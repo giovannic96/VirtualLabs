@@ -1,0 +1,18 @@
+#title {
+  text-decoration: none;
+  color: white;
+}
+
+.fill-remaining-space {
+  flex: 1 1 auto;
+}
+
+.log-button-div button {
+  font-size: large;
+}
+
+.home-page-div {
+  text-align: center;
+  font-size: x-large;
+  margin-top: 60px;
+}

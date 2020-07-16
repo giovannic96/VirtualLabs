@@ -1,0 +1,71 @@
+{
+  "users": [
+    {
+      "email": "olivier@mail.com",
+      "password": "$2a$10$9SFIVF0tDrwRoUlZOo9Q0urEs0cnpBXu9RWGf/TxuHjFzDteQhvDW",
+      "id": 1
+    }
+  ],
+  "students": [
+    {
+      "id": "123456",
+      "name": "Rossi",
+      "firstName": "Mario",
+      "courseId": 0
+    },
+    {
+      "id": "538746",
+      "name": "Russo",
+      "firstName": "Leonardo",
+      "courseId": 0
+    },
+    {
+      "id": "135275",
+      "name": "Ferrari",
+      "firstName": "Francesco",
+      "courseId": 0
+    },
+    {
+      "id": "132353",
+      "name": "Esposito",
+      "firstName": "Alessandro",
+      "courseId": 0
+    },
+    {
+      "id": "123125",
+      "name": "Bianchi",
+      "firstName": "Lorenzo",
+      "courseId": 1
+    },
+    {
+      "id": "123113",
+      "name": "Romano",
+      "firstName": "Mattia",
+      "courseId": 1
+    },
+    {
+      "id": "353252",
+      "name": "Colombo",
+      "firstName": "Andrea",
+      "courseId": 1
+    },
+    {
+      "id": "352324",
+      "name": "Ricci",
+      "firstName": "Gabriele",
+      "courseId": 1
+    },
+    {
+      "id": "544456",
+      "name": "Marino",
+      "firstName": "Edoardo",
+      "courseId": 0
+    },
+    {
+      "id": "532456",
+      "name": "Greco",
+      "firstName": "Tommaso",
+      "courseId": 1
+    }
+  ]
+}

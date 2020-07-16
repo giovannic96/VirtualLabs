@@ -1,0 +1,15 @@
+table {
+  width: 100%;
+}
+
+.input-student-div mat-form-field {
+  width: 400px;
+}
+
+.input-student-div button {
+  margin-left: 1em;
+}
+
+.delete-btn {
+  margin-bottom: 0.5em;
+}

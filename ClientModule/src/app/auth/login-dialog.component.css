@@ -1,0 +1,24 @@
+.form-container {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons-div button {
+  margin: .7em;
+  min-width: 90px;
+}
+
+.error-advice {
+  color: red;
+  margin: .5em 0 1em 0;
+  text-align: center;
+}
+
+.email-div {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
