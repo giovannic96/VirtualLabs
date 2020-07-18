@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.polito.ai</groupId>
-    <artifactId>esercitazione3</artifactId>
+    <artifactId>virtualLabs</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>esercitazione3</name>
+    <name>virtualLabs</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
