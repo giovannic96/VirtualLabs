@@ -3,7 +3,9 @@ package it.polito.ai.virtualLabs.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 enum TeamProposalStatus {
     PENDING,
@@ -23,4 +25,14 @@ public class TeamProposal {
 
     @Enumerated(EnumType.STRING)
     private TeamProposalStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "course_name")
+    Course course;
+
+    @JoinTable(name = "teamProposal_student",
+            joinColumns = @JoinColumn(name = "teamProposal_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_matricola"))
+    @ManyToMany
+    List<Student> students = new ArrayList<>();
 }

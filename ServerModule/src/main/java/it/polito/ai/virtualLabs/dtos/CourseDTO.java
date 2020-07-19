@@ -9,7 +9,8 @@ import javax.persistence.Id;
 public class CourseDTO extends RepresentationModel<CourseDTO> {
     @Id
     String name;
-    int min;
-    int max;
+    String acronym;
+    int minTeamSize;
+    int maxTeamSize;
     boolean enabled;
 }

@@ -16,4 +16,16 @@ public class Vm {
     private int vCPU;
     private int RAM;
     private int disk;
+
+    @ManyToOne
+    @JoinColumn(name = "student_matricola")
+    private Student student;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @ManyToOne
+    @JoinColumn(name = "vmModel_id")
+    private VmModel vmModel;
 }

@@ -1,14 +1,9 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.CourseDTO;
-import it.polito.ai.virtualLabs.dtos.StudentDTO;
-import org.springframework.hateoas.Link;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ModelHelper {
-
+/*
     public static CourseDTO enrich(CourseDTO courseDTO) {
         //create links
         Link selfLink = linkTo(CourseController.class).slash(courseDTO.getName()).withSelfRel();
@@ -25,4 +20,6 @@ public class ModelHelper {
         studentDTO.add(selfLink);
         return studentDTO;
     }
+
+ */
 }

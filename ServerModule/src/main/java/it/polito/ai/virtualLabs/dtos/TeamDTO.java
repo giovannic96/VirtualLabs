@@ -9,5 +9,4 @@ public class TeamDTO {
     @Id
     Long id;
     String name;
-    int status;
 }

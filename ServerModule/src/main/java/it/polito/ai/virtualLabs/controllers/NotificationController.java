@@ -15,7 +15,7 @@ public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
-
+/*
     @GetMapping("/confirm/{token}")
     public String confirm(@PathVariable String token) {
         try {
@@ -37,5 +37,5 @@ public class NotificationController {
         }
         return "home";
     }
-
+*/
 }

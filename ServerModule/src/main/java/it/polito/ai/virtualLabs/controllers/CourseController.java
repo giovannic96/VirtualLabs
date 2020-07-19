@@ -1,27 +1,11 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.CourseDTO;
-import it.polito.ai.virtualLabs.dtos.StudentDTO;
-import it.polito.ai.virtualLabs.services.TeamService;
-import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("API/courses")
 public class CourseController {
-
+/*
     @Autowired
     TeamService teamService;
 
@@ -74,6 +58,6 @@ public class CourseController {
         } catch(IOException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 }
 

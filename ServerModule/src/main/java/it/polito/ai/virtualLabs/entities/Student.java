@@ -10,19 +10,24 @@ import java.util.List;
 @Entity
 public class Student extends User{
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(name = "student_course",
             joinColumns = @JoinColumn(name="student_id"),
             inverseJoinColumns = @JoinColumn(name="course_name")
     )
     private List<Course> courses = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "members")
+    @ManyToMany(mappedBy = "students")
     private List<Team> teams = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "students")
+    private List<TeamProposal> teamProposals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.MERGE)
+    private List<Vm> vms = new ArrayList<>();
 
     public void addCourse(Course c) {
         courses.add(c);
@@ -31,11 +36,11 @@ public class Student extends User{
 
     public void addToTeam(Team t) {
         teams.add(t);
-        t.getMembers().add(this);
+        t.getStudents().add(this);
     }
 
     public void removeFromTeam(Team t) {
         teams.remove(t);
-        t.getMembers().remove(this);
+        t.getStudents().remove(this);
     }
 }

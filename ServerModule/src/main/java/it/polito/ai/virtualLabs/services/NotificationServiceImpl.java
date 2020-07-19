@@ -1,32 +1,13 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-import it.polito.ai.virtualLabs.entities.Student;
-import it.polito.ai.virtualLabs.entities.Team;
-import it.polito.ai.virtualLabs.entities.Token;
-import it.polito.ai.virtualLabs.repositories.TeamRepository;
-import it.polito.ai.virtualLabs.repositories.TokenRepository;
-import it.polito.ai.virtualLabs.services.exceptions.notification.NotifyTeamException;
-import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
-import it.polito.ai.virtualLabs.services.exceptions.token.TokenExpiredException;
-import it.polito.ai.virtualLabs.services.exceptions.token.TokenNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
-
+/*
     @Autowired
     JavaMailSender emailSender;
 
@@ -38,6 +19,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     TeamService teamService;
+
 
     @Override
     public void sendMessage(String address, String subject, String body) throws MailException {
@@ -63,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
         List<Token> pendingTokens = tokenRepository.findAllByTeamId(teamId);
         if(pendingTokens.isEmpty()) {
             try {
-                teamService.changeTeamState(teamId, Team.ACTIVE);
+                //teamService.changeTeamState(teamId, Team.ACTIVE);
             } catch (TeamNotFoundException ex) {
                 return false;
             }
@@ -96,9 +78,9 @@ public class NotificationServiceImpl implements NotificationService {
 
         //verify that all memberIds are inside the team 'dto'
         List<String> teamMembers = teamRepository.getOne(dto.getId())
-                                        .getMembers()
+                                        .getStudents()
                                         .stream()
-                                        .map(Student::getId)
+                                        .map(Student::getMatricola)
                                         .collect(Collectors.toList());
         if(memberIds.size() != teamMembers.size())
             throw new NotifyTeamException("All members must be enrolled in the team: " + dto.getName());
@@ -114,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
             t.setTeamId(dto.getId());
             t.setExpiryDate(new Timestamp(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(3)));
             tokenRepository.saveAndFlush(t);
-            sendMessage("s259741@studenti.polito.it"/*TODO: decomment this later->calcEmail(t.getId())*/, "TEAM PROPOSAL", calcBody(t.getId()));
+            sendMessage("s259741@studenti.polito.it"//TODO: decomment this later->calcEmail(t.getId()), "TEAM PROPOSAL", calcBody(t.getId()));
         }
     }
 
@@ -134,4 +116,5 @@ public class NotificationServiceImpl implements NotificationService {
         String rejectURL = prefixRejectURL + id;
         return confirmBody + confirmURL + "\n\n" + rejectBody + rejectURL;
     }
+    */
 }

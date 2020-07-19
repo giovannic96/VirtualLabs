@@ -1,14 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.CourseDTO;
-import it.polito.ai.virtualLabs.dtos.StudentDTO;
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-
-import java.io.Reader;
-import java.util.List;
-import java.util.Optional;
-
 public interface TeamService {
+    /*
     boolean addCourse(CourseDTO course);
     Optional<CourseDTO> getCourse(String name);
     List<CourseDTO> getAllCourses();
@@ -30,5 +23,5 @@ public interface TeamService {
     List<StudentDTO> getStudentsInTeams(String courseName);
     List<StudentDTO> getAvailableStudents(String courseName);
     void changeTeamState(Long teamId, int state);
-    void evictTeam(Long teamId);
+    void evictTeam(Long teamId);*/
 }

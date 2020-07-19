@@ -17,4 +17,8 @@ public class Version {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar submissionDate;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "report_id")
+    private Report report;
 }

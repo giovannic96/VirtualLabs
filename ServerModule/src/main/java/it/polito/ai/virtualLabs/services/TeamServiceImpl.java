@@ -1,45 +1,14 @@
 package it.polito.ai.virtualLabs.services;
 
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
-import it.polito.ai.virtualLabs.dtos.CourseDTO;
-import it.polito.ai.virtualLabs.dtos.StudentDTO;
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-import it.polito.ai.virtualLabs.entities.Course;
-import it.polito.ai.virtualLabs.entities.Student;
-import it.polito.ai.virtualLabs.entities.Team;
-import it.polito.ai.virtualLabs.entities.User;
-import it.polito.ai.virtualLabs.repositories.CourseRepository;
 import it.polito.ai.virtualLabs.repositories.StudentRepository;
-import it.polito.ai.virtualLabs.repositories.TeamRepository;
-import it.polito.ai.virtualLabs.repositories.UserRepository;
-import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotEnabledException;
-import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
-import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentPrivacyException;
-import it.polito.ai.virtualLabs.services.exceptions.team.TeamConstraintsNotSatisfiedException;
-import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
-
+/*
     @Autowired
     CourseRepository courseRepository;
     @Autowired
@@ -52,6 +21,7 @@ public class TeamServiceImpl implements TeamService {
     NotificationService notificationService;
     @Autowired
     ModelMapper modelMapper;
+
 
     @Override
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -132,7 +102,7 @@ public class TeamServiceImpl implements TeamService {
         Course course = courseRepository.getOne(courseName);
         Optional<Student> student = course.getStudents()
                 .stream()
-                .filter(s -> s.getId().equals(studentId))
+                .filter(s -> s.getMatricola().equals(studentId))
                 .findFirst();
         if(student.isPresent())
             return false;
@@ -217,7 +187,7 @@ public class TeamServiceImpl implements TeamService {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
                 if(user.isPresent()) {
-                    String id = user.get().getStudent().getId();
+                    String id = user.get().getMatricola();
                     if(!studentId.equals(id)) {
                         throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
                     }
@@ -242,7 +212,7 @@ public class TeamServiceImpl implements TeamService {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
                 if(user.isPresent()) {
-                    String id = user.get().getStudent().getId();
+                    String id = user.get().getMatricola();
                     if(!studentId.equals(id)) {
                         throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
                     }
@@ -265,7 +235,7 @@ public class TeamServiceImpl implements TeamService {
 
         return teamRepository
                 .getOne(teamId)
-                .getMembers()
+                .getStudents()
                 .stream()
                 .map(s -> modelMapper.map(s, StudentDTO.class))
                 .collect(Collectors.toList());
@@ -282,7 +252,7 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotEnabledException("Il corso di '" + courseId + "' non è abilitato");
 
         List<String> distinctMembersIds = memberIds.stream().distinct().collect(Collectors.toList());
-        if(distinctMembersIds.size() < course.getMin() && distinctMembersIds.size() > course.getMax())
+        if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
             throw new TeamConstraintsNotSatisfiedException("Il team '" + name + "' non rispetta i vincoli di cardinalità");
 
         List<Student> students = new ArrayList<>();
@@ -305,7 +275,7 @@ public class TeamServiceImpl implements TeamService {
         Team proposedTeam = new Team();
         proposedTeam.setName(name);
         proposedTeam.setCourse(course);
-        proposedTeam.setStatus(Team.INACTIVE);
+        //proposedTeam.setStatus(Team.INACTIVE);
 
         //IMPORTANTE: se uso 'new' (come abbiamo fatto prima con Team) ho bisogno della save(), mentre se modifico
         // qualcosa di già esistente nel db, la update è fatta in automatico grazie a @Transactional.
@@ -330,11 +300,14 @@ public class TeamServiceImpl implements TeamService {
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
-                user.ifPresent(value -> value.getStudent().getCourses().forEach(course -> {
-                    if (!courseName.equals(course.getName())) {
-                        throw new StudentPrivacyException("Lo studente non ha i permessi per visualizzare le info relative al corso " + courseName);
-                    }
-                }));
+                user.ifPresent(value -> {
+                    Student student = (Student)value;
+                    student.getCourses().forEach(course -> {
+                        if (!courseName.equals(course.getName())) {
+                            throw new StudentPrivacyException("Lo studente non ha i permessi per visualizzare le info relative al corso " + courseName);
+                        }
+                    });
+                });
             }
         });
         return courseRepository
@@ -373,7 +346,7 @@ public class TeamServiceImpl implements TeamService {
     public void changeTeamState(Long teamId, int newStatus) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
-        teamRepository.getOne(teamId).setStatus(newStatus);
+        //teamRepository.getOne(teamId).setStatus(newStatus);
     }
 
     @Override
@@ -382,4 +355,6 @@ public class TeamServiceImpl implements TeamService {
             throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
         teamRepository.deleteById(teamId);
     }
+
+    */
 }

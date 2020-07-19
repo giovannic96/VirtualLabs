@@ -19,14 +19,17 @@ public class Team {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    Course course;
+    @JoinColumn(name = "course_name")
+    private Course course;
 
     @JoinTable(name = "team_student",
             joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id"))
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    List<Student> members = new ArrayList<>();
+            inverseJoinColumns = @JoinColumn(name = "student_matricola"))
+    @ManyToMany
+    private List<Student> students = new ArrayList<>();
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Vm> vms = new ArrayList<>();
 
     public void setCourse(Course c) {
         if(course != null)
@@ -37,12 +40,12 @@ public class Team {
     }
 
     public void addMember(Student s) {
-        members.add(s);
+        students.add(s);
         s.getTeams().add(this);
     }
 
     public void removeMember(Student s) {
-        members.remove(s);
+        students.remove(s);
         s.getTeams().remove(this);
     }
 
