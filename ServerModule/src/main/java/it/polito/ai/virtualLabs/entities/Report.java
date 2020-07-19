@@ -8,13 +8,6 @@ import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
-enum ReportStatus {
-    NULL,
-    READ,
-    SUBMITTED,
-    REVISED,
-}
-
 @Data
 @Entity
 public class Report {
@@ -40,4 +33,11 @@ public class Report {
     @ManyToOne
     @JoinColumn(name = "student_matricola")
     private Student student;
+
+    public enum ReportStatus {
+        NULL,
+        READ,
+        SUBMITTED,
+        REVISED,
+    }
 }

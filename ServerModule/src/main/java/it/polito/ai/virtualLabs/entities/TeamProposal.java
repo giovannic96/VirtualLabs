@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-enum TeamProposalStatus {
-    PENDING,
-    CONFIRMED,
-    REJECTED
-}
-
 @Data
 @Entity
 public class TeamProposal {
@@ -35,4 +29,10 @@ public class TeamProposal {
             inverseJoinColumns = @JoinColumn(name = "student_matricola"))
     @ManyToMany
     List<Student> students = new ArrayList<>();
+
+    public enum TeamProposalStatus {
+        PENDING,
+        CONFIRMED,
+        REJECTED
+    }
 }

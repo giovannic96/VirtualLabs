@@ -1,16 +1,14 @@
 package it.polito.ai.virtualLabs.dtos;
 
 import lombok.Data;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.util.Calendar;
 
 @Data
-public class AssignmentDTO {
-
+public class VersionDTO {
     @Id
     Long id;
-    String name;
-    Calendar releaseDate;
-    Calendar expiryDate;
     String content;
+    Calendar submissionDate;
 }
