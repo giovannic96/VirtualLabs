@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class Report {
     List<Version> versions = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "student_matricola")
+    @JoinColumn(name = "student_id")
     private Student student;
 
     public enum ReportStatus {

@@ -30,6 +30,6 @@ public class VmModel {
     private List<Vm> vms = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "professor_matricola")
+    @JoinColumn(name = "professor_id")
     private Professor professor;
 }

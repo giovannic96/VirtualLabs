@@ -1,8 +1,6 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.services.NotificationService;
-import it.polito.ai.virtualLabs.services.exceptions.token.TokenExpiredException;
-import it.polito.ai.virtualLabs.services.exceptions.token.TokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

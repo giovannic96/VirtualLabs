@@ -80,7 +80,7 @@ public class NotificationServiceImpl implements NotificationService {
         List<String> teamMembers = teamRepository.getOne(dto.getId())
                                         .getStudents()
                                         .stream()
-                                        .map(Student::getMatricola)
+                                        .map(Student::getId)
                                         .collect(Collectors.toList());
         if(memberIds.size() != teamMembers.size())
             throw new NotifyTeamException("All members must be enrolled in the team: " + dto.getName());

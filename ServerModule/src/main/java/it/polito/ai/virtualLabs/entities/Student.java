@@ -26,7 +26,7 @@ public class Student extends User{
     @ManyToMany(mappedBy = "students")
     private List<TeamProposal> teamProposals = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.MERGE)
     private List<Vm> vms = new ArrayList<>();
 
     public void addCourse(Course c) {

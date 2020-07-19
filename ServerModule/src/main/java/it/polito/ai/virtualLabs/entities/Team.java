@@ -24,7 +24,7 @@ public class Team {
 
     @JoinTable(name = "team_student",
             joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_matricola"))
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
     @ManyToMany
     private List<Student> students = new ArrayList<>();
 

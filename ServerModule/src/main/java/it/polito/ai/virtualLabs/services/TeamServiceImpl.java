@@ -1,6 +1,5 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.repositories.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,7 +20,6 @@ public class TeamServiceImpl implements TeamService {
     NotificationService notificationService;
     @Autowired
     ModelMapper modelMapper;
-
 
     @Override
     @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -102,7 +100,7 @@ public class TeamServiceImpl implements TeamService {
         Course course = courseRepository.getOne(courseName);
         Optional<Student> student = course.getStudents()
                 .stream()
-                .filter(s -> s.getMatricola().equals(studentId))
+                .filter(s -> s.getId().equals(studentId))
                 .findFirst();
         if(student.isPresent())
             return false;
@@ -187,7 +185,7 @@ public class TeamServiceImpl implements TeamService {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
                 if(user.isPresent()) {
-                    String id = user.get().getMatricola();
+                    String id = user.get().getId();
                     if(!studentId.equals(id)) {
                         throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
                     }
@@ -212,7 +210,7 @@ public class TeamServiceImpl implements TeamService {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
                 if(user.isPresent()) {
-                    String id = user.get().getMatricola();
+                    String id = user.get().getId();
                     if(!studentId.equals(id)) {
                         throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
                     }

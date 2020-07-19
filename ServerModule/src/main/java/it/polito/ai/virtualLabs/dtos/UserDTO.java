@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 public class UserDTO implements Serializable {
     @Id
-    String matricola;
+    String id; //matricola
     String username;
     String password;
     String name;

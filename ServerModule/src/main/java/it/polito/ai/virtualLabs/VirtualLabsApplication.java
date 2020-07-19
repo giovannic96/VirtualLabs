@@ -1,8 +1,10 @@
 package it.polito.ai.virtualLabs;
 
 import it.polito.ai.virtualLabs.services.TeamService;
+import it.polito.ai.virtualLabs.services.VmService;
 import it.polito.ai.virtualLabs.services.exceptions.team.TeamServiceException;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

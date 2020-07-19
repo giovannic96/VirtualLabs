@@ -34,6 +34,6 @@ public class Assignment {
     private List<Report> reports = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "professor_matricola")
+    @JoinColumn(name = "professor_id")
     private Professor professor;
 }

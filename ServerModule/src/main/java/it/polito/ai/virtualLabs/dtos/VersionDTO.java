@@ -9,6 +9,7 @@ import java.util.Calendar;
 public class VersionDTO {
     @Id
     Long id;
+    String title;
     String content;
     Calendar submissionDate;
 }

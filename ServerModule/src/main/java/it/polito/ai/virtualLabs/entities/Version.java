@@ -3,6 +3,7 @@ package it.polito.ai.virtualLabs.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.Calendar;
 
 @Data
@@ -12,6 +13,9 @@ public class Version {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotEmpty
+    private String title;
 
     private String content;
 

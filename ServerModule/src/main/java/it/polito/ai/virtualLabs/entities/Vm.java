@@ -18,8 +18,8 @@ public class Vm {
     private int disk;
 
     @ManyToOne
-    @JoinColumn(name = "student_matricola")
-    private Student student;
+    @JoinColumn(name = "student_id")
+    private Student owner;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
