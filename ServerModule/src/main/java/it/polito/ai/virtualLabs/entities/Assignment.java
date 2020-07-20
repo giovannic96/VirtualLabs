@@ -18,10 +18,8 @@ public class Assignment {
     @NotNull
     private String name;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime releaseDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime expiryDate;
 
     private String content;

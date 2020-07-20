@@ -41,7 +41,7 @@ public class VmServiceImpl implements VmService {
     public Optional<VmModelDTO> getVmModel(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
-        return Optional.of(vmRepository.findById(vmId).get().getVmModel())
+        return Optional.of(vmRepository.getOne(vmId).getVmModel())
                 .map(vmModel -> modelMapper.map(vmModel, VmModelDTO.class));
     }
 
@@ -49,7 +49,7 @@ public class VmServiceImpl implements VmService {
     public Optional<UserDTO> getOwner(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
-        return Optional.of(vmRepository.findById(vmId).get().getOwner())
+        return Optional.of(vmRepository.getOne(vmId).getOwner())
                 .map(owner -> modelMapper.map(owner, UserDTO.class));
     }
 
@@ -57,7 +57,7 @@ public class VmServiceImpl implements VmService {
     public Optional<TeamDTO> getTeam(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
-        return Optional.of(vmRepository.findById(vmId).get().getTeam())
+        return Optional.of(vmRepository.getOne(vmId).getTeam())
                 .map(team -> modelMapper.map(team, TeamDTO.class));
     }
 
@@ -86,9 +86,9 @@ public class VmServiceImpl implements VmService {
         if(!vmModelRepository.existsById(vmModelId))
             throw new VmModelNotFoundException("The VmModel with id " + vmModelId + " does not exist");
 
-        Team team = teamRepository.findById(teamId).get();
+        Team team = teamRepository.getOne(teamId);
         List<Vm> teamVms = team.getVms();
-        VmModel vmModel = vmModelRepository.findById(vmModelId).get();
+        VmModel vmModel = vmModelRepository.getOne(vmModelId);
 
         //check resources and number of vms constraints
         if(teamVms.size() >= vmModel.getMaxTotVM() ||
@@ -97,7 +97,7 @@ public class VmServiceImpl implements VmService {
 
         //create VM
         Vm vm = modelMapper.map(vmDTO, Vm.class);
-        vm.setOwner((Student)userRepository.findById(studentId).get());
+        vm.setOwner(userRepository.getStudentById(studentId));
         vm.setTeam(team);
         vm.setVmModel(vmModel);
 
@@ -148,7 +148,8 @@ public class VmServiceImpl implements VmService {
             totDisk += v.getDisk();
             totVCpu += v.getVCPU();
         }
-        return ram > 0 || disk > 0 || vCPU > 0 || totRam + ram > vmModel.getMaxRAM() ||
+
+        return ram < 0 || disk < 0 || vCPU < 0 || totRam + ram > vmModel.getMaxRAM() ||
                 totDisk + disk > vmModel.getMaxDisk() || totVCpu + vCPU > vmModel.getMaxVCPU();
     }
 

@@ -7,7 +7,7 @@ import javax.persistence.Id;
 public class VmDTO {
     @Id
     Long id;
-    boolean status;
+    boolean active;
     int vCPU;
     int RAM;
     int disk;

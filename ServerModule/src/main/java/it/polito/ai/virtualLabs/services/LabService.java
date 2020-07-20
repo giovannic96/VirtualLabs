@@ -15,6 +15,7 @@ public interface LabService {
     List<VersionDTO> getReportVersions(Long reportId);
     StudentDTO getReportOwner(Long reportId);
     List<AssignmentDTO> getCourseAssignments(String courseName);
+
     boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId);
     boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId);
     boolean addVersionToReport(VersionDTO versionDTO, Long reportId);

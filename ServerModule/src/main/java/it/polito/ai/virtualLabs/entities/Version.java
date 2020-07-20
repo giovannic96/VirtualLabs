@@ -19,7 +19,6 @@ public class Version {
 
     private String content;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime submissionDate;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

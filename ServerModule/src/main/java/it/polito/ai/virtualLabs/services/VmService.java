@@ -14,6 +14,7 @@ public interface VmService {
     Optional<TeamDTO> getTeam(Long vmId);
     List<VmModelDTO> getAllVmModels();
     List<VmDTO> getAllVms();
+
     boolean createVm(VmDTO vmDTO, String studentId, Long teamId, Long vmModelId);
     boolean removeVm(Long vmId);
     boolean editVmResources(Long vmId, int vCPU, int ram, int disk);
