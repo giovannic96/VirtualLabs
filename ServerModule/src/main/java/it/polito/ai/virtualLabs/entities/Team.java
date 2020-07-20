@@ -48,5 +48,4 @@ public class Team {
         students.remove(s);
         s.getTeams().remove(this);
     }
-
 }

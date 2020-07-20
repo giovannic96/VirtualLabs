@@ -16,7 +16,7 @@ public interface VmService {
     List<VmDTO> getAllVms();
     boolean createVm(VmDTO vmDTO, String studentId, Long teamId, Long vmModelId);
     boolean removeVm(Long vmId);
-    void editVmResources(int vCPU, int ram, int disk);
-    void powerOnVm();
-    void powerOffVm();
+    boolean editVmResources(Long vmId, int vCPU, int ram, int disk);
+    boolean powerOnVm(Long vmId);
+    boolean powerOffVm(Long vmId);
 }

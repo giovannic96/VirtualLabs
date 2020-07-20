@@ -33,12 +33,25 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    private Student student;
+    private Student owner;
 
     public enum ReportStatus {
         NULL,
         READ,
         SUBMITTED,
         REVISED,
+    }
+
+    public void addVersion(Version v) {
+        versions.add(v);
+        v.setReport(this);
+    }
+
+    public void setAssignment(Assignment a) {
+        if(assignment != null)
+            assignment.getReports().remove(this);
+        if(a != null)
+            a.getReports().add(this);
+        assignment = a;
     }
 }

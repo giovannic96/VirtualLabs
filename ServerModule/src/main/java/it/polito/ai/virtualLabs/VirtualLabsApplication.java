@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class VirtualLabsApplication {
 
-    @Bean //la classe ModelMapper mi serve per fare le conversioni (es. utilizzare map() per trasformare un Entity in DTO)
+    @Bean
     ModelMapper modelMapper() {
         return new ModelMapper();
     }
@@ -25,6 +25,7 @@ public class VirtualLabsApplication {
             public void run(String... args) {
                 try {
                     //here goes the code...
+
                 } catch (TeamServiceException e) {
                     System.out.println(e.getMessage());
                 }

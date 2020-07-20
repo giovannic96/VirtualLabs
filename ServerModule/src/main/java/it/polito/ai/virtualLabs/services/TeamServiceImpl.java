@@ -352,6 +352,7 @@ public class TeamServiceImpl implements TeamService {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
         teamRepository.deleteById(teamId);
+        teamRepository.flush();
     }
 
     */

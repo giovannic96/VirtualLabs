@@ -11,7 +11,7 @@ public class Vm {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private boolean status;
+    private boolean active;
 
     private int vCPU;
     private int RAM;
@@ -28,4 +28,28 @@ public class Vm {
     @ManyToOne
     @JoinColumn(name = "vmModel_id")
     private VmModel vmModel;
+
+    public void setTeam(Team t) {
+        if(team != null)
+            team.getVms().remove(this);
+        if(t != null)
+            t.getVms().add(this);
+        team = t;
+    }
+
+    public void setVmModel(VmModel v) {
+        if(vmModel != null)
+            vmModel.getVms().remove(this);
+        if(v != null)
+            v.getVms().add(this);
+        vmModel = v;
+    }
+
+    public void setOwner(Student s) {
+        if(owner != null)
+            owner.getVms().remove(this);
+        if(s != null)
+            s.getVms().add(this);
+        owner = s;
+    }
 }

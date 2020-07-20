@@ -4,8 +4,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Data
@@ -19,10 +19,10 @@ public class Assignment {
     private String name;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar releaseDate;
+    private LocalDateTime releaseDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar expiryDate;
+    private LocalDateTime expiryDate;
 
     private String content;
 
@@ -36,4 +36,31 @@ public class Assignment {
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
+
+    public void addReport(Report r) {
+        reports.add(r);
+        r.setAssignment(this);
+    }
+
+    public void setProfessor(Professor p) {
+        if(professor != null)
+            professor.getAssignments().remove(this);
+        if(p != null)
+            p.getAssignments().add(this);
+        professor = p;
+    }
+
+    public void setCourse(Course c) {
+        if(course != null)
+            course.getAssignments().remove(this);
+        if(c != null)
+            c.getAssignments().add(this);
+        course = c;
+    }
+
+    public void setReports(List<Report> reportList) {
+        for(Report r : reports) {
+            r.setAssignment(null);
+        }
+    }
 }

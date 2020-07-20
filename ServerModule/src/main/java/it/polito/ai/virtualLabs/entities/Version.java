@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -20,7 +20,7 @@ public class Version {
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar submissionDate;
+    private LocalDateTime submissionDate;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "report_id")

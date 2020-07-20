@@ -3,7 +3,7 @@ package it.polito.ai.virtualLabs.dtos;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Data
 public class VersionDTO {
@@ -11,5 +11,5 @@ public class VersionDTO {
     Long id;
     String title;
     String content;
-    Calendar submissionDate;
+    LocalDateTime submissionDate;
 }

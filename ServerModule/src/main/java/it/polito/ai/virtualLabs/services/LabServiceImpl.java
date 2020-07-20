@@ -1,75 +1,214 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.AssignmentDTO;
-import it.polito.ai.virtualLabs.dtos.ReportDTO;
-import it.polito.ai.virtualLabs.dtos.UserDTO;
-import it.polito.ai.virtualLabs.dtos.VersionDTO;
+import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.*;
+import it.polito.ai.virtualLabs.repositories.*;
+import it.polito.ai.virtualLabs.services.exceptions.assignment.AssignmentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.report.ReportNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class LabServiceImpl implements LabService {
 
+    @Autowired
+    AssignmentRepository assignmentRepository;
+    @Autowired
+    ReportRepository reportRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    VersionRepository versionRepository;
+    @Autowired
+    ModelMapper modelMapper;
+
     @Override
     public List<AssignmentDTO> getAllAssignments() {
-        return null;
+        return assignmentRepository.findAll()
+                .stream()
+                .map(a -> modelMapper.map(a, AssignmentDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ReportDTO> getStudentReports(String studentId) {
-        return null;
+        if(!userRepository.existsById(studentId))
+            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
+
+        Student s = (Student)userRepository.getOne(studentId);
+        return s.getReports()
+                .stream()
+                .map(r -> modelMapper.map(r, ReportDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<AssignmentDTO> getAssignmentReports(Long assignmentId) {
-        return null;
+    public List<ReportDTO> getAssignmentReports(Long assignmentId) {
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        Assignment a = assignmentRepository.getOne(assignmentId);
+        return a.getReports()
+                .stream()
+                .map(r -> modelMapper.map(r, ReportDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public UserDTO getAssignmentProfessor(String professorId) {
-        return null;
+    public ProfessorDTO getAssignmentProfessor(Long assignmentId) {
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        Assignment a = assignmentRepository.getOne(assignmentId);
+        return modelMapper.map(a.getProfessor(), ProfessorDTO.class);
     }
 
     @Override
     public List<VersionDTO> getReportVersions(Long reportId) {
-        return null;
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        Report r = reportRepository.getOne(reportId);
+        return r.getVersions()
+                .stream()
+                .map(v -> modelMapper.map(v, VersionDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public UserDTO getReportOwner(Long reportId) {
-        return null;
+    public StudentDTO getReportOwner(Long reportId) {
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        Report r = reportRepository.getOne(reportId);
+        return modelMapper.map(r.getOwner(), StudentDTO.class);
     }
 
     @Override
     public List<AssignmentDTO> getCourseAssignments(String courseName) {
-        return null;
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+
+        Course c = courseRepository.getOne(courseName);
+        return c.getAssignments()
+                .stream()
+                .map(a -> modelMapper.map(a, AssignmentDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId) {
-        return false;
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+        if(!userRepository.existsById(professorId))
+            throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
+
+        Course course = courseRepository.getOne(courseName);
+        Professor professor = (Professor)userRepository.getOne(professorId);
+        Assignment assignment = modelMapper.map(assignmentDTO, Assignment.class);
+
+        //check if there is already an assignment with that name in that course
+        if(course.getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName())))
+            return false;
+
+        //add assignment to course and professor
+        course.addAssignment(assignment);
+        professor.addAssignment(assignment);
+
+        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
+        assignmentRepository.saveAndFlush(assignment);
+        return true;
     }
 
     @Override
-    public boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId) {
-        return false;
+    public boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId) {
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+        if(!userRepository.existsById(studentId))
+            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
+
+        Assignment assignment = assignmentRepository.getOne(assignmentId);
+        Student student = (Student)userRepository.getOne(studentId);
+        Report report = modelMapper.map(reportDTO, Report.class);
+
+        //check if there is already a report for that assignmentId and studentId
+        if(reportRepository.findReportByAssignmentIdAndOwnerId(assignmentId, studentId).isPresent())
+            return false;
+
+        //add report to assignment and student
+        assignment.addReport(report);
+        student.addReport(report);
+
+        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
+        reportRepository.saveAndFlush(report);
+        return true;
     }
 
     @Override
     public boolean addVersionToReport(VersionDTO versionDTO, Long reportId) {
-        return false;
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        Report report = reportRepository.getOne(reportId);
+        Version version = modelMapper.map(versionDTO, Version.class);
+
+        //check if there is already a version with same timestamp in that report
+        if(report.getVersions().stream().anyMatch(v -> v.getSubmissionDate().isEqual(versionDTO.getSubmissionDate())))
+            return false;
+
+        //add version to report
+        report.addVersion(version);
+
+        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
+        versionRepository.saveAndFlush(version);
+        return true;
     }
 
     @Override
     public boolean removeAssignment(Long assignmentId) {
-        return false;
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        //remove assignment in relationships
+        Assignment assignment = assignmentRepository.getOne(assignmentId);
+        assignment.setProfessor(null);
+        assignment.setReports(null);
+        assignment.setCourse(null);
+
+        assignmentRepository.deleteById(assignmentId);
+        assignmentRepository.flush();
+        return true;
     }
 
     @Override
-    public void editAssignment(AssignmentDTO assignmentDTO) {
+    public boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate) {
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
+        //check date and name constraints
+        Assignment assignment = assignmentRepository.getOne(assignmentId);
+        if(!expiryDate.isBefore(LocalDateTime.now()) ||
+            assignment.getCourse().getAssignments().stream().anyMatch(a -> a.getName().equals(name)))
+            return false;
+
+        //edit assignment
+        assignment.setName(name);
+        assignment.setContent(content);
+        assignment.setExpiryDate(expiryDate);
+
+        assignmentRepository.saveAndFlush(assignment);
+        return true;
     }
 }

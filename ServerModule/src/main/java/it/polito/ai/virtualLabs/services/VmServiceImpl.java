@@ -9,6 +9,10 @@ import it.polito.ai.virtualLabs.repositories.TeamRepository;
 import it.polito.ai.virtualLabs.repositories.UserRepository;
 import it.polito.ai.virtualLabs.repositories.VmModelRepository;
 import it.polito.ai.virtualLabs.repositories.VmRepository;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.vm.VmNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.vmmodel.VmModelNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,25 +79,20 @@ public class VmServiceImpl implements VmService {
 
     @Override
     public boolean createVm(VmDTO vmDTO, String studentId, Long teamId, Long vmModelId) {
-        if(vmRepository.existsById(vmDTO.getId()) || !teamRepository.existsById(teamId) ||
-            !userRepository.existsById(studentId) || !vmModelRepository.existsById(vmModelId))
-            return false;
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
+        if(!userRepository.existsById(studentId))
+            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
+        if(!vmModelRepository.existsById(vmModelId))
+            throw new VmModelNotFoundException("The VmModel with id " + vmModelId + " does not exist");
 
-        //get current resources
         Team team = teamRepository.findById(teamId).get();
         List<Vm> teamVms = team.getVms();
         VmModel vmModel = vmModelRepository.findById(vmModelId).get();
-        int totRam = 0, totDisk = 0, totVCpu = 0;
 
-        for(Vm v : teamVms) {
-            totRam += v.getRAM();
-            totDisk += v.getDisk();
-            totVCpu += v.getVCPU();
-        }
-
-        //check all resources (and number of vms) constraints
-        if(teamVms.size() >= vmModel.getMaxTotVM() || totRam + vmDTO.getRAM() > vmModel.getMaxRAM() ||
-            totDisk + vmDTO.getDisk() > vmModel.getMaxDisk() || totVCpu + vmDTO.getVCPU() > vmModel.getMaxVCPU())
+        //check resources and number of vms constraints
+        if(teamVms.size() >= vmModel.getMaxTotVM() ||
+            resourcesExceeded(teamVms, vmModel, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
             return false;
 
         //create VM
@@ -108,21 +107,90 @@ public class VmServiceImpl implements VmService {
 
     @Override
     public boolean removeVm(Long vmId) {
-        return false;
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
+
+        //remove vm in relationships
+        Vm vm = vmRepository.getOne(vmId);
+        vm.setTeam(null);
+        vm.setOwner(null);
+        vm.setVmModel(null);
+
+        vmRepository.deleteById(vmId);
+        vmRepository.flush();
+        return true;
     }
 
     @Override
-    public void editVmResources(int vCPU, int ram, int disk) {
+    public boolean editVmResources(Long vmId, int vCPU, int ram, int disk) {
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
+        //check resources constraints
+        Vm curVm = vmRepository.getOne(vmId);
+        if(resourcesExceeded(curVm.getTeam().getVms(), curVm.getVmModel(), vCPU, ram, disk))
+            return false;
+
+        //edit vm resources
+        curVm.setVCPU(vCPU);
+        curVm.setRAM(ram);
+        curVm.setDisk(disk);
+
+        vmRepository.saveAndFlush(curVm);
+        return true;
+    }
+
+    private boolean resourcesExceeded(List<Vm> teamVms, VmModel vmModel, int vCPU, int ram, int disk) {
+        int totRam = 0, totDisk = 0, totVCpu = 0;
+
+        for(Vm v : teamVms) {
+            totRam += v.getRAM();
+            totDisk += v.getDisk();
+            totVCpu += v.getVCPU();
+        }
+        return ram > 0 || disk > 0 || vCPU > 0 || totRam + ram > vmModel.getMaxRAM() ||
+                totDisk + disk > vmModel.getMaxDisk() || totVCpu + vCPU > vmModel.getMaxVCPU();
     }
 
     @Override
-    public void powerOnVm() {
+    public boolean powerOnVm(Long vmId) {
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
+        //get number of active vms for the group to which vm belongs
+        Vm vm = vmRepository.getOne(vmId);
+        int nActiveVMs = 0;
+
+        for(Vm v : vm.getTeam().getVms()) {
+            if(v.isActive())
+                nActiveVMs++;
+        }
+
+        //check max number of active vms constraint
+        if(nActiveVMs >= vm.getVmModel().getMaxActiveVM())
+            return false;
+
+        //set vm as active
+        vm.setActive(true);
+
+        vmRepository.saveAndFlush(vm);
+        return true;
     }
 
     @Override
-    public void powerOffVm() {
+    public boolean powerOffVm(Long vmId) {
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
+        //check if vm is already off
+        Vm vm = vmRepository.getOne(vmId);
+        if(!vm.isActive())
+            return false;
+
+        //set vm as active
+        vm.setActive(false);
+
+        vmRepository.saveAndFlush(vm);
+        return true;
     }
 }

@@ -2,7 +2,7 @@ package it.polito.ai.virtualLabs.dtos;
 
 import lombok.Data;
 import javax.persistence.Id;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Data
 public class AssignmentDTO {
@@ -10,7 +10,7 @@ public class AssignmentDTO {
     @Id
     Long id;
     String name;
-    Calendar releaseDate;
-    Calendar expiryDate;
+    LocalDateTime releaseDate;
+    LocalDateTime expiryDate;
     String content;
 }

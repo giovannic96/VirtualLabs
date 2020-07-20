@@ -3,8 +3,8 @@ package it.polito.ai.virtualLabs.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Data
@@ -15,7 +15,7 @@ public class TeamProposal {
     private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar expiryDate;
+    private LocalDateTime expiryDate;
 
     @Enumerated(EnumType.STRING)
     private TeamProposalStatus status;

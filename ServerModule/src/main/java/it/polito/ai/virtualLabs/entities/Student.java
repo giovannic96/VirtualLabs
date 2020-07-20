@@ -20,7 +20,7 @@ public class Student extends User{
     @ManyToMany(mappedBy = "students")
     private List<Team> teams = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
 
     @ManyToMany(mappedBy = "students")
@@ -32,6 +32,11 @@ public class Student extends User{
     public void addCourse(Course c) {
         courses.add(c);
         c.getStudents().add(this);
+    }
+
+    public void addReport(Report r) {
+        reports.add(r);
+        r.setOwner(this);
     }
 
     public void addToTeam(Team t) {

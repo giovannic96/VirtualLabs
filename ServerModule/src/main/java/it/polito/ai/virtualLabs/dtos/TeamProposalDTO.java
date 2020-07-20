@@ -3,12 +3,12 @@ package it.polito.ai.virtualLabs.dtos;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
 import lombok.Data;
 import javax.persistence.*;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Data
 public class TeamProposalDTO {
     @Id
     String id;
-    Calendar expiryDate;
+    LocalDateTime expiryDate;
     TeamProposal.TeamProposalStatus status;
 }
