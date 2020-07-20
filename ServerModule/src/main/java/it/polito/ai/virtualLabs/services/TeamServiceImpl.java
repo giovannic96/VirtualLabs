@@ -1,28 +1,74 @@
 package it.polito.ai.virtualLabs.services;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.*;
+import it.polito.ai.virtualLabs.repositories.*;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotEnabledException;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.team.TeamConstraintsNotSatisfiedException;
+import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.team.TeamProposalNotFoundException;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.Reader;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
-/*
+
+    private static final int PROPOSAL_EXPIRATION_DAYS = 3;
+
+    // Queste sono da esempio per usarle dopo
+    // @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    @Autowired
+    AssignmentRepository assignmentRepository;
     @Autowired
     CourseRepository courseRepository;
     @Autowired
-    StudentRepository studentRepository;
+    ReportRepository reportRepository;
+    @Autowired
+    TeamProposalRepository teamProposalRepository;
     @Autowired
     TeamRepository teamRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserRepository studentRepository;
+    @Autowired
+    VersionRepository versionRepository;
+    @Autowired
+    VmModelRepository vmModelRepository;
+    @Autowired
+    VmRepository vmRepository;
+
+
+    @Autowired
+    TeamService teamService;
     @Autowired
     NotificationService notificationService;
     @Autowired
     ModelMapper modelMapper;
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     public boolean addCourse(CourseDTO course) {
         if(courseRepository.existsById(course.getName()))
             return false;
@@ -32,7 +78,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<CourseDTO> getCourse(String name) {
         if (!courseRepository.existsById(name))
             return Optional.empty();
@@ -41,7 +86,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<CourseDTO> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
@@ -50,35 +94,74 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public boolean addStudent(StudentDTO student) {
-        if(studentRepository.existsById(student.getId()))
+        if(userRepository.existsById(student.getId()))
             return false;
         Student s = modelMapper.map(student, Student.class);
-        studentRepository.saveAndFlush(s);
+        userRepository.saveAndFlush(s);
         return true;
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<StudentDTO> getStudent(String studentId) {
-        if (!studentRepository.existsById(studentId))
+
+        if (!studentId.startsWith("s") || !userRepository.existsById(studentId))
             return Optional.empty();
-        return studentRepository.findById(studentId)
+
+        System.out.println(userRepository.findById(studentId).getClass());
+        return userRepository.findStudentById(studentId)
                 .map(s -> modelMapper.map(s, StudentDTO.class));
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<StudentDTO> getAllStudents() {
-        return studentRepository.findAll()
+        return userRepository.findAllStudents()
                 .stream()
                 .map(s -> modelMapper.map(s, StudentDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public boolean addProfessor(ProfessorDTO professor) {
+        if(userRepository.existsById(professor.getId()))
+            return false;
+        Professor p = modelMapper.map(professor, Professor.class);
+        userRepository.saveAndFlush(p);
+        return true;
+    }
+
+    @Override
+    public Optional<ProfessorDTO> getProfessor(String professorId) {
+        if (!professorId.startsWith("d") || !userRepository.existsById(professorId))
+            return Optional.empty();
+        return userRepository.findProfessorById(professorId)
+                .map(p -> modelMapper.map(p, ProfessorDTO.class));
+    }
+
+    @Override
+    public List<ProfessorDTO> getAllProfessors() {
+        return userRepository.findAllProfessors()
+                .stream()
+                .map(p -> modelMapper.map(p, ProfessorDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean addTeam(TeamDTO team) {
+        return false;
+    }
+
+    @Override
+    public Optional<TeamDTO> getTeam(String teamName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<TeamDTO> getAllTeams() {
+        return null;
+    }
+
+    @Override
     public List<StudentDTO> getEnrolledStudents(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
@@ -90,11 +173,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     public boolean addStudentToCourse(String studentId, String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
-        if(!studentRepository.existsById(studentId))
+        if(!userRepository.existsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
 
         Course course = courseRepository.getOne(courseName);
@@ -105,14 +187,13 @@ public class TeamServiceImpl implements TeamService {
         if(student.isPresent())
             return false;
         else {
-            Student s = studentRepository.getOne(studentId);
+            Student s = userRepository.findStudentById(studentId).get();
             course.addStudent(s);
             return true;
         }
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public void enableCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
@@ -121,7 +202,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public void disableCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
@@ -130,8 +210,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<Boolean> addAll(List<StudentDTO> students) {
+    public List<Boolean> addAllStudents(List<StudentDTO> students) {
         List<Boolean> retList = new ArrayList<>();
         for(StudentDTO s : students) {
             retList.add(addStudent(s));
@@ -140,8 +219,16 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<Boolean> enrollAll(List<String> studentIds, String courseName) {
+    public List<Boolean> addAllProfessors(List<ProfessorDTO> professors) {
+        List<Boolean> retList = new ArrayList<>();
+        for(ProfessorDTO p : professors) {
+            retList.add(addProfessor(p));
+        }
+        return retList;
+    }
+
+    @Override
+    public List<Boolean> enrollAllStudents(List<String> studentIds, String courseName) {
         List<Boolean> retList = new ArrayList<>();
         for(String id : studentIds) {
             retList.add(addStudentToCourse(id, courseName));
@@ -149,14 +236,14 @@ public class TeamServiceImpl implements TeamService {
         return retList;
     }
 
+    //TODO: da testare
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
     public List<Boolean> addAndEnroll(Reader r, String courseName) {
         List<StudentDTO> students;
         try {
             // create csv bean reader
             CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder(r)
-                    .withType(StudentDTO.class)
+                    .withType(UserDTO.class)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
             // convert `CsvToBean` object to list of students
@@ -175,12 +262,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
-    public List<CourseDTO> getCourses(String studentId) {
-        if (!studentRepository.existsById(studentId))
+    public List<CourseDTO> getCoursesForStudent(String studentId) {
+        if (!userRepository.existsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
-
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        /*
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
                 Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
@@ -191,20 +277,19 @@ public class TeamServiceImpl implements TeamService {
                     }
                 }
             }
-        });
-        return studentRepository.getOne(studentId)
-                .getCourses()
+        });*/
+        Student student = userRepository.findStudentById(studentId).get();
+        return student.getCourses()
                 .stream()
                 .map(c -> modelMapper.map(c, CourseDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
     public List<TeamDTO> getTeamsForStudent(String studentId) {
-        if(!studentRepository.existsById(studentId))
+        if(!userRepository.existsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
-
+        /*
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
@@ -216,18 +301,16 @@ public class TeamServiceImpl implements TeamService {
                     }
                 }
             }
-        });
-        return studentRepository
-                .getOne(studentId)
-                .getTeams()
+        });*/
+        Student student = userRepository.findStudentById(studentId).get();
+        return student.getTeams()
                 .stream()
                 .map(t -> modelMapper.map(t, TeamDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<StudentDTO> getMembers(Long teamId) {
+    public List<StudentDTO> getTeamMembers(Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("Il team con id '" + teamId + "' non è stato trovato");
 
@@ -240,8 +323,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TeamDTO proposeTeam(String courseId, String name, List<String> memberIds) {
+    //TODO: da controllare
+    public TeamProposalDTO proposeTeam(String courseId, String teamName, List<String> memberIds) {
         if(!courseRepository.existsById(courseId))
             throw new CourseNotFoundException("Il corso di '" + courseId + "' non è stato trovato");
 
@@ -251,49 +334,98 @@ public class TeamServiceImpl implements TeamService {
 
         List<String> distinctMembersIds = memberIds.stream().distinct().collect(Collectors.toList());
         if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
-            throw new TeamConstraintsNotSatisfiedException("Il team '" + name + "' non rispetta i vincoli di cardinalità");
+            throw new TeamConstraintsNotSatisfiedException("Il team '" + teamName + "' non rispetta i vincoli di cardinalità");
 
         List<Student> students = new ArrayList<>();
-        for(String member : distinctMembersIds) {
-            if(!studentRepository.existsById(member))
-                throw new StudentNotFoundException("Lo studente con id '" + member + "' non è stato trovato");
+        for(String memberId : distinctMembersIds) {
+            if(!userRepository.existsById(memberId))
+                throw new StudentNotFoundException("Lo studente con id '" + memberId + "' non è stato trovato");
 
-            Student student = studentRepository.getOne(member);
+            Student student = userRepository.findStudentById(memberId).get();
             if(!student.getCourses().contains(course))
-                throw new StudentNotEnrolledException("Lo studente con id '" + member + "' non è iscritto al corso '" + "' " + courseId);
+                throw new StudentNotEnrolledException("Lo studente con id '" + memberId + "' non è iscritto al corso '" + "' " + courseId);
 
             List<Team> studentTeams = student.getTeams();
             for(Team t : studentTeams) {
                 if(t.getCourse().getName().equals(courseId))
-                    throw new StudentAlreadyTeamedUpException("Lo studente con id '" + member + "' fa già parte del gruppo '" + t.getName() + "'");
+                    throw new StudentAlreadyTeamedUpException("Lo studente con id '" + memberId + "' fa già parte del gruppo '" + t.getName() + "'");
             }
             students.add(student); //this will be part of the team (if all the controls are verified)
         }
-        // Create new team
-        Team proposedTeam = new Team();
-        proposedTeam.setName(name);
-        proposedTeam.setCourse(course);
-        //proposedTeam.setStatus(Team.INACTIVE);
+        // Create new team proposal
+        TeamProposal proposal = new TeamProposal();
+        proposal.setStatus(TeamProposal.TeamProposalStatus.PENDING);
+        proposal.setCourse(course);
+        proposal.setStudents(students);
+        proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
 
         //IMPORTANTE: se uso 'new' (come abbiamo fatto prima con Team) ho bisogno della save(), mentre se modifico
         // qualcosa di già esistente nel db, la update è fatta in automatico grazie a @Transactional.
         //Questo perchè se durante la transazione si crea un oggetto marcato con @Entity tramite new, l’ORM non lo sta
         // ancora tracciando: per questo motivo c’è il metodo save() che aggiunge semplicemente l’istanza che gli
         // passiamo alle entity tracciate.
-        teamRepository.saveAndFlush(proposedTeam);
+        teamProposalRepository.saveAndFlush(proposal);
         for(Student s : students) {
-            s.addToTeam(proposedTeam);
+            s.addTeamProposal(proposal);
         }
 
-        return modelMapper.map(proposedTeam, TeamDTO.class);
+        return modelMapper.map(proposal, TeamProposalDTO.class);
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ROLE_STUDENT','ROLE_ADMIN')")
+    public TeamDTO createTeam(Long teamProposalId) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("La proposta con id '"+ teamProposalId +"' non è stata trovata");
+
+        TeamProposal teamProposal = teamProposalRepository.getOne(teamProposalId);
+
+        String courseName = teamProposal.getCourse().getName();
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+
+
+        Course course = courseRepository.getOne(courseName);
+        if(!course.isEnabled())
+            throw new CourseNotEnabledException("Il corso di '" + courseName + "' non è abilitato");
+
+        List<String> distinctMembersIds = teamProposal.getStudents().stream().map(Student::getId).distinct().collect(Collectors.toList());
+        if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
+            throw new TeamConstraintsNotSatisfiedException("Il team '" + teamProposal.getTeamName() + "' non rispetta i vincoli di cardinalità");
+
+        List<Student> studentsToAdd = new ArrayList<>();
+        for(String memberId : distinctMembersIds) {
+            if(!userRepository.existsById(memberId))
+                throw new StudentNotFoundException("Lo studente con id '" + memberId + "' non è stato trovato");
+
+            Student student = userRepository.findStudentById(memberId).get();
+            if(!student.getCourses().contains(course))
+                throw new StudentNotEnrolledException("Lo studente con id '" + memberId + "' non è iscritto al corso '" + courseName + "'");
+
+            List<Team> studentTeams = student.getTeams();
+            for(Team t : studentTeams) {
+                if(t.getCourse().getName().equals(courseName))
+                    throw new StudentAlreadyTeamedUpException("Lo studente con id '" + memberId + "' fa già parte del gruppo '" + t.getName() + "'");
+            }
+            studentsToAdd.add(student); //this will be part of the team (if all the controls are verified)
+        }
+        // Create new team proposal
+        Team team = new Team();
+        team.setName(teamProposal.getTeamName());
+        team.setCourse(course);
+
+        teamRepository.saveAndFlush(team);
+        for(Student s : studentsToAdd) {
+            s.addToTeam(team);
+        }
+
+        return modelMapper.map(team, TeamDTO.class);
+    }
+
+    @Override
     public List<TeamDTO> getTeamsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
-
+        /*
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
@@ -307,7 +439,7 @@ public class TeamServiceImpl implements TeamService {
                     });
                 });
             }
-        });
+        });*/
         return courseRepository
                 .getOne(courseName)
                 .getTeams()
@@ -317,7 +449,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<StudentDTO> getStudentsInTeams(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
@@ -329,7 +460,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<StudentDTO> getAvailableStudents(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
@@ -341,19 +471,17 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void changeTeamState(Long teamId, int newStatus) {
-        if(!teamRepository.existsById(teamId))
-            throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
-        //teamRepository.getOne(teamId).setStatus(newStatus);
+    public void changeTeamProposalStatus(Long teamProposalId, TeamProposal.TeamProposalStatus newStatus) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamNotFoundException("Il team con id " + teamProposalId + " non esiste");
+        teamProposalRepository.getOne(teamProposalId).setStatus(newStatus);
     }
 
     @Override
-    public void evictTeam(Long teamId) {
+    public void deleteTeam(Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
         teamRepository.deleteById(teamId);
         teamRepository.flush();
     }
-
-    */
 }

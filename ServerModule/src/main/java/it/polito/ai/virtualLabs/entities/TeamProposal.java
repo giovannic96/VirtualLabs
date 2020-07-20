@@ -12,10 +12,11 @@ import java.util.List;
 public class TeamProposal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime expiryDate;
+
+    private String teamName;
 
     @Enumerated(EnumType.STRING)
     private TeamProposalStatus status;

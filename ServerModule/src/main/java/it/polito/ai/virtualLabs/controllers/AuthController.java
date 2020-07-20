@@ -31,7 +31,7 @@ public class AuthController {
     JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    UserRepository users;
+    UserRepository userRepository;
 
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody UserDTO data) {
@@ -39,7 +39,7 @@ public class AuthController {
             String username = data.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
             String token = jwtTokenProvider.createToken(
-                    username, this.users.findByUsername(username).orElseThrow(() ->
+                    username, this.userRepository.findByUsername(username).orElseThrow(() ->
                             new UsernameNotFoundException("Username " + username + "not found")).getRoles());
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);

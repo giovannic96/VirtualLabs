@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 @Data
 public class TeamProposalDTO {
     @Id
-    String id;
+    Long id;
     LocalDateTime expiryDate;
+    String teamName;
     TeamProposal.TeamProposalStatus status;
 }

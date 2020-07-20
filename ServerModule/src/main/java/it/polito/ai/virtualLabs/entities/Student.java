@@ -48,4 +48,14 @@ public class Student extends User{
         teams.remove(t);
         t.getStudents().remove(this);
     }
+
+    public void addTeamProposal(TeamProposal t) {
+        teamProposals.add(t);
+        t.getStudents().add(this);
+    }
+
+    public void removeTeamProposal(TeamProposal t) {
+        teamProposals.remove(t);
+        t.getStudents().remove(this);
+    }
 }

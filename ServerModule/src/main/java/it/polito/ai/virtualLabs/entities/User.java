@@ -22,6 +22,9 @@ import static java.util.stream.Collectors.toList;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="userType",
+        discriminatorType = DiscriminatorType.STRING)
 public class User implements UserDetails {
 
     @Id

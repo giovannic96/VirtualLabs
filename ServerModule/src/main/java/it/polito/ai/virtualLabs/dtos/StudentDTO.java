@@ -1,4 +1,6 @@
 package it.polito.ai.virtualLabs.dtos;
 
-public class StudentDTO {
+import java.io.Serializable;
+
+public class StudentDTO extends UserDTO {
 }
