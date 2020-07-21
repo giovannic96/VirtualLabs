@@ -117,12 +117,5 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }*/
-
-    @GetMapping("/{courseName}/assignments")
-    public List<AssignmentDTO> getAssignments(@PathVariable String courseName) {
-        List<AssignmentDTO> assignments = labService.getAllAssignments();
-
-        return assignments;
-    }
 }
 
