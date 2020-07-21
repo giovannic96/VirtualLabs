@@ -1,12 +1,13 @@
 package it.polito.ai.virtualLabs.dtos;
 
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
-public class UserDTO implements Serializable {
+public class UserDTO extends RepresentationModel<UserDTO> implements Serializable {
     @Id
     String id; //matricola
     String username;

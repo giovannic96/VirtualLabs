@@ -27,6 +27,7 @@ public interface TeamService {
     Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId); //TESTED
     List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName);
     List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
+    List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
 
     TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds); //TESTED
     void changeTeamProposalStatus(Long teamProposalId, TeamProposal.TeamProposalStatus newStatus); //TESTED
@@ -39,6 +40,7 @@ public interface TeamService {
 
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
+    List<ProfessorDTO> getProfessorsForCourse(String courseName);
     void enableCourse(String courseName); //TESTED
     void disableCourse(String courseName); //TESTED
     List<Boolean> enrollAllStudents(List<String> studentIds, String courseName); //TESTED

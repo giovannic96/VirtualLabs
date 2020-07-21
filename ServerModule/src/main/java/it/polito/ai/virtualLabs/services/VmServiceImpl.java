@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,10 +80,49 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    public Optional<VmModelDTO> getCourseVmModel(String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+
+        Optional<VmModel> vmModel = vmModelRepository.findByCourseName(courseName);
+        /*if(!vmModel.isPresent())
+            return Optional.empty();
+        */
+        return vmModel.map(v -> modelMapper.map(v, VmModelDTO.class));
+    }
+
+    @Override
+    public List<VmDTO> getCourseVms(String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+
+        Optional<VmModel> vmModelOpt = vmModelRepository.findByCourseName(courseName);
+        if(!vmModelOpt.isPresent())
+            return new ArrayList<VmDTO>();
+
+        return vmModelOpt.get().getVms()
+                .stream()
+                .map(v -> modelMapper.map(v, VmDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VmDTO> getStudentVms(String studentId) {
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
+
+
+        return userRepository.getStudentById(studentId).getVms()
+                .stream()
+                .map(v -> modelMapper.map(v, VmDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         Team team = teamRepository.getOne(teamId);

@@ -4,7 +4,6 @@ import it.polito.ai.virtualLabs.dtos.TeamDTO;
 import it.polito.ai.virtualLabs.dtos.UserDTO;
 import it.polito.ai.virtualLabs.dtos.VmDTO;
 import it.polito.ai.virtualLabs.dtos.VmModelDTO;
-import it.polito.ai.virtualLabs.entities.VmModel;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +14,9 @@ public interface VmService {
     Optional<TeamDTO> getTeam(Long vmId); //TESTED
     List<VmModelDTO> getAllVmModels(); //TESTED
     List<VmDTO> getAllVms(); //TESTED
+    Optional<VmModelDTO> getCourseVmModel(String courseName);
+    List<VmDTO> getCourseVms(String courseName);
+    List<VmDTO> getStudentVms(String studentId);
 
     boolean createVm(VmDTO vmDTO, String studentId, Long teamId); //TESTED
     boolean removeVm(Long vmId); //TESTED

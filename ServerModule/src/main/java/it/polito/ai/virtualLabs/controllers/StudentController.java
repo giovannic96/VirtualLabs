@@ -2,13 +2,26 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.services.LabService;
+import it.polito.ai.virtualLabs.dtos.ReportDTO;
+import it.polito.ai.virtualLabs.dtos.StudentDTO;
+import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.web.server.ResponseStatusException;
+import sun.jvm.hotspot.ui.classbrowser.ClassBrowserPanel;
+
+import javax.swing.text.html.Option;
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,8 +40,11 @@ public class StudentController {
     @GetMapping({"","/"})
     public List<StudentDTO> all() {
         List<StudentDTO> students = teamService.getAllStudents();
+        /*
         for(StudentDTO s: students)
             ModelHelper.enrich(s);
+
+         */
         return students;
     }
 
@@ -52,27 +68,36 @@ public class StudentController {
     @GetMapping("/{studentId}/teams")
     public List<TeamDTO> teams(@PathVariable String studentId) {
         List<TeamDTO> teams = teamService.getTeamsForStudent(studentId);
+        /*
         for(TeamDTO t: teams) {
             ModelHelper.enrich(t);
         }
+
+         */
         return teams;
     }
 
     @GetMapping("/{studentId}/vms")
     public List<VmDTO> vms(@PathVariable String studentId) {
         List<VmDTO> vms = vmService.getStudentVms(studentId);
+        /*
         for(VmDTO v: vms) {
             ModelHelper.enrich(v);
         }
+
+         */
         return vms;
     }
 
     @GetMapping("/{studentId}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String studentId) {
-        List<TeamProposalDTO> teamProposals = vmService.getTeamProposalsForStudent(studentId);
+        List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForStudent(studentId);
+        /*
         for(TeamProposalDTO tp: teamProposals) {
             ModelHelper.enrich(tp);
         }
+
+         */
         return teamProposals;
     }
 
