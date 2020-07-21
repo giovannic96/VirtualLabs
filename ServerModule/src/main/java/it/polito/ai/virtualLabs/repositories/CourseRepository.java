@@ -10,10 +10,6 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, String> {
-
-    // TODO: da testare entrambe per via della tabella Student (che non esiste)
-    // e per vedere che tipo di lista restituisce
-
     @Query("SELECT s FROM Student s INNER JOIN s.teams t INNER JOIN t.course c WHERE c.name=:courseName")
     List<Student> getStudentsInTeams(String courseName);
 

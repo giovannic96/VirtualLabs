@@ -8,8 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
-    boolean existsByName(String courseName);
     boolean existsByNameAndCourseName(String teamName, String courseName);
-
-    Optional<Team> findByName(String courseName);
+    Optional<Team> findByNameAndCourseName(String teamName, String courseName);
 }

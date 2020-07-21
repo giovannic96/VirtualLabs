@@ -113,12 +113,7 @@ public class VmServiceImpl implements VmService {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
-        //remove vm in relationships
-        Vm vm = vmRepository.getOne(vmId);
-        vm.setTeam(null);
-        vm.setOwner(null);
-        vm.setVmModel(null);
-
+        //remove vm
         vmRepository.deleteById(vmId);
         vmRepository.flush();
         return true;

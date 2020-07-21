@@ -21,20 +21,21 @@ public interface TeamService {
     Optional<ProfessorDTO> getProfessor(String professorId); //TESTED
     List<ProfessorDTO> getAllProfessors(); //TESTED
 
-    Optional<TeamDTO> getTeam(String teamName);
-    List<TeamDTO> getTeamsForCourse(String courseName);
-    List<TeamDTO> getTeamsForStudent(String studentId);
-    Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId);
-    List<TeamProposalDTO> getTeamProposalsForCourse(String courseName);
+    Optional<TeamDTO> getTeam(String teamName, String courseName); //TESTED
+    List<TeamDTO> getTeamsForCourse(String courseName); //TESTED
+    List<TeamDTO> getTeamsForStudent(String studentId); //TESTED
+    Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId); //TESTED
+    List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName);
+    List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
 
     TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds); //TESTED
     void changeTeamProposalStatus(Long teamProposalId, TeamProposal.TeamProposalStatus newStatus); //TESTED
     TeamDTO acceptTeamProposal(Long teamProposalId); //TESTED
     boolean rejectTeamProposal(Long teamProposalId); //TESTED
-    void deleteTeam(Long teamId);
-    List<StudentDTO>getTeamMembers(Long TeamId);
-    List<StudentDTO> getStudentsInTeams(String courseName);
-    List<StudentDTO> getAvailableStudents(String courseName);
+    void deleteTeam(Long teamId); //TESTED
+    List<StudentDTO>getTeamMembers(Long TeamId); //TESTED
+    List<StudentDTO> getStudentsInTeams(String courseName); //TESTED
+    List<StudentDTO> getAvailableStudents(String courseName); //TESTED
 
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED

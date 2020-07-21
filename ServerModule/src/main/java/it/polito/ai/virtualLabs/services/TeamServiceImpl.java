@@ -207,10 +207,10 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Optional<TeamDTO> getTeam(String teamName) {
-        if (!teamRepository.existsByName(teamName))
+    public Optional<TeamDTO> getTeam(String teamName, String courseName) {
+        if (!teamRepository.existsByNameAndCourseName(teamName, courseName))
             return Optional.empty();
-        return teamRepository.findByName(teamName)
+        return teamRepository.findByNameAndCourseName(teamName, courseName)
                 .map(t -> modelMapper.map(t, TeamDTO.class));
     }
 
@@ -435,6 +435,16 @@ public class TeamServiceImpl implements TeamService {
         return teamProposalRepository.findById(teamProposalId)
                 .map(t -> modelMapper.map(t, TeamProposalDTO.class));
 
+    }
+
+    @Override
+    public List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+        return teamProposalRepository.findAllByCourseNameAndStatus(courseName, TeamProposal.TeamProposalStatus.PENDING)
+                .stream()
+                .map(tp -> modelMapper.map(tp, TeamProposalDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
