@@ -78,19 +78,21 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public boolean createVm(VmDTO vmDTO, String studentId, Long teamId, Long vmModelId) {
+    public boolean createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
         if(!userRepository.existsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
-        if(!vmModelRepository.existsById(vmModelId))
-            throw new VmModelNotFoundException("The VmModel with id " + vmModelId + " does not exist");
 
         Team team = teamRepository.getOne(teamId);
         List<Vm> teamVms = team.getVms();
-        VmModel vmModel = vmModelRepository.getOne(vmModelId);
+        VmModel vmModel = team.getCourse().getVmModel();
 
-        //check resources and number of vms constraints
+        //check if the course to which the team belongs has no vmModel yet
+        if(vmModel == null)
+            throw new VmModelNotFoundException("The is no VmModel for this course yet");
+
+        //check number of vms and resources constraints
         if(teamVms.size() >= vmModel.getMaxTotVM() ||
             resourcesExceeded(teamVms, vmModel, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
             return false;
@@ -158,10 +160,13 @@ public class VmServiceImpl implements VmService {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
-        //get number of active vms for the group to which vm belongs
+        //check if vm is already active
         Vm vm = vmRepository.getOne(vmId);
-        int nActiveVMs = 0;
+        if(vm.isActive())
+            return false;
 
+        //get number of active vms for the group to which vm belongs
+        int nActiveVMs = 0;
         for(Vm v : vm.getTeam().getVms()) {
             if(v.isActive())
                 nActiveVMs++;
