@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 public class VmModel {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

@@ -28,7 +28,6 @@ import static java.util.stream.Collectors.toList;
 public class User implements UserDetails {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     @NotEmpty

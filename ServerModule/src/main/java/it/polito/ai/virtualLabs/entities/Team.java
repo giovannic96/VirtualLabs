@@ -11,8 +11,7 @@ import java.util.List;
 @Data
 public class Team {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

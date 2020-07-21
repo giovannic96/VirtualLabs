@@ -11,8 +11,8 @@ import java.util.List;
 @Data
 @Entity
 public class TeamProposal {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDateTime expiryDate;

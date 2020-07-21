@@ -7,8 +7,8 @@ import javax.persistence.*;
 @Data
 @Entity
 public class Vm {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private boolean active;
