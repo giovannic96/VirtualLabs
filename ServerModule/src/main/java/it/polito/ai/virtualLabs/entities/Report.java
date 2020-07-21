@@ -42,16 +42,19 @@ public class Report {
         REVISED,
     }
 
-    public void addVersion(Version v) {
-        versions.add(v);
-        v.setReport(this);
-    }
-
     public void setAssignment(Assignment a) {
         if(assignment != null)
             assignment.getReports().remove(this);
         if(a != null)
             a.getReports().add(this);
         assignment = a;
+    }
+
+    public void setOwner(Student s) {
+        if(owner != null)
+            owner.getReports().remove(this);
+        if(s != null)
+            s.getReports().add(this);
+        owner = s;
     }
 }

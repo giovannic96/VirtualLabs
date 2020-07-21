@@ -22,9 +22,4 @@ public class Professor extends User{
 
     @OneToMany(mappedBy = "professor", cascade = CascadeType.MERGE)
     private List<VmModel> vmModels = new ArrayList<>();
-
-    public void addAssignment(Assignment a) {
-        assignments.add(a);
-        a.setProfessor(this);
-    }
 }

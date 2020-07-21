@@ -5,10 +5,9 @@ import it.polito.ai.virtualLabs.dtos.UserDTO;
 import it.polito.ai.virtualLabs.dtos.VmDTO;
 import it.polito.ai.virtualLabs.dtos.VmModelDTO;
 import it.polito.ai.virtualLabs.entities.*;
-import it.polito.ai.virtualLabs.repositories.TeamRepository;
-import it.polito.ai.virtualLabs.repositories.UserRepository;
-import it.polito.ai.virtualLabs.repositories.VmModelRepository;
-import it.polito.ai.virtualLabs.repositories.VmRepository;
+import it.polito.ai.virtualLabs.repositories.*;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.vm.VmNotFoundException;
@@ -34,6 +33,8 @@ public class VmServiceImpl implements VmService {
     TeamRepository teamRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CourseRepository courseRepository;
     @Autowired
     ModelMapper modelMapper;
 
@@ -90,7 +91,7 @@ public class VmServiceImpl implements VmService {
 
         //check if the course to which the team belongs has no vmModel yet
         if(vmModel == null)
-            throw new VmModelNotFoundException("The is no VmModel for this course yet");
+            throw new VmModelNotFoundException("There is no VmModel for this course yet");
 
         //check number of vms and resources constraints
         if(teamVms.size() >= vmModel.getMaxTotVM() ||
@@ -197,6 +198,29 @@ public class VmServiceImpl implements VmService {
         vm.setActive(false);
 
         vmRepository.saveAndFlush(vm);
+        return true;
+    }
+
+    @Override
+    public boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+        if(!userRepository.existsById(professorId))
+            throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
+
+        //check if there is already a vmModel for that course
+        if(vmModelRepository.existsByCourseName(courseName))
+            return false;
+
+        VmModel vmModel = modelMapper.map(vmModelDTO, VmModel.class);
+        Professor professor = userRepository.getProfessorById(professorId);
+        Course course = courseRepository.getOne(courseName);
+
+        //set vmModel to course
+        vmModel.setCourse(course);
+        vmModel.setProfessor(professor);
+
+        courseRepository.saveAndFlush(course);
         return true;
     }
 }

@@ -39,11 +39,6 @@ public class Course {
         s.getCourses().add(this);
     }
 
-    public void addAssignment(Assignment a) {
-        assignments.add(a);
-        a.setCourse(this);
-    }
-
     public void addTeam(Team t) {
         teams.add(t);
         t.setCourse(this);
@@ -53,4 +48,6 @@ public class Course {
         teams.remove(t);
         t.setCourse(null);
     }
+
+
 }

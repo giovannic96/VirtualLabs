@@ -32,4 +32,20 @@ public class VmModel {
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
+
+    public void setProfessor(Professor p) {
+        if(professor != null)
+            professor.getVmModels().remove(this);
+        if(p != null)
+            p.getVmModels().add(this);
+        professor = p;
+    }
+
+    public void setCourse(Course c) {
+        if(course != null)
+            course.setVmModel(null);
+        if(c != null)
+            c.setVmModel(this);
+        course = c;
+    }
 }

@@ -24,4 +24,12 @@ public class Version {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "report_id")
     private Report report;
+
+    public void setReport(Report r) {
+        if(report != null)
+            report.getVersions().remove(this);
+        if(r != null)
+            r.getVersions().add(this);
+        report = r;
+    }
 }

@@ -8,17 +8,17 @@ import java.util.List;
 
 public interface LabService {
 
-    List<AssignmentDTO> getAllAssignments();
-    List<ReportDTO> getStudentReports(String studentId);
-    List<ReportDTO> getAssignmentReports(Long assignmentId);
-    ProfessorDTO getAssignmentProfessor(Long assignmentId);
-    List<VersionDTO> getReportVersions(Long reportId);
-    StudentDTO getReportOwner(Long reportId);
-    List<AssignmentDTO> getCourseAssignments(String courseName);
+    List<AssignmentDTO> getAllAssignments(); //TESTED
+    List<ReportDTO> getStudentReports(String studentId); //TESTED
+    List<ReportDTO> getAssignmentReports(Long assignmentId); //TESTED
+    ProfessorDTO getAssignmentProfessor(Long assignmentId); //TESTED
+    List<VersionDTO> getReportVersions(Long reportId); //TESTED
+    StudentDTO getReportOwner(Long reportId); //TESTED
+    List<AssignmentDTO> getCourseAssignments(String courseName); //TESTED
 
-    boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId);
-    boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId);
-    boolean addVersionToReport(VersionDTO versionDTO, Long reportId);
-    boolean removeAssignment(Long assignmentId);
-    boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate);
+    boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId); //TESTED
+    boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId); //TESTED
+    boolean addVersionToReport(VersionDTO versionDTO, Long reportId); //TESTED
+    boolean removeAssignment(Long assignmentId); //TESTED
+    boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate); //TESTED
 }

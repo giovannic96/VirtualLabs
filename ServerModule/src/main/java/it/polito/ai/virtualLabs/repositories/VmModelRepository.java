@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VmModelRepository extends JpaRepository<VmModel, Long> {
 
+    boolean existsByCourseName(String courseName);
 }

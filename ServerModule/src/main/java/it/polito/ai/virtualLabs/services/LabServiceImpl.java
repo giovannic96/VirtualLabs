@@ -47,7 +47,7 @@ public class LabServiceImpl implements LabService {
         if(!userRepository.existsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
-        Student s = (Student)userRepository.getOne(studentId);
+        Student s = userRepository.getStudentById(studentId);
         return s.getReports()
                 .stream()
                 .map(r -> modelMapper.map(r, ReportDTO.class))
@@ -116,7 +116,7 @@ public class LabServiceImpl implements LabService {
             throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
 
         Course course = courseRepository.getOne(courseName);
-        Professor professor = (Professor)userRepository.getOne(professorId);
+        Professor professor = userRepository.getProfessorById(professorId);
         Assignment assignment = modelMapper.map(assignmentDTO, Assignment.class);
 
         //check if there is already an assignment with that name in that course
@@ -124,10 +124,9 @@ public class LabServiceImpl implements LabService {
             return false;
 
         //add assignment to course and professor
-        course.addAssignment(assignment);
-        professor.addAssignment(assignment);
+        assignment.setCourse(course);
+        assignment.setProfessor(professor);
 
-        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
         assignmentRepository.saveAndFlush(assignment);
         return true;
     }
@@ -140,7 +139,7 @@ public class LabServiceImpl implements LabService {
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         Assignment assignment = assignmentRepository.getOne(assignmentId);
-        Student student = (Student)userRepository.getOne(studentId);
+        Student student = userRepository.getStudentById(studentId);
         Report report = modelMapper.map(reportDTO, Report.class);
 
         //check if there is already a report for that assignmentId and studentId
@@ -148,10 +147,9 @@ public class LabServiceImpl implements LabService {
             return false;
 
         //add report to assignment and student
-        assignment.addReport(report);
-        student.addReport(report);
+        report.setAssignment(assignment);
+        report.setOwner(student);
 
-        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
         reportRepository.saveAndFlush(report);
         return true;
     }
@@ -169,9 +167,8 @@ public class LabServiceImpl implements LabService {
             return false;
 
         //add version to report
-        report.addVersion(version);
+        version.setReport(report);
 
-        //TODO the saveAndFlush operation has to be done before doing course.addAssignment or at the end of the method?
         versionRepository.saveAndFlush(version);
         return true;
     }
@@ -181,12 +178,7 @@ public class LabServiceImpl implements LabService {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
-        //remove assignment in relationships
-        Assignment assignment = assignmentRepository.getOne(assignmentId);
-        assignment.setProfessor(null);
-        assignment.setReports(null);
-        assignment.setCourse(null);
-
+        //remove assignment
         assignmentRepository.deleteById(assignmentId);
         assignmentRepository.flush();
         return true;
@@ -199,7 +191,7 @@ public class LabServiceImpl implements LabService {
 
         //check date and name constraints
         Assignment assignment = assignmentRepository.getOne(assignmentId);
-        if(!expiryDate.isBefore(LocalDateTime.now()) ||
+        if(expiryDate.isBefore(LocalDateTime.now()) ||
             assignment.getCourse().getAssignments().stream().anyMatch(a -> a.getName().equals(name)))
             return false;
 
