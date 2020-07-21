@@ -181,12 +181,7 @@ public class LabServiceImpl implements LabService {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
-        //remove assignment in relationships
-        Assignment assignment = assignmentRepository.getOne(assignmentId);
-        assignment.setProfessor(null);
-        assignment.setReports(null);
-        assignment.setCourse(null);
-
+        //remove assignment
         assignmentRepository.deleteById(assignmentId);
         assignmentRepository.flush();
         return true;
