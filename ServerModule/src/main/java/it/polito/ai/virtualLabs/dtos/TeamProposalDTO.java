@@ -12,4 +12,6 @@ public class TeamProposalDTO {
     LocalDateTime expiryDate;
     String teamName;
     TeamProposal.TeamProposalStatus status;
+    String statusDesc;
+    int missing;
 }

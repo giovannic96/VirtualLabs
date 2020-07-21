@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.entities;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,6 +21,10 @@ public class TeamProposal {
 
     @Enumerated(EnumType.STRING)
     private TeamProposalStatus status;
+
+    private String statusDesc;
+
+    private int missing;
 
     @ManyToOne
     @JoinColumn(name = "course_name")
