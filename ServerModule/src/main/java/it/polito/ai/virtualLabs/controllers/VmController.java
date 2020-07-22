@@ -1,14 +1,17 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.ReportDTO;
 import it.polito.ai.virtualLabs.dtos.VmDTO;
+import it.polito.ai.virtualLabs.dtos.VmModelDTO;
 import it.polito.ai.virtualLabs.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("API/vms")
@@ -26,6 +29,24 @@ public class VmController {
 
         //TODO: da enrichare
         return vm.get();
+    }
+
+    @GetMapping("/vmModels")
+    public List<VmModelDTO> allVmModels() {
+        return vmService.getAllVmModels()
+                .stream()
+                .map(ModelHelper::enrich)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/vmModels/{vmModelId}")
+    public VmModelDTO vmModel(Long vmModelId) {
+        Optional<VmModelDTO> vmModel = vmService.getVmModel(vmModelId);
+
+        if(!vmModel.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmModelId.toString());
+
+        return ModelHelper.enrich(vmModel.get());
     }
 
     //@PutMapping("/{vmId}/edit")

@@ -8,6 +8,8 @@ import it.polito.ai.virtualLabs.services.VmService;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -105,7 +107,8 @@ public class CourseController {
         if(!teamService.addProfessorToCourse(id, courseName))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in assignment of professor with id: " + id);
 
-        return teamService.getProfessor(id).get();
+
+        return ModelHelper.enrich(teamService.getProfessor(id).get());
     }
 
     @PostMapping("/{courseName}/enrollOne")
@@ -131,9 +134,39 @@ public class CourseController {
         }
     }
 
-    //@PostMapping("/{courseName}/setVmModel")
+    @PostMapping("/{courseName}/setVmModel")
+    @ResponseStatus(HttpStatus.CREATED)
+    public VmModelDTO setVmModelToCourse(@PathVariable String courseName,
+                                         @RequestBody VmModelDTO vmModelDTO,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
 
-    //@PutMapping("/{courseName}")
+        Optional<ProfessorDTO> professor = teamService.getProfessorByUsername(userDetails.getUsername());
+
+        if(!professor.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel recupero delle informazioni sull'utente: " + userDetails.getUsername());
+        if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
+
+        return ModelHelper.enrich(vmModelDTO);
+
+    }
+
+    @PutMapping("/{courseName}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CourseDTO editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
+        if(!courseName.equals(courseDTO.getName()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The course you want to edit has a name different from '" + courseDTO.getName() + "'");
+
+        Optional<CourseDTO> currentCourse = teamService.getCourse(courseName);
+        if(!currentCourse.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '" + courseName + "' was not found");
+
+        if(!teamService.editCourse(courseName, courseDTO))
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The course named '" + courseName + "' was not modified");
+
+        return ModelHelper.enrich(courseDTO);
+    }
+
     //@PutMapping("/{courseName}/editVmModel")
 
     //@DeleteMapping("/{courseName}/students")

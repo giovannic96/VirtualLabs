@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class TeamServiceImpl implements TeamService {
 
     private static final int PROPOSAL_EXPIRATION_DAYS = 3;
+    private static final int MIN_SIZE_FOR_GROUP = 2;
 
     // Queste sono da esempio per usarle dopo
     // @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -67,8 +68,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public boolean addCourse(CourseDTO course) {
-        if(courseRepository.existsById(course.getName()))
+        if(courseRepository.existsById(course.getName()) ||
+                course.getMaxTeamSize() - course.getMinTeamSize() <= MIN_SIZE_FOR_GROUP)
             return false;
+
         Course c = modelMapper.map(course, Course.class);
         courseRepository.saveAndFlush(c);
         return true;
@@ -130,6 +133,14 @@ public class TeamServiceImpl implements TeamService {
         if (!userRepository.existsById(professorId))
             return Optional.empty();
         return userRepository.findProfessorById(professorId)
+                .map(p -> modelMapper.map(p, ProfessorDTO.class));
+    }
+
+    @Override
+    public Optional<ProfessorDTO> getProfessorByUsername(String username) {
+        if (!userRepository.professorExistsByUsername(username))
+            return Optional.empty();
+        return userRepository.findProfessorByUsername(username)
                 .map(p -> modelMapper.map(p, ProfessorDTO.class));
     }
 
@@ -563,6 +574,24 @@ public class TeamServiceImpl implements TeamService {
                 .stream()
                 .map(s -> modelMapper.map(s, StudentDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean editCourse(String courseName, CourseDTO courseDTO) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+
+        if(courseDTO.getMaxTeamSize() - courseDTO.getMinTeamSize() <= MIN_SIZE_FOR_GROUP)
+            return false;
+
+        Course course = courseRepository.getOne(courseName);
+
+        course.setAcronym(courseDTO.getAcronym());
+        course.setMaxTeamSize(courseDTO.getMaxTeamSize());
+        course.setMinTeamSize(courseDTO.getMinTeamSize());
+
+        courseRepository.saveAndFlush(course);
+        return true;
     }
 
     @Override

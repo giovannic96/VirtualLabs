@@ -3,6 +3,8 @@ package it.polito.ai.virtualLabs.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,9 @@ public class Course {
 
     @Id String name;
     String acronym;
+    @Min(2) @Max(10)
     int minTeamSize;
+    @Min(2) @Max(10)
     int maxTeamSize;
     boolean enabled;
 

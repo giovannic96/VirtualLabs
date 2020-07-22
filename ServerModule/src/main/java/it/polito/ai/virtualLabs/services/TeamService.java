@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.Course;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
 
 import java.io.Reader;
@@ -19,6 +20,7 @@ public interface TeamService {
     boolean addProfessor(ProfessorDTO professor); //TESTED
     List<Boolean> addAllProfessors(List<ProfessorDTO> professors); //TESTED
     Optional<ProfessorDTO> getProfessor(String professorId); //TESTED
+    Optional<ProfessorDTO> getProfessorByUsername(String username);
     List<ProfessorDTO> getAllProfessors(); //TESTED
 
     Optional<TeamDTO> getTeam(String teamName, String courseName); //TESTED
@@ -38,6 +40,7 @@ public interface TeamService {
     List<StudentDTO> getStudentsInTeams(String courseName); //TESTED
     List<StudentDTO> getAvailableStudents(String courseName); //TESTED
 
+    boolean editCourse(String courseName, CourseDTO courseDTO);
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
     boolean addProfessorToCourse(String professorId, String courseName);

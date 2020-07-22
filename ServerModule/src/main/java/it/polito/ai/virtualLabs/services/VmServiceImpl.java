@@ -49,7 +49,15 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Optional<VmModelDTO> getVmModel(Long vmId) {
+    public Optional<VmModelDTO> getVmModel(Long vmModelId) {
+        if (!vmModelRepository.existsById(vmModelId))
+            return Optional.empty();
+        return Optional.of(vmModelRepository.getOne(vmModelId))
+                .map(vmModel -> modelMapper.map(vmModel, VmModelDTO.class));
+    }
+
+    @Override
+    public Optional<VmModelDTO> getVmModelForVm(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
         return Optional.of(vmRepository.getOne(vmId).getVmModel())

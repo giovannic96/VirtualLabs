@@ -46,6 +46,8 @@ API
 
 *Vms*
 * GET	http://ip_address:port/api/vms/:vmId
+* GET	http://ip_address:port/api/vms/vmModels
+* GET	http://ip_address:port/api/vms/vmModels/:vmModelId
 
 ---  
 **POST**

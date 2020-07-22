@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +34,21 @@ public class LabServiceImpl implements LabService {
     VersionRepository versionRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    @Override
+    public Optional<ReportDTO> getReport(Long reportId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<AssignmentDTO> getAssignment(Long assignmentId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<VersionDTO> getVersion(Long versionId) {
+        return Optional.empty();
+    }
 
     @Override
     public List<AssignmentDTO> getAllAssignments() {
