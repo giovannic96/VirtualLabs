@@ -10,6 +10,9 @@ API
 
 * GET	http://ip_address:port/api/professors
 * GET	http://ip_address:port/api/professors/:professorId
+* GET	http://ip_address:port/api/professors/:professorId/courses
+* GET	http://ip_address:port/api/professors/:professorId/vmModels
+* GET	http://ip_address:port/api/professors/:professorId/courses/:courseName/assignments
 * GET	http://ip_address:port/api/courses
 * GET	http://ip_address:port/api/courses/enrolled
 * GET	http://ip_address:port/api/courses/teams
@@ -19,7 +22,7 @@ API
 * GET	http://ip_address:port/api/courses/:courseName/assignments
 * GET	http://ip_address:port/api/courses/:courseName/teamProposals
 * GET	http://ip_address:port/api/courses/:courseName/assignments
-* GET	http://ip_address:port/api/courses/:courseName/teams/:teamId/vms -> `List of vms of the team of the course`
+* GET	http://ip_address:port/api/courses/:courseName/teams/:teamId/vms 
 * GET	http://ip_address:port/api/students
 * GET	http://ip_address:port/api/students/:studentId
 * GET	http://ip_address:port/api/students/:studentId/courses
