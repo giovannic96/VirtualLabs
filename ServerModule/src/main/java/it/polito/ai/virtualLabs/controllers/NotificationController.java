@@ -14,7 +14,7 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 /*
-    @GetMapping("/confirm/{token}")
+    @PutMapping("/confirm/{token}")
     public String confirm(@PathVariable String token) {
         try {
             if(notificationService.confirm(token))
@@ -25,7 +25,7 @@ public class NotificationController {
         return "home";
     }
 
-    @GetMapping("/reject/{token}")
+    @PutMapping("/reject/{token}")
     public String reject(@PathVariable String token) {
         try {
             if(notificationService.reject(token))

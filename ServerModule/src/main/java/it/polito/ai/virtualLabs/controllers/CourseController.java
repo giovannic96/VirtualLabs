@@ -5,12 +5,19 @@ import it.polito.ai.virtualLabs.entities.Assignment;
 import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
+import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -82,21 +89,6 @@ public class CourseController {
         //TODO: da enrichare
     }
 
-    @GetMapping("/{courseName}/teams/{teamName}/vms")
-    public List<VmDTO> vmsForTeam(@PathVariable String courseName, @PathVariable String teamName) {
-
-        Optional<TeamDTO> team = teamService.getTeamsForCourse(courseName)
-                .stream()
-                .filter(t -> t.getName().equals(teamName))
-                .findFirst();
-
-        if(!team.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        return vmService.getTeamVms(team.get().getId());
-        //TODO: da enrichare
-    }
-/*
     @PostMapping({"","/"})
     public CourseDTO addCourse(@RequestBody CourseDTO courseDTO) {
         if(!teamService.addCourse(courseDTO))
@@ -104,13 +96,25 @@ public class CourseController {
         return ModelHelper.enrich(courseDTO);
     }
 
-    @PostMapping("/{name}/enrollOne")
+    @PostMapping("/{courseName}/assignProfessor")
     @ResponseStatus(HttpStatus.CREATED)
-    public void enrollStudent(@PathVariable String name, @RequestBody Map<String,String> input) {
+    public ProfessorDTO assignProfessor(@PathVariable String courseName, @RequestBody Map<String, String> input) {
         if(!input.containsKey("id"))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         String id = input.get("id");
-        if(!teamService.addStudentToCourse(id, name))
+        if(!teamService.addProfessorToCourse(id, courseName))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nell'assegnazione del docente con id: " + id);
+
+        return teamService.getProfessor(id).get();
+    }
+
+    @PostMapping("/{courseName}/enrollOne")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void enrollStudent(@PathVariable String courseName, @RequestBody Map<String,String> input) {
+        if(!input.containsKey("id"))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        String id = input.get("id");
+        if(!teamService.addStudentToCourse(id, courseName))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nell'iscrizione dello studente con id: " + id);
     }
 
@@ -125,6 +129,16 @@ public class CourseController {
         } catch(IOException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }*/
+    }
+
+    //@PostMapping("/{courseName}/setVmModel")
+
+    //@PutMapping("/{courseName}")
+    //@PutMapping("/{courseName}/editVmModel")
+
+    //@DeleteMapping("/{courseName}/students")
+
+
+
 }
 

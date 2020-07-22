@@ -40,6 +40,7 @@ public interface TeamService {
 
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
+    boolean addProfessorToCourse(String professorId, String courseName);
     List<ProfessorDTO> getProfessorsForCourse(String courseName);
     void enableCourse(String courseName); //TESTED
     void disableCourse(String courseName); //TESTED

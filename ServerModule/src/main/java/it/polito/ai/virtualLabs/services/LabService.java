@@ -1,15 +1,21 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.Assignment;
 import it.polito.ai.virtualLabs.entities.Report;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface LabService {
 
+    Optional<ReportDTO> getReport(Long reportId);
+    Optional<AssignmentDTO> getAssignment(Long assignmentId);
+    Optional<VersionDTO> getVersion(Long versionId);
     List<AssignmentDTO> getAllAssignments(); //TESTED
     List<ReportDTO> getStudentReports(String studentId); //TESTED
+    List<ReportDTO> getStudentReportsForAssignment(String studentId, Long assignmentId); //TESTED
     List<ReportDTO> getAssignmentReports(Long assignmentId); //TESTED
     ProfessorDTO getAssignmentProfessor(Long assignmentId); //TESTED
     List<VersionDTO> getReportVersions(Long reportId); //TESTED

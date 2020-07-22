@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,14 @@ public class VmServiceImpl implements VmService {
     CourseRepository courseRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    @Override
+    public Optional<VmDTO> getVm(Long vmId) {
+        if (!vmRepository.existsById(vmId))
+            return Optional.empty();
+        return Optional.of(vmRepository.getOne(vmId))
+                .map(vm -> modelMapper.map(vm, VmDTO.class));
+    }
 
     @Override
     public Optional<VmModelDTO> getVmModel(Long vmId) {

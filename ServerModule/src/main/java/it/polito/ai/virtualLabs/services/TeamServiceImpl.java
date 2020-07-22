@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -229,7 +230,7 @@ public class TeamServiceImpl implements TeamService {
     public boolean addStudentToCourse(String studentId, String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
 
         Course course = courseRepository.getOne(courseName);
@@ -242,6 +243,27 @@ public class TeamServiceImpl implements TeamService {
         else {
             Student s = userRepository.getStudentById(studentId);
             course.addStudent(s);
+            return true;
+        }
+    }
+
+    @Override
+    public boolean addProfessorToCourse(String professorId, String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+        if(!userRepository.professorExistsById(professorId))
+            throw new StudentNotFoundException("Il docente con id '" + professorId + "' non è stato trovato");
+
+        Course course = courseRepository.getOne(courseName);
+        Optional<Professor> professor = course.getProfessors()
+                .stream()
+                .filter(p -> p.getId().equals(professorId))
+                .findFirst();
+        if(professor.isPresent())
+            return false;
+        else {
+            Professor p = userRepository.getProfessorById(professorId);
+            course.addProfessor(p);
             return true;
         }
     }
@@ -446,7 +468,10 @@ public class TeamServiceImpl implements TeamService {
         teamProposalRepository.saveAndFlush(proposal);
         for(Student s : students) {
             s.addTeamProposal(proposal);
+            proposal.addToken(UUID.randomUUID().toString());
         }
+
+        //TODO: far partire le email da qui (chiamare la notifyTeam)
 
         return modelMapper.map(proposal, TeamProposalDTO.class);
     }

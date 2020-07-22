@@ -6,11 +6,13 @@ import it.polito.ai.virtualLabs.dtos.ReportDTO;
 import it.polito.ai.virtualLabs.dtos.StudentDTO;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -88,23 +90,6 @@ public class StudentController {
 
          */
         return teamProposals;
-    }
-
-    //get list of reports of an assignment of the course for a specific student
-    @GetMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/reports")
-    public List<ReportDTO> reportsForAssignment(@PathVariable String studentId,
-                                                @PathVariable String courseName,
-                                                @PathVariable Long assignmentId) {
-        Optional<StudentDTO> student = teamService.getStudent(studentId);
-        if(!student.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT, studentId);
-
-        return labService.getAssignmentReports(assignmentId)
-                .stream()
-                .filter(report -> labService.getReportOwner(report.getId()).getId().equals(studentId))
-                .collect(Collectors.toList());
-
-        //TODO: da enrichare
     }
 
     /*

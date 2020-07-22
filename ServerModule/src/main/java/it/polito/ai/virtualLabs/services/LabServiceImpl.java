@@ -55,6 +55,22 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    public List<ReportDTO> getStudentReportsForAssignment(String studentId, Long assignmentId) {
+        if(!userRepository.existsById(studentId))
+            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
+
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        Student s = userRepository.getStudentById(studentId);
+        return s.getReports()
+                .stream()
+                .filter(r -> r.getAssignment().getId().equals(assignmentId))
+                .map(r -> modelMapper.map(r, ReportDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ReportDTO> getAssignmentReports(Long assignmentId) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");

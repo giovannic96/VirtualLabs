@@ -24,7 +24,8 @@ public class TeamProposal {
 
     private String statusDesc;
 
-    private int missing;
+    @ElementCollection
+    private List<String> tokens = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "course_name")
@@ -35,6 +36,14 @@ public class TeamProposal {
             inverseJoinColumns = @JoinColumn(name = "student_id"))
     @ManyToMany
     List<Student> students = new ArrayList<>();
+
+    public void addToken(String token) {
+        tokens.add(token);
+    }
+
+    public void removeToken(String token) {
+        tokens.remove(token);
+    }
 
     public enum TeamProposalStatus {
         PENDING,

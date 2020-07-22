@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VmService {
+    Optional<VmDTO> getVm(Long vmId);
     Optional<VmModelDTO> getVmModel(Long vmId); //TESTED
     Optional<UserDTO> getOwner(Long vmId); //TESTED
     Optional<TeamDTO> getTeam(Long vmId); //TESTED

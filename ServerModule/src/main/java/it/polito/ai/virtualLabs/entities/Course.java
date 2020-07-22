@@ -39,6 +39,11 @@ public class Course {
         s.getCourses().add(this);
     }
 
+    public void addProfessor(Professor p) {
+        professors.add(p);
+        p.getCourses().add(this);
+    }
+
     public void addTeam(Team t) {
         teams.add(t);
         t.setCourse(this);
