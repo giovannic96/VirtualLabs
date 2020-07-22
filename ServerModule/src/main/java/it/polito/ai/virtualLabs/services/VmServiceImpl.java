@@ -119,6 +119,28 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    public List<VmDTO> getTeamVms(Long teamId) {
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
+
+        return teamRepository.getOne(teamId).getVms()
+                .stream()
+                .map(v -> modelMapper.map(v, VmDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VmModelDTO> getProfessorVmModels(String professorId) {
+        if (!userRepository.professorExistsById(professorId))
+            throw new StudentNotFoundException("The professor with id '" + professorId + "' does not exists");
+
+        return userRepository.getProfessorById(professorId).getVmModels()
+                .stream()
+                .map(v -> modelMapper.map(v, VmModelDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");

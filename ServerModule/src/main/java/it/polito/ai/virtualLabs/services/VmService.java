@@ -17,6 +17,8 @@ public interface VmService {
     Optional<VmModelDTO> getCourseVmModel(String courseName);
     List<VmDTO> getCourseVms(String courseName);
     List<VmDTO> getStudentVms(String studentId);
+    List<VmDTO> getTeamVms(Long teamId);
+    List<VmModelDTO> getProfessorVmModels(String professorId);
 
     boolean createVm(VmDTO vmDTO, String studentId, Long teamId); //TESTED
     boolean removeVm(Long vmId); //TESTED

@@ -32,9 +32,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT p FROM Professor p WHERE p.id = :professorId")
     Professor getProfessorById(String professorId);
 
-    @Query("SELECT COUNT(s) FROM Student s WHERE s.id = :studentId")
+    @Query("SELECT CASE WHEN COUNT(s)>0 THEN TRUE ELSE FALSE END FROM Student s WHERE s.id = :studentId")
     boolean studentExistsById(String studentId);
 
-    @Query("SELECT COUNT(p) FROM Professor p WHERE p.id = :professorId")
+    @Query("SELECT CASE WHEN COUNT(p)>0 THEN TRUE ELSE FALSE END FROM Professor p WHERE p.id = :professorId")
     boolean professorExistsById(String professorId);
 }

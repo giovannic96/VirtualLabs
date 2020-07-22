@@ -327,7 +327,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<CourseDTO> getCoursesForStudent(String studentId) {
-        if (!userRepository.existsById(studentId))
+        if (!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
         /*
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -344,6 +344,18 @@ public class TeamServiceImpl implements TeamService {
         });*/
         Student student = userRepository.getStudentById(studentId);
         return student.getCourses()
+                .stream()
+                .map(c -> modelMapper.map(c, CourseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseDTO> getCoursesForProfessor(String professorId) {
+        if (!userRepository.professorExistsById(professorId))
+            throw new StudentNotFoundException("Il docente con id '" + professorId + "' non è stato trovato");
+
+        Professor professor = userRepository.getProfessorById(professorId);
+        return professor.getCourses()
                 .stream()
                 .map(c -> modelMapper.map(c, CourseDTO.class))
                 .collect(Collectors.toList());
@@ -476,8 +488,8 @@ public class TeamServiceImpl implements TeamService {
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
 
-        return courseRepository
-                .getOne(studentId)
+        return userRepository
+                .getStudentById(studentId)
                 .getTeamProposals()
                 .stream()
                 .map(tp -> modelMapper.map(tp, TeamProposalDTO.class))

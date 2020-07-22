@@ -46,4 +46,5 @@ public interface TeamService {
     List<Boolean> enrollAllStudents(List<String> studentIds, String courseName); //TESTED
     List<Boolean> addAndEnroll(Reader r, String courseName);
     List<CourseDTO> getCoursesForStudent(String studentId); //TESTED
+    List<CourseDTO> getCoursesForProfessor(String professorId);
 }

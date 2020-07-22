@@ -82,9 +82,18 @@ public class CourseController {
         //TODO: da enrichare
     }
 
-    @GetMapping("/{courseName}/teams/{teamId}/vms")
-    public List<VmDTO> vmsForTeam(@PathVariable String courseName, @PathVariable String teamId) {
-        return vmService.getCourseVms(courseName);
+    @GetMapping("/{courseName}/teams/{teamName}/vms")
+    public List<VmDTO> vmsForTeam(@PathVariable String courseName, @PathVariable String teamName) {
+
+        Optional<TeamDTO> team = teamService.getTeamsForCourse(courseName)
+                .stream()
+                .filter(t -> t.getName().equals(teamName))
+                .findFirst();
+
+        if(!team.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return vmService.getTeamVms(team.get().getId());
         //TODO: da enrichare
     }
 /*
