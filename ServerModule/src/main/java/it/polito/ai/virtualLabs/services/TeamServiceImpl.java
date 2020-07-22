@@ -144,38 +144,38 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public TeamDTO acceptTeamProposal(Long teamProposalId) {
         if(!teamProposalRepository.existsById(teamProposalId))
-            throw new TeamProposalNotFoundException("La proposta con id '"+ teamProposalId +"' non è stata trovata");
+            throw new TeamProposalNotFoundException("The proposal with id '"+ teamProposalId +"' was not found");
 
         TeamProposal teamProposal = teamProposalRepository.getOne(teamProposalId);
 
         if(teamRepository.existsByNameAndCourseName(teamProposal.getTeamName(), teamProposal.getCourse().getName()))
-            throw new TeamProposalAlreadyAcceptedException("La proposta con id '"+ teamProposalId +"' è già stata accettata");
+            throw new TeamProposalAlreadyAcceptedException("The proposal with id '"+ teamProposalId +"' was already accepted");
 
         String courseName = teamProposal.getCourse().getName();
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
         Course course = courseRepository.getOne(courseName);
         if(!course.isEnabled())
-            throw new CourseNotEnabledException("Il corso di '" + courseName + "' non è abilitato");
+            throw new CourseNotEnabledException("The course named '" + courseName + "' is not enabled");
 
         List<String> distinctMembersIds = teamProposal.getStudents().stream().map(Student::getId).distinct().collect(Collectors.toList());
         if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
-            throw new TeamConstraintsNotSatisfiedException("Il team '" + teamProposal.getTeamName() + "' non rispetta i vincoli di cardinalità");
+            throw new TeamConstraintsNotSatisfiedException("The team named '" + teamProposal.getTeamName() + "' does not meet the cardinality constraints");
 
         List<Student> studentsToAdd = new ArrayList<>();
         for(String memberId : distinctMembersIds) {
             if(!userRepository.studentExistsById(memberId))
-                throw new StudentNotFoundException("Lo studente con id '" + memberId + "' non è stato trovato");
+                throw new StudentNotFoundException("The student with id '" + memberId + "' was not found");
 
             Student student = userRepository.getStudentById(memberId);
             if(!student.getCourses().contains(course))
-                throw new StudentNotEnrolledException("Lo studente con id '" + memberId + "' non è iscritto al corso '" + courseName + "'");
+                throw new StudentNotEnrolledException("The student with id '" + memberId + "' is not enrolled to the course named '" + courseName + "'");
 
             List<Team> studentTeams = student.getTeams();
             for(Team t : studentTeams) {
                 if(t.getCourse().getName().equals(courseName))
-                    throw new StudentAlreadyTeamedUpException("Lo studente con id '" + memberId + "' fa già parte del gruppo '" + t.getName() + "'");
+                    throw new StudentAlreadyTeamedUpException("The student with id '" + memberId + "' is already part of the group named '" + t.getName() + "'");
             }
             studentsToAdd.add(student); //this will be part of the team (if all the controls are verified)
         }
@@ -197,7 +197,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public boolean rejectTeamProposal(Long teamProposalId) {
         if(!teamProposalRepository.existsById(teamProposalId))
-            throw new TeamProposalNotFoundException("La proposta con id '"+ teamProposalId +"' non è stata trovata");
+            throw new TeamProposalNotFoundException("The proposal with id '"+ teamProposalId +"' was not found");
 
         TeamProposal teamProposal = teamProposalRepository.getOne(teamProposalId);
         if(teamProposal.getStatus() == TeamProposal.TeamProposalStatus.REJECTED)
@@ -218,7 +218,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<StudentDTO> getEnrolledStudents(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
         return courseRepository.getOne(courseName).getStudents()
                 .stream()
@@ -229,9 +229,9 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public boolean addStudentToCourse(String studentId, String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         if(!userRepository.studentExistsById(studentId))
-            throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
 
         Course course = courseRepository.getOne(courseName);
         Optional<Student> student = course.getStudents()
@@ -250,9 +250,9 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public boolean addProfessorToCourse(String professorId, String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' non è stato trovato");
         if(!userRepository.professorExistsById(professorId))
-            throw new StudentNotFoundException("Il docente con id '" + professorId + "' non è stato trovato");
+            throw new StudentNotFoundException("The professor with id '" + professorId + "' was not found");
 
         Course course = courseRepository.getOne(courseName);
         Optional<Professor> professor = course.getProfessors()
@@ -271,7 +271,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<ProfessorDTO> getProfessorsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
         return courseRepository.getOne(courseName).getProfessors()
                 .stream()
@@ -282,7 +282,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void enableCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         Course c = courseRepository.getOne(courseName);
         c.setEnabled(true);
     }
@@ -290,7 +290,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void disableCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         Course c = courseRepository.getOne(courseName);
         c.setEnabled(false);
     }
@@ -335,7 +335,7 @@ public class TeamServiceImpl implements TeamService {
             // convert `CsvToBean` object to list of students
             students = csvToBean.parse();
         } catch(Exception ex) {
-           throw new ParsingFileException("Errore durante il parsing del file");
+           throw new ParsingFileException("Error in parsing file");
         }
 
         List<Boolean> retList = new ArrayList<Boolean>();
@@ -350,7 +350,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<CourseDTO> getCoursesForStudent(String studentId) {
         if (!userRepository.studentExistsById(studentId))
-            throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
         /*
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
@@ -359,7 +359,7 @@ public class TeamServiceImpl implements TeamService {
                 if(user.isPresent()) {
                     String id = user.get().getId();
                     if(!studentId.equals(id)) {
-                        throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
+                        throw new StudentPrivacyException("The student with id '" + studentId + "' does not have permission to view this info");
                     }
                 }
             }
@@ -374,7 +374,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<CourseDTO> getCoursesForProfessor(String professorId) {
         if (!userRepository.professorExistsById(professorId))
-            throw new StudentNotFoundException("Il docente con id '" + professorId + "' non è stato trovato");
+            throw new StudentNotFoundException("The professor with id '" + professorId + "' was not found");
 
         Professor professor = userRepository.getProfessorById(professorId);
         return professor.getCourses()
@@ -386,7 +386,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<TeamDTO> getTeamsForStudent(String studentId) {
         if(!userRepository.existsById(studentId))
-            throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
         /*
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
@@ -395,7 +395,7 @@ public class TeamServiceImpl implements TeamService {
                 if(user.isPresent()) {
                     String id = user.get().getId();
                     if(!studentId.equals(id)) {
-                        throw new StudentPrivacyException("Lo studente con id '" + studentId + "' non ha i permessi per visualizzare queste info");
+                        throw new StudentPrivacyException("The student with id '" + studentId + "' does not have permission to view this info");
                     }
                 }
             }
@@ -410,7 +410,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<StudentDTO> getTeamMembers(Long teamId) {
         if(!teamRepository.existsById(teamId))
-            throw new TeamNotFoundException("Il team con id '" + teamId + "' non è stato trovato");
+            throw new TeamNotFoundException("The team with id '" + teamId + "' was not found");
 
         return teamRepository
                 .getOne(teamId)
@@ -423,33 +423,33 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso di '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
         Optional<TeamProposal> oldProposal = teamProposalRepository.findByTeamNameAndCourseName(teamName, courseName);
         if(oldProposal.isPresent() && oldProposal.get().getStatus() != TeamProposal.TeamProposalStatus.REJECTED)
-            throw new TeamAlreadyProposedException("Il team '" + teamName + "' per il corso di '" + courseName + "' ha già una richiesta in corso o accettata");
+            throw new TeamAlreadyProposedException("The team '" + teamName + "' for the course named '" + courseName + "' has already a request in progress or accepted");
 
         Course course = courseRepository.getOne(courseName);
         if(!course.isEnabled())
-            throw new CourseNotEnabledException("Il corso di '" + courseName + "' non è abilitato");
+            throw new CourseNotEnabledException("The course named '" + courseName + "' is not enabled");
 
         List<String> distinctMembersIds = memberIds.stream().distinct().collect(Collectors.toList());
         if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
-            throw new TeamConstraintsNotSatisfiedException("Il team '" + teamName + "' non rispetta i vincoli di cardinalità");
+            throw new TeamConstraintsNotSatisfiedException("The team '" + teamName + "' does not respect cardinality constraints");
 
         List<Student> students = new ArrayList<>();
         for(String memberId : distinctMembersIds) {
             if(!userRepository.existsById(memberId))
-                throw new StudentNotFoundException("Lo studente con id '" + memberId + "' non è stato trovato");
+                throw new StudentNotFoundException("The student with id '" + memberId + "' was not found");
 
             Student student = userRepository.getStudentById(memberId);
             if(!student.getCourses().contains(course))
-                throw new StudentNotEnrolledException("Lo studente con id '" + memberId + "' non è iscritto al corso '" + "' " + courseName);
+                throw new StudentNotEnrolledException("The student with id '" + memberId + "' is not enrolled to the course named '" + "' " + courseName);
 
             List<Team> studentTeams = student.getTeams();
             for(Team t : studentTeams) {
                 if(t.getCourse().getName().equals(courseName))
-                    throw new StudentAlreadyTeamedUpException("Lo studente con id '" + memberId + "' fa già parte del gruppo '" + t.getName() + "'");
+                    throw new StudentAlreadyTeamedUpException("The student with id '" + memberId + "' is already part of the group named '" + t.getName() + "'");
             }
             students.add(student); //this will be part of the team (if all the controls are verified)
         }
@@ -460,11 +460,6 @@ public class TeamServiceImpl implements TeamService {
         proposal.setTeamName(teamName);
         proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
 
-        //IMPORTANTE: se uso 'new' (come abbiamo fatto prima con Team) ho bisogno della save(), mentre se modifico
-        // qualcosa di già esistente nel db, la update è fatta in automatico grazie a @Transactional.
-        //Questo perchè se durante la transazione si crea un oggetto marcato con @Entity tramite new, l’ORM non lo sta
-        // ancora tracciando: per questo motivo c’è il metodo save() che aggiunge semplicemente l’istanza che gli
-        // passiamo alle entity tracciate.
         teamProposalRepository.saveAndFlush(proposal);
         for(Student s : students) {
             s.addTeamProposal(proposal);
@@ -488,7 +483,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         return teamProposalRepository.findAllByCourseNameAndStatus(courseName, TeamProposal.TeamProposalStatus.PENDING)
                 .stream()
                 .map(tp -> modelMapper.map(tp, TeamProposalDTO.class))
@@ -498,7 +493,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<TeamProposalDTO> getTeamProposalsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
         return courseRepository
                 .getOne(courseName)
@@ -511,7 +506,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<TeamProposalDTO> getTeamProposalsForStudent(String studentId) {
         if(!userRepository.studentExistsById(studentId))
-            throw new StudentNotFoundException("Lo studente con id '" + studentId + "' non è stato trovato");
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
 
         return userRepository
                 .getStudentById(studentId)
@@ -524,7 +519,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<TeamDTO> getTeamsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         /*
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
@@ -534,7 +529,7 @@ public class TeamServiceImpl implements TeamService {
                     Student student = (Student)value;
                     student.getCourses().forEach(course -> {
                         if (!courseName.equals(course.getName())) {
-                            throw new StudentPrivacyException("Lo studente non ha i permessi per visualizzare le info relative al corso " + courseName);
+                            throw new StudentPrivacyException("The student does not have permission to view the information relating to the course named " + courseName);
                         }
                     });
                 });
@@ -551,7 +546,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<StudentDTO> getStudentsInTeams(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         return courseRepository
                 .getStudentsInTeams(courseName)
                 .stream()
@@ -562,7 +557,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<StudentDTO> getAvailableStudents(String courseName) {
         if(!courseRepository.existsById(courseName))
-            throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         return courseRepository
                 .getStudentsNotInTeams(courseName)
                 .stream()
@@ -573,14 +568,14 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void changeTeamProposalStatus(Long teamProposalId, TeamProposal.TeamProposalStatus newStatus) {
         if(!teamProposalRepository.existsById(teamProposalId))
-            throw new TeamNotFoundException("La proposta di team con id " + teamProposalId + " non esiste");
+            throw new TeamNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
         teamProposalRepository.getOne(teamProposalId).setStatus(newStatus);
     }
 
     @Override
     public void deleteTeam(Long teamId) {
         if(!teamRepository.existsById(teamId))
-            throw new TeamNotFoundException("Il team con id " + teamId + " non esiste");
+            throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
         teamRepository.deleteById(teamId);
         teamRepository.flush();
     }

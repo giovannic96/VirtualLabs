@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyTeam(TeamDTO dto, List<String> memberIds) {
         if(!teamRepository.existsById(dto.getId()))
-            throw new TeamNotFoundException("Il team con id " + dto.getId() + " non è stato trovato");
+            throw new TeamNotFoundException("The team with id " + dto.getId() + " was not found");
 
         //verify that all memberIds are inside the team 'dto'
         List<String> teamMembers = teamRepository.getOne(dto.getId())
@@ -96,7 +96,7 @@ public class NotificationServiceImpl implements NotificationService {
             t.setTeamId(dto.getId());
             t.setExpiryDate(new Timestamp(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(3)));
             tokenRepository.saveAndFlush(t);
-            sendMessage("s259741@studenti.polito.it"//TODO: decomment this later->calcEmail(t.getId()), "TEAM PROPOSAL", calcBody(t.getId()));
+            sendMessage(calcEmail(t.getId()), "TEAM PROPOSAL", calcBody(t.getId()));
         }
     }
 

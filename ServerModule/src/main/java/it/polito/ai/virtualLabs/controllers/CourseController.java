@@ -92,7 +92,7 @@ public class CourseController {
     @PostMapping({"","/"})
     public CourseDTO addCourse(@RequestBody CourseDTO courseDTO) {
         if(!teamService.addCourse(courseDTO))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nell'inserimento del corso: " + courseDTO.getName());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in entering course: " + courseDTO.getName());
         return ModelHelper.enrich(courseDTO);
     }
 
@@ -103,7 +103,7 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         String id = input.get("id");
         if(!teamService.addProfessorToCourse(id, courseName))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nell'assegnazione del docente con id: " + id);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in assignment of professor with id: " + id);
 
         return teamService.getProfessor(id).get();
     }
@@ -115,7 +115,7 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         String id = input.get("id");
         if(!teamService.addStudentToCourse(id, courseName))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nell'iscrizione dello studente con id: " + id);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in enrolling student with id: " + id);
     }
 
     @PostMapping("/{name}/enrollMany")
