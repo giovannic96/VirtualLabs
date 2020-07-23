@@ -92,6 +92,7 @@ public class CourseController {
     }
 
     @PostMapping({"","/"})
+    @ResponseStatus(HttpStatus.CREATED)
     public CourseDTO addCourse(@RequestBody CourseDTO courseDTO) {
         if(!teamService.addCourse(courseDTO))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in entering course: " + courseDTO.getName());
@@ -99,7 +100,7 @@ public class CourseController {
     }
 
     @PostMapping("/{courseName}/assignProfessor")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public ProfessorDTO assignProfessor(@PathVariable String courseName, @RequestBody Map<String, String> input) {
         if(!input.containsKey("id"))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -136,7 +137,7 @@ public class CourseController {
 
     @PostMapping("/{courseName}/setVmModel")
     @ResponseStatus(HttpStatus.CREATED)
-    public VmModelDTO setVmModelToCourse(@PathVariable String courseName,
+    public void setVmModelToCourse(@PathVariable String courseName,
                                          @RequestBody VmModelDTO vmModelDTO,
                                          @AuthenticationPrincipal UserDetails userDetails) {
 
@@ -146,14 +147,11 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel recupero delle informazioni sull'utente: " + userDetails.getUsername());
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
-
-        return ModelHelper.enrich(vmModelDTO);
-
     }
 
     @PutMapping("/{courseName}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public CourseDTO editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
+    @ResponseStatus(HttpStatus.OK)
+    public void editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
         if(!courseName.equals(courseDTO.getName()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The course you want to edit has a name different from '" + courseDTO.getName() + "'");
 
@@ -163,14 +161,31 @@ public class CourseController {
 
         if(!teamService.editCourse(courseName, courseDTO))
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The course named '" + courseName + "' was not modified");
-
-        return ModelHelper.enrich(courseDTO);
     }
 
-    //@PutMapping("/{courseName}/editVmModel")
+    @PutMapping("/{courseName}/editVmModel")
+    @ResponseStatus(HttpStatus.OK)
+    public void editVmModel(@RequestParam String courseName, @RequestBody VmModelDTO vmModelDTO) {
+        Optional<VmModelDTO> currentVmModel = vmService.getCourseVmModel(courseName);
 
-    //@DeleteMapping("/{courseName}/students")
+        if(!currentVmModel.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' does not have a vm model setted");
+        if(!vmService.editVmModelSettings(currentVmModel.get().getId(), vmModelDTO))
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The vm model named '" + vmModelDTO.getName() + "' was not modified");
+    }
 
+    @DeleteMapping("/{courseName}/students")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeStudentsFromCourse(@RequestParam String courseName, @RequestBody List<String> studentIds) {
+        Optional<CourseDTO> course = teamService.getCourse(courseName);
+
+        if(!course.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
+
+        for(String studentId : studentIds) {
+            teamService.removeStudentFromCourse(studentId, courseName);
+        }
+    }
 
 
 }

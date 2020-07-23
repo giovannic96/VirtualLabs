@@ -8,6 +8,7 @@ import it.polito.ai.virtualLabs.repositories.*;
 import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotEnabledException;
 import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
+import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
@@ -108,6 +109,14 @@ public class TeamServiceImpl implements TeamService {
         if (!userRepository.existsById(studentId))
             return Optional.empty();
         return userRepository.findStudentById(studentId)
+                .map(s -> modelMapper.map(s, StudentDTO.class));
+    }
+
+    @Override
+    public Optional<StudentDTO> getStudentByUsername(String username) {
+        if (!userRepository.studentExistsByUsername(username))
+            return Optional.empty();
+        return userRepository.findStudentByUsername(username)
                 .map(s -> modelMapper.map(s, StudentDTO.class));
     }
 
@@ -219,10 +228,18 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Optional<TeamDTO> getTeam(String teamName, String courseName) {
+    public Optional<TeamDTO> getTeamForCourse(String teamName, String courseName) {
         if (!teamRepository.existsByNameAndCourseName(teamName, courseName))
             return Optional.empty();
         return teamRepository.findByNameAndCourseName(teamName, courseName)
+                .map(t -> modelMapper.map(t, TeamDTO.class));
+    }
+
+    @Override
+    public Optional<TeamDTO> getTeam(Long teamId) {
+        if (!teamRepository.existsById(teamId))
+            return Optional.empty();
+        return teamRepository.findById(teamId)
                 .map(t -> modelMapper.map(t, TeamDTO.class));
     }
 
@@ -259,6 +276,18 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public void removeStudentFromCourse(String studentId, String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+
+        Course course = courseRepository.getOne(courseName);
+
+        course.removeStudent(userRepository.getStudentById(studentId));
+    }
+
+    @Override
     public boolean addProfessorToCourse(String professorId, String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' non è stato trovato");
@@ -277,6 +306,18 @@ public class TeamServiceImpl implements TeamService {
             course.addProfessor(p);
             return true;
         }
+    }
+
+    @Override
+    public void removeProfessorFromCourse(String professorId, String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+        if(!userRepository.professorExistsById(professorId))
+            throw new ProfessorNotFoundException("The professor with id '" + professorId + "' was not found");
+
+        Course course = courseRepository.getOne(courseName);
+
+        course.removeProfessor(userRepository.getProfessorById(professorId));
     }
 
     @Override
@@ -477,7 +518,7 @@ public class TeamServiceImpl implements TeamService {
             proposal.addToken(UUID.randomUUID().toString());
         }
 
-        //TODO: far partire le email da qui (chiamare la notifyTeam)
+        //TODO: send emails from here (call notifyTeam)
 
         return modelMapper.map(proposal, TeamProposalDTO.class);
     }

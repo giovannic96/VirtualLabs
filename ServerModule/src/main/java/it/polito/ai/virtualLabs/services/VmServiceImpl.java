@@ -217,6 +217,28 @@ public class VmServiceImpl implements VmService {
         return true;
     }
 
+    @Override
+    public boolean editVmModelSettings(Long vmModelId, VmModelDTO vmModelDTO) {
+        if(!vmModelRepository.existsById(vmModelId))
+            throw new VmNotFoundException("The vm model with id " + vmModelId + " does not exist");
+
+        VmModel curVmModel = vmModelRepository.getOne(vmModelId);
+
+        List<VmDTO> vmList = getCourseVms(curVmModel.getCourse().getName());
+
+        //TODO: decidere se gestire i vincoli sulle vm già create
+
+        curVmModel.setName(vmModelDTO.getName());
+        curVmModel.setMaxVCPU(vmModelDTO.getMaxVCPU());
+        curVmModel.setMaxDisk(vmModelDTO.getMaxDisk());
+        curVmModel.setMaxRAM(vmModelDTO.getMaxRAM());
+        curVmModel.setMaxActiveVM(vmModelDTO.getMaxActiveVM());
+        curVmModel.setMaxTotVM(vmModelDTO.getMaxTotVM());
+
+        vmModelRepository.saveAndFlush(curVmModel);
+        return true;
+    }
+
     private boolean resourcesExceeded(List<Vm> teamVms, VmModel vmModel, int vCPU, int ram, int disk) {
         int totRam = 0, totDisk = 0, totVCpu = 0;
 

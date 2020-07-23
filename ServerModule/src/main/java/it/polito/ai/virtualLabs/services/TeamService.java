@@ -1,7 +1,6 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
-import it.polito.ai.virtualLabs.entities.Course;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
 
 import java.io.Reader;
@@ -16,6 +15,7 @@ public interface TeamService {
     boolean addStudent(StudentDTO student); //TESTED
     List<Boolean> addAllStudents(List<StudentDTO> students); //TESTED
     Optional<StudentDTO> getStudent(String studentId); //TESTED
+    Optional<StudentDTO> getStudentByUsername(String studentId);
     List<StudentDTO> getAllStudents(); //TESTED
     boolean addProfessor(ProfessorDTO professor); //TESTED
     List<Boolean> addAllProfessors(List<ProfessorDTO> professors); //TESTED
@@ -23,7 +23,8 @@ public interface TeamService {
     Optional<ProfessorDTO> getProfessorByUsername(String username);
     List<ProfessorDTO> getAllProfessors(); //TESTED
 
-    Optional<TeamDTO> getTeam(String teamName, String courseName); //TESTED
+    Optional<TeamDTO> getTeamForCourse(String teamName, String courseName); //TESTED
+    Optional<TeamDTO> getTeam(Long teamId);
     List<TeamDTO> getTeamsForCourse(String courseName); //TESTED
     List<TeamDTO> getTeamsForStudent(String studentId); //TESTED
     Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId); //TESTED
@@ -43,7 +44,9 @@ public interface TeamService {
     boolean editCourse(String courseName, CourseDTO courseDTO);
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
+    void removeStudentFromCourse(String studentId, String courseName);
     boolean addProfessorToCourse(String professorId, String courseName);
+    void removeProfessorFromCourse(String professorId, String courseName);
     List<ProfessorDTO> getProfessorsForCourse(String courseName);
     void enableCourse(String courseName); //TESTED
     void disableCourse(String courseName); //TESTED
