@@ -1,6 +1,5 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.CourseDTO;
 import it.polito.ai.virtualLabs.dtos.VmDTO;
 import it.polito.ai.virtualLabs.dtos.VmModelDTO;
 import it.polito.ai.virtualLabs.services.VmService;
@@ -50,7 +49,12 @@ public class VmController {
         return ModelHelper.enrich(vmModel.get());
     }
 
-    //@PutMapping("/{vmId}/edit")
+    @PutMapping("/{vmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void edit(@PathVariable Long vmId, @RequestBody VmDTO vmDTO) {
+        if(!vmService.editVmResources(vmId, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The vm with id '" + vmId + "' cannot be modified: resources exceeded");
+    }
 
     @PutMapping("/{vmId}/powerOn")
     @ResponseStatus(HttpStatus.OK)
