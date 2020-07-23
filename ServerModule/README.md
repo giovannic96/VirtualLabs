@@ -74,7 +74,7 @@ API
 * PUT	http://ip_address:port/api/courses/:courseName/editVmModel
 
 *Vms* 
-* PUT	http://ip_address:port/api/vms/:vmId/edit
+* PUT	http://ip_address:port/api/vms/:vmId
 * PUT	http://ip_address:port/api/vms/:vmId/powerOn
 * PUT	http://ip_address:port/api/vms/:vmId/powerOff
 

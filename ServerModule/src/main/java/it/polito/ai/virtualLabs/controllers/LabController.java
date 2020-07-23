@@ -25,7 +25,7 @@ public class LabController {
         Optional<AssignmentDTO> assignment = labService.getAssignment(assignmentId);
 
         if(!assignment.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, assignmentId.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment with id " + assignmentId + " was not found");
 
         //TODO: da enrichare
         return assignment.get();
@@ -36,7 +36,7 @@ public class LabController {
         Optional<ReportDTO> report = labService.getReport(reportId);
 
         if(!report.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, reportId.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report with id " + reportId + " was not found");
 
         //TODO: da enrichare
         return report.get();
@@ -47,7 +47,7 @@ public class LabController {
         Optional<VersionDTO> version = labService.getVersion(versionId);
 
         if(!version.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, versionId.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Version with id " + versionId + " was not found");
 
         //TODO: da enrichare
         return version.get();
@@ -58,7 +58,7 @@ public class LabController {
         Optional<ReportDTO> report = labService.getReport(reportId);
 
         if(!report.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, reportId.toString());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report with id " + reportId + " was not found");
 
         List<VersionDTO> versions = labService.getReportVersions(reportId);
 
@@ -69,13 +69,30 @@ public class LabController {
     //get list of reports of an assignment of the course for a specific student
     @GetMapping("/assignments/{assignmentId}/reports")
     public List<ReportDTO> reportsForAssignment(@PathVariable Long assignmentId) {
+        Optional<AssignmentDTO> assignment = labService.getAssignment(assignmentId);
+        if(!assignment.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment with id " + assignmentId + " was not found");
+
         List<ReportDTO> reports = labService.getAssignmentReports(assignmentId);
 
         //TODO: da enrichare
         return reports;
     }
 
-    //@PostMapping("/reports/{reportId}/submitVersion")
+    @PostMapping("/reports/{reportId}/submitVersion")
+    @ResponseStatus(HttpStatus.CREATED)
+    public VersionDTO submitVersion(@PathVariable Long reportId, @RequestBody VersionDTO versionDTO) {
+        Optional<ReportDTO> report = labService.getReport(reportId);
+
+        if(!report.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report with id " + reportId + " was not found");
+
+        if(labService.addVersionToReport(versionDTO, reportId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
+
+        //TODO: to enrich
+        return versionDTO;
+    }
 
     //@PutMapping("/reports/{reportId}/gradeReport")
 }

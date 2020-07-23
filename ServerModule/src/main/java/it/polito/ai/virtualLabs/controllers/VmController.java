@@ -49,7 +49,13 @@ public class VmController {
         return ModelHelper.enrich(vmModel.get());
     }
 
-    //@PutMapping("/{vmId}/edit")
+    @PutMapping("/{vmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void edit(@PathVariable Long vmId, @RequestBody VmDTO vmDTO) {
+        if(!vmService.editVmResources(vmId, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The vm with id '" + vmId + "' cannot be modified: resources exceeded");
+    }
+
     //@PutMapping("/{vmId}/powerOn")
     //@PutMapping("/{vmId}/powerOff")
 
