@@ -165,7 +165,7 @@ public class CourseController {
 
     @PutMapping("/{courseName}/editVmModel")
     @ResponseStatus(HttpStatus.OK)
-    public void editVmModel(@RequestParam String courseName, @RequestBody VmModelDTO vmModelDTO) {
+    public void editVmModel(@PathVariable String courseName, @RequestBody VmModelDTO vmModelDTO) {
         Optional<VmModelDTO> currentVmModel = vmService.getCourseVmModel(courseName);
 
         if(!currentVmModel.isPresent())
@@ -176,7 +176,7 @@ public class CourseController {
 
     @DeleteMapping("/{courseName}/students")
     @ResponseStatus(HttpStatus.OK)
-    public void removeStudentsFromCourse(@RequestParam String courseName, @RequestBody List<String> studentIds) {
+    public void removeStudentsFromCourse(@PathVariable String courseName, @RequestBody List<String> studentIds) {
         Optional<CourseDTO> course = teamService.getCourse(courseName);
 
         if(!course.isPresent())
@@ -186,7 +186,6 @@ public class CourseController {
             teamService.removeStudentFromCourse(studentId, courseName);
         }
     }
-
 
 }
 

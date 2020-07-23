@@ -1,5 +1,6 @@
 package it.polito.ai.virtualLabs.controllers;
 
+import it.polito.ai.virtualLabs.dtos.CourseDTO;
 import it.polito.ai.virtualLabs.dtos.VmDTO;
 import it.polito.ai.virtualLabs.dtos.VmModelDTO;
 import it.polito.ai.virtualLabs.services.VmService;
@@ -40,7 +41,7 @@ public class VmController {
     }
 
     @GetMapping("/vmModels/{vmModelId}")
-    public VmModelDTO vmModel(Long vmModelId) {
+    public VmModelDTO vmModel(@PathVariable Long vmModelId) {
         Optional<VmModelDTO> vmModel = vmService.getVmModel(vmModelId);
 
         if(!vmModel.isPresent())
@@ -50,10 +51,30 @@ public class VmController {
     }
 
     //@PutMapping("/{vmId}/edit")
-    //@PutMapping("/{vmId}/powerOn")
-    //@PutMapping("/{vmId}/powerOff")
 
-    //@DeleteMapping("/{vmsId}")
+    @PutMapping("/{vmId}/powerOn")
+    @ResponseStatus(HttpStatus.OK)
+    public void powerOn(@PathVariable Long vmId) {
+        if(!vmService.powerOnVm(vmId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in powering on the vm with id: " + vmId);
+    }
 
+    @PutMapping("/{vmId}/powerOff")
+    @ResponseStatus(HttpStatus.OK)
+    public void powerOff(@PathVariable Long vmId) {
+        if(!vmService.powerOffVm(vmId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in powering off the vm with id: " + vmId);
+    }
 
+    @DeleteMapping("/{vmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void remove(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+
+        if (!vm.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The vm with id '" + vmId + "' was not found");
+
+        if(!vmService.removeVm(vmId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in removing the vm with id: " + vmId);
+    }
 }
