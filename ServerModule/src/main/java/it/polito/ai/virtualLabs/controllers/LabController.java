@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -77,5 +78,15 @@ public class LabController {
 
     //@PostMapping("/reports/{reportId}/submitVersion")
 
-    //@PutMapping("/reports/{reportId}/gradeReport")
+    @PutMapping("/reports/{reportId}/gradeReport")
+    @ResponseStatus(HttpStatus.OK)
+    public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Float> input) {
+        if(!input.containsKey("grade"))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        float grade = input.get("grade");
+        if(!labService.gradeReport(reportId, grade))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in grading the report with id: " + reportId);
+    }
+
 }

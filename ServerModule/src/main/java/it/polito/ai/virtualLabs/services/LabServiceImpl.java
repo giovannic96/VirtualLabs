@@ -235,4 +235,25 @@ public class LabServiceImpl implements LabService {
         assignmentRepository.saveAndFlush(assignment);
         return true;
     }
+
+    @Override
+    public boolean gradeReport(Long reportId, float grade) {
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        //check if grade is not positive
+        if(grade <= 0.0f)
+            return false;
+
+        //check if there is already a grade for that report
+        Report report = reportRepository.getOne(reportId);
+        if(report.getGrade() != 0.0f)
+            return false;
+
+        //grade report
+        report.setGrade(grade);
+
+        reportRepository.saveAndFlush(report);
+        return true;
+    }
 }
