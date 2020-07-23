@@ -114,13 +114,10 @@ public class VmServiceImpl implements VmService {
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
 
         Optional<VmModel> vmModelOpt = vmModelRepository.findByCourseName(courseName);
-        if(!vmModelOpt.isPresent())
-            return new ArrayList<VmDTO>();
-
-        return vmModelOpt.get().getVms()
+        return vmModelOpt.map(vmModel -> vmModel.getVms()
                 .stream()
                 .map(v -> modelMapper.map(v, VmDTO.class))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())).orElseGet(ArrayList::new);
     }
 
     @Override
@@ -188,14 +185,13 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public boolean removeVm(Long vmId) {
+    public void removeVm(Long vmId) {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
         //remove vm
         vmRepository.deleteById(vmId);
         vmRepository.flush();
-        return true;
     }
 
     @Override

@@ -33,15 +33,13 @@ public interface TeamService {
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
 
     TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds); //TESTED
-    void changeTeamProposalStatus(Long teamProposalId, TeamProposal.TeamProposalStatus newStatus); //TESTED
-    TeamDTO acceptTeamProposal(Long teamProposalId); //TESTED
-    boolean rejectTeamProposal(Long teamProposalId); //TESTED
     void deleteTeam(Long teamId); //TESTED
     List<StudentDTO>getTeamMembers(Long TeamId); //TESTED
     List<StudentDTO> getStudentsInTeams(String courseName); //TESTED
     List<StudentDTO> getAvailableStudents(String courseName); //TESTED
 
     boolean editCourse(String courseName, CourseDTO courseDTO);
+    void removeCourse(String courseName);
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
     void removeStudentFromCourse(String studentId, String courseName);

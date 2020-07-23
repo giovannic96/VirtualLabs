@@ -2,38 +2,27 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("notification")
+@RequestMapping("API/notification")
 public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
-/*
-    @PutMapping("/confirm/{token}")
-    public String confirm(@PathVariable String token) {
-        try {
-            if(notificationService.confirm(token))
-                return "confirmPage";
-        } catch(TokenNotFoundException | TokenExpiredException ex) {
-            return "home";
-        }
-        return "home";
+
+    @PutMapping("/accept")
+    @ResponseStatus(HttpStatus.OK)
+    public void accept(@RequestParam Long tpId, @RequestParam String token) {
+        notificationService.accept(tpId, token);
     }
 
-    @PutMapping("/reject/{token}")
-    public String reject(@PathVariable String token) {
-        try {
-            if(notificationService.reject(token))
-                return "rejectPage";
-        } catch(TokenNotFoundException | TokenExpiredException ex) {
-            return "home";
-        }
-        return "home";
+    @PutMapping("/reject")
+    @ResponseStatus(HttpStatus.OK)
+    public void reject(@RequestParam Long tpId, @RequestParam String token) {
+        notificationService.reject(tpId, token);
     }
-*/
+
 }

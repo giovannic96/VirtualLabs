@@ -1,25 +1,50 @@
 package it.polito.ai.virtualLabs.services;
 
+import it.polito.ai.virtualLabs.dtos.TeamDTO;
+import it.polito.ai.virtualLabs.entities.Course;
+import it.polito.ai.virtualLabs.entities.Student;
+import it.polito.ai.virtualLabs.entities.Team;
+import it.polito.ai.virtualLabs.entities.TeamProposal;
+import it.polito.ai.virtualLabs.repositories.CourseRepository;
+import it.polito.ai.virtualLabs.repositories.TeamProposalRepository;
+import it.polito.ai.virtualLabs.repositories.TeamRepository;
+import it.polito.ai.virtualLabs.repositories.UserRepository;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotEnabledException;
+import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.team.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
-/*
+
     @Autowired
     JavaMailSender emailSender;
-
-    @Autowired
-    TokenRepository tokenRepository;
-
     @Autowired
     TeamRepository teamRepository;
-
+    @Autowired
+    TeamProposalRepository teamProposalRepository;
+    @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     TeamService teamService;
-
 
     @Override
     public void sendMessage(String address, String subject, String body) throws MailException {
@@ -31,46 +56,119 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public boolean confirm(String token) {
-        if(!tokenRepository.existsById(token))
-            throw new TokenNotFoundException("Token not found");
+    public boolean accept(Long teamProposalId, String token) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
 
-        Token t = tokenRepository.getOne(token);
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        if(t.getExpiryDate().before(now))
-            throw new TokenExpiredException("Token expired");
-
-        tokenRepository.delete(t);
-        Long teamId = t.getTeamId();
-        List<Token> pendingTokens = tokenRepository.findAllByTeamId(teamId);
-        if(pendingTokens.isEmpty()) {
-            try {
-                //teamService.changeTeamState(teamId, Team.ACTIVE);
-            } catch (TeamNotFoundException ex) {
-                return false;
+        //check if any of the students is already teamed up in another team
+        TeamProposal tp = teamProposalRepository.getOne(teamProposalId);
+        for(Student s : tp.getStudents()) {
+            for(Team t : s.getTeams()) {
+                if(t.getCourse().getName().equals(tp.getCourse().getName())) {
+                    tp.setStatus(TeamProposal.TeamProposalStatus.REJECTED);
+                    tp.setStatusDesc(s.getName() + " " + s.getSurname() + " is already enrolled in another team");
+                    throw new StudentAlreadyTeamedUpException("The student with id '" + s.getId() + "' is already teamed up");
+                }
             }
-            return true;
         }
-        return false;
-    }
 
-    @Override
-    public boolean reject(String token) {
-        if(!tokenRepository.existsById(token))
-            throw new TokenNotFoundException("Token not found");
-
-        Token t = tokenRepository.getOne(token);
-        Long teamId = t.getTeamId();
-        List<Token> pendingTokens = tokenRepository.findAllByTeamId(teamId);
-        tokenRepository.deleteAll(pendingTokens);
-        try {
-            teamService.evictTeam(teamId);
-        } catch (TeamNotFoundException ex) {
+        //check the team proposal
+        if(!checkProposal(tp, token))
             return false;
-        }
+
+        //remove token
+        tp.getTokens().remove(token);
+
+        //check if ALL students have accepted the team proposal
+        if(tp.getTokens().size() == 0) {
+            tp.setStatus(TeamProposal.TeamProposalStatus.CONFIRMED);
+            tp.setStatusDesc("All students accepted the proposal");
+
+            //create the team
+            Team team = new Team();
+            team.setName(tp.getTeamName());
+            team.setCourse(tp.getCourse());
+            teamRepository.saveAndFlush(team);
+            for(Student s : tp.getStudents())
+                s.addToTeam(team);
+        } else
+            tp.setStatusDesc("Other students must accept the proposal yet");
+
+        teamProposalRepository.saveAndFlush(tp);
         return true;
     }
 
+    @Override
+    public boolean reject(Long teamProposalId, String token) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
+
+        //check the team proposal
+        TeamProposal tp = teamProposalRepository.getOne(teamProposalId);
+        if(!checkProposal(tp, token))
+            return false;
+
+        //remove token
+        tp.getTokens().clear();
+
+        //reject the team proposal and add status description
+        tp.setStatus(TeamProposal.TeamProposalStatus.REJECTED);
+        String username = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
+        Student s = userRepository.getStudentByUsername(username);
+        tp.setStatusDesc(s.getName() + " " + s.getSurname() + " rejected the proposal");
+
+        teamProposalRepository.saveAndFlush(tp);
+        return true;
+    }
+
+    @Override
+    public void notifyTeam(TeamDTO dto, List<String> memberIds) {
+
+    }
+
+    private boolean checkProposal(TeamProposal tp, String token) {
+        //check if team proposal is already expired
+        if(tp.getExpiryDate().isBefore(LocalDateTime.now()))
+            return false;
+
+        //check if team proposal was already accepted or rejected
+        if(tp.getStatus() != TeamProposal.TeamProposalStatus.PENDING)
+            if(tp.getStatus() == TeamProposal.TeamProposalStatus.CONFIRMED)
+                throw new TeamProposalAlreadyAcceptedException("The proposal with id '"+tp.getId()+"' was already accepted");
+            else
+                throw new TeamProposalRejectedException("The proposal with id '"+tp.getId()+"' was already rejected");
+
+        //check if the course exists
+        String courseName = tp.getCourse().getName();
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+
+        //check if course is enabled
+        Course course = courseRepository.getOne(courseName);
+        if(!course.isEnabled())
+            throw new CourseNotEnabledException("The course named '" + courseName + "' is not enabled");
+
+        //check if student ids are duplicated or invalid
+        List<String> distinctStudentsId = tp.getStudents()
+                .stream()
+                .map(Student::getId)
+                .distinct()
+                .collect(Collectors.toList());
+        for(String studentId : distinctStudentsId) {
+            if(!userRepository.studentExistsById(studentId))
+                throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+            Student student = userRepository.getStudentById(studentId);
+            if(!student.getCourses().contains(course))
+                throw new StudentNotEnrolledException("The student with id '" + studentId +"' is not enrolled to the course named '" + courseName +"'");
+        }
+
+        //check if token exists
+        if(!tp.getTokens().contains(token))
+            throw new TokenNotFoundException("The token '" + token + "' was not found");
+
+        return true;
+    }
+/*
     @Override
     public void notifyTeam(TeamDTO dto, List<String> memberIds) {
         if(!teamRepository.existsById(dto.getId()))
@@ -99,7 +197,7 @@ public class NotificationServiceImpl implements NotificationService {
             sendMessage(calcEmail(t.getId()), "TEAM PROPOSAL", calcBody(t.getId()));
         }
     }
-
+*/
     private String calcEmail(String id) {
         final String prefixEmail = "s";
         final String suffixEmail = "@studenti.polito.it";
@@ -107,8 +205,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String calcBody(String id) {
-        final String prefixConfirmURL = "http://localhost:8080/notification/confirm/";
-        final String prefixRejectURL = "http://localhost:8080/notification/reject/";
+        final String prefixConfirmURL = "http://localhost:8080/API/notification/accept/";
+        final String prefixRejectURL = "http://localhost:8080/API/notification/reject/";
         final String confirmBody = "Click here to confirm the proposal: ";
         final String rejectBody = "Click here to reject the proposal: ";
 
@@ -116,5 +214,4 @@ public class NotificationServiceImpl implements NotificationService {
         String rejectURL = prefixRejectURL + id;
         return confirmBody + confirmURL + "\n\n" + rejectBody + rejectURL;
     }
-    */
 }

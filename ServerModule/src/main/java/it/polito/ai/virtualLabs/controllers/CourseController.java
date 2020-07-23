@@ -174,6 +174,17 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The vm model named '" + vmModelDTO.getName() + "' was not modified");
     }
 
+    @DeleteMapping("/{courseName}")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeStudentsFromCourse(@PathVariable String courseName) {
+        Optional<CourseDTO> course = teamService.getCourse(courseName);
+
+        if(!course.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
+
+        teamService.removeCourse(courseName);
+    }
+
     @DeleteMapping("/{courseName}/students")
     @ResponseStatus(HttpStatus.OK)
     public void removeStudentsFromCourse(@PathVariable String courseName, @RequestBody List<String> studentIds) {

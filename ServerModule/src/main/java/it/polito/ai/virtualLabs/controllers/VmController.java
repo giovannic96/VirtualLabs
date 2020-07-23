@@ -78,7 +78,6 @@ public class VmController {
         if (!vm.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The vm with id '" + vmId + "' was not found");
 
-        if(!vmService.removeVm(vmId))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in removing the vm with id: " + vmId);
+        vmService.removeVm(vmId);
     }
 }
