@@ -21,6 +21,7 @@ API
 *Professors*
 * GET	http://ip_address:port/api/professors
 * GET	http://ip_address:port/api/professors/:professorId
+* GET	http://ip_address:port/api/professors/:professorId/assignments
 * GET	http://ip_address:port/api/professors/:professorId/courses
 * GET	http://ip_address:port/api/professors/:professorId/vmModels
 * GET	http://ip_address:port/api/professors/:professorId/courses/:courseName/assignments  
@@ -28,6 +29,7 @@ API
 *Students*
 * GET	http://ip_address:port/api/students
 * GET	http://ip_address:port/api/students/:studentId
+* GET	http://ip_address:port/api/students/:studentId/reports
 * GET	http://ip_address:port/api/students/:studentId/courses
 * GET	http://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/reports
 * GET	http://ip_address:port/api/students/:studentId/teams
@@ -36,10 +38,15 @@ API
 
 *Labs*
 * GET	http://ip_address:port/api/labs/assignments/:assignmentId
+* GET	http://ip_address:port/api/labs/assignments/:assignmentId/course
+* GET	http://ip_address:port/api/labs/assignments/:assignmentId/professor
 * GET	http://ip_address:port/api/labs/assignments/:assignmentId/reports
 * GET	http://ip_address:port/api/labs/reports/:reportId
+* GET	http://ip_address:port/api/labs/reports/:reportId/assignment
+* GET	http://ip_address:port/api/labs/reports/:reportId/owner
 * GET	http://ip_address:port/api/labs/reports/:reportId/versions
 * GET	http://ip_address:port/api/labs/versions/:versionId
+* GET	http://ip_address:port/api/labs/versions/:versionId/report
 
 *Teams*
 * GET	http://ip_address:port/api/teams/:teamId
