@@ -69,13 +69,31 @@ public class ProfessorController {
         return vmModels;
     }
 
-    @GetMapping("/{professorId}/courses/{courseName}/assignments")
-    public List<AssignmentDTO> assignments(@PathVariable String professorId, @PathVariable String courseName) {
-        List<VmModelDTO> vmModels = vmService.getProfessorVmModels(professorId);
+    @GetMapping("/{professorId}/assignments")
+    public List<AssignmentDTO> assignments(@PathVariable String professorId) {
+        List<AssignmentDTO> assignments = vmService.getProfessorAssignments(professorId);
 
-        return labService.getCourseAssignments(courseName)
+        for(AssignmentDTO a : assignments) {
+            ModelHelper.enrich(a);
+        }
+
+        return assignments;
+    }
+
+    @GetMapping("/{professorId}/courses/{courseName}/assignments")
+    public List<AssignmentDTO> assignmentsForCourse(@PathVariable String professorId, @PathVariable String courseName) {
+        List<AssignmentDTO> assignments = labService.getCourseAssignments(courseName);
+
+        assignments = assignments
                 .stream()
-                .filter(a -> labService.getAssignmentProfessor(a.getId()).getId().equals(professorId))
+                .filter(a -> labService.getAssignmentProfessor(a.getId()).isPresent() &&
+                        labService.getAssignmentProfessor(a.getId()).get().getId().equals(professorId))
                 .collect(Collectors.toList());
+
+        for (AssignmentDTO a : assignments) {
+            ModelHelper.enrich(a);
+        }
+
+        return assignments;
     }
 }

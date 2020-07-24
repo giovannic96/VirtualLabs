@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.Report;
 import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.dtos.ReportDTO;
 import it.polito.ai.virtualLabs.dtos.StudentDTO;
@@ -83,13 +84,23 @@ public class StudentController {
     @GetMapping("/{studentId}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String studentId) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForStudent(studentId);
-        /*
+
         for(TeamProposalDTO tp: teamProposals) {
             ModelHelper.enrich(tp);
         }
 
-         */
         return teamProposals;
+    }
+
+    @GetMapping("/{studentId}/reports")
+    public List<ReportDTO> reports(@PathVariable String studentId) {
+        List<ReportDTO> reports = labService.getStudentReports(studentId);
+
+        for(ReportDTO report: reports) {
+            ModelHelper.enrich(report);
+        }
+
+        return reports;
     }
 
     /*

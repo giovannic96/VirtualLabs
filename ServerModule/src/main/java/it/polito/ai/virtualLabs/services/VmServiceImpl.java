@@ -184,6 +184,17 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    public List<AssignmentDTO> getProfessorAssignments(String professorId) {
+        if (!userRepository.professorExistsById(professorId))
+            throw new StudentNotFoundException("The professor with id '" + professorId + "' does not exists");
+
+        return userRepository.getProfessorById(professorId).getAssignments()
+                .stream()
+                .map(a -> modelMapper.map(a, AssignmentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");

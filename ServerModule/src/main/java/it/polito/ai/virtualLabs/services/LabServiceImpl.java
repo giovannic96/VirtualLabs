@@ -8,6 +8,7 @@ import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundExcepti
 import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.report.ReportNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.version.VersionNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,12 +100,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public ProfessorDTO getAssignmentProfessor(Long assignmentId) {
+    public Optional<ProfessorDTO> getAssignmentProfessor(Long assignmentId) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
         Assignment a = assignmentRepository.getOne(assignmentId);
-        return modelMapper.map(a.getProfessor(), ProfessorDTO.class);
+        return Optional.of(modelMapper.map(a.getProfessor(), ProfessorDTO.class));
     }
 
     @Override
@@ -120,12 +121,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public StudentDTO getReportOwner(Long reportId) {
+    public Optional<StudentDTO> getReportOwner(Long reportId) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
         Report r = reportRepository.getOne(reportId);
-        return modelMapper.map(r.getOwner(), StudentDTO.class);
+        return Optional.of(modelMapper.map(r.getOwner(), StudentDTO.class));
     }
 
     @Override
@@ -138,6 +139,30 @@ public class LabServiceImpl implements LabService {
                 .stream()
                 .map(a -> modelMapper.map(a, AssignmentDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ReportDTO> getReportForVersion(Long versionId) {
+        if(!versionRepository.existsById(versionId))
+            throw new VersionNotFoundException("The version with id " + versionId + " does not exist");
+
+        return Optional.of(modelMapper.map(versionRepository.getOne(versionId).getReport(), ReportDTO.class));
+    }
+
+    @Override
+    public Optional<AssignmentDTO> getAssignmentForReport(Long reportId) {
+        if(!reportRepository.existsById(reportId))
+            throw new AssignmentNotFoundException("The report with id " + reportId + " does not exist");
+
+        return Optional.of(modelMapper.map(reportRepository.getOne(reportId).getAssignment(), AssignmentDTO.class));
+    }
+
+    @Override
+    public Optional<CourseDTO> getAssignmentCourse(Long assignmentId) {
+        if(!assignmentRepository.existsById(assignmentId))
+            throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        return Optional.of(modelMapper.map(assignmentRepository.getOne(assignmentId).getCourse(), CourseDTO.class));
     }
 
     @Override

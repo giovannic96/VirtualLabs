@@ -1,8 +1,6 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.AssignmentDTO;
-import it.polito.ai.virtualLabs.dtos.ReportDTO;
-import it.polito.ai.virtualLabs.dtos.VersionDTO;
+import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.Report;
 import it.polito.ai.virtualLabs.services.LabService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +52,36 @@ public class LabController {
         return version.get();
     }
 
+    @GetMapping("/versions/{versionId}/report")
+    public ReportDTO reportForVersion(@PathVariable Long versionId) {
+        Optional<ReportDTO> report = labService.getReportForVersion(versionId);
+
+        if(!report.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report of the version with id " + versionId + " was not found");
+
+        return ModelHelper.enrich(report.get());
+    }
+
+    @GetMapping("/reports/{reportId}/assignment")
+    public AssignmentDTO assignmentForReport(@PathVariable Long reportId) {
+        Optional<AssignmentDTO> assignment = labService.getAssignmentForReport(reportId);
+
+        if(!assignment.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Assignment of the report with id " + reportId + " was not found");
+
+        return ModelHelper.enrich(assignment.get());
+    }
+
+    @GetMapping("/reports/{reportId}/owner")
+    public StudentDTO reportOwner(@PathVariable Long reportId) {
+        Optional<StudentDTO> owner = labService.getReportOwner(reportId);
+
+        if(!owner.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student of the report with id " + reportId + " was not found");
+
+        return ModelHelper.enrich(owner.get());
+    }
+
     @GetMapping("/reports/{reportId}/versions")
     public List<VersionDTO> versionsForReport(@PathVariable Long reportId) {
         Optional<ReportDTO> report = labService.getReport(reportId);
@@ -78,6 +106,26 @@ public class LabController {
 
         //TODO: da enrichare
         return reports;
+    }
+
+    @GetMapping("/assignments/{assignmentId}/course")
+    public CourseDTO courseForAssignment(@PathVariable Long assignmentId) {
+        Optional<CourseDTO> course = labService.getAssignmentCourse(assignmentId);
+
+        if(!course.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Course of the assignment with id " + assignmentId + " was not found");
+
+        return ModelHelper.enrich(course.get());
+    }
+
+    @GetMapping("/assignments/{assignmentId}/professor")
+    public ProfessorDTO professorForAssignment(@PathVariable Long assignmentId) {
+        Optional<ProfessorDTO> professor = labService.getAssignmentProfessor(assignmentId);
+
+        if(!professor.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The professor of the assignment with id " + assignmentId + " was not found");
+
+        return ModelHelper.enrich(professor.get());
     }
 
     @PostMapping("/reports/{reportId}/submitVersion")

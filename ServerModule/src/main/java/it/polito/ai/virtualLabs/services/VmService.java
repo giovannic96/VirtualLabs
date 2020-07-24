@@ -21,6 +21,7 @@ public interface VmService {
     List<VmDTO> getStudentVms(String studentId);
     List<VmDTO> getTeamVms(Long teamId);
     List<VmModelDTO> getProfessorVmModels(String professorId);
+    List<AssignmentDTO> getProfessorAssignments(String professorId);
 
     boolean createVm(VmDTO vmDTO, String studentId, Long teamId); //TESTED
     void removeVm(Long vmId); //TESTED
