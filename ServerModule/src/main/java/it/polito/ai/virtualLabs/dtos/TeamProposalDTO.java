@@ -15,5 +15,5 @@ public class TeamProposalDTO extends RepresentationModel<TeamProposalDTO> {
     String teamName;
     TeamProposal.TeamProposalStatus status;
     String statusDesc;
-    int missing;
+    String creatorId;
 }

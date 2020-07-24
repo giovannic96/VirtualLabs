@@ -1,7 +1,6 @@
 package it.polito.ai.virtualLabs.controllers;
 
-import it.polito.ai.virtualLabs.dtos.VmDTO;
-import it.polito.ai.virtualLabs.dtos.VmModelDTO;
+import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ public class VmController {
     VmService vmService;
 
     @GetMapping("/{vmId}")
-    public VmDTO report(@PathVariable Long vmId) {
+    public VmDTO getOne(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
 
         if(!vm.isPresent())
@@ -29,6 +28,28 @@ public class VmController {
 
         //TODO: da enrichare
         return vm.get();
+    }
+
+    @GetMapping("/{vmId}/team")
+    public TeamDTO team(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+        Optional<TeamDTO> team = vmService.getTeam(vmId);
+
+        if(!vm.isPresent() || !team.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+
+        return ModelHelper.enrich(team.get());
+    }
+
+    @GetMapping("/{vmId}/owner")
+    public StudentDTO owner(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+        Optional<StudentDTO> owner = vmService.getOwner(vmId);
+
+        if(!vm.isPresent() || !owner.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+
+        return ModelHelper.enrich(owner.get());
     }
 
     @GetMapping("/vmModels")
@@ -47,6 +68,36 @@ public class VmController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmModelId.toString());
 
         return ModelHelper.enrich(vmModel.get());
+    }
+
+    @GetMapping("/vmModels/{vmModelId}/course")
+    public CourseDTO course(@PathVariable Long vmModelId) {
+        Optional<CourseDTO> course = vmService.getVmModelCourse(vmModelId);
+
+        if(!course.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, course.toString());
+
+        return ModelHelper.enrich(course.get());
+    }
+
+    @GetMapping("/vmModels/{vmModelId}/professor")
+    public ProfessorDTO professor(@PathVariable Long vmModelId) {
+        Optional<ProfessorDTO> professor = vmService.getVmModelProfessor(vmModelId);
+
+        if(!professor.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, professor.toString());
+
+        return ModelHelper.enrich(professor.get());
+    }
+
+    @GetMapping("/vmModels/{vmModelId}/vms")
+    public List<VmDTO> vms(@PathVariable Long vmModelId) {
+        List<VmDTO> vms = vmService.getVmModelVms(vmModelId);
+
+        for(VmDTO vm : vms) {
+            ModelHelper.enrich(vm);
+        }
+        return vms;
     }
 
     @PutMapping("/{vmId}")

@@ -1,9 +1,6 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-import it.polito.ai.virtualLabs.dtos.UserDTO;
-import it.polito.ai.virtualLabs.dtos.VmDTO;
-import it.polito.ai.virtualLabs.dtos.VmModelDTO;
+import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.*;
 import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
@@ -65,11 +62,11 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Optional<UserDTO> getOwner(Long vmId) {
+    public Optional<StudentDTO> getOwner(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
         return Optional.of(vmRepository.getOne(vmId).getOwner())
-                .map(owner -> modelMapper.map(owner, UserDTO.class));
+                .map(owner -> modelMapper.map(owner, StudentDTO.class));
     }
 
     @Override
@@ -102,10 +99,42 @@ public class VmServiceImpl implements VmService {
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
 
         Optional<VmModel> vmModel = vmModelRepository.findByCourseName(courseName);
-        /*if(!vmModel.isPresent())
+        if(!vmModel.isPresent())
             return Optional.empty();
-        */
+
         return vmModel.map(v -> modelMapper.map(v, VmModelDTO.class));
+    }
+
+    @Override
+    public Optional<CourseDTO> getVmModelCourse(Long vmModelId) {
+        if(!vmModelRepository.existsById(vmModelId))
+            throw new CourseNotFoundException("The vm model with id '" + vmModelId + "' does not exist");
+
+        Optional<Course> course = courseRepository.findById(vmModelRepository.getOne(vmModelId).getCourse().getName());
+        if(!course.isPresent())
+            return Optional.empty();
+
+        return course.map(c -> modelMapper.map(c, CourseDTO.class));
+    }
+
+    @Override
+    public Optional<ProfessorDTO> getVmModelProfessor(Long vmModelId) {
+        if(!vmModelRepository.existsById(vmModelId))
+            throw new CourseNotFoundException("The vm model with id '" + vmModelId + "' does not exist");
+
+        Optional<Professor> professor = userRepository.findProfessorById(vmModelRepository.getOne(vmModelId).getProfessor().getId());
+        if(!professor.isPresent())
+            return Optional.empty();
+
+        return professor.map(p -> modelMapper.map(p, ProfessorDTO.class));
+    }
+
+    @Override
+    public List<VmDTO> getVmModelVms(Long vmModelId) {
+        return vmRepository.findAllByVmModelId(vmModelId)
+                .stream()
+                .map(vm -> modelMapper.map(vm, VmDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

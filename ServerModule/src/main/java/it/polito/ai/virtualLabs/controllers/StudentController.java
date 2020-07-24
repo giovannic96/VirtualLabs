@@ -100,4 +100,12 @@ public class StudentController {
         return ModelHelper.enrich(studentDTO);
     }*/
 
+    /*
+    @PostMapping({"","/"})
+    public ProfessorDTO addProfessor(@RequestBody ProfessorDTO professorDTO) {
+        if(!teamService.addProfessor(professorDTO))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, professorDTO.getId());
+        return ModelHelper.enrich(professorDTO);
+    }*/
+
 }

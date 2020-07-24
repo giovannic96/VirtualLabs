@@ -28,12 +28,15 @@ public interface TeamService {
     List<TeamDTO> getTeamsForCourse(String courseName); //TESTED
     List<TeamDTO> getTeamsForStudent(String studentId); //TESTED
     Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId); //TESTED
+    Optional<CourseDTO> getTeamProposalCourse(Long teamProposalId);
+    List<StudentDTO> getTeamProposalMembers(Long teamProposalId);
     List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName);
     List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
 
-    TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds); //TESTED
+    TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername); //TESTED
     void deleteTeam(Long teamId); //TESTED
+    void deleteTeamProposal(Long teamProposalId);
     List<StudentDTO>getTeamMembers(Long TeamId); //TESTED
     List<StudentDTO> getStudentsInTeams(String courseName); //TESTED
     List<StudentDTO> getAvailableStudents(String courseName); //TESTED
@@ -52,4 +55,5 @@ public interface TeamService {
     List<Boolean> addAndEnroll(Reader r, String courseName);
     List<CourseDTO> getCoursesForStudent(String studentId); //TESTED
     List<CourseDTO> getCoursesForProfessor(String professorId);
+    Optional<CourseDTO> getCourseForTeam(Long teamId);
 }

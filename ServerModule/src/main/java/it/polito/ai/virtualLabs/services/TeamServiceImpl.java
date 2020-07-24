@@ -366,6 +366,16 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public Optional<CourseDTO> getCourseForTeam(Long teamId) {
+        if(!teamRepository.existsById(teamId))
+            throw new TeamNotFoundException("The team with id '" + teamId + "' was not found");
+
+        Course course = teamRepository.getOne(teamId).getCourse();
+
+        return Optional.of(modelMapper.map(course, CourseDTO.class));
+    }
+
+    @Override
     public List<TeamDTO> getTeamsForStudent(String studentId) {
         if(!userRepository.existsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
@@ -403,7 +413,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds) {
+    public TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
@@ -442,22 +452,17 @@ public class TeamServiceImpl implements TeamService {
         proposal.setCourse(course);
         proposal.setTeamName(teamName);
         proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
+        proposal.setCreatorId(userRepository.getStudentByUsername(creatorUsername).getId());
 
         teamProposalRepository.saveAndFlush(proposal);
         for(Student s : students) {
             s.addTeamProposal(proposal);
-            proposal.addToken(hashToken(s.getUsername()));
         }
 
-        //TODO
-        //notificationService.notifyTeam();
+        //send email to all members
+        notificationService.notifyTeam(proposal.getId(), memberIds);
 
         return modelMapper.map(proposal, TeamProposalDTO.class);
-    }
-
-    private String hashToken(String username) {
-        String randomString = UUID.randomUUID().toString()+"|"+username;
-        return Base64.getEncoder().encodeToString(randomString.getBytes());
     }
 
     @Override
@@ -466,7 +471,27 @@ public class TeamServiceImpl implements TeamService {
             return Optional.empty();
         return teamProposalRepository.findById(teamProposalId)
                 .map(t -> modelMapper.map(t, TeamProposalDTO.class));
+    }
 
+    @Override
+    public Optional<CourseDTO> getTeamProposalCourse(Long teamProposalId) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            return Optional.empty();
+        Course course = teamProposalRepository.getOne(teamProposalId).getCourse();
+
+        return Optional.of(modelMapper.map(course, CourseDTO.class));
+    }
+
+    @Override
+    public List<StudentDTO> getTeamProposalMembers(Long teamProposalId) {
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("The team proposal with id '" + teamProposalId + "' was not found");
+
+        return teamProposalRepository.getOne(teamProposalId)
+                .getStudents()
+                .stream()
+                .map(s -> modelMapper.map(s, StudentDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -587,6 +612,14 @@ public class TeamServiceImpl implements TeamService {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
         teamRepository.deleteById(teamId);
+        teamRepository.flush();
+    }
+
+    @Override
+    public void deleteTeamProposal(Long teamProposalId) {
+        if(!teamRepository.existsById(teamProposalId))
+            throw new TeamNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
+        teamRepository.deleteById(teamProposalId);
         teamRepository.flush();
     }
 }

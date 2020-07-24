@@ -13,13 +13,13 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
-    @PutMapping("/accept")
+    @GetMapping("/accept")
     @ResponseStatus(HttpStatus.OK)
     public void accept(@RequestParam Long tpId, @RequestParam String token) {
         notificationService.accept(tpId, token);
     }
 
-    @PutMapping("/reject")
+    @GetMapping("/reject")
     @ResponseStatus(HttpStatus.OK)
     public void reject(@RequestParam Long tpId, @RequestParam String token) {
         notificationService.reject(tpId, token);

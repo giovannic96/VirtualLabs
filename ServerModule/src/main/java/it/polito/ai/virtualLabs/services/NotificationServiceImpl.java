@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.TeamDTO;
+import it.polito.ai.virtualLabs.dtos.TeamProposalDTO;
 import it.polito.ai.virtualLabs.entities.Course;
 import it.polito.ai.virtualLabs.entities.Student;
 import it.polito.ai.virtualLabs.entities.Team;
@@ -23,10 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +75,7 @@ public class NotificationServiceImpl implements NotificationService {
             return false;
 
         //remove token
-        tp.getTokens().remove(token);
+        tp.removeToken(token);
 
         //check if ALL students have accepted the team proposal
         if(tp.getTokens().size() == 0) {
@@ -122,8 +120,24 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyTeam(TeamDTO dto, List<String> memberIds) {
+    public void notifyTeam(Long teamProposalId, List<String> studentIds) {
 
+        TeamProposal proposal = teamProposalRepository.getOne(teamProposalId);
+        for(String id : studentIds) {
+            String username = userRepository.getStudentById(id).getUsername();
+            String token = hashToken(username);
+
+            sendMessage(username, "VirtualLabs Invitation", calcBody(teamProposalId, token));
+
+            proposal.addToken(token);
+        }
+
+
+    }
+
+    private String hashToken(String username) {
+        String randomString = UUID.randomUUID().toString()+"|"+username;
+        return Base64.getEncoder().encodeToString(randomString.getBytes());
     }
 
     private boolean checkProposal(TeamProposal tp, String token) {
@@ -168,50 +182,13 @@ public class NotificationServiceImpl implements NotificationService {
 
         return true;
     }
-/*
-    @Override
-    public void notifyTeam(TeamDTO dto, List<String> memberIds) {
-        if(!teamRepository.existsById(dto.getId()))
-            throw new TeamNotFoundException("The team with id " + dto.getId() + " was not found");
 
-        //verify that all memberIds are inside the team 'dto'
-        List<String> teamMembers = teamRepository.getOne(dto.getId())
-                                        .getStudents()
-                                        .stream()
-                                        .map(Student::getId)
-                                        .collect(Collectors.toList());
-        if(memberIds.size() != teamMembers.size())
-            throw new NotifyTeamException("All members must be enrolled in the team: " + dto.getName());
-        for(String memberId : teamMembers) {
-            if(!memberIds.contains(memberId))
-                throw new NotifyTeamException("All members must be enrolled in the team: " + dto.getName());
-        }
-
-        //generate tokens for each member and send email
-        for(String id : memberIds) {
-            Token t = new Token();
-            t.setId(UUID.randomUUID().toString());
-            t.setTeamId(dto.getId());
-            t.setExpiryDate(new Timestamp(System.currentTimeMillis() + TimeUnit.HOURS.toMillis(3)));
-            tokenRepository.saveAndFlush(t);
-            sendMessage(calcEmail(t.getId()), "TEAM PROPOSAL", calcBody(t.getId()));
-        }
-    }
-*/
-    private String calcEmail(String id) {
-        final String prefixEmail = "s";
-        final String suffixEmail = "@studenti.polito.it";
-        return prefixEmail + id + suffixEmail;
-    }
-
-    private String calcBody(String id) {
-        final String prefixConfirmURL = "http://localhost:8080/API/notification/accept/";
-        final String prefixRejectURL = "http://localhost:8080/API/notification/reject/";
+    private String calcBody(Long tpId, String token) {
+        final String confirmURL = "http://localhost:8080/API/notification/accept/?tpId="+tpId+"&token="+token;
+        final String rejectURL = "http://localhost:8080/API/notification/reject/?tpId="+tpId+"&token="+token;
         final String confirmBody = "Click here to confirm the proposal: ";
         final String rejectBody = "Click here to reject the proposal: ";
 
-        String confirmURL = prefixConfirmURL + id;
-        String rejectURL = prefixRejectURL + id;
         return confirmBody + confirmURL + "\n\n" + rejectBody + rejectURL;
     }
 }

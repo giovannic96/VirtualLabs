@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,10 @@ public class TeamProposal {
 
     private String statusDesc;
 
-    @ElementCollection
+    @NotNull
+    private String creatorId;
+
+    @ElementCollection(fetch=FetchType.EAGER)
     private List<String> tokens = new ArrayList<>();
 
     @ManyToOne

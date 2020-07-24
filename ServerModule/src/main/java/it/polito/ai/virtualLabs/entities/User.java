@@ -55,6 +55,8 @@ public class User implements UserDetails {
         return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
     }
 
+    boolean registered;
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

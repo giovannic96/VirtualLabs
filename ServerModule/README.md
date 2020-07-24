@@ -42,12 +42,23 @@ API
 * GET	http://ip_address:port/api/labs/versions/:versionId
 
 *Teams*
-* GET	http://ip_address:port/api/teams/:teamId/vms 
+* GET	http://ip_address:port/api/teams/:teamId
+* GET	http://ip_address:port/api/teams/:teamId/course
+* GET	http://ip_address:port/api/teams/:teamId/members
+* GET	http://ip_address:port/api/teams/:teamId/vms
+* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId
+* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/course
+* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/members
 
 *Vms*
 * GET	http://ip_address:port/api/vms/:vmId
+* GET	http://ip_address:port/api/vms/:vmId/team
+* GET	http://ip_address:port/api/vms/:vmId/owner
 * GET	http://ip_address:port/api/vms/vmModels
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId
+* GET	http://ip_address:port/api/vms/vmModels/:vmModelId/course
+* GET	http://ip_address:port/api/vms/vmModels/:vmModelId/professor
+* GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
 
 ---  
 **POST**
@@ -82,8 +93,8 @@ API
 * PUT	http://ip_address:port/api/labs/reports/:reportId/gradeReport
 
 *Notification*
-* PUT	http://ip_address:port/api/notification/:teamProposalId/accept
-* PUT	http://ip_address:port/api/notification/:teamProposalId/reject
+* PUT	http://ip_address:port/api/notification/accept?tpId=:tpId&token=:token
+* PUT	http://ip_address:port/api/notification/reject?tpId=:tpId&token=:token
 
 ---
 **DELETE**
@@ -94,3 +105,6 @@ API
 
 *Vms*
 * DELETE http://ip_address:port/api/vms/:vmId
+
+*Teams*
+* DELETE http://ip_address:port/api/teams/:teamProposalId
