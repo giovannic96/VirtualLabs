@@ -61,7 +61,7 @@ public class LabServiceImpl implements LabService {
 
     @Override
     public List<ReportDTO> getStudentReports(String studentId) {
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         Student s = userRepository.getStudentById(studentId);
@@ -73,7 +73,7 @@ public class LabServiceImpl implements LabService {
 
     @Override
     public List<ReportDTO> getStudentReportsForAssignment(String studentId, Long assignmentId) {
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         if(!assignmentRepository.existsById(assignmentId))
@@ -169,7 +169,7 @@ public class LabServiceImpl implements LabService {
     public boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
-        if(!userRepository.existsById(professorId))
+        if(!userRepository.professorExistsById(professorId))
             throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
 
         Course course = courseRepository.getOne(courseName);
@@ -192,7 +192,7 @@ public class LabServiceImpl implements LabService {
     public boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         Assignment assignment = assignmentRepository.getOne(assignmentId);

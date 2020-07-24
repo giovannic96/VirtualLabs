@@ -32,11 +32,8 @@ public class StudentController {
     @GetMapping({"","/"})
     public List<StudentDTO> all() {
         List<StudentDTO> students = teamService.getAllStudents();
-        /*
         for(StudentDTO s: students)
             ModelHelper.enrich(s);
-
-         */
         return students;
     }
 
@@ -51,55 +48,40 @@ public class StudentController {
     @GetMapping("/{studentId}/courses")
     public List<CourseDTO> courses(@PathVariable String studentId) {
         List<CourseDTO> courses = teamService.getCoursesForStudent(studentId);
-        for(CourseDTO c: courses) {
+        for(CourseDTO c: courses)
             ModelHelper.enrich(c);
-        }
         return courses;
     }
 
     @GetMapping("/{studentId}/teams")
     public List<TeamDTO> teams(@PathVariable String studentId) {
         List<TeamDTO> teams = teamService.getTeamsForStudent(studentId);
-        /*
-        for(TeamDTO t: teams) {
+        for(TeamDTO t: teams)
             ModelHelper.enrich(t);
-        }
-
-         */
         return teams;
     }
 
     @GetMapping("/{studentId}/vms")
     public List<VmDTO> vms(@PathVariable String studentId) {
         List<VmDTO> vms = vmService.getStudentVms(studentId);
-        /*
-        for(VmDTO v: vms) {
+        for(VmDTO v: vms)
             ModelHelper.enrich(v);
-        }
-
-         */
         return vms;
     }
 
     @GetMapping("/{studentId}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String studentId) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForStudent(studentId);
-
-        for(TeamProposalDTO tp: teamProposals) {
+        for(TeamProposalDTO tp: teamProposals)
             ModelHelper.enrich(tp);
-        }
-
         return teamProposals;
     }
 
     @GetMapping("/{studentId}/reports")
     public List<ReportDTO> reports(@PathVariable String studentId) {
         List<ReportDTO> reports = labService.getStudentReports(studentId);
-
-        for(ReportDTO report: reports) {
+        for(ReportDTO report: reports)
             ModelHelper.enrich(report);
-        }
-
         return reports;
     }
 

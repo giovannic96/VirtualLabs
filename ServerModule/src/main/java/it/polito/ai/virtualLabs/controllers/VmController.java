@@ -22,22 +22,17 @@ public class VmController {
     @GetMapping("/{vmId}")
     public VmDTO getOne(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
-
         if(!vm.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
-
-        //TODO: da enrichare
-        return vm.get();
+        return ModelHelper.enrich(vm.get());
     }
 
     @GetMapping("/{vmId}/team")
     public TeamDTO team(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
         Optional<TeamDTO> team = vmService.getTeam(vmId);
-
         if(!vm.isPresent() || !team.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
-
         return ModelHelper.enrich(team.get());
     }
 
@@ -45,10 +40,8 @@ public class VmController {
     public StudentDTO owner(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
         Optional<StudentDTO> owner = vmService.getOwner(vmId);
-
         if(!vm.isPresent() || !owner.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
-
         return ModelHelper.enrich(owner.get());
     }
 
@@ -63,40 +56,32 @@ public class VmController {
     @GetMapping("/vmModels/{vmModelId}")
     public VmModelDTO vmModel(@PathVariable Long vmModelId) {
         Optional<VmModelDTO> vmModel = vmService.getVmModel(vmModelId);
-
         if(!vmModel.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmModelId.toString());
-
         return ModelHelper.enrich(vmModel.get());
     }
 
     @GetMapping("/vmModels/{vmModelId}/course")
     public CourseDTO course(@PathVariable Long vmModelId) {
         Optional<CourseDTO> course = vmService.getVmModelCourse(vmModelId);
-
         if(!course.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, course.toString());
-
         return ModelHelper.enrich(course.get());
     }
 
     @GetMapping("/vmModels/{vmModelId}/professor")
     public ProfessorDTO professor(@PathVariable Long vmModelId) {
         Optional<ProfessorDTO> professor = vmService.getVmModelProfessor(vmModelId);
-
         if(!professor.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, professor.toString());
-
         return ModelHelper.enrich(professor.get());
     }
 
     @GetMapping("/vmModels/{vmModelId}/vms")
     public List<VmDTO> vms(@PathVariable Long vmModelId) {
         List<VmDTO> vms = vmService.getVmModelVms(vmModelId);
-
-        for(VmDTO vm : vms) {
+        for(VmDTO vm : vms)
             ModelHelper.enrich(vm);
-        }
         return vms;
     }
 
@@ -125,10 +110,8 @@ public class VmController {
     @ResponseStatus(HttpStatus.OK)
     public void remove(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
-
         if (!vm.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The vm with id '" + vmId + "' was not found");
-
         vmService.removeVm(vmId);
     }
 }

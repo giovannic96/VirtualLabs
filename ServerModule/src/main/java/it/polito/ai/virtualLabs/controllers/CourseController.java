@@ -2,6 +2,7 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.Assignment;
+import it.polito.ai.virtualLabs.entities.Professor;
 import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,7 +40,6 @@ public class CourseController {
         List<CourseDTO> courses = teamService.getAllCourses();
         for(CourseDTO c: courses)
             ModelHelper.enrich(c);
-
         return courses;
     }
 
@@ -47,32 +48,40 @@ public class CourseController {
         Optional<CourseDTO> course = teamService.getCourse(courseName);
         if(!course.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
         return ModelHelper.enrich(course.get());
     }
 
     @GetMapping("/{courseName}/enrolled")
     public List<StudentDTO> enrolledStudents(@PathVariable String courseName) {
-        return teamService.getEnrolledStudents(courseName);
-        //TODO: da enrichare
+        List<StudentDTO> students = teamService.getEnrolledStudents(courseName);
+        for(StudentDTO s : students)
+            ModelHelper.enrich(s);
+        return students;
     }
 
     @GetMapping("/{courseName}/teams")
     public List<TeamDTO> teams(@PathVariable String courseName) {
-        return teamService.getTeamsForCourse(courseName);
-        //TODO: da enrichare
+        List<TeamDTO> teams = teamService.getTeamsForCourse(courseName);
+        for(TeamDTO t : teams)
+            ModelHelper.enrich(t);
+        return teams;
     }
 
     @GetMapping("/{courseName}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String courseName) {
-        return teamService.getTeamProposalsForCourse(courseName);
-        //TODO: da enrichare
+        List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForCourse(courseName);
+        for(TeamProposalDTO tp : teamProposals)
+            ModelHelper.enrich(tp);
+        return teamProposals;
+
     }
 
     @GetMapping("/{courseName}/assignments")
     public List<AssignmentDTO> assignments(@PathVariable String courseName) {
-        return labService.getCourseAssignments(courseName);
-        //TODO: da enrichare
+        List<AssignmentDTO> assignments = labService.getCourseAssignments(courseName);
+        for(AssignmentDTO a : assignments)
+            ModelHelper.enrich(a);
+        return assignments;
     }
 
     @GetMapping("/{courseName}/vmModel")
@@ -80,15 +89,16 @@ public class CourseController {
         Optional<VmModelDTO> vmModel = vmService.getCourseVmModel(courseName);
         if(!vmModel.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        //TODO: da enrichare
-        return vmModel.get();
+        return ModelHelper.enrich(vmModel.get());
     }
 
     @GetMapping("/{courseName}/professors")
     public List<ProfessorDTO> professors(@PathVariable String courseName) {
-        return teamService.getProfessorsForCourse(courseName);
-        //TODO: da enrichare
+        List<ProfessorDTO> professors = teamService.getProfessorsForCourse(courseName);
+        for(ProfessorDTO p : professors)
+            ModelHelper.enrich(p);
+        return professors;
+
     }
 
     @PostMapping({"","/"})

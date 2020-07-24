@@ -93,7 +93,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public boolean addStudent(StudentDTO student) {
-        if(userRepository.existsById(student.getId()))
+        if(userRepository.studentExistsById(student.getId()))
             return false;
         Student s = modelMapper.map(student, Student.class);
         userRepository.saveAndFlush(s);
@@ -103,7 +103,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Optional<StudentDTO> getStudent(String studentId) {
 
-        if (!userRepository.existsById(studentId))
+        if (!userRepository.studentExistsById(studentId))
             return Optional.empty();
         return userRepository.findStudentById(studentId)
                 .map(s -> modelMapper.map(s, StudentDTO.class));
@@ -127,7 +127,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public boolean addProfessor(ProfessorDTO professor) {
-        if(userRepository.existsById(professor.getId()))
+        if(userRepository.professorExistsById(professor.getId()))
             return false;
         Professor p = modelMapper.map(professor, Professor.class);
         userRepository.saveAndFlush(p);
@@ -136,7 +136,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Optional<ProfessorDTO> getProfessor(String professorId) {
-        if (!userRepository.existsById(professorId))
+        if (!userRepository.professorExistsById(professorId))
             return Optional.empty();
         return userRepository.findProfessorById(professorId)
                 .map(p -> modelMapper.map(p, ProfessorDTO.class));
@@ -377,7 +377,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamDTO> getTeamsForStudent(String studentId) {
-        if(!userRepository.existsById(studentId))
+        if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
         /*
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -431,7 +431,7 @@ public class TeamServiceImpl implements TeamService {
 
         List<Student> students = new ArrayList<>();
         for(String memberId : distinctMembersIds) {
-            if(!userRepository.existsById(memberId))
+            if(!userRepository.studentExistsById(memberId))
                 throw new StudentNotFoundException("The student with id '" + memberId + "' was not found");
 
             Student student = userRepository.getStudentById(memberId);

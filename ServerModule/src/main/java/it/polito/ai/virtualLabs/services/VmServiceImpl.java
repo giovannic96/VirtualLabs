@@ -337,7 +337,7 @@ public class VmServiceImpl implements VmService {
     public boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
-        if(!userRepository.existsById(professorId))
+        if(!userRepository.professorExistsById(professorId))
             throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
 
         //check if there is already a vmModel for that course

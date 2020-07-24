@@ -31,11 +31,8 @@ public class ProfessorController {
     @GetMapping({"","/"})
     public List<ProfessorDTO> all() {
         List<ProfessorDTO> professors = teamService.getAllProfessors();
-        /*
         for(ProfessorDTO p: professors)
             ModelHelper.enrich(p);
-
-         */
         return professors;
     }
 
@@ -44,39 +41,30 @@ public class ProfessorController {
         Optional<ProfessorDTO> professor = teamService.getProfessor(professorId);
         if(!professor.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, professorId);
-
-        //return ModelHelper.enrich(professor.get());
-        return professor.get();
+        return ModelHelper.enrich(professor.get());
     }
 
     @GetMapping("/{professorId}/courses")
     public List<CourseDTO> courses(@PathVariable String professorId) {
         List<CourseDTO> courses = teamService.getCoursesForProfessor(professorId);
-        for(CourseDTO c: courses) {
+        for(CourseDTO c: courses)
             ModelHelper.enrich(c);
-        }
         return courses;
     }
 
     @GetMapping("/{professorId}/vmModels")
     public List<VmModelDTO> vmModels(@PathVariable String professorId) {
         List<VmModelDTO> vmModels = vmService.getProfessorVmModels(professorId);
-        /*
-        for(TeamDTO t: teams) {
-            ModelHelper.enrich(t);
-        }
-         */
+        for(VmModelDTO v: vmModels)
+            ModelHelper.enrich(v);
         return vmModels;
     }
 
     @GetMapping("/{professorId}/assignments")
     public List<AssignmentDTO> assignments(@PathVariable String professorId) {
         List<AssignmentDTO> assignments = vmService.getProfessorAssignments(professorId);
-
-        for(AssignmentDTO a : assignments) {
+        for(AssignmentDTO a : assignments)
             ModelHelper.enrich(a);
-        }
-
         return assignments;
     }
 
@@ -90,10 +78,8 @@ public class ProfessorController {
                         labService.getAssignmentProfessor(a.getId()).get().getId().equals(professorId))
                 .collect(Collectors.toList());
 
-        for (AssignmentDTO a : assignments) {
+        for (AssignmentDTO a : assignments)
             ModelHelper.enrich(a);
-        }
-
         return assignments;
     }
 }

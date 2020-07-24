@@ -46,50 +46,40 @@ public class TeamController {
     @GetMapping("/{teamId}/members")
     public List<StudentDTO> members(@PathVariable Long teamId) {
         List<StudentDTO> members = teamService.getTeamMembers(teamId);
-
-        for(StudentDTO s : members) {
+        for(StudentDTO s : members)
             ModelHelper.enrich(s);
-        }
-
         return members;
     }
 
     @GetMapping("/{teamId}/vms")
     public List<VmDTO> vmsForTeam(@PathVariable Long teamId) {
         List<VmDTO> vms = vmService.getTeamVms(teamId);
-
-        //TODO: da enrichare
+        for(VmDTO vm : vms)
+            ModelHelper.enrich(vm);
         return vms;
     }
 
     @GetMapping("/teamProposals/{teamProposalId}")
     public TeamProposalDTO getOneProposal(@PathVariable Long teamProposalId) {
         Optional<TeamProposalDTO> teamProposal = teamService.getTeamProposal(teamProposalId);
-
         if(!teamProposal.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The team proposal with id '" + teamProposalId + "' was not found");
-
         return ModelHelper.enrich(teamProposal.get());
     }
 
     @GetMapping("/teamProposals/{teamProposalId}/course")
     public CourseDTO teamProposalCourse(@PathVariable Long teamProposalId) {
         Optional<CourseDTO> course = teamService.getTeamProposalCourse(teamProposalId);
-
         if(!course.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course of the proposal with id '" + teamProposalId + "' was not found");
-
         return ModelHelper.enrich(course.get());
     }
 
     @GetMapping("/teamProposals/{teamProposalId}/members")
     public List<StudentDTO> teamProposalMembers(@PathVariable Long teamProposalId) {
         List<StudentDTO> members = teamService.getTeamProposalMembers(teamProposalId);
-
-        for(StudentDTO s : members) {
+        for(StudentDTO s : members)
             ModelHelper.enrich(s);
-        }
-
         return members;
     }
 
@@ -106,7 +96,7 @@ public class TeamController {
         String courseName = (String)input.get("courseName");
 
         List<String> studentIds = (List<String>)input.get("studentIds");
-        return teamService.proposeTeam(courseName, teamName, studentIds, userDetails.getUsername());
+        return ModelHelper.enrich(teamService.proposeTeam(courseName, teamName, studentIds, userDetails.getUsername()));
     }
 
     @PostMapping("/{teamId}/createVm")
@@ -126,8 +116,7 @@ public class TeamController {
         if(!vmService.createVm(vmDTO, studentId, teamId))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot create vm: current resources are not enough");
 
-        //TODO: to enrich
-        return vmDTO;
+        return ModelHelper.enrich(vmDTO);
     }
 
     @DeleteMapping("/{teamProposalId}")

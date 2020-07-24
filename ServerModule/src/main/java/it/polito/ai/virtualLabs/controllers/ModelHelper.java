@@ -158,8 +158,6 @@ public class ModelHelper {
                 reports
         );
 
-        studentDTO.add(selfLink);
-
         return studentDTO;
     }
 
