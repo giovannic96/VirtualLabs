@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("API/notification")
+@RequestMapping("notification")
 public class NotificationController {
 
     @Autowired

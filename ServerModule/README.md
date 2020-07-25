@@ -68,8 +68,8 @@ API
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
 
 *Notification*
-* PUT	http://ip_address:port/api/notification/accept?tpId=:tpId&token=:token
-* PUT	http://ip_address:port/api/notification/reject?tpId=:tpId&token=:token
+* PUT	http://ip_address:port/notification/accept?tpId=:tpId&token=:token
+* PUT	http://ip_address:port/notification/reject?tpId=:tpId&token=:token
 
 ---  
 **POST**
