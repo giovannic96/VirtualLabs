@@ -67,6 +67,10 @@ API
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/professor
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
 
+*Notification*
+* PUT	http://ip_address:port/api/notification/accept?tpId=:tpId&token=:token
+* PUT	http://ip_address:port/api/notification/reject?tpId=:tpId&token=:token
+
 ---  
 **POST**
 
@@ -98,10 +102,6 @@ API
 
 *Labs* 
 * PUT	http://ip_address:port/api/labs/reports/:reportId/gradeReport
-
-*Notification*
-* PUT	http://ip_address:port/api/notification/accept?tpId=:tpId&token=:token
-* PUT	http://ip_address:port/api/notification/reject?tpId=:tpId&token=:token
 
 ---
 **DELETE**
