@@ -20,8 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -45,11 +49,19 @@ public class NotificationServiceImpl implements NotificationService {
     TeamService teamService;
 
     @Override
-    public void sendMessage(String address, String subject, String body) throws MailException {
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void sendMessage(String address, String subject, String body) throws MailException, MessagingException {
+
+        /*SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(address);
         message.setSubject(subject);
-        message.setText(body);
+        message.setText(body);*/
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
+        String htmlMsg = "<h1> messaggio di <b>PROVA</b></h1>";
+        helper.setText(htmlMsg, true);
+        helper.setTo(address);
+        helper.setSubject(subject);
+
         emailSender.send(message);
     }
 
@@ -120,7 +132,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyTeam(Long teamProposalId, List<String> studentIds) {
+    public void notifyTeam(Long teamProposalId, List<String> studentIds) throws MessagingException {
 
         TeamProposal proposal = teamProposalRepository.getOne(teamProposalId);
         for(String id : studentIds) {

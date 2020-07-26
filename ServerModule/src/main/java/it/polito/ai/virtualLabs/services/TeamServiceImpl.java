@@ -471,8 +471,12 @@ public class TeamServiceImpl implements TeamService {
         }
 
         //send email to all members
-        notificationService.notifyTeam(proposal.getId(), memberIds);
-
+        try {
+            notificationService.notifyTeam(proposal.getId(), memberIds);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return modelMapper.map(proposal, TeamProposalDTO.class);
     }
 
