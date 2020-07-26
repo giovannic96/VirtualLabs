@@ -56,4 +56,5 @@ public interface TeamService {
     List<CourseDTO> getCoursesForStudent(String studentId); //TESTED
     List<CourseDTO> getCoursesForProfessor(String professorId);
     Optional<CourseDTO> getCourseForTeam(Long teamId);
+    List<StudentDTO> getStudentsNotInCourse(String courseName);
 }

@@ -1,0 +1,51 @@
+<div class="form-container">
+  <h2>Login</h2>
+  <form [formGroup]="signupForm">
+
+    <!-- Email -->
+    <mat-form-field appearance="legacy">
+      <mat-label>Email</mat-label>
+      <input matInput [type]="'email'" formControlName="email">
+      <mat-error *ngIf="signupForm.controls.email.hasError('email')">
+        Insert a valid email
+      </mat-error>
+      <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+        The field email is <strong>required</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password -->
+    <mat-form-field class="email-div" appearance="legacy">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hidePass ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hidePass = !hidePass">
+        <mat-icon>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="signupForm.controls.password.invalid">
+        Password <strong>not valid</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Repeat password -->
+    <mat-form-field class="email-div" appearance="legacy">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hidePass ? 'password' : 'text'" formControlName="password">
+      <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hidePass = !hidePass">
+        <mat-icon>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="signupForm.controls.password.invalid"> <!-- TODO add custom validator -->
+        Password <strong>not valid</strong>
+      </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="signupError" class="error-advice">Wrong email or password</div>
+    <div class="buttons-div">
+      <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">
+        SIGNUP
+      </button>
+      <button mat-raised-button color="" (click)="dialogRef.close(false)">
+        CANCEL
+      </button>
+    </div>
+  </form>
+</div>

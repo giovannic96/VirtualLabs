@@ -1,8 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Student} from "../student.model";
+import {Student} from "../../../models/student.model";
 import {MatTableDataSource} from "@angular/material/table";
-import {StudentService} from "../services/student.service";
+import {StudentService} from "../../../services/student.service";
 import {core} from "@angular/compiler";
+import {CourseService} from "../../../services/course.service";
 
 @Component({
   selector: 'app-students-cont',
@@ -12,12 +13,13 @@ import {core} from "@angular/compiler";
 export class StudentsContComponent implements OnInit {
 
   tableStudents = new MatTableDataSource<Student>();
-  allStudents: Student[];
+  notEnrolledStudents: Student[];
 
-  constructor(private studentService: StudentService) {
+  constructor(private studentService: StudentService,
+              private courseService: CourseService) {
 
-    this.getAllStudents();
-    this.getEnrolledStudents();
+    this.getEnrolledStudents("Mobile");
+    this.getNotEnrolledStudents("Mobile");
 
     /*
     this.studentService.find('738812').subscribe(student => {
@@ -35,20 +37,26 @@ export class StudentsContComponent implements OnInit {
   }
 
   getAllStudents() {
-    this.studentService.query().subscribe(students => {
-      this.allStudents = students;
-      this.allStudents.sort((a, b) => Student.sortData(a, b));
+    this.studentService.getAll().subscribe(students => {
+      this.notEnrolledStudents = students;
+      this.notEnrolledStudents.sort((a, b) => Student.sortData(a, b));
     })
   }
 
-  getEnrolledStudents() {
-    this.studentService.getEnrolled().subscribe(students => {
+  getEnrolledStudents(courseName: string) {
+    this.courseService.getEnrolled(courseName).subscribe(students => {
       this.tableStudents = new MatTableDataSource<Student>(students);
     });
   }
 
+  getNotEnrolledStudents(courseName: string) {
+    this.courseService.getNotEnrolled(courseName).subscribe(students => {
+      this.notEnrolledStudents = students;
+    });
+  }
+
   enrollStudent(studentFromEvent: Student) {
-    this.studentService.enroll(studentFromEvent).subscribe(student => {
+    this.courseService.enroll(studentFromEvent).subscribe(student => {
       if(student !== undefined) {
         // add student to tableStudents
         let tmp = this.tableStudents.data;
@@ -69,7 +77,7 @@ export class StudentsContComponent implements OnInit {
     })
 
     // unroll students
-    this.studentService.unroll(studentsFromEvent).subscribe(s => {
+    this.courseService.unroll(studentsFromEvent).subscribe(s => {
       if(s !== undefined) {
         // update tableStudents
         this.tableStudents = new MatTableDataSource<Student>(tmpStudentList);

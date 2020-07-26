@@ -3,10 +3,6 @@
   <a id="title" routerLink="/home" routerLinkActive="active"><span>VirtualLabs</span></a>
   <span class="fill-remaining-space"></span>
   <div class="log-button-div">
-    <button *ngIf="userLoggedIn" mat-flat-button color="primary" (click)="userLogout()">
-      Logout
-      <mat-icon>logout</mat-icon>
-    </button>
     <button *ngIf="!userLoggedIn" mat-flat-button color="primary" (click)="redirectToLogin()">
       Login
       <mat-icon>login</mat-icon>

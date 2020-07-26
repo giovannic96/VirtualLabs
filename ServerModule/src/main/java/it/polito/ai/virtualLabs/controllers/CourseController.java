@@ -59,6 +59,14 @@ public class CourseController {
         return students;
     }
 
+    @GetMapping("/{courseName}/notEnrolled")
+    public List<StudentDTO> notEnrolledStudents(@PathVariable String courseName) {
+        List<StudentDTO> students = teamService.getStudentsNotInCourse(courseName);
+        for(StudentDTO s : students)
+            ModelHelper.enrich(s);
+        return students;
+    }
+
     @GetMapping("/{courseName}/teams")
     public List<TeamDTO> teams(@PathVariable String courseName) {
         List<TeamDTO> teams = teamService.getTeamsForCourse(courseName);

@@ -55,4 +55,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT CASE WHEN COUNT(p)>0 THEN TRUE ELSE FALSE END FROM Professor p WHERE p.username = :email")
     boolean professorExistsByUsername(String email);
+
+    @Query("SELECT s FROM Student s WHERE s.id NOT IN (SELECT s.id FROM Course c INNER JOIN c.students s WHERE c.name=:courseName)")
+    List<Student> getStudentsNotInCourse(String courseName);
 }

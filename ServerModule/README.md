@@ -12,6 +12,7 @@ API
 * GET	http://ip_address:port/api/courses
 * GET	http://ip_address:port/api/courses/:courseName
 * GET	http://ip_address:port/api/courses/:courseName/enrolled
+* GET	http://ip_address:port/api/courses/:courseName/notEnrolled
 * GET	http://ip_address:port/api/courses/:courseName/teams
 * GET	http://ip_address:port/api/courses/:courseName/professors
 * GET	http://ip_address:port/api/courses/:courseName/vmModel

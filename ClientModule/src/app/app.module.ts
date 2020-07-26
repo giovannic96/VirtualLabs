@@ -14,18 +14,24 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StudentsComponent } from './teacher/students.component';
-import { StudentsContComponent } from './teacher/students-cont.component';
+import { StudentsComponent } from './components/tabs/students/students.component';
+import { StudentsContComponent } from './components/tabs/students/students-cont.component';
 import { RouterModule } from "@angular/router";
 import {routes} from "./app-routing-module";
-import {HomeComponent} from "./teacher/home.component";
-import {PageNotFoundComponent} from "./teacher/pagenotfound.component";
-import {VmsContComponent} from "./teacher/vms-cont.component";
+import {HomeComponent} from "./components/home.component";
 import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import {MatDialogModule} from "@angular/material/dialog";
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AuthInterceptorService} from "./auth/auth-interceptor.service";
+import { UserContComponent } from './components/tabs/user-cont.component';
+import { VmComponent } from './components/tabs/vms/vm.component';
+import { LabComponent } from './components/tabs/labs/lab.component';
+import { TeamComponent } from './components/tabs/teams/team.component';
+import { CourseInfoComponent } from './components/tabs/courses/course-info.component';
+import { SignupDialogComponent } from './auth/signup-dialog.component';
+import { ProfileComponent } from './auth/profile.component';
+import {PageNotFoundComponent} from "./components/pagenotfound.component";
 
 @NgModule({
   declarations: [
@@ -33,9 +39,15 @@ import {AuthInterceptorService} from "./auth/auth-interceptor.service";
     StudentsComponent,
     StudentsContComponent,
     HomeComponent,
-    VmsContComponent,
-    PageNotFoundComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+    UserContComponent,
+    VmComponent,
+    LabComponent,
+    TeamComponent,
+    CourseInfoComponent,
+    SignupDialogComponent,
+    ProfileComponent,
+    PageNotFoundComponent
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false }),

@@ -19,6 +19,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private checkLogin(url: string): boolean {
+    return true; //TODO delete this line later
     if(this.authService.isUserLogged()) {
       return true;
     }

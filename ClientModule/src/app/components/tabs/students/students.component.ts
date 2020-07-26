@@ -1,5 +1,5 @@
 import { MatButton } from '@angular/material/button';
-import { Student } from '../student.model';
+import { Student } from '../../../models/student.model';
 import {Component, ViewChild, ElementRef, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -27,7 +27,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   // Students
   currentSelectedOption: Student;
-  @Input() allStudents: Student[];
+  @Input() notEnrolledStudents: Student[];
 
   _tableStudents: MatTableDataSource<Student>;
   @Input() set tableStudents(tableStudents: MatTableDataSource<Student>) {
@@ -50,7 +50,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   constructor() {
     // Initialize columns
-    this.columnsToDisplay = ['select', 'id', 'name', 'firstName'];
+    this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
   }
 
   ngOnInit() {
@@ -72,20 +72,10 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   displayStudent(student: Student) {
-    return student.name + ' ' + student.firstName + ' (' + student.id + ')';
+    return student.surname + ' ' + student.name + ' (' + student.id + ')';
   }
 
   updateView() {
-    // update filtered (not enrolled) students
-    if (this.allStudents) {
-      this.filteredStudents = [];
-      this.allStudents.forEach(s => {
-        if(!this.tableStudents.data.map(student => student.id).includes(s.id))
-          this.filteredStudents.push(s);
-      });
-      this.filteredStudents.sort((a, b) => Student.sortData(a, b));
-    }
-
     // clear textbox and update table
     if(this.addStudentInput != undefined && this.addStudentInput.nativeElement.value != '') {
       this.addStudentInput.nativeElement.value = '';
@@ -101,14 +91,14 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     const inputValue = this.addStudentInput.nativeElement.value.toLowerCase();
     let enableButton = false;
 
-    // filter data, i.e. display only a part of the 'allStudents' array, according to the input value
-    this.filteredStudents = this.allStudents.filter(student => {
-      const studentString = student.name + ' ' + student.firstName + ' (' + student.id + ')';
-      if (studentString.toLowerCase() === inputValue && !this.tableStudents.data.includes(student)) {
+    // filter data, i.e. display only a part of the 'notEnrolledStudents' array, according to the input value
+    this.filteredStudents = this.notEnrolledStudents.filter(student => {
+      const studentString = student.surname + ' ' + student.name + ' (' + student.id + ')';
+      if (studentString.toLowerCase() === inputValue) {
         enableButton = true;
         this.currentSelectedOption = student;
       }
-      return studentString.toLowerCase().includes(inputValue) && !this.tableStudents.data.includes(student);
+      return studentString.toLowerCase().includes(inputValue);
     });
 
     // enable/disable addButton
