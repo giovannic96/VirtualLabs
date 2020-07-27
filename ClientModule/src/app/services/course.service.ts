@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import {Observable, throwError} from 'rxjs';
-import {Student} from '../models/student.model';
-import {catchError, retry} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, Observable, throwError} from "rxjs";
+import {Student} from "../models/student.model";
+import {catchError, retry} from "rxjs/operators";
+import {HttpClient} from "@angular/common/http";
+import {Course} from "../models/course.model";
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,31 @@ import {HttpClient} from '@angular/common/http';
 export class CourseService {
 
   private API_PATH = 'http://localhost:8080/API/courses';
+  private _selectedCourse: BehaviorSubject<Course>;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {
+    this._selectedCourse = new BehaviorSubject<Course>(null);
+  }
+
+  getSelectedCourse(): Observable<Course> {
+    return this._selectedCourse.asObservable();
+  }
+
+  setSelectedCourse(course: Course) {
+    this._selectedCourse.next(course);
+  }
+
+  getAll(): Observable<Course[]> {
+    return this.httpClient
+      .get<Course[]>(`${this.API_PATH}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetAll error: ${err.message}`);
+        })
+      );
+  }
 
   getEnrolled(courseName: string): Observable<Student[]> {
     return this.httpClient

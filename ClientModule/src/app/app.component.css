@@ -3,6 +3,19 @@
   color: white;
 }
 
+mat-list-item:active {
+  background-color: #c5cae9 !important;
+}
+
+mat-list-item:hover {
+  background-color: #a1ace5 !important;
+}
+
+mat-sidenav {
+  min-width: 200px;
+  margin-top: 2.5em;
+}
+
 .fill-remaining-space {
   flex: 1 1 auto;
 }

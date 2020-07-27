@@ -1,24 +1,56 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Student} from '../../../models/student.model';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {StudentService} from '../../../services/student.service';
-import {CourseService} from '../../../services/course.service';
+import {Student} from '../../models/student.model';
+import {StudentService} from '../../services/student.service';
+import {CourseService} from '../../services/course.service';
+import {Course} from '../../models/course.model';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
-  selector: 'app-students-cont',
-  templateUrl: './students-cont.component.html',
-  styleUrls: ['./students-cont.component.css']
+  selector: 'app-course-cont',
+  templateUrl: './course-cont.component.html',
+  styleUrls: ['./course-cont.component.css']
 })
-export class StudentsContComponent implements OnInit {
-
+export class CourseContComponent implements OnInit {
   tableStudents = new MatTableDataSource<Student>();
   notEnrolledStudents: Student[];
+  navLinks: any[];
+  activeLinkIndex = -1;
+  selectedCourse: Course;
+
 
   constructor(private studentService: StudentService,
-              private courseService: CourseService) {
+              private courseService: CourseService,
+              private router: Router,
+              private activatedRoute: ActivatedRoute) {
 
-    this.getEnrolledStudents('Mobile');
-    this.getNotEnrolledStudents('Mobile');
+    this.courseService.getSelectedCourse().subscribe(course => {
+      this.selectedCourse = course;
+      if (course !== null) {
+        this.getEnrolledStudents(course.name);
+        this.getNotEnrolledStudents(course.name);
+      }
+    });
+
+    this.navLinks = [
+      {
+        label: 'Students',
+        path: './teacher/course/applicazioni-internet/students',
+        index: 0
+      }, {
+        label: 'Teams',
+        path: './teacher/course/applicazioni-internet/groups',
+        index: 1
+      }, {
+        label: 'VMs',
+        path: './teacher/course/applicazioni-internet/vms',
+        index: 2
+      },
+    ];
+
+    this.router.events.subscribe((res) => {
+      this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+    });
 
     /*
     this.studentService.find('738812').subscribe(student => {
@@ -71,9 +103,8 @@ export class StudentsContComponent implements OnInit {
     const tmpStudentList = [];
 
     this.tableStudents.data.forEach(student => {
-      if (!studentsFromEvent.includes(student)) {
+      if (!studentsFromEvent.includes(student))
         tmpStudentList.push(student);
-      }
     });
 
     // unroll students

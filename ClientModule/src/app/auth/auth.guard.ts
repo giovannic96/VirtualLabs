@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
 import { Observable } from 'rxjs';
-import {AuthService} from "../services/auth.service";
+import {AuthService} from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
 
   private checkLogin(url: string): boolean {
     return true; //TODO delete this line later
-    if(this.authService.isUserLogged()) {
+    if (this.authService.isUserLogged()) {
       return true;
     }
     this.authService.redirectUrl = url;

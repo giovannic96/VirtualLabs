@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {AuthService} from "../services/auth.service";
-import {MatDialogRef} from "@angular/material/dialog";
-import {LoginDialogComponent} from "./login-dialog.component";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AuthService} from '../services/auth.service';
+import {MatDialogRef} from '@angular/material/dialog';
+import {LoginDialogComponent} from './login-dialog.component';
 
 @Component({
   selector: 'app-signup',
@@ -20,7 +20,7 @@ export class SignupDialogComponent implements OnInit {
     this.signupForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(32)]]
-      //TODO add custom validator for repeat password
+      // TODO add custom validator for repeat password
     });
   }
 
@@ -28,7 +28,7 @@ export class SignupDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    if(this.signupForm.valid) {
+    if (this.signupForm.valid) {
       this.authService.signup(this.signupForm.get('email').value, this.signupForm.get('password').value)
         .subscribe(resp => {
           this.signupError = false;

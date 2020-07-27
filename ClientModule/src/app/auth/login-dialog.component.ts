@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {MatDialogRef} from "@angular/material/dialog";
-import {AuthService} from "../services/auth.service";
-import {User} from "../models/user.model";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatDialogRef} from '@angular/material/dialog';
+import {AuthService} from '../services/auth.service';
+import {User} from '../models/user.model';
 
 @Component({
   selector: 'app-login-dialog',
@@ -27,7 +27,7 @@ export class LoginDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    if(this.loginForm.valid) {
+    if (this.loginForm.valid) {
       this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value)
         .subscribe(resp => {
         localStorage.setItem('tokenLab5', resp.accessToken);

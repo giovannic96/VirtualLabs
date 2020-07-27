@@ -15,32 +15,30 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StudentsComponent } from './components/tabs/students/students.component';
-import { StudentsContComponent } from './components/tabs/students/students-cont.component';
-import { RouterModule } from "@angular/router";
-import {routes} from "./app-routing-module";
-import {HomeComponent} from "./components/home.component";
-import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
-import {MatDialogModule} from "@angular/material/dialog";
+import { RouterModule } from '@angular/router';
+import {routes} from './app-routing-module';
+import {HomeComponent} from './components/home.component';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {MatDialogModule} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {AuthInterceptorService} from "./auth/auth-interceptor.service";
-import { UserContComponent } from './components/tabs/user-cont.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AuthInterceptorService} from './auth/auth-interceptor.service';
+import { CourseContComponent } from './components/tabs/course-cont.component';
 import { VmComponent } from './components/tabs/vms/vm.component';
 import { LabComponent } from './components/tabs/labs/lab.component';
 import { TeamComponent } from './components/tabs/teams/team.component';
 import { CourseInfoComponent } from './components/tabs/courses/course-info.component';
 import { SignupDialogComponent } from './auth/signup-dialog.component';
 import { ProfileComponent } from './auth/profile.component';
-import {PageNotFoundComponent} from "./components/pagenotfound.component";
+import {PageNotFoundComponent} from './components/pagenotfound.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StudentsComponent,
-    StudentsContComponent,
     HomeComponent,
     LoginDialogComponent,
-    UserContComponent,
+    CourseContComponent,
     VmComponent,
     LabComponent,
     TeamComponent,
