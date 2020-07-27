@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {Student} from "../models/student.model";
+import {Student} from '../models/student.model';
 import {forkJoin, Observable, of, throwError} from 'rxjs';
-import {HttpClient} from "@angular/common/http";
-import {catchError, retry} from "rxjs/operators";
+import {HttpClient} from '@angular/common/http';
+import {catchError, retry} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class StudentService {
 
   constructor(private httpClient: HttpClient) { }
 
-  create(newStudent: Student) : Observable<Student> {
+  create(newStudent: Student): Observable<Student> {
     return this.httpClient
       .post<Student>(`${this.API_PATH}`, newStudent)
       .pipe(
@@ -25,7 +25,7 @@ export class StudentService {
       );
   }
 
-  update(newStudent: Student) : Observable<Student> {
+  update(newStudent: Student): Observable<Student> {
     return this.httpClient
       .put<Student>(`${this.API_PATH}/${newStudent.id}`, newStudent)
       .pipe(
@@ -61,7 +61,7 @@ export class StudentService {
       );
   }
 
-  delete(studentId: string) : Observable<Student> {
+  delete(studentId: string): Observable<Student> {
     return this.httpClient
       .delete<Student>(`${this.API_PATH}/${studentId}`)
       .pipe(

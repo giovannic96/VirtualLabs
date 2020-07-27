@@ -1,0 +1,19 @@
+
+<!--
+<app-students [notEnrolledStudents]="notEnrolledStudents"
+              [tableStudents]="tableStudents"
+              (studentSelect)="enrollStudent($event)"
+              (studentDelete)="unrollStudents($event)">
+</app-students>
+-->
+<nav mat-tab-nav-bar>
+  <a mat-tab-link
+     *ngFor="let link of navLinks"
+     [routerLink]="link.path"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+    {{link.label}}
+  </a>
+  <!-- TODO: to manage variable passing -->
+</nav>
+<router-outlet></router-outlet>

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import {Observable, throwError} from "rxjs";
+import {BehaviorSubject, Observable, throwError} from "rxjs";
 import {Student} from "../models/student.model";
 import {catchError, retry} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
+import {Course} from "../models/course.model";
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,33 @@ import {HttpClient} from "@angular/common/http";
 export class CourseService {
 
   private API_PATH = 'http://localhost:8080/API/courses';
+  private _selectedCourse: BehaviorSubject<Course>;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {
+    this._selectedCourse = new BehaviorSubject<Course>(null);
+  }
 
-  getEnrolled(courseName: string) : Observable<Student[]> {
+  getSelectedCourse(): Observable<Course> {
+    return this._selectedCourse.asObservable();
+  }
+
+  setSelectedCourse(course: Course) {
+    this._selectedCourse.next(course);
+  }
+
+  getAll(): Observable<Course[]> {
+    return this.httpClient
+      .get<Course[]>(`${this.API_PATH}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetAll error: ${err.message}`);
+        })
+      );
+  }
+
+  getEnrolled(courseName: string): Observable<Student[]> {
     return this.httpClient
       .get<Student[]>(`${this.API_PATH}/${courseName}/enrolled`)
       .pipe(
@@ -25,7 +49,7 @@ export class CourseService {
       );
   }
 
-  getNotEnrolled(courseName: string) : Observable<Student[]> {
+  getNotEnrolled(courseName: string): Observable<Student[]> {
     return this.httpClient
       .get<Student[]>(`${this.API_PATH}/${courseName}/notEnrolled`)
       .pipe(
@@ -37,11 +61,11 @@ export class CourseService {
       );
   }
 
-  enroll(student: Student) : Observable<Student> {
+  enroll(student: Student): Observable<Student> {
     return null;
   }
 
-  unroll(student: Student[]) : Observable<Student[]> {
+  unroll(student: Student[]): Observable<Student[]> {
     return null;
   }
 

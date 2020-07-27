@@ -1,10 +1,12 @@
-import {Component, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import {ActivatedRoute, Router} from "@angular/router";
-import {MatDialog} from "@angular/material/dialog";
-import {LoginDialogComponent} from "./auth/login-dialog.component";
-import {AuthService} from "./services/auth.service";
-import {HomeComponent} from "./components/home.component";
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {LoginDialogComponent} from './auth/login-dialog.component';
+import {AuthService} from './services/auth.service';
+import {HomeComponent} from './components/home.component';
+import {Course} from './models/course.model';
+import {CourseService} from './services/course.service';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +17,16 @@ export class AppComponent {
   @ViewChild(MatSidenav) sideNav: MatSidenav;
   title = 'ai20-lab05';
   userLoggedIn: boolean;
-  navLinks: any[];
-  activeLinkIndex = -1;
+  allCourses: Course[] = [];
+  selectedCourseName: string;
 
   constructor(private authService: AuthService,
+              private courseService: CourseService,
               private router: Router,
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog) {
+
+    this.selectedCourseName = '';
 
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {
@@ -38,31 +43,21 @@ export class AppComponent {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if(params.doLogin) {
+      if (params.doLogin) {
         this.openDialog();
       }
     });
 
-    this.navLinks = [
-      {
-        label: 'Studenti',
-        path: './teacher/course/applicazioni-internet/students',
-        index: 0
-      }, {
-        label: 'Gruppi',
-        path: './teacher/course/applicazioni-internet/groups',
-        index: 1
-      }, {
-        label: 'VMs',
-        path: './teacher/course/applicazioni-internet/vms',
-        index: 2
-      },
-    ];
-  }
+    this.courseService.getSelectedCourse().subscribe(course => {
+      this.selectedCourseName = course ? course.name : '';
+    });
 
-  ngOnInit(): void {
-    this.router.events.subscribe((res) => {
-      this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+    this.courseService.getAll().subscribe(courseList => {
+      this.allCourses = courseList;
+      if (courseList.length)
+        this.setCurrentCourse(courseList[0]);
+
+      this.router.navigate(['courses/' + courseList[0].name + '/students']);
     });
   }
 
@@ -70,13 +65,13 @@ export class AppComponent {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
 
-      if(result && this.authService.redirectUrl) {
+      if (result && this.authService.redirectUrl) {
         this.router.navigate([this.authService.redirectUrl]);
         this.authService.redirectUrl = '';
       } else {
         this.router.navigate(['home']);
       }
-    })
+    });
   }
 
   userLogout() {
@@ -90,5 +85,9 @@ export class AppComponent {
 
   toggleForMenuClick() {
     this.sideNav.toggle();
+  }
+
+  setCurrentCourse(course: Course) {
+    this.courseService.setSelectedCourse(course);
   }
 }

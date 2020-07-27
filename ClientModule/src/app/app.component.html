@@ -10,32 +10,20 @@
   </div>
 </mat-toolbar>
 <mat-toolbar>
-  <span>Applicazioni Internet</span>
+  <span>{{selectedCourseName}}</span>
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav mode="side" opened position="start">
-    <div class="container">
+    <div>
       <mat-nav-list>
-        <mat-list-item routerLink="/teacher/course/applicazioni-internet/students" routerLinkActive="active">
-          Applicazioni Internet
-        </mat-list-item>
-      </mat-nav-list>
-      <mat-nav-list>
-        <mat-list-item>
-          Programmazione di Sistema
+        <mat-list-item *ngFor="let course of allCourses"
+                       (click)="setCurrentCourse(course)"
+                       routerLink="/courses/{{course.name}}/students">
+          {{course.name}}
         </mat-list-item>
       </mat-nav-list>
     </div>
   </mat-sidenav>
-  <nav mat-tab-nav-bar>
-    <a mat-tab-link
-       *ngFor="let link of navLinks"
-       [routerLink]="link.path"
-       routerLinkActive #rla="routerLinkActive"
-       [active]="rla.isActive">
-      {{link.label}}
-    </a>
-  </nav>
-  <router-outlet></router-outlet>
+  <app-course-cont></app-course-cont>
 </mat-sidenav-container>
 

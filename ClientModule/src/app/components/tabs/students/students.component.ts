@@ -49,7 +49,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   columnsToDisplay: string[];
 
   constructor() {
-    // Initialize columns
+    this._tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
   }
 

@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable, of} from "rxjs";
-import {Token} from "../models/token.model";
+import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {Token} from '../models/token.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private tokenLoggedObs : BehaviorSubject<Token>;
+  private tokenLoggedObs: BehaviorSubject<Token>;
   redirectUrl: string;
 
   constructor(private httpClient: HttpClient) {
     let token: Token = null;
     const localStorageItem = localStorage.getItem('tokenVirtualLabs');
-    if(localStorageItem) {
+    if (localStorageItem) {
       token = JSON.parse(atob(localStorageItem.split('.')[1]));
     }
     this.tokenLoggedObs = new BehaviorSubject<Token>(token);
