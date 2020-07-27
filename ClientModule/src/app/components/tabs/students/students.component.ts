@@ -77,11 +77,11 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   updateView() {
     // clear textbox and update table
-    if(this.addStudentInput != undefined && this.addStudentInput.nativeElement.value != '') {
+    if (this.addStudentInput !== undefined && this.addStudentInput.nativeElement.value !== '') {
       this.addStudentInput.nativeElement.value = '';
       this.currentSelectedOption = null;
     }
-    if(this.table) this.table.renderRows();
+    if (this.table) this.table.renderRows();
     this.tableStudents.paginator = this.paginator;
     this.tableStudents.sort = this.sort;
   }
@@ -110,7 +110,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   unrollStudents() {
-    let selected = [];
+    const selected = [];
 
     this.tableStudents.data.forEach(student => {
       if (this.selectedStudents.isSelected(student)) {

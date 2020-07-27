@@ -2,7 +2,7 @@ export class Token {
   private _username: string;
   private _iat: number;
   private _exp: number;
-  private _sub : string;
+  private _sub: string;
 
   constructor(username: string, iat: number, exp: number, sub: string) {
     this._username = username;

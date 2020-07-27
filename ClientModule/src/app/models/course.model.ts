@@ -17,39 +17,40 @@ export class Course {
     return this._name;
   }
 
+  set name(value: string) {
+    this._name = value;
+  }
+
   get acronym(): string {
     return this._acronym;
+  }
+
+  set acronym(value: string) {
+    this._acronym = value;
   }
 
   get enabled(): boolean {
     return this._enabled;
   }
 
-  get minTeamSize(): number {
-    return this._minTeamSize;
-  }
-
-  get maxTeamSize(): number {
-    return this._maxTeamSize;
-  }
-
-  set name(value: string) {
-    this._name = value;
-  }
-
   set enabled(value: boolean) {
     this._enabled = value;
+  }
+
+  get minTeamSize(): number {
+    return this._minTeamSize;
   }
 
   set minTeamSize(value: number) {
     this._minTeamSize = value;
   }
 
+  get maxTeamSize(): number {
+    return this._maxTeamSize;
+  }
+
   set maxTeamSize(value: number) {
     this._maxTeamSize = value;
   }
 
-  set acronym(value: string) {
-    this._acronym = value;
-  }
 }

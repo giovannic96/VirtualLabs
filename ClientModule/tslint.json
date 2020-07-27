@@ -9,7 +9,7 @@
     },
     "array-type": false,
     "arrow-return-shorthand": true,
-    "curly": true,
+    "curly": false,
     "deprecation": {
       "severity": "warning"
     },
@@ -114,6 +114,7 @@
     },
     "variable-name": {
       "options": [
+        "allow-leading-underscore",
         "ban-keywords",
         "check-format",
         "allow-pascal-case"
