@@ -5,10 +5,10 @@
       <mat-label>Email</mat-label>
       <input matInput [type]="'email'" formControlName="email">
       <mat-error *ngIf="loginForm.controls.email.hasError('email')">
-        Inserire un'email valida
+        Please insert a valid email
       </mat-error>
       <mat-error *ngIf="loginForm.controls.email.hasError('required')">
-        Il campo email è <strong>richiesto</strong>
+        The field email is <strong>required</strong>
       </mat-error>
     </mat-form-field>
     <mat-form-field class="email-div" appearance="legacy">
@@ -21,7 +21,7 @@
         Password <strong>non valida</strong>
       </mat-error>
     </mat-form-field>
-    <div *ngIf="loginError" class="error-advice">Email o password errate</div>
+    <div *ngIf="loginError" class="error-advice">Wrong email or password</div>
     <div class="buttons-div">
       <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">
         LOGIN

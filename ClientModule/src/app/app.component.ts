@@ -13,7 +13,7 @@ import {HomeComponent} from "./components/home.component";
 })
 export class AppComponent {
   @ViewChild(MatSidenav) sideNav: MatSidenav;
-  title = 'ai20-lab05';
+  title = 'VirtualLabs';
   userLoggedIn: boolean;
   navLinks: any[];
   activeLinkIndex = -1;
@@ -45,11 +45,11 @@ export class AppComponent {
 
     this.navLinks = [
       {
-        label: 'Studenti',
+        label: 'Students',
         path: './teacher/course/applicazioni-internet/students',
         index: 0
       }, {
-        label: 'Gruppi',
+        label: 'Groups',
         path: './teacher/course/applicazioni-internet/groups',
         index: 1
       }, {

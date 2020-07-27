@@ -110,7 +110,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   unrollStudents() {
-    let selected = [];
+    const selected = [];
 
     this.tableStudents.data.forEach(student => {
       if (this.selectedStudents.isSelected(student)) {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {Observable, throwError} from "rxjs";
-import {Student} from "../models/student.model";
-import {catchError, retry} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import {Observable, throwError} from 'rxjs';
+import {Student} from '../models/student.model';
+import {catchError, retry} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class CourseService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getEnrolled(courseName: string) : Observable<Student[]> {
+  getEnrolled(courseName: string): Observable<Student[]> {
     return this.httpClient
       .get<Student[]>(`${this.API_PATH}/${courseName}/enrolled`)
       .pipe(
@@ -25,7 +25,7 @@ export class CourseService {
       );
   }
 
-  getNotEnrolled(courseName: string) : Observable<Student[]> {
+  getNotEnrolled(courseName: string): Observable<Student[]> {
     return this.httpClient
       .get<Student[]>(`${this.API_PATH}/${courseName}/notEnrolled`)
       .pipe(
@@ -37,11 +37,11 @@ export class CourseService {
       );
   }
 
-  enroll(student: Student) : Observable<Student> {
+  enroll(student: Student): Observable<Student> {
     return null;
   }
 
-  unroll(student: Student[]) : Observable<Student[]> {
+  unroll(student: Student[]): Observable<Student[]> {
     return null;
   }
 
