@@ -2,3 +2,6 @@
 *.iws
 *.iml
 *.ipr
+virtual_rsa
+start_update.bat
+stop_and_package.bat
