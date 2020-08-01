@@ -1,0 +1,16 @@
+mat-list-item:active {
+  background-color: #c5cae9 !important;
+}
+
+mat-list-item:hover {
+  background-color: #a1ace5 !important;
+}
+
+mat-sidenav {
+  margin-top: 2.5em;
+}
+
+.tab-container {
+  padding: 0 2em;
+}
+

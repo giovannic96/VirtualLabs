@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AuthService} from './services/auth.service';
-import {HomeComponent} from './components/home.component';
+import {HomeComponent} from './components/main/home/home.component';
 import {Course} from './models/course.model';
 import {CourseService} from './services/course.service';
 
@@ -14,11 +14,10 @@ import {CourseService} from './services/course.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  // TODO: usare l'interfaccia per comandare la sidenav
   @ViewChild(MatSidenav) sideNav: MatSidenav;
   title = 'VirtualLabs';
   userLoggedIn: boolean;
-  allCourses: Course[] = [];
-  selectedCourseName: string;
 
   constructor(private authService: AuthService,
               private courseService: CourseService,
@@ -26,12 +25,11 @@ export class AppComponent {
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog) {
 
-    this.selectedCourseName = '';
 
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {
         if (this.authService.isTokenExpired()) {
-          localStorage.removeItem('tokenLab5');
+          localStorage.removeItem('tokenVirtualLabs');
           this.userLoggedIn = false;
         } else {
           this.userLoggedIn = true;
@@ -46,18 +44,6 @@ export class AppComponent {
       if (params.doLogin) {
         this.openDialog();
       }
-    });
-
-    this.courseService.getSelectedCourse().subscribe(course => {
-      this.selectedCourseName = course ? course.name : '';
-    });
-
-    this.courseService.getAll().subscribe(courseList => {
-      this.allCourses = courseList;
-      if (courseList.length)
-        this.setCurrentCourse(courseList[0]);
-
-      this.router.navigate(['courses/' + courseList[0].name + '/students']);
     });
   }
 
@@ -87,7 +73,4 @@ export class AppComponent {
     this.sideNav.toggle();
   }
 
-  setCurrentCourse(course: Course) {
-    this.courseService.setSelectedCourse(course);
-  }
 }

@@ -6,7 +6,7 @@
       <input matInput type="text" placeholder="Name of the student"
              #addStudentInput [matAutocomplete]="ids"
              (keyup)="filterData()"
-             (click)="filterData()">
+             [disabled]="!notEnrolledStudents">
     </mat-form-field>
     <mat-autocomplete #ids="matAutocomplete"
                       [displayWith]="displayStudent"
@@ -16,10 +16,10 @@
     </mat-autocomplete>
     <button mat-raised-button color="accent" #addButton
             [disabled]="!currentSelectedOption || tableStudents.data.includes(currentSelectedOption)"
-            (click)="enrollStudent()">ADD
+            (click)="enrollStudent(currentSelectedOption)">ADD
     </button>
   </div>
-  <button class="delete-btn" mat-raised-button color="warn" (click)="unrollStudents()"
+  <button class="delete-btn" mat-raised-button color="warn"
           [disabled]="!selectedStudents.hasValue()"
           (click)="unrollStudents()">DELETE SELECTED STUDENTS
   </button>

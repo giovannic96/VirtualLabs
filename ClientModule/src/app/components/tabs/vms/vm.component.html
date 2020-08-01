@@ -1,1 +1,33 @@
-<p>vm works!</p>
+<div class="tab-section formed-teams-section" *ngIf="teamList">
+  <div class="tab-subtitle">
+    <mat-icon>desktop_windows</mat-icon>
+    <h2>Virtual machines</h2>
+  </div>
+  <mat-accordion multi="false">
+    <mat-expansion-panel *ngFor="let team of teamList" [disabled]="!(team.vms | async)?.length">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{team.name}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="team-vms-container" *ngIf="(team.vms | async)?.length">
+        <mat-card *ngFor="let vm of team.vms | async">
+          <mat-card-header>
+            <mat-card-title>
+              Vm#2
+            </mat-card-title>
+            <div class="led-fake-div" [class]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+          </mat-card-header>
+          <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+          <mat-card-content>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}Gb | Disk: {{vm.disk}}GB</mat-card-subtitle>
+            <mat-card-footer>
+              <button mat-flat-button color="accent">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
+              <button mat-flat-button color="primary" [disabled]="!vm.active">ENTER</button>
+            </mat-card-footer>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

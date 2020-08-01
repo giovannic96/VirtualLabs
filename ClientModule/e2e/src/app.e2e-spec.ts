@@ -10,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('ai20-lab05 app is running!');
+    expect(page.getTitleText()).toEqual('VirtualLabs app is running!');
   });
 
   afterEach(async () => {

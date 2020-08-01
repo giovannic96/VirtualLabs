@@ -4,6 +4,7 @@ export class Course {
   private _enabled: boolean;
   private _minTeamSize: number;
   private _maxTeamSize: number;
+  links: {rel, href}[];
 
   constructor(name: string, acronym: string, enabled: boolean, minTeamSize: number, maxTeamSize: number) {
     this._name = name;

@@ -9,3 +9,12 @@ mat-icon:hover {cursor: pointer;}
 .container {
   margin-top: 2.5em;
 }
+
+.snackMessageInfo {background-color: #b8b6b6; color: #203988;}
+.snackMessageSuccess {background-color: #54ba54; color: white;}
+.snackMessageWarning {background-color: #d6a440; color: white;}
+.snackMessageError {background-color: #cb4747; color: white;}
+
+.tab-section { margin-bottom: 1.5em;}
+
+.tab-subtitle { display: flex; align-items: center;}

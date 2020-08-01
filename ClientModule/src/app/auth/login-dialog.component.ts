@@ -30,7 +30,7 @@ export class LoginDialogComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value)
         .subscribe(resp => {
-        localStorage.setItem('tokenLab5', resp.accessToken);
+        localStorage.setItem('tokenVirtualLabs', resp.accessToken);
         const userParsed = JSON.parse(atob(resp.accessToken.split('.')[1]));
         this.authService.setUserLogged(userParsed);
         this.loginError = false;

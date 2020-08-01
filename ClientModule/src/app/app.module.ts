@@ -17,61 +17,70 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StudentsComponent } from './components/tabs/students/students.component';
 import { RouterModule } from '@angular/router';
 import {routes} from './app-routing-module';
-import {HomeComponent} from './components/home.component';
+import {HomeComponent} from './components/main/home/home.component';
+import {PersonalComponent} from './components/main/personal/personal.component';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 import {MatDialogModule} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AuthInterceptorService} from './auth/auth-interceptor.service';
-import { CourseContComponent } from './components/tabs/course-cont.component';
 import { VmComponent } from './components/tabs/vms/vm.component';
 import { LabComponent } from './components/tabs/labs/lab.component';
 import { TeamComponent } from './components/tabs/teams/team.component';
-import { CourseInfoComponent } from './components/tabs/courses/course-info.component';
+import { CourseInfoComponent } from './components/tabs/info/course-info.component';
 import { SignupDialogComponent } from './auth/signup-dialog.component';
 import { ProfileComponent } from './auth/profile.component';
-import {PageNotFoundComponent} from './components/pagenotfound.component';
+import {PageNotFoundComponent} from './components/main/pagenotfound.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MySnackBarComponent} from './helpers/my-snack-bar.component';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [
     AppComponent,
+    PersonalComponent,
     StudentsComponent,
     HomeComponent,
     LoginDialogComponent,
-    CourseContComponent,
     VmComponent,
     LabComponent,
     TeamComponent,
     CourseInfoComponent,
     SignupDialogComponent,
     ProfileComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    MySnackBarComponent
   ],
-  imports: [
-    RouterModule.forRoot(routes, {enableTracing: false }),
-    BrowserModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatListModule,
-    MatTabsModule,
-    MatTableModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatSortModule,
-    MatPaginatorModule,
-    HttpClientModule,
-    MatDialogModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+    imports: [
+        RouterModule.forRoot(routes, {enableTracing: false}),
+        BrowserModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatListModule,
+        MatTabsModule,
+        MatTableModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        MatSortModule,
+        MatPaginatorModule,
+        HttpClientModule,
+        MatDialogModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatExpansionModule,
+        MatSnackBarModule,
+        MatCardModule
+    ],
   exports: [
     RouterModule,
   ],
   providers: [
+    MySnackBarComponent,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,

@@ -14,4 +14,5 @@ public class UserDTO extends RepresentationModel<UserDTO> implements Serializabl
     String password;
     String name;
     String surname;
+    String photo;
 }

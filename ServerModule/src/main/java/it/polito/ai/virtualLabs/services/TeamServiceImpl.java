@@ -95,6 +95,8 @@ public class TeamServiceImpl implements TeamService {
     public boolean addStudent(StudentDTO student) {
         if(userRepository.studentExistsById(student.getId()))
             return false;
+        student.setPhoto(Base64.getEncoder().withoutPadding().encodeToString(String.valueOf(System.currentTimeMillis()).getBytes()));
+        System.out.println(student.getPhoto());
         Student s = modelMapper.map(student, Student.class);
         userRepository.saveAndFlush(s);
         return true;
@@ -460,6 +462,7 @@ public class TeamServiceImpl implements TeamService {
         // Create new team proposal
         TeamProposal proposal = new TeamProposal();
         proposal.setStatus(TeamProposal.TeamProposalStatus.PENDING);
+        proposal.setStatusDesc("Still no student has accepted the proposal");
         proposal.setCourse(course);
         proposal.setTeamName(teamName);
         proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
@@ -472,7 +475,7 @@ public class TeamServiceImpl implements TeamService {
 
         //send email to all members
         try {
-            notificationService.notifyTeam(proposal.getId(), memberIds);
+            //notificationService.notifyTeam(proposal.getId(), memberIds);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

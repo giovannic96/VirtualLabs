@@ -13,6 +13,8 @@ API
 * GET	http://ip_address:port/api/courses/:courseName
 * GET	http://ip_address:port/api/courses/:courseName/enrolled
 * GET	http://ip_address:port/api/courses/:courseName/notEnrolled
+* GET	http://ip_address:port/api/courses/:courseName/teamedUp					//da aggiungere a postman
+* GET	http://ip_address:port/api/courses/:courseName/notTeamedUP				//da aggiungere a postman
 * GET	http://ip_address:port/api/courses/:courseName/teams
 * GET	http://ip_address:port/api/courses/:courseName/professors
 * GET	http://ip_address:port/api/courses/:courseName/vmModel
@@ -56,6 +58,7 @@ API
 * GET	http://ip_address:port/api/teams/:teamId/vms
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/course
+* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/creator       //da aggiungere a postman
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/members
 
 *Vms*
@@ -80,6 +83,7 @@ API
 * POST http://ip_address:port/api/courses/:courseName/assignProfessor
 * POST http://ip_address:port/api/courses/:courseName/enrollOne
 * POST http://ip_address:port/api/courses/:courseName/enrollMany
+* POST http://ip_address:port/api/courses/:courseName/unrollMany
 * POST http://ip_address:port/api/courses/:courseName/setVmModel
 
 *Teams*
@@ -109,7 +113,6 @@ API
 
 *Courses*
 * DELETE http://ip_address:port/api/courses/:courseName
-* DELETE http://ip_address:port/api/courses/:courseName/students
 
 *Vms*
 * DELETE http://ip_address:port/api/vms/:vmId

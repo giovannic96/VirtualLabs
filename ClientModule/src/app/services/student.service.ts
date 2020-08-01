@@ -9,7 +9,7 @@ import {catchError, retry} from 'rxjs/operators';
 })
 export class StudentService {
 
-  private API_PATH = 'http://localhost:8080/API/students';
+  private API_PATH = 'https://virtuallabs.ns0.it/API/students';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -72,4 +72,17 @@ export class StudentService {
         })
       );
   }
+
+  getCourses(studentId: string): Observable<Student[]> {
+    return this.httpClient
+      .get<Student[]>(`${this.API_PATH}/${studentId}/courses`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetCourses error: ${err.message}`);
+        })
+      );
+  }
+
 }

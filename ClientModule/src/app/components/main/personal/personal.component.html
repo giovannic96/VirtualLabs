@@ -1,0 +1,30 @@
+<mat-toolbar>
+  <span>{{selectedCourseName}}</span>
+</mat-toolbar>
+<mat-sidenav-container [autosize]="true">
+  <mat-sidenav mode="side" opened position="start">
+    <div>
+      <mat-nav-list>
+        <mat-list-item *ngFor="let course of allCourses"
+                       (click)="setCurrentCourse(course)"
+                       routerLink="/courses/{{course.name}}/students">
+          {{course.name}}
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  <div>
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link
+         *ngFor="let link of navLinks"
+         [routerLink]="this.selectedCourseName + link.path"
+         routerLinkActive #rla="routerLinkActive"
+         [active]="rla.isActive">
+        {{link.label}}
+      </a>
+    </nav>
+    <div class="tab-container">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</mat-sidenav-container>

@@ -67,6 +67,22 @@ public class CourseController {
         return students;
     }
 
+    @GetMapping("/{courseName}/teamedUp")
+    public List<StudentDTO> teamedUpStudents(@PathVariable String courseName) {
+        List<StudentDTO> students = teamService.getStudentsInTeams(courseName);
+        for(StudentDTO s : students)
+            ModelHelper.enrich(s);
+        return students;
+    }
+
+    @GetMapping("/{courseName}/notTeamedUp")
+    public List<StudentDTO> notTeamedUpStudents(@PathVariable String courseName) {
+        List<StudentDTO> students = teamService.getAvailableStudents(courseName);
+        for(StudentDTO s : students)
+            ModelHelper.enrich(s);
+        return students;
+    }
+
     @GetMapping("/{courseName}/teams")
     public List<TeamDTO> teams(@PathVariable String courseName) {
         List<TeamDTO> teams = teamService.getTeamsForCourse(courseName);
@@ -181,6 +197,19 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The course named '" + courseName + "' was not modified");
     }
 
+    @PostMapping("/{courseName}/unrollMany")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeStudentsFromCourse(@PathVariable String courseName, @RequestBody List<String> studentIds) {
+        Optional<CourseDTO> course = teamService.getCourse(courseName);
+
+        if(!course.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
+
+        for(String studentId : studentIds) {
+            teamService.removeStudentFromCourse(studentId, courseName);
+        }
+    }
+
     @PutMapping("/{courseName}/editVmModel")
     @ResponseStatus(HttpStatus.OK)
     public void editVmModel(@PathVariable String courseName, @RequestBody VmModelDTO vmModelDTO) {
@@ -201,19 +230,6 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
 
         teamService.removeCourse(courseName);
-    }
-
-    @DeleteMapping("/{courseName}/students")
-    @ResponseStatus(HttpStatus.OK)
-    public void removeStudentsFromCourse(@PathVariable String courseName, @RequestBody List<String> studentIds) {
-        Optional<CourseDTO> course = teamService.getCourse(courseName);
-
-        if(!course.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
-
-        for(String studentId : studentIds) {
-            teamService.removeStudentFromCourse(studentId, courseName);
-        }
     }
 
 }

@@ -12,6 +12,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ModelHelper {
 
+    private static final String PHOTO_SERVER_PATH = "https://virtuallabs.ns0.it/images/user_profiles/";
+    private static final String PHOTO_FORMAT = "png";
+
+
     public static CourseDTO enrich(CourseDTO courseDTO) {
         //create links
         Link selfLink = linkTo(CourseController.class).slash(courseDTO.getName()).withSelfRel();
@@ -148,6 +152,8 @@ public class ModelHelper {
         Link teams = linkTo(methodOn(StudentController.class).teams(studentDTO.getId())).withRel("teams");
         Link vms = linkTo(methodOn(StudentController.class).vms(studentDTO.getId())).withRel("vms");
         Link reports = linkTo(methodOn(StudentController.class).reports(studentDTO.getId())).withRel("reports");
+
+        studentDTO.setPhoto(PHOTO_SERVER_PATH + studentDTO.getPhoto() + "." + PHOTO_FORMAT);
 
         studentDTO.add(
                 selfLink,

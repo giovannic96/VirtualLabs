@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('tokenLab5');
+    localStorage.removeItem('tokenVirtualLabs');
     this.setUserLogged(null);
   }
 

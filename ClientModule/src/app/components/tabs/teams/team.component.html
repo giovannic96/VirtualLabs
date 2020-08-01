@@ -1,1 +1,136 @@
-<p>team works!</p>
+<div class="tab-section formed-teams-section" *ngIf="teamList && teamList.length; else noTeams">
+  <div class="tab-subtitle">
+    <mat-icon>groups</mat-icon>
+    <h2>Teams</h2>
+  </div>
+  <mat-accordion multi="false">
+    <mat-expansion-panel *ngFor="let team of this.teamList">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{team.name}}
+        </mat-panel-title>
+        <mat-panel-description>
+          Here could go a description (useless)
+          <div class="icons-div">
+            <mat-icon>person</mat-icon><span>{{(team.members | async)?.length}}</span>
+            <mat-icon>desktop_windows</mat-icon><span>{{(team.vms | async)?.length}}</span>
+          </div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <h4>Composed by:</h4>
+      <mat-card *ngFor="let member of team.members | async">
+        <mat-card-header>
+          <img [src]="member.photo" mat-card-avatar>
+          <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+          <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      <ng-container *ngIf="(team.vms | async)?.length">
+        <h4>VMs:</h4>
+        <mat-card *ngFor="let vm of team.vms | async; let i = index">
+          <mat-card-header>
+            <img src="https://w0.pngwave.com/png/997/157/virtualbox-computer-icons-virtual-machine-operating-systems-virtualization-boxing-png-clip-art.png" mat-card-avatar>
+            <mat-card-title>VM#{{i+1}}</mat-card-title>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}Gb | Disk: {{vm.disk}}GB</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+      </ng-container>
+      <mat-action-row>
+        <button mat-raised-button color="warn">DELETE TEAM</button>
+        <button mat-raised-button color="primary">SEND MESSAGE</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<ng-template #noTeams>
+  <div class="no-teams-message-container">
+    <mat-card><mat-card-header><mat-card-title>
+      Still no team has been formed
+    </mat-card-title></mat-card-header></mat-card>
+  </div>
+</ng-template>
+
+<div class="tab-section pending-proposal-section">
+  <div class="tab-subtitle">
+    <mat-icon>pending_actions</mat-icon>
+    <h2>Pending team proposals</h2>
+  </div>
+  <mat-accordion multi="false">
+    <mat-card *ngIf="!pendingProposals.length">
+      <mat-card-header>
+        <mat-card-subtitle>There are no pending proposals</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+    <mat-expansion-panel *ngFor="let proposal of pendingProposals">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{proposal.teamName}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{proposal.statusDesc}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <h3 *ngIf="proposal.creator | async as creator">
+        <b>{{creator.name}} {{creator.surname}}</b> proposed this team.
+      </h3>
+      <h4>It will be composed by:</h4>
+      <mat-card *ngFor="let member of proposal.members | async">
+        <mat-card-header>
+          <img src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png" mat-card-avatar>
+          <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+          <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      <br>
+      <em>This team proposal will expire on {{proposal.expiryDate.toLocaleDateString()}} at {{proposal.expiryDate.toLocaleTimeString()}}</em>
+      <mat-action-row>
+        <button mat-raised-button color="primary">SEND MESSAGE</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
+<div class="tab-section student-lists-section">
+  <div class="tab-subtitle">
+    <mat-icon>list</mat-icon>
+    <h2>Students in teams</h2>
+  </div>
+  <div class="student-lists-container">
+    <div class="student-list">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title class="student-list-title">Already teamed up</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-list>
+          <mat-list-item *ngFor="let student of teamedUpStudents">
+            <img matListAvatar src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png">
+            <h3 matLine>{{student.name}} {{student.surname}} - {{student.id}}</h3>
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+    <div class="student-list">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title class="student-list-title">Not engaged yet</mat-card-title>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-list>
+          <mat-list-item *ngFor="let student of notTeamedUpStudents">
+            <img matListAvatar src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png">
+            <h3 matLine>{{student.name}} {{student.surname}} - {{student.id}}</h3>
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<div class="tab-section proposal-history-section">
+  <div class="tab-subtitle">
+    <mat-icon>history</mat-icon>
+    <h2>Proposals history</h2>
+  </div>
+  <!-- TODO: pensare a come implementare la cronologia delle proposte-->
+</div>

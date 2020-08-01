@@ -1,0 +1,47 @@
+h3, h4 {
+  font-weight: normal;
+}
+
+.icons-div {
+  display: flex;
+  align-items: center;
+}
+
+.icons-div mat-icon {
+  margin-left: 1em;
+}
+
+.no-teams-message-container {
+  margin: 1.5em 0;
+}
+
+mat-panel-title {
+  font-size: large;
+}
+
+mat-panel-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+mat-card {
+  margin-bottom: .5em;
+}
+
+.mat-card-subtitle {
+  margin-bottom: 0;
+}
+
+.student-lists-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.student-list-title {
+  font-weight: lighter;
+}
+
+.student-list {
+  width: 48%
+}
