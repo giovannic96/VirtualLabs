@@ -1,8 +1,5 @@
 export class User {
 
-  PHOTO_URL = 'https://virtuallabs.ns0.it/images/user_profiles/';
-  PHOTO_FORMAT = '.png';
-
   private _id: string;
   private _username: string;
   private _password: string;

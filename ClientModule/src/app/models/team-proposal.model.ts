@@ -1,5 +1,10 @@
 import {Student} from './student.model';
-import {Observable} from 'rxjs';
+
+export enum TeamProposalStatus {
+  PENDING = 'PENDING',
+  REJECTED = 'REJECTED',
+  CONFIRMED = 'CONFIRMED'
+}
 
 export class TeamProposal {
 
@@ -9,8 +14,8 @@ export class TeamProposal {
   private _status: string;
   private _statusDesc: string;
   private _creatorId: string;
-  private _members: Observable<Student[]>;
-  private _creator: Observable<Student>;
+  private _members: Student[];
+  private _creator: Student;
 
   get id(): number {
     return this._id;
@@ -60,19 +65,19 @@ export class TeamProposal {
     this._creatorId = value;
   }
 
-  get members(): Observable<Student[]> {
+  get members(): Student[] {
     return this._members;
   }
 
-  set members(value: Observable<Student[]>) {
+  set members(value: Student[]) {
     this._members = value;
   }
 
-  get creator(): Observable<Student> {
+  get creator(): Student {
     return this._creator;
   }
 
-  set creator(value: Observable<Student>) {
+  set creator(value: Student) {
     this._creator = value;
   }
 

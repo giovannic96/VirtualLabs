@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {concatMap, filter, flatMap, map, mergeMap, switchMap, take, toArray} from 'rxjs/operators';
+import {concatMap, filter, flatMap, map, mergeMap, switchMap, take, tap, toArray} from 'rxjs/operators';
 import {forkJoin, from, Observable, of} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
 import {Student} from '../../../models/student.model';
 import {StudentService} from '../../../services/student.service';
 import {TeamService} from '../../../services/team.service';
-import {TeamProposal} from '../../../models/team-proposal.model';
+import {TeamProposal, TeamProposalStatus} from '../../../models/team-proposal.model';
 
 @Component({
   selector: 'app-team',
@@ -31,39 +31,39 @@ export class TeamComponent implements OnInit {
               private studentService: StudentService,
               private teamService: TeamService) {
 
-    this.currentCourse = this.courseService.getSelectedCourse();
+    this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
-    this.currentCourse
-      .pipe(concatMap(course => {
+    this.currentCourse.pipe(
+      concatMap(course => {
         return this.courseService.getAllTeams(course.name);
-      }))
-      .pipe(mergeMap(teamList => {
+      }),
+      concatMap(teamList => {
         this.teamList = teamList;
         return teamList;
-      })).pipe(map(team => {
-        team.members = this.teamService.getTeamMembers(team.id);
-        team.vms = this.teamService.getTeamVms(team.id);
+      }),
+      tap(team => {
+        this.teamService.getTeamMembers(team.id).subscribe(members => team.members = members);
+        this.teamService.getTeamVms(team.id).subscribe(vms => team.vms = vms);
     })).subscribe();
 
-    this.currentCourse
-      .pipe(concatMap(course => {
+    this.currentCourse.pipe(
+      concatMap(course => {
         return this.courseService.getAllProposals(course.name);
-      })).pipe(map(teamProposalList => {
-        teamProposalList.forEach(proposal => {
-          proposal.members = this.teamService.getTeamProposalMembers(proposal.id);
-          proposal.creator = this.studentService.find(proposal.creatorId);
-        });
+      }),
+      concatMap(teamProposalList => {
+        this.allProposals = teamProposalList;
+        this.pendingProposals = teamProposalList.filter(proposal => proposal.status === TeamProposalStatus.PENDING);
         return teamProposalList;
-      })).subscribe(list => {
-        this.allProposals = list;
-        this.pendingProposals = list.filter(proposal => proposal.status === 'PENDING');
-      });
+      }),
+      tap(proposal => {
+        this.teamService.getTeamProposalMembers(proposal.id).subscribe(members => proposal.members = members);
+        this.studentService.find(proposal.creatorId).subscribe(creator => proposal.creator = creator);
+      })).subscribe();
 
     this.currentCourse
       .pipe(concatMap(course => {
         return this.courseService.getTeamedUpStudents(course.name);
-      }))
-      .subscribe(studentList => this.teamedUpStudents = studentList);
+      })).subscribe(studentList => this.teamedUpStudents = studentList);
 
     this.currentCourse
       .pipe(concatMap(course => {

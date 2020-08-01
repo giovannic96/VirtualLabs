@@ -9,6 +9,7 @@ import {Course} from '../../../models/course.model';
 import {CourseService} from '../../../services/course.service';
 import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-students',
@@ -54,12 +55,11 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     this.tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
 
-    this.courseService.getSelectedCourse().subscribe(course => {
+    this.courseService.getSelectedCourse().pipe(
+      filter(course => !!course)).subscribe(course => {
       this.selectedCourse = course;
-      if (course !== null) {
-        this.getEnrolledStudents(course.name);
-        this.getNotEnrolledStudents(course.name);
-      }
+      this.getEnrolledStudents(course.name);
+      this.getNotEnrolledStudents(course.name);
     });
   }
 

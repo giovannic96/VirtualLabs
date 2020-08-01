@@ -5,8 +5,8 @@ import {Vm} from './vm.model';
 export class Team {
   private _id: number;
   private _name: string;
-  private _members: Observable<Student[]>;
-  private _vms: Observable<Vm[]>;
+  private _members: Student[];
+  private _vms: Vm[];
   private _totCPU: number;
   private _totRAM: number;
   private _totDisk: number;
@@ -32,19 +32,19 @@ export class Team {
     this._name = value;
   }
 
-  get members(): Observable<Student[]> {
+  get members(): Student[] {
     return this._members;
   }
 
-  set members(value: Observable<Student[]>) {
+  set members(value: Student[]) {
     this._members = value;
   }
 
-  get vms(): Observable<Vm[]> {
+  get vms(): Vm[] {
     return this._vms;
   }
 
-  set vms(value: Observable<Vm[]>) {
+  set vms(value: Vm[]) {
     this._vms = value;
   }
 

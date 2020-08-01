@@ -1,4 +1,4 @@
-<div class="tab-section formed-teams-section" *ngIf="teamList && teamList.length; else noTeams">
+<div class="tab-section formed-teams-section" *ngIf="teamList?.length; else noTeams">
   <div class="tab-subtitle">
     <mat-icon>groups</mat-icon>
     <h2>Teams</h2>
@@ -12,22 +12,22 @@
         <mat-panel-description>
           Here could go a description (useless)
           <div class="icons-div">
-            <mat-icon>person</mat-icon><span>{{(team.members | async)?.length}}</span>
-            <mat-icon>desktop_windows</mat-icon><span>{{(team.vms | async)?.length}}</span>
+            <mat-icon>person</mat-icon><span>{{team.members?.length}}</span>
+            <mat-icon>desktop_windows</mat-icon><span>{{team.vms?.length}}</span>
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <h4>Composed by:</h4>
-      <mat-card *ngFor="let member of team.members | async">
+      <mat-card *ngFor="let member of team.members">
         <mat-card-header>
           <img [src]="member.photo" mat-card-avatar>
           <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
           <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
-      <ng-container *ngIf="(team.vms | async)?.length">
+      <ng-container *ngIf="team.vms?.length">
         <h4>VMs:</h4>
-        <mat-card *ngFor="let vm of team.vms | async; let i = index">
+        <mat-card *ngFor="let vm of team.vms; let i = index">
           <mat-card-header>
             <img src="https://w0.pngwave.com/png/997/157/virtualbox-computer-icons-virtual-machine-operating-systems-virtualization-boxing-png-clip-art.png" mat-card-avatar>
             <mat-card-title>VM#{{i+1}}</mat-card-title>
@@ -56,7 +56,7 @@
     <h2>Pending team proposals</h2>
   </div>
   <mat-accordion multi="false">
-    <mat-card *ngIf="!pendingProposals.length">
+    <mat-card *ngIf="!pendingProposals?.length">
       <mat-card-header>
         <mat-card-subtitle>There are no pending proposals</mat-card-subtitle>
       </mat-card-header>
@@ -70,11 +70,11 @@
           {{proposal.statusDesc}}
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <h3 *ngIf="proposal.creator | async as creator">
-        <b>{{creator.name}} {{creator.surname}}</b> proposed this team.
+      <h3>
+        <b>{{proposal.creator?.name}} {{proposal.creator?.surname}}</b> proposed this team.
       </h3>
       <h4>It will be composed by:</h4>
-      <mat-card *ngFor="let member of proposal.members | async">
+      <mat-card *ngFor="let member of proposal.members">
         <mat-card-header>
           <img src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png" mat-card-avatar>
           <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>

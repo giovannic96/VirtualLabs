@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
-import {concatMap, map, mergeMap} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {catchError, concatAll, concatMap, filter, map, mergeAll, mergeMap, tap, toArray} from 'rxjs/operators';
+import {forkJoin, Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
+import {Vm} from '../../../models/vm.model';
 
 @Component({
   selector: 'app-vm',
@@ -22,18 +23,21 @@ export class VmComponent implements OnInit {
               private teamService: TeamService,
               private courseService: CourseService) {
 
-    this.currentCourse = this.courseService.getSelectedCourse();
+    this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
-    this.currentCourse
-      .pipe(concatMap(course => {
+    this.currentCourse.pipe(
+      concatMap(course => {
         return this.courseService.getAllTeams(course.name);
-      }))
-      .pipe(mergeMap(teamList => {
+      }),
+      concatMap(teamList => {
         this.teamList = teamList;
         return teamList;
-      })).pipe(map(team => {
-        team.vms = this.teamService.getTeamVms(team.id);
-    })).subscribe();
+      }),
+      mergeMap(team => {
+        this.teamService.getTeamVms(team.id).subscribe(vms => team.vms = vms);
+        return of(null);
+      })).subscribe();
+
   }
 
   ngOnInit(): void {

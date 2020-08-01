@@ -1,17 +1,17 @@
-<div class="tab-section formed-teams-section" *ngIf="teamList">
+<div class="tab-section vms-section" *ngIf="teamList">
   <div class="tab-subtitle">
     <mat-icon>desktop_windows</mat-icon>
     <h2>Virtual machines</h2>
   </div>
   <mat-accordion multi="false">
-    <mat-expansion-panel *ngFor="let team of teamList" [disabled]="!(team.vms | async)?.length">
+    <mat-expansion-panel *ngFor="let team of teamList" [disabled]="!team.vms?.length">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{team.name}}
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div class="team-vms-container" *ngIf="(team.vms | async)?.length">
-        <mat-card *ngFor="let vm of team.vms | async">
+      <div class="team-vms-container" *ngIf="team.vms?.length">
+        <mat-card *ngFor="let vm of team.vms">
           <mat-card-header>
             <mat-card-title>
               Vm#2
