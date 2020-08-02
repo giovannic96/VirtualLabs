@@ -9,6 +9,7 @@ import {Student} from '../../../models/student.model';
 import {StudentService} from '../../../services/student.service';
 import {TeamService} from '../../../services/team.service';
 import {TeamProposal, TeamProposalStatus} from '../../../models/team-proposal.model';
+import {VmModel} from '../../../models/vm-model.model';
 
 @Component({
   selector: 'app-team',
@@ -34,9 +35,7 @@ export class TeamComponent implements OnInit {
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
     this.currentCourse.pipe(
-      concatMap(course => {
-        return this.courseService.getAllTeams(course.name);
-      }),
+      concatMap(course => this.courseService.getAllTeams(course.name)),
       concatMap(teamList => {
         this.teamList = teamList;
         return teamList;

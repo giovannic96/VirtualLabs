@@ -1,3 +1,51 @@
+<div class="tab-section vm-model-section" *ngIf="teamList">
+  <div class="tab-subtitle">
+    <mat-icon>tune</mat-icon>
+    <h2>Vm model</h2>
+  </div>
+  <mat-accordion>
+    <mat-expansion-panel hideToggle [expanded]="!vmModel">
+      <mat-expansion-panel-header class="vm-model-panel-header">
+        <mat-panel-description>
+          <div class="vm-model-description" *ngIf="vmModel else noVmModel">
+            <mat-list>
+              <mat-list-item>
+                <img matListAvatar src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+                <h4 matLine>{{vmModel.name}}</h4>
+              </mat-list-item>
+            </mat-list>
+            <mat-card-subtitle class="vm-model-editor-description"><i>Set by Prof. {{vmModel?.professor?.name}} {{vmModel.professor?.surname}}</i></mat-card-subtitle>
+          </div>
+          <ng-template #noVmModel>
+            <mat-card-subtitle class="no-vm-model-message">There is no vm model for this course yet</mat-card-subtitle>
+          </ng-template>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="vm-model-details" *ngIf="vmModel">
+        <div>
+          <h4 matLine>Operating system:</h4>
+          <mat-card-subtitle>Windows 10</mat-card-subtitle>
+        </div>
+        <div>
+          <h4 matLine>Max resources per team:</h4>
+          <mat-card-subtitle mat-card-subtitle>CPU cores: {{vmModel.maxVCPU}} <br> RAM: {{vmModel.maxRAM}}Gb <br> Disk: {{calcDiskLabel(vmModel.maxDisk)}}</mat-card-subtitle>
+        </div>
+        <div>
+          <h4 matLine>Limits on vms number:</h4>
+          <mat-card-subtitle>Max vms per team: {{vmModel.maxTotVM}} <br> Max active vms at the same time: {{vmModel.maxActiveVM}}</mat-card-subtitle>
+        </div>
+      </div>
+      <mat-action-row>
+        <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog('create')">CREATE MODEL</button>
+        <ng-template #vmModelExists>
+          <button mat-raised-button color="warn">DELETE</button>
+          <button mat-raised-button color="primary">EDIT</button>
+        </ng-template>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+
 <div class="tab-section vms-section" *ngIf="teamList">
   <div class="tab-subtitle">
     <mat-icon>desktop_windows</mat-icon>
@@ -20,7 +68,7 @@
           </mat-card-header>
           <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
           <mat-card-content>
-            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}Gb | Disk: {{vm.disk}}GB</mat-card-subtitle>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}Gb | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
               <button mat-flat-button color="accent">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
               <button mat-flat-button color="primary" [disabled]="!vm.active">ENTER</button>

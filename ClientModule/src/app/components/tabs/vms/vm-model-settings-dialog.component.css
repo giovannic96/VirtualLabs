@@ -1,0 +1,35 @@
+.vm-model-form-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.vm-model-form-column {
+  width: 30%;
+}
+
+.vm-model-form-column mat-form-field {
+  width: 100%;
+}
+
+mat-slider {
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+h4 {
+  margin-bottom: 2em;
+}
+
+mat-card-title {
+  margin-bottom: 0.5em;
+}
+
+mat-card-subtitle {
+  margin-bottom: 0;
+}
+
+.operating-system-preview-card {
+  margin-top: 1em;
+  padding: 1.5em 1.5em .3em 1.5em;
+}
+

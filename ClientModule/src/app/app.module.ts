@@ -35,6 +35,9 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MySnackBarComponent} from './helpers/my-snack-bar.component';
 import {MatCardModule} from '@angular/material/card';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSliderModule} from '@angular/material/slider';
+import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
 
 @NgModule({
   declarations: [
@@ -50,32 +53,35 @@ import {MatCardModule} from '@angular/material/card';
     SignupDialogComponent,
     ProfileComponent,
     PageNotFoundComponent,
-    MySnackBarComponent
+    MySnackBarComponent,
+    VmModelSettingsDialogComponent
   ],
-    imports: [
-        RouterModule.forRoot(routes, {enableTracing: false}),
-        BrowserModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTabsModule,
-        MatTableModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        MatSortModule,
-        MatPaginatorModule,
-        HttpClientModule,
-        MatDialogModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatExpansionModule,
-        MatSnackBarModule,
-        MatCardModule
-    ],
+  imports: [
+    RouterModule.forRoot(routes, {enableTracing: false}),
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
+    MatTableModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    MatSortModule,
+    MatPaginatorModule,
+    HttpClientModule,
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatSelectModule,
+    MatSliderModule
+  ],
   exports: [
     RouterModule,
   ],

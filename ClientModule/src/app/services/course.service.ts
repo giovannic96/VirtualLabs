@@ -6,6 +6,7 @@ import {HttpClient} from '@angular/common/http';
 import {Course} from '../models/course.model';
 import {Team} from '../models/team.model';
 import {TeamProposal} from '../models/team-proposal.model';
+import {VmModel} from '../models/vm-model.model';
 
 @Injectable({
   providedIn: 'root'
@@ -135,6 +136,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`getNotTeamedUp error: ${err.message}`);
+        })
+      );
+  }
+
+  getVmModel(courseName: string): Observable<VmModel> {
+    return this.httpClient
+      .get<VmModel>(`${this.API_PATH}/${courseName}/vmModel`)
+      .pipe(
+        retry(1),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getVmModel error: ${err.message}`);
         })
       );
   }

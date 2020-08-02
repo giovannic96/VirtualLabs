@@ -1,0 +1,51 @@
+<mat-card-title>
+  Configure vm model settings
+</mat-card-title>
+<mat-divider></mat-divider>
+<div class="vm-model-form-container">
+  <div class="vm-model-form-column">
+    <h4>Basic info</h4>
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Operating system</mat-label>
+      <mat-select>
+        <mat-option value="win10">Windows 10</mat-option>
+        <mat-option value="ubuntu">Ubuntu 20.04</mat-option>
+        <mat-option value="debian">Debian buster</mat-option>
+        <mat-option value="macos">Mac OS X Cheetah 10.0</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-card class="operating-system-preview-card">
+      <mat-card-content>
+        <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="vm-model-form-column">
+    <h4>Max resources per team</h4>
+    <mat-card-subtitle>Max CPU - {{cpuSlider.value}} cores</mat-card-subtitle>
+    <mat-slider #cpuSlider step="2" min="0" max="32"></mat-slider>
+    <mat-card-subtitle>Max RAM - {{ramSlider.value}} Gb</mat-card-subtitle>
+    <mat-slider #ramSlider step="8" min="0" max="64"></mat-slider>
+    <mat-card-subtitle>Max Disk - {{calcDiskLabel(diskSlider.value)}}</mat-card-subtitle>
+    <mat-slider #diskSlider step="512" min="0" max="4096"></mat-slider>
+  </div>
+  <div class="vm-model-form-column">
+    <h4>Limits on vms number</h4>
+    <mat-card-subtitle>Max vms - {{totVmsSlider.value}}</mat-card-subtitle>
+    <mat-slider #totVmsSlider step="1" min="0" max="10"
+                (valueChange)="activeVmsSlider.value =
+                      totVmsSlider.value < activeVmsSlider.value ?
+                      totVmsSlider.value : activeVmsSlider.value"></mat-slider>
+    <mat-card-subtitle>Max active vms - {{activeVmsSlider.value}}</mat-card-subtitle>
+    <mat-slider #activeVmsSlider step="1" min="0" [max]="totVmsSlider.value"></mat-slider>
+  </div>
+</div>
+<mat-divider style="margin-top: 1em;"></mat-divider>
+<div class="vm-model-buttons-div">
+  <button mat-raised-button mat-dialog-close color="warn">CANCEL</button>
+  <button mat-raised-button color="primary">CREATE</button>
+</div>

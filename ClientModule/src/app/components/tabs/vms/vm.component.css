@@ -7,6 +7,10 @@ mat-card {
   margin: 0 .5em;
 }
 
+mat-list {
+  padding-top: 0;
+}
+
 .mat-card-header {
   width: 100%;
   display: inline-flex;
@@ -37,4 +41,39 @@ mat-card-footer button {
 .led-powered-off {
   background-color: #fd2626;
 }
+
+.vm-model-description {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5em 0;
+}
+
+.vm-model-panel-header {
+  height: auto !important;
+  /*pointer-events: none;*/
+}
+
+.vm-model-editor-description {
+  margin: auto 2em !important;
+}
+
+.vm-model-details {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.vm-model-buttons-div {
+  text-align: right;
+}
+
+.vm-model-buttons-div button {
+  margin: 1em 0 0 1em;
+}
+
+.no-vm-model-message {
+  margin: 1em 0;
+}
+
 

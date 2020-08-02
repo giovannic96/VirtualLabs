@@ -18,3 +18,7 @@ mat-icon:hover {cursor: pointer;}
 .tab-section { margin-bottom: 1.5em;}
 
 .tab-subtitle { display: flex; align-items: center;}
+
+mat-action-row {
+  margin-right: 1em;
+}
