@@ -14,8 +14,6 @@ import {CourseService} from './services/course.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // TODO: usare l'interfaccia per comandare la sidenav
-  @ViewChild(MatSidenav) sideNav: MatSidenav;
   title = 'VirtualLabs';
   userLoggedIn: boolean;
 
@@ -69,8 +67,8 @@ export class AppComponent {
     this.router.navigate(['/home'], { queryParams: {doLogin: true}});
   }
 
-  toggleForMenuClick() {
-    this.sideNav.toggle();
+  toggleSidenav(event: Event) {
+    this.courseService.clicksOnMenu.next(event);
   }
 
 }

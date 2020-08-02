@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
 import {Course} from '../../../models/course.model';
 import {Router} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
+import {MatSidenav} from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-personal',
@@ -10,6 +11,7 @@ import {CourseService} from '../../../services/course.service';
 })
 export class PersonalComponent implements OnInit {
 
+  @ViewChild(MatSidenav) sideNav: MatSidenav;
 
   allCourses: Course[];
   selectedCourseName: string;
@@ -57,6 +59,8 @@ export class PersonalComponent implements OnInit {
     this.courseService.getSelectedCourse().subscribe(course => {
       this.selectedCourseName = course ? course.name : '';
     });
+
+    this.courseService.clicksOnMenu.subscribe(event => this.sideNav.toggle());
 
     this.router.events.subscribe((res) => {
       this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));

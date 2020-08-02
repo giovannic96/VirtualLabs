@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject, throwError} from 'rxjs';
 import {Student} from '../models/student.model';
 import {catchError, map, retry} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
@@ -15,9 +15,11 @@ export class CourseService {
 
   private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
   private _selectedCourse: BehaviorSubject<Course>;
+  public clicksOnMenu: Subject<Event>;
 
   constructor(private httpClient: HttpClient) {
     this._selectedCourse = new BehaviorSubject<Course>(null);
+    this.clicksOnMenu = new Subject<Event>();
   }
 
   getSelectedCourse(): Observable<Course> {
