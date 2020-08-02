@@ -3,6 +3,12 @@
   color: white;
 }
 
+.logo {
+  height: -webkit-fill-available;
+  margin-top: .5em;
+  padding: 5px 0;
+}
+
 .fill-remaining-space {
   flex: 1 1 auto;
 }
