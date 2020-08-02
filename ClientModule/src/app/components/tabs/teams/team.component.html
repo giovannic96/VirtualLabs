@@ -105,7 +105,10 @@
         <mat-list>
           <mat-list-item *ngFor="let student of teamedUpStudents">
             <img matListAvatar src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png">
-            <h3 matLine>{{student.name}} {{student.surname}} - {{student.id}}</h3>
+            <div class="teamed-up-student-info">
+              <h3 matLine class="teamed-up-student-label">{{student.name}} {{student.surname}} - {{student.id}}</h3>
+              <mat-card-subtitle><em>{{findTeam(student.id)?.name}}</em></mat-card-subtitle>
+            </div>
           </mat-list-item>
         </mat-list>
       </mat-card>

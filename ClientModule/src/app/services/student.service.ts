@@ -3,6 +3,7 @@ import {Student} from '../models/student.model';
 import {forkJoin, Observable, of, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
+import {Team} from '../models/team.model';
 
 @Injectable({
   providedIn: 'root'
@@ -81,6 +82,18 @@ export class StudentService {
         catchError( err => {
           console.error(err);
           return throwError(`GetCourses error: ${err.message}`);
+        })
+      );
+  }
+
+  getTeams(studentId: string): Observable<Team[]> {
+    return this.httpClient
+      .get<Team[]>(`${this.API_PATH}/${studentId}/teams`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetTeams error: ${err.message}`);
         })
       );
   }

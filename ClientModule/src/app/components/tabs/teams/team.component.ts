@@ -73,4 +73,8 @@ export class TeamComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  findTeam(studentId: string) {
+    return this.teamList.find(team => team.members?.find(student => student.id === studentId));
+  }
+
 }

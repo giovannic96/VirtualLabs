@@ -45,3 +45,12 @@ mat-card {
 .student-list {
   width: 48%
 }
+
+.teamed-up-student-info {
+  margin-left: 1em;
+}
+
+.teamed-up-student-label {
+  font-size: medium;
+  margin: 0 0 5px 0;
+}
