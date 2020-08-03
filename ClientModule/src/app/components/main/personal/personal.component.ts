@@ -23,24 +23,24 @@ export class PersonalComponent implements OnInit {
 
     this.navLinks = [
       {
+        label: 'Info',
+        path: '/info',
+        index: 0
+      }, {
         label: 'Students',
         path: '/students',
-        index: 0
+        index: 1
       }, {
         label: 'Teams',
         path: '/teams',
-        index: 1
+        index: 2
       }, {
         label: 'VMs',
         path: '/vms',
-        index: 2
+        index: 3
       }, {
         label: 'Labs',
         path: '/labs',
-        index: 3
-      }, {
-        label: 'Info',
-        path: '/info',
         index: 4
       }
     ];
@@ -53,7 +53,7 @@ export class PersonalComponent implements OnInit {
       if (courseList.length)
         this.setCurrentCourse(courseList[0]);
 
-      this.router.navigate(['courses/' + courseList[0].name + '/students']);
+      this.router.navigate(['courses/' + courseList[0].name + '/info']);
     });
 
     this.courseService.getSelectedCourse().subscribe(course => {
