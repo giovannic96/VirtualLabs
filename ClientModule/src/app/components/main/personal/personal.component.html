@@ -7,7 +7,7 @@
       <mat-nav-list>
         <mat-list-item *ngFor="let course of allCourses"
                        (click)="setCurrentCourse(course)"
-                       routerLink="/courses/{{course.name}}/students">
+                       routerLink="/courses/{{course.name}}/info">
           {{course.name}}
         </mat-list-item>
       </mat-nav-list>
