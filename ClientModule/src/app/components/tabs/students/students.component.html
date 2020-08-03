@@ -20,22 +20,36 @@
     </button>
   </div>
   <button class="delete-btn" mat-raised-button color="warn"
-          [disabled]="!selectedStudents.hasValue()"
+          [disabled]="!getCurrentPageSelected().length"
           (click)="unrollStudents()">DELETE SELECTED STUDENTS
   </button>
+  <div class="selection-message-popup" *ngIf="isSelectionPopupToShow && isCurrentPageAllSelected()">
+    <ng-container *ngIf="!isAllSelected else extendedSelection">
+      <mat-card-subtitle>All {{getCurrentPageSelected().length}} students on this page have been selected.</mat-card-subtitle>
+      <button mat-button (click)="selectAllStudents()">
+        <mat-card-subtitle>Select all {{tableStudents.data.length}} students</mat-card-subtitle>
+      </button>
+    </ng-container>
+    <ng-template #extendedSelection>
+      <mat-card-subtitle>All students of this course have been selected.</mat-card-subtitle>
+      <button mat-button (click)="selectedStudents.clear()">
+        <mat-card-subtitle>Cancel selection</mat-card-subtitle>
+      </button>
+    </ng-template>
+  </div>
   <table mat-table [dataSource]="tableStudents" matSort>
     <!-- checkbox Column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
         <mat-checkbox [disabled]="!tableStudents.data.length"
-                      [checked]="selectedStudents.hasValue() && isAllSelected()"
-                      [indeterminate]="selectedStudents.hasValue() && !isAllSelected()"
+                      [checked]="!!getCurrentPageSelected().length && isCurrentPageAllSelected()"
+                      [indeterminate]="!!getCurrentPageSelected().length && !isCurrentPageAllSelected()"
                       (change)="toggleMasterCheckbox()">
         </mat-checkbox>
       </th>
       <td mat-cell *matCellDef="let student">
         <mat-checkbox [checked]="selectedStudents.isSelected(student)"
-                      (change)="selectedStudents.toggle(student)">
+                      (change)="toggleStudentCheckBox(student)">
         </mat-checkbox>
       </td>
     </ng-container>

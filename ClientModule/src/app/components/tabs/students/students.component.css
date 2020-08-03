@@ -13,3 +13,22 @@ table {
 .delete-btn {
   margin-bottom: 0.5em;
 }
+
+.selection-message-popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(241,243,244,0.871);
+  border-radius: 5px;
+  padding: .3em 1em;
+  margin: 1em 0;
+}
+
+.selection-message-popup button {
+  margin: 0 .3em;
+  padding: 0 .6em;
+}
+
+.selection-message-popup button mat-card-subtitle {
+  color: #3f51b5;
+}

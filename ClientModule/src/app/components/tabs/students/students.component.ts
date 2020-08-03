@@ -38,6 +38,9 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   filteredStudents: Student[] = [];
   selectedStudents = new SelectionModel<Student>(true);
 
+  isSelectionPopupToShow = false;
+  isAllSelected = false;
+
   // Columns
   columnsToDisplay: string[];
 
@@ -102,6 +105,9 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   unrollStudents() {
+
+    // here should open an "are you sure" dialog
+
     const studentIds: string[] = [];
     this.selectedStudents.selected.forEach(s => studentIds.push(s.id));
     this.courseService.unroll(this.selectedCourse.name, studentIds).subscribe(() => {
@@ -125,14 +131,25 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     this.tableStudents.paginator = this.paginator;
   }
 
-  isAllSelected() {
-    return this.selectedStudents.selected.length === this.tableStudents.data.length;
+  isCurrentPageAllSelected() {
+    return this.getCurrentPageStudents().every(student => this.selectedStudents.isSelected(student));
   }
 
   toggleMasterCheckbox() {
-    this.isAllSelected() ?
-      this.selectedStudents.clear() :
-      this.tableStudents.data.forEach(student => this.selectedStudents.select(student));
+    if (this.isCurrentPageAllSelected()) {
+      this.selectedStudents.deselect(...this.getCurrentPageStudents());
+      this.isSelectionPopupToShow = false;
+    } else {
+      this.selectedStudents.select(...this.getCurrentPageStudents());
+      this.isSelectionPopupToShow = true;
+    }
+    this.isAllSelected = false;
+  }
+
+  toggleStudentCheckBox(student: Student) {
+    this.selectedStudents.toggle(student);
+    this.isSelectionPopupToShow = false;
+    this.isAllSelected = false;
   }
 
   displayStudent(student: Student) {
@@ -174,4 +191,20 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     this.currentSelectedOption = event.option.value;
     this.addButton.disabled = this.tableStudents.data.includes(this.currentSelectedOption);
   }
+
+  getCurrentPageStudents(): Student[] {
+    return this.tableStudents._pageData(this.tableStudents.sortData(this.tableStudents.data, this.sort));
+  }
+
+  getCurrentPageSelected(): Student[] {
+    return this.tableStudents._pageData(this.tableStudents.sortData(this.tableStudents.data, this.sort))
+        .filter(student => this.selectedStudents.isSelected(student));
+  }
+
+  selectAllStudents() {
+    this.selectedStudents.select(...this.tableStudents.data);
+    this.isAllSelected = true;
+  }
+
+
 }
