@@ -9,7 +9,9 @@ import {Course} from '../../../models/course.model';
 import {CourseService} from '../../../services/course.service';
 import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {filter} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
+import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-students',
@@ -53,7 +55,8 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   constructor(private courseService: CourseService,
               private studentService: StudentService,
-              public mySnackBar: MySnackBarComponent) {
+              public mySnackBar: MySnackBarComponent,
+              public dialog: MatDialog) {
 
     this.tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
@@ -104,10 +107,29 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  async openDialog() {
+
+    // Prepare a message for the dialog based on selection
+    const message = this.isAllSelected ?
+      'You are unrolling all the students of this course' :
+      'You are unrolling ' + this.selectedStudents.selected.length +
+        (this.selectedStudents.selected.length > 1 ? ' students' : ' student') + ' from this course';
+
+    // Open a dialog and get the response as an 'await'
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    // Check the response when dialog closes
+    if (areYouSure) {
+      this.unrollStudents();
+    }
+  }
+
   unrollStudents() {
-
-    // here should open an "are you sure" dialog
-
     const studentIds: string[] = [];
     this.selectedStudents.selected.forEach(s => studentIds.push(s.id));
     this.courseService.unroll(this.selectedCourse.name, studentIds).subscribe(() => {

@@ -38,6 +38,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
+import { MyDialogComponent } from './helpers/my-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-s
     ProfileComponent,
     PageNotFoundComponent,
     MySnackBarComponent,
-    VmModelSettingsDialogComponent
+    VmModelSettingsDialogComponent,
+    MyDialogComponent
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),

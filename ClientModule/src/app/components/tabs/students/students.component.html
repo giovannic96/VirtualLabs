@@ -21,7 +21,7 @@
   </div>
   <button class="delete-btn" mat-raised-button color="warn"
           [disabled]="!getCurrentPageSelected().length"
-          (click)="unrollStudents()">DELETE SELECTED STUDENTS
+          (click)="openDialog()">DELETE SELECTED STUDENTS
   </button>
   <div class="selection-message-popup" *ngIf="isSelectionPopupToShow && isCurrentPageAllSelected()">
     <ng-container *ngIf="!isAllSelected else extendedSelection">
