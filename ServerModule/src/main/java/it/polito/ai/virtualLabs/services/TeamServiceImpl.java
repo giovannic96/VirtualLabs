@@ -231,6 +231,23 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public void removeStudentFromTeamByCourse(String studentId, String courseName) {
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+
+        Student student = userRepository.getStudentById(studentId);
+        Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(student, courseName);
+
+        if(team.isPresent()) {
+            team.get().removeMember(student);
+            if(team.get().getStudents().isEmpty())
+                this.teamRepository.delete(team.get());
+        }
+    }
+
+    @Override
     public boolean addProfessorToCourse(String professorId, String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' non è stato trovato");

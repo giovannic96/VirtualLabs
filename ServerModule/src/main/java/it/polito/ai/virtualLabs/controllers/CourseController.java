@@ -207,6 +207,7 @@ public class CourseController {
 
         for(String studentId : studentIds) {
             teamService.removeStudentFromCourse(studentId, courseName);
+            teamService.removeStudentFromTeamByCourse(studentId, courseName);
         }
     }
 

@@ -46,6 +46,7 @@ public interface TeamService {
     List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
     boolean addStudentToCourse(String studentId, String courseName); //TESTED
     void removeStudentFromCourse(String studentId, String courseName);
+    void removeStudentFromTeamByCourse(String studentId, String courseName);
     boolean addProfessorToCourse(String professorId, String courseName);
     void removeProfessorFromCourse(String professorId, String courseName);
     List<ProfessorDTO> getProfessorsForCourse(String courseName);
