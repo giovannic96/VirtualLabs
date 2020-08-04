@@ -10,10 +10,9 @@
           {{team.name}}
         </mat-panel-title>
         <mat-panel-description>
-          Here could go a description (useless)
           <div class="icons-div">
-            <mat-icon>person</mat-icon><span>{{team.members?.length}}</span>
-            <mat-icon>desktop_windows</mat-icon><span>{{team.vms?.length}}</span>
+            <mat-icon>person</mat-icon><span>{{team.members ? team.members.length : 0}}</span>
+            <mat-icon>desktop_windows</mat-icon><span>{{team.vms? team.vms.length : 0}}</span>
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
