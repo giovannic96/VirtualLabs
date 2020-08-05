@@ -10,6 +10,10 @@ mat-sidenav {
   margin-top: 48px;
 }
 
+::ng-deep mat-sidenav-content {
+  overflow: hidden !important;
+}
+
 .tab-container {
   padding: 0 2em;
 }

@@ -2,7 +2,7 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-mat-sidenav-container{height:100%}
+mat-sidenav-container{min-height: 100vh}
 mat-icon{padding-right: 12px;}
 mat-icon:hover {cursor: pointer;}
 

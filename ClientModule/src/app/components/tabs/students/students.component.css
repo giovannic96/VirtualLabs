@@ -1,3 +1,7 @@
+.table-container {
+  margin: 2em 0;
+}
+
 table {
   width: 100%;
 }
