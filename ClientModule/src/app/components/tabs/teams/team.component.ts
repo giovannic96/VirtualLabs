@@ -25,11 +25,11 @@ export class TeamComponent implements OnInit {
   private currentCourse: Observable<Course>;
   public teamList: Team[];
 
-  public allProposals: TeamProposal[] = [];
-  public pendingProposals: TeamProposal[] = [];
+  public allProposals: TeamProposal[];
+  public pendingProposals: TeamProposal[];
 
-  public teamedUpStudents: Student[] = [];
-  public notTeamedUpStudents: Student[] = [];
+  public teamedUpStudents: Student[];
+  public notTeamedUpStudents: Student[];
 
   constructor(private courseService: CourseService,
               private studentService: StudentService,

@@ -42,14 +42,14 @@
   </mat-accordion>
 </div>
 <ng-template #noTeams>
-  <div class="no-teams-message-container">
+  <div class="no-teams-message-container" *ngIf="teamList">
     <mat-card><mat-card-header><mat-card-title>
       Still no team has been formed
     </mat-card-title></mat-card-header></mat-card>
   </div>
 </ng-template>
 
-<div class="tab-section pending-proposal-section">
+<div class="tab-section pending-proposal-section" *ngIf="pendingProposals">
   <div class="tab-subtitle">
     <mat-icon>pending_actions</mat-icon>
     <h2>Pending team proposals</h2>
@@ -89,7 +89,7 @@
   </mat-accordion>
 </div>
 
-<div class="tab-section student-lists-section">
+<div class="tab-section student-lists-section" *ngIf="teamedUpStudents && notTeamedUpStudents">
   <div class="tab-subtitle">
     <mat-icon>list</mat-icon>
     <h2>Students in teams</h2>
@@ -129,7 +129,7 @@
   </div>
 </div>
 
-<div class="tab-section proposal-history-section">
+<div class="tab-section proposal-history-section" *ngIf="allProposals && allProposals?.length">
   <div class="tab-subtitle">
     <mat-icon>history</mat-icon>
     <h2>Proposals history</h2>
