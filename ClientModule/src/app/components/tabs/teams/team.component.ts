@@ -10,6 +10,9 @@ import {StudentService} from '../../../services/student.service';
 import {TeamService} from '../../../services/team.service';
 import {TeamProposal, TeamProposalStatus} from '../../../models/team-proposal.model';
 import {VmModel} from '../../../models/vm-model.model';
+import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 
 @Component({
   selector: 'app-team',
@@ -30,7 +33,9 @@ export class TeamComponent implements OnInit {
 
   constructor(private courseService: CourseService,
               private studentService: StudentService,
-              private teamService: TeamService) {
+              private teamService: TeamService,
+              private dialog: MatDialog,
+              private mySnackBar: MySnackBarComponent) {
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
@@ -75,6 +80,35 @@ export class TeamComponent implements OnInit {
 
   findTeam(studentId: string) {
     return this.teamList.find(team => team.members?.find(student => student.id === studentId));
+  }
+
+  async openDialog(team: Team) {
+
+    // Prepare the message
+    const message = 'This will delete the team ' + team.name + ' from this course';
+
+    // Open a dialog and get the response as an 'await'
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    // Check the response when dialog closes
+    if (areYouSure) {
+      this.deleteTeam(team);
+    }
+  }
+
+  deleteTeam(team: Team) {
+    this.teamList.splice(this.teamList.indexOf(team), 1);
+    this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
+    return;
+    this.teamService.deleteTeam(team.id).subscribe(() => {
+      this.teamList.splice(this.teamList.indexOf(team), 1);
+      this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
+    });
   }
 
 }

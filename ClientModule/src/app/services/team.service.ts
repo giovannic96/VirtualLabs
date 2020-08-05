@@ -62,4 +62,16 @@ export class TeamService {
         })
       );
   }
+
+  deleteTeam(teamId: number) {
+    return this.httpClient
+      .delete<any>(`${this.API_PATH}/${teamId}`)
+      .pipe(
+        retry(3),
+        catchError(err => {
+          console.error(err);
+          return throwError(`DeleteTeam error: ${err.message}`);
+        })
+      );
+  }
 }
