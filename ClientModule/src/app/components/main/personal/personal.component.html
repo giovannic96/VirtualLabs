@@ -5,11 +5,13 @@
   <mat-sidenav mode="side" opened position="start">
     <div>
       <mat-nav-list>
-        <mat-list-item *ngFor="let course of allCourses"
-                       (click)="setCurrentCourse(course)"
-                       routerLink="/courses/{{course.name}}/info">
+        <a mat-list-item disableRipple class="sidenav-list-item"
+                        *ngFor="let course of allCourses"
+                        (click)="setCurrentCourse(course)"
+                        routerLink="/courses/{{course.name}}"
+                        routerLinkActive="sidenav-course-active">
           {{course.name}}
-        </mat-list-item>
+        </a>
       </mat-nav-list>
     </div>
   </mat-sidenav>
@@ -17,7 +19,7 @@
     <nav mat-tab-nav-bar>
       <a mat-tab-link
          *ngFor="let link of navLinks"
-         [routerLink]="this.selectedCourseName + link.path"
+         [routerLink]="link.path"
          routerLinkActive #rla="routerLinkActive"
          [active]="rla.isActive">
         {{link.label}}

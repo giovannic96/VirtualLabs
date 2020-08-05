@@ -1,9 +1,9 @@
-mat-list-item:active {
-  background-color: #c5cae9 !important;
+.sidenav-list-item:hover {
+  background: #a1ace5 !important;
 }
 
-mat-list-item:hover {
-  background-color: #a1ace5 !important;
+.sidenav-course-active {
+  background: #c5cae9 !important;
 }
 
 mat-sidenav {

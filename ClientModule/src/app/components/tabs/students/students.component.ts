@@ -55,8 +55,8 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   constructor(private courseService: CourseService,
               private studentService: StudentService,
-              public mySnackBar: MySnackBarComponent,
-              public dialog: MatDialog) {
+              private mySnackBar: MySnackBarComponent,
+              private dialog: MatDialog) {
 
     this.tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
 import {Course} from '../../../models/course.model';
-import {Router} from '@angular/router';
+import {Router, RouterLinkActive} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
 
@@ -24,23 +24,23 @@ export class PersonalComponent implements OnInit {
     this.navLinks = [
       {
         label: 'Info',
-        path: '/info',
+        path: 'info',
         index: 0
       }, {
         label: 'Students',
-        path: '/students',
+        path: 'students',
         index: 1
       }, {
         label: 'Teams',
-        path: '/teams',
+        path: 'teams',
         index: 2
       }, {
         label: 'VMs',
-        path: '/vms',
+        path: 'vms',
         index: 3
       }, {
         label: 'Labs',
-        path: '/labs',
+        path: 'labs',
         index: 4
       }
     ];
@@ -53,7 +53,7 @@ export class PersonalComponent implements OnInit {
       if (courseList.length)
         this.setCurrentCourse(courseList[0]);
 
-      this.router.navigate(['courses/' + courseList[0].name + '/info']);
+      this.router.navigate(['courses/' + courseList[0].name]);
     });
 
     this.courseService.getSelectedCourse().subscribe(course => {

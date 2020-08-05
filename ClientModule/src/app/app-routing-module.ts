@@ -13,11 +13,13 @@ import {LabComponent} from './components/tabs/labs/lab.component';
 export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
-  {path: 'courses', component: PersonalComponent, children: [
-      {path: ':courseName/students', component: StudentsComponent},
-      {path: ':courseName/vms', component: VmComponent},
-      {path: ':courseName/labs', component: LabComponent},
-      {path: ':courseName/teams', component: TeamComponent},
-      {path: ':courseName/info', component: CourseInfoComponent}]},
+  {path: 'courses', component: PersonalComponent},
+  {path: 'courses/:courseName', component: PersonalComponent, children: [
+      {path: '', redirectTo: 'info', pathMatch: 'full'},
+      {path: 'students', component: StudentsComponent},
+      {path: 'vms', component: VmComponent},
+      {path: 'labs', component: LabComponent},
+      {path: 'teams', component: TeamComponent},
+      {path: 'info', component: CourseInfoComponent}]},
   {path: '**', component: PageNotFoundComponent}
 ];
