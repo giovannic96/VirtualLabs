@@ -119,7 +119,18 @@ public class TeamController {
         return ModelHelper.enrich(vmDTO);
     }
 
-    @DeleteMapping("/{teamProposalId}")
+    @DeleteMapping("/{teamId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTeam(@PathVariable Long teamId) {
+        Optional<TeamDTO> team = teamService.getTeam(teamId);
+
+        if(!team.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        teamService.deleteTeam(teamId);
+    }
+
+    @DeleteMapping("/teamProposals/{teamProposalId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteTeamProposal(@PathVariable Long teamProposalId,
                                     @AuthenticationPrincipal UserDetails userDetails) {

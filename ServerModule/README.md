@@ -13,8 +13,8 @@ API
 * GET	http://ip_address:port/api/courses/:courseName
 * GET	http://ip_address:port/api/courses/:courseName/enrolled
 * GET	http://ip_address:port/api/courses/:courseName/notEnrolled
-* GET	http://ip_address:port/api/courses/:courseName/teamedUp					//da aggiungere a postman
-* GET	http://ip_address:port/api/courses/:courseName/notTeamedUP				//da aggiungere a postman
+* GET	http://ip_address:port/api/courses/:courseName/teamedUp
+* GET	http://ip_address:port/api/courses/:courseName/notTeamedUp
 * GET	http://ip_address:port/api/courses/:courseName/teams
 * GET	http://ip_address:port/api/courses/:courseName/professors
 * GET	http://ip_address:port/api/courses/:courseName/vmModel
@@ -58,7 +58,7 @@ API
 * GET	http://ip_address:port/api/teams/:teamId/vms
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/course
-* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/creator       //da aggiungere a postman
+* GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/creator
 * GET	http://ip_address:port/api/teams/teamProposals/:teamProposalId/members
 
 *Vms*
@@ -118,4 +118,5 @@ API
 * DELETE http://ip_address:port/api/vms/:vmId
 
 *Teams*
-* DELETE http://ip_address:port/api/teams/:teamProposalId
+* DELETE http://ip_address:port/api/teams/:teamId
+* DELETE http://ip_address:port/api/teams/teamProposals/:teamProposalId
