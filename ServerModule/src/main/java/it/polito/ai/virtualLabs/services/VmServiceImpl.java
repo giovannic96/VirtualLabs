@@ -210,7 +210,7 @@ public class VmServiceImpl implements VmService {
             throw new VmModelNotFoundException("There is no VmModel for this course yet");
 
         //check number of vms and resources constraints
-        if(teamVms.size() >= vmModel.getMaxTotVM() ||
+        if(teamVms.size() >= vmModel.getMaxTotVm() ||
             resourcesExceeded(teamVms, vmModel, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
             return false;
 
@@ -268,8 +268,8 @@ public class VmServiceImpl implements VmService {
         curVmModel.setMaxVCPU(vmModelDTO.getMaxVCPU());
         curVmModel.setMaxDisk(vmModelDTO.getMaxDisk());
         curVmModel.setMaxRAM(vmModelDTO.getMaxRAM());
-        curVmModel.setMaxActiveVM(vmModelDTO.getMaxActiveVM());
-        curVmModel.setMaxTotVM(vmModelDTO.getMaxTotVM());
+        curVmModel.setMaxActiveVm(vmModelDTO.getMaxActiveVm());
+        curVmModel.setMaxTotVm(vmModelDTO.getMaxTotVm());
 
         vmModelRepository.saveAndFlush(curVmModel);
         return true;
@@ -306,7 +306,7 @@ public class VmServiceImpl implements VmService {
         }
 
         //check max number of active vms constraint
-        if(nActiveVMs >= vm.getVmModel().getMaxActiveVM())
+        if(nActiveVMs >= vm.getVmModel().getMaxActiveVm())
             return false;
 
         //set vm as active
@@ -352,7 +352,7 @@ public class VmServiceImpl implements VmService {
         vmModel.setCourse(course);
         vmModel.setProfessor(professor);
 
-        courseRepository.saveAndFlush(course);
+        vmModelRepository.saveAndFlush(vmModel);
         return true;
     }
 }

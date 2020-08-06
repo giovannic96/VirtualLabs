@@ -15,12 +15,13 @@ public class VmModel {
 
     @NotNull
     private String name;
+    private String os;
 
     private int maxVCPU;
     private int maxDisk;
     private int maxRAM;
-    private int maxTotVM;
-    private int maxActiveVM;
+    private int maxTotVm;
+    private int maxActiveVm;
 
     @OneToOne
     @JoinColumn(name = "course_name")

@@ -10,9 +10,10 @@ public class VmModelDTO extends RepresentationModel<VmModelDTO> {
     @Id
     Long id;
     String name;
+    String os;
     int maxVCPU;
     int maxDisk;
     int maxRAM;
-    int maxTotVM;
-    int maxActiveVM;
+    int maxTotVm;
+    int maxActiveVm;
 }
