@@ -4,22 +4,24 @@ export class VmModel {
 
   private _id: number;
   private _name: number;
+  private _os: string;
   private _maxVCPU: number;
   private _maxDisk: number;
   private _maxRAM: number;
-  private _maxTotVM: number;
-  private _maxActiveVM: number;
+  private _maxTotVm: number;
+  private _maxActiveVm: number;
   private _professor: Professor;
 
-  constructor(id: number, name: number, maxVCPU: number, maxDisk: number,
-              maxRAM: number, maxTotVM: number, maxActiveVM: number) {
+  constructor(id: number, name: number, os: string, maxVCPU: number, maxRAM: number,
+              maxDisk: number, maxTotVm: number, maxActiveVm: number) {
     this._id = id;
     this._name = name;
+    this._os = os;
     this._maxVCPU = maxVCPU;
     this._maxDisk = maxDisk;
     this._maxRAM = maxRAM;
-    this._maxTotVM = maxTotVM;
-    this._maxActiveVM = maxActiveVM;
+    this._maxTotVm = maxTotVm;
+    this._maxActiveVm = maxActiveVm;
   }
 
   get id(): number {
@@ -36,6 +38,14 @@ export class VmModel {
 
   set name(value: number) {
     this._name = value;
+  }
+
+  get os(): string {
+    return this._os;
+  }
+
+  set os(value: string) {
+    this._os = value;
   }
 
   get maxVCPU(): number {
@@ -62,20 +72,20 @@ export class VmModel {
     this._maxRAM = value;
   }
 
-  get maxTotVM(): number {
-    return this._maxTotVM;
+  get maxTotVm(): number {
+    return this._maxTotVm;
   }
 
-  set maxTotVM(value: number) {
-    this._maxTotVM = value;
+  set maxTotVm(value: number) {
+    this._maxTotVm = value;
   }
 
-  get maxActiveVM(): number {
-    return this._maxActiveVM;
+  get maxActiveVm(): number {
+    return this._maxActiveVm;
   }
 
-  set maxActiveVM(value: number) {
-    this._maxActiveVM = value;
+  set maxActiveVm(value: number) {
+    this._maxActiveVm = value;
   }
 
   get professor(): Professor {
@@ -84,5 +94,17 @@ export class VmModel {
 
   set professor(value: Professor) {
     this._professor = value;
+  }
+
+  getDTO(): any {
+    return {
+      name: this.name,
+      os: this.os,
+      maxVCPU: this.maxVCPU,
+      maxRAM: this.maxRAM,
+      maxDisk: this.maxDisk,
+      maxTotVm: this.maxTotVm,
+      maxActiveVm: this.maxActiveVm
+    };
   }
 }

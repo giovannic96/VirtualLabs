@@ -13,7 +13,7 @@
 
 mat-slider {
   width: 100%;
-  margin-bottom: 1em;
+  margin-bottom: .2em;
 }
 
 h4 {
@@ -33,3 +33,15 @@ mat-card-subtitle {
   padding: 1.5em 1.5em .3em 1.5em;
 }
 
+.custom-slider-error-container {
+  height: 1.2em;
+  margin-bottom: 1em;
+  margin-top: -1em;
+}
+
+.custom-slider-error-message {
+  margin: 0;
+  font-weight: initial;
+  color: #f44336;
+  font-size: 75%;
+}

@@ -11,6 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from '../../../auth/login-dialog.component';
 import {VmModelSettingsDialogComponent} from './vm-model-settings-dialog.component';
 import {VmModel} from '../../../models/vm-model.model';
+import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 
 @Component({
   selector: 'app-vm',
@@ -27,7 +28,8 @@ export class VmComponent implements OnInit {
   constructor(private vmService: VmService,
               private teamService: TeamService,
               private courseService: CourseService,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private mySnackBar: MySnackBarComponent) {
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
@@ -57,7 +59,20 @@ export class VmComponent implements OnInit {
 
   openDialog(action: string) {
     // TODO: usare 'action' per dire al dialog se creare o modificare il model
+
     const dialogRef = this.dialog.open(VmModelSettingsDialogComponent, {disableClose: true});
+
+    let course: Course;
+    const subscription = this.currentCourse.subscribe(currentCourse => course = currentCourse);
+
+    dialogRef.afterClosed().pipe(concatMap((vmModel: VmModel) => {
+      if (!!vmModel) {
+        return this.courseService.setVmModel(course.name, vmModel.getDTO());
+      }
+    })).subscribe(response => this.mySnackBar.openSnackBar('Vm model created successfully', MessageType.SUCCESS, 3),
+      error => this.mySnackBar.openSnackBar('Vm model creation failed', MessageType.ERROR, 3));
+
+    subscription.unsubscribe();
   }
 
   calcDiskLabel(value: number) {

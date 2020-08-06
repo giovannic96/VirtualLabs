@@ -19,7 +19,7 @@ export class VmService {
     return this.httpClient
       .get<Professor>(`${this.API_PATH}/vmModels/${vmModelId}/professor`)
       .pipe(
-        retry(3),
+        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`getVmModelProfessor error: ${err.message}`);

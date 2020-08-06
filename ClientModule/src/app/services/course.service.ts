@@ -154,6 +154,18 @@ export class CourseService {
       );
   }
 
+  setVmModel(courseName: string, vmModel: VmModel) {
+    return this.httpClient
+      .post<boolean>(`${this.API_PATH}/${courseName}/setVmModel`, vmModel)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`setVmModel error: ${err.message}`);
+        })
+      );
+  }
+
   getResource(link: string) {
     return this.httpClient
       .get<any>(link)
