@@ -154,6 +154,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   isCurrentPageAllSelected() {
+    this.isAllSelected = this.getCurrentPageSelected().length === this.tableStudents.data.length;
     return this.getCurrentPageStudents().every(student => this.selectedStudents.isSelected(student));
   }
 

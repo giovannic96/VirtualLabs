@@ -28,7 +28,7 @@
         </div>
         <div>
           <h4 matLine>Max resources per team:</h4>
-          <mat-card-subtitle mat-card-subtitle>CPU cores: {{vmModel.maxVCPU}} <br> RAM: {{vmModel.maxRAM}}Gb <br> Disk: {{calcDiskLabel(vmModel.maxDisk)}}</mat-card-subtitle>
+          <mat-card-subtitle mat-card-subtitle>CPU cores: {{vmModel.maxVCPU}} <br> RAM: {{vmModel.maxRAM}}GB <br> Disk: {{calcDiskLabel(vmModel.maxDisk)}}</mat-card-subtitle>
         </div>
         <div>
           <h4 matLine>Limits on vms number:</h4>
@@ -68,7 +68,7 @@
           </mat-card-header>
           <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
           <mat-card-content>
-            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}Gb | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
               <button mat-flat-button color="accent">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
               <button mat-flat-button color="primary" [disabled]="!vm.active">ENTER</button>

@@ -169,6 +169,7 @@ public class CourseController {
         }
     }
 
+    /*
     @PostMapping("/{courseName}/setVmModel")
     @ResponseStatus(HttpStatus.CREATED)
     public void setVmModelToCourse(@PathVariable String courseName,
@@ -180,6 +181,17 @@ public class CourseController {
         if(!professor.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel recupero delle informazioni sull'utente: " + userDetails.getUsername());
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
+    }*/
+
+    // TODO: just for tests, remove it and decomment method above
+    @PostMapping("/{courseName}/setVmModel")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void setVmModelToCourse(@PathVariable String courseName,
+                                   @RequestBody VmModelDTO vmModelDTO) {
+
+
+        if(!vmService.setVmModelToCourse(vmModelDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
     }
 

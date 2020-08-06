@@ -6,6 +6,10 @@ table {
   width: 100%;
 }
 
+mat-icon {
+  cursor: default;
+}
+
 .input-student-div mat-form-field {
   width: 400px;
 }

@@ -3,6 +3,10 @@
   grid-template-columns: 33.3% 33.3% 33.3%;
 }
 
+mat-icon {
+  cursor: default;
+}
+
 mat-card {
   margin: 0 .5em;
 }
