@@ -112,7 +112,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     // Prepare a message for the dialog based on selection
     const message = this.isAllSelected ?
       'You are unrolling all the students of this course' :
-      'You are unrolling ' + this.selectedStudents.selected.length +
+      'You are unrolling ' + this.getCurrentPageSelected().length +
         (this.selectedStudents.selected.length > 1 ? ' students' : ' student') + ' from this course';
 
     // Open a dialog and get the response as an 'await'
@@ -154,7 +154,6 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   }
 
   isCurrentPageAllSelected() {
-    this.isAllSelected = this.getCurrentPageSelected().length === this.tableStudents.data.length;
     return this.getCurrentPageStudents().every(student => this.selectedStudents.isSelected(student));
   }
 
@@ -162,11 +161,12 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     if (this.isCurrentPageAllSelected()) {
       this.selectedStudents.deselect(...this.getCurrentPageStudents());
       this.isSelectionPopupToShow = false;
+      this.isAllSelected = false;
     } else {
       this.selectedStudents.select(...this.getCurrentPageStudents());
       this.isSelectionPopupToShow = true;
+      this.isAllSelected = this.paginator.pageSize >= this.tableStudents.data.length;
     }
-    this.isAllSelected = false;
   }
 
   toggleStudentCheckBox(student: Student) {

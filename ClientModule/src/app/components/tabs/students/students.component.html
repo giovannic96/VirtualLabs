@@ -27,7 +27,7 @@
           (click)="openDialog()">DELETE SELECTED STUDENTS
   </button>
   <div class="selection-message-popup" *ngIf="isSelectionPopupToShow && isCurrentPageAllSelected()">
-    <ng-container *ngIf="!isAllSelected else extendedSelection">
+    <ng-container *ngIf="!isAllSelected && paginator.pageSize < tableStudents.data.length; else extendedSelection">
       <mat-card-subtitle>All {{getCurrentPageSelected().length}} students on this page have been selected.</mat-card-subtitle>
       <button mat-button (click)="selectAllStudents()">
         <mat-card-subtitle>Select all {{tableStudents.data.length}} students</mat-card-subtitle>
