@@ -50,10 +50,27 @@ export class PersonalComponent implements OnInit {
 
     this.courseService.getAll().subscribe(courseList => {
       this.allCourses = courseList;
-      if (courseList.length)
-        this.setCurrentCourse(courseList[0]);
 
-      this.router.navigate(['courses/' + courseList[0].name]);
+      let courseToNavigate: string;
+      let tabToVisit: string;
+      if (courseList.length) {
+        const splitUrl = this.router.url.split('/');
+        if (splitUrl.length > 2) {
+          courseList.find(course => {
+            if (course.name === this.router.url.split('/')[2]) {
+              this.setCurrentCourse(course);
+              courseToNavigate = course.name;
+              tabToVisit = splitUrl.length > 3 ? this.router.url.split('/')[3] : '';
+            }
+          });
+        }
+        if (!courseToNavigate) {
+          this.setCurrentCourse(courseList[0]);
+          courseToNavigate = courseList[0].name;
+          tabToVisit = '';
+        }
+        this.router.navigate(['courses/' + courseToNavigate + '/' + tabToVisit]);
+      }
     });
 
     this.courseService.getSelectedCourse().subscribe(course => {
