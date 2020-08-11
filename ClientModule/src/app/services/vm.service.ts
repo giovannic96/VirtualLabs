@@ -11,7 +11,8 @@ import {Professor} from '../models/professor.model';
 })
 export class VmService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/vms';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/vms';
+  private API_PATH = 'http://localhost:8080/API/vms';
 
   constructor(private httpClient: HttpClient) { }
 

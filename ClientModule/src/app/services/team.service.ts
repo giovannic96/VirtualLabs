@@ -11,7 +11,8 @@ import {Vm} from '../models/vm.model';
 })
 export class TeamService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/teams';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/teams';
+  private API_PATH = 'http://localhost:8080/API/teams';
 
   constructor(private httpClient: HttpClient) { }
 

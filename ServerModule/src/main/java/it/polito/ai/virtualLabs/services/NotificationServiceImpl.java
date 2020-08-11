@@ -1,7 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-import it.polito.ai.virtualLabs.dtos.TeamProposalDTO;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import it.polito.ai.virtualLabs.entities.Course;
 import it.polito.ai.virtualLabs.entities.Student;
 import it.polito.ai.virtualLabs.entities.Team;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +62,23 @@ public class NotificationServiceImpl implements NotificationService {
         helper.setSubject(subject);
 
         emailSender.send(message);
+    }
+
+    @Override
+    public void sendMessageToTeam(String from, List<String> to, String subject, String body) throws MailException {
+        SimpleMailMessage message = new SimpleMailMessage();
+        final String headerBody = "Communication from the Prof. " + from + ":\n\n";
+        message.setSubject(subject);
+        message.setText(headerBody + body);
+
+        for(String email : to) {
+            if(userRepository.findStudentByUsername(email).isPresent()) {
+                message.setTo(email);
+                emailSender.send(message);
+            } else {
+                throw new StudentNotFoundException("The student with email '" + email + "' was not found in our system");
+            }
+        }
     }
 
     @Override
@@ -143,8 +159,6 @@ public class NotificationServiceImpl implements NotificationService {
 
             proposal.addToken(token);
         }
-
-
     }
 
     private String hashToken(String username) {

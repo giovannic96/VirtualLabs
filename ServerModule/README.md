@@ -72,8 +72,8 @@ API
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
 
 *Notification*
-* PUT	http://ip_address:port/notification/accept?tpId=:tpId&token=:token
-* PUT	http://ip_address:port/notification/reject?tpId=:tpId&token=:token
+* GET	http://ip_address:port/notification/accept?tpId=:tpId&token=:token
+* GET	http://ip_address:port/notification/reject?tpId=:tpId&token=:token
 
 ---  
 **POST**
@@ -92,6 +92,9 @@ API
 
 *Labs*
 * POST http://ip_address:port/api/labs/reports/:reportId/submitVersion
+
+*Notification*
+* POST	http://ip_address:port/notification/private/sendMessage
 
 ---
 **PUT**

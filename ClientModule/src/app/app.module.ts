@@ -39,6 +39,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
 import { MyDialogComponent } from './helpers/my-dialog.component';
+import {EmailDialogComponent} from './helpers/email-dialog.component';
+import {MatChipsModule} from "@angular/material/chips";
 
 @NgModule({
   declarations: [
@@ -56,7 +58,8 @@ import { MyDialogComponent } from './helpers/my-dialog.component';
     PageNotFoundComponent,
     MySnackBarComponent,
     VmModelSettingsDialogComponent,
-    MyDialogComponent
+    MyDialogComponent,
+    EmailDialogComponent
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -82,7 +85,8 @@ import { MyDialogComponent } from './helpers/my-dialog.component';
     MatSnackBarModule,
     MatCardModule,
     MatSelectModule,
-    MatSliderModule
+    MatSliderModule,
+    MatChipsModule
   ],
   exports: [
     RouterModule,
