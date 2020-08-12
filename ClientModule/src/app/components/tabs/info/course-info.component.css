@@ -1,3 +1,144 @@
 mat-icon {
   cursor: default;
 }
+
+mat-card {
+  margin-top: 1.8em;
+  margin-bottom: .5em;
+}
+
+mat-card-title {
+  text-align: center;
+  color: #337ab7;
+}
+
+mat-card-subtitle {
+  text-align: center;
+  font-style: italic;
+}
+
+mat-card-header {
+  display: flow-root;
+}
+
+.info-card-main {
+  margin-bottom: 40px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 4px 1px rgba(0, 0, 0, 0.19), 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+.info-row {
+  margin: 1em;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  line-height: 1.5;
+  font-size: 15px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 300;
+}
+
+.info-row-title {
+  padding-left: 10px;
+  width: 16%;
+  margin-right: 10px;
+  font-style: italic;
+}
+
+.info-row-content {
+  width: 84%;
+}
+
+.info-row-content-professor {
+  width: 93%;
+}
+
+.info-row-content-professor mat-list {
+  padding-top: 0;
+}
+
+.info-row-content p {
+  margin-block-start: unset;
+}
+
+.info-divider {
+  margin-left: 10px;
+  margin-right: 10px;
+  display: block;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: rgba(0,0,0,.12);
+}
+
+.info-table {
+  border: 1px solid #ddd;
+  width: 100%;
+  max-width: 100%;
+  background-color: transparent;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.info-table-header-row {
+  background-color: #fafafa;
+}
+
+.info-table-body-row {
+  text-align: center;
+}
+
+table thead tr th {
+  border: 1px solid #ddd;
+  font-weight: 500;
+}
+
+table tbody tr td {
+  border: 1px solid #ddd;
+}
+
+.info-charts-container {
+  margin: 1em;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.info-chart {
+  height: 370px;
+  width: 80%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top: .6em;
+  padding-left: 0;
+  box-shadow:  0 1px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 2px 0 rgba(0, 0, 0, 0.12)
+}
+
+#chartContainerPasses {
+  margin-right: 3em;
+}
+
+.info-charts-card-container {
+  background-color: rgba(67, 152, 220, 0.2);
+  margin-top: 0;
+  box-shadow: none;
+  padding: 12px;
+}
+
+.info-stats-row {
+  text-align: center;
+}
+
+.info-stats-row-title {
+  width: 100%;
+  font-size: 22px;
+  font-style: normal;
+}
+
+.info-professor-name-container {
+  margin-left: 1em;
+}
+
+.info-professor-name-label {
+  font-size: medium;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+}

@@ -20,6 +20,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,8 +41,18 @@ public class CourseController {
     @GetMapping({"","/"})
     public List<CourseDTO> all() {
         List<CourseDTO> courses = teamService.getAllCourses();
-        for(CourseDTO c: courses)
+        for(CourseDTO c: courses) {
             ModelHelper.enrich(c);
+            String courseInfo = "";
+            try {
+                courseInfo = new String(Files.readAllBytes(Paths.get(
+                        "C:\\Users\\giova\\Desktop\\VirtualLabs\\ServerModule\\src\\main\\resources\\static\\"
+                                + c.getName() +".txt")));
+            } catch (IOException ex) {
+                courseInfo = "";
+            }
+            c.setInfo(courseInfo);
+        }
         return courses;
     }
 
@@ -122,7 +135,6 @@ public class CourseController {
         for(ProfessorDTO p : professors)
             ModelHelper.enrich(p);
         return professors;
-
     }
 
     @PostMapping({"","/"})

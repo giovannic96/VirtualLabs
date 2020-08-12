@@ -4,14 +4,16 @@ export class Course {
   private _enabled: boolean;
   private _minTeamSize: number;
   private _maxTeamSize: number;
+  private _info: string;
   links: {rel, href}[];
 
-  constructor(name: string, acronym: string, enabled: boolean, minTeamSize: number, maxTeamSize: number) {
+  constructor(name: string, acronym: string, enabled: boolean, minTeamSize: number, maxTeamSize: number, info: string) {
     this._name = name;
     this._acronym = acronym;
     this._enabled = enabled;
     this._minTeamSize = minTeamSize;
     this._maxTeamSize = maxTeamSize;
+    this._info = info;
   }
 
   get name(): string {
@@ -54,4 +56,11 @@ export class Course {
     this._maxTeamSize = value;
   }
 
+  get info(): string {
+    return this._info;
+  }
+
+  set info(value: string) {
+    this._info = value;
+  }
 }

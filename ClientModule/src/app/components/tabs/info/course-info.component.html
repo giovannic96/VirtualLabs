@@ -1,1 +1,69 @@
-<p>course-info works!</p>
+<mat-card class="info-card-main">
+  <mat-card-header>
+    <mat-card-title>{{this.courseInfo.name}}</mat-card-title>
+    <mat-card-subtitle>{{this.courseInfo.acronym}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <div>
+      <div class="info-row">
+        <div class="info-row-title"><span><strong>Professors</strong></span></div>
+        <div class="info-row-content info-row-content-professor">
+          <mat-list>
+            <mat-list-item *ngFor="let professor of courseProfessors">
+              <img matListAvatar src="https://dt2sdf0db8zob.cloudfront.net/wp-content/uploads/2019/12/9-Best-Online-Avatars-and-How-to-Make-Your-Own-for-Free-image1-5.png">
+              <div class="info-professor-name-container">
+                <h3 matLine class="info-professor-name-label">{{professor.name}} {{professor.surname}}</h3>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-row-title"><span><strong>Team size</strong></span></div>
+        <div class="info-row-content">
+          <table class="info-table">
+            <thead>
+              <tr class="info-table-header-row">
+                <th>Min</th>
+                <th>Max</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="info-table-body-row">
+                <td>{{this.courseInfo.minTeamSize}}</td>
+                <td>{{this.courseInfo.maxTeamSize}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-row-title"><span><strong>Course description</strong></span></div>
+        <div class="info-row-content"><p [innerHTML]="this.courseInfo.description"></p></div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-row-title"><span><strong>Prerequisites</strong></span></div>
+        <div class="info-row-content"><p [innerHTML]="this.courseInfo.prerequisites"></p></div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-row-title"><span><strong>Course topics</strong></span></div>
+        <div class="info-row-content"><p [innerHTML]="this.courseInfo.topics"></p></div>
+      </div>
+      <div class="info-divider"></div>
+    </div>
+    <div class="info-row info-stats-row">
+      <div class="info-row-title info-stats-row-title"><span><strong>Exam passing statistics</strong></span></div>
+    </div>
+    <mat-card class="info-charts-card-container">
+    <div class="info-charts-container">
+      <mat-card id="chartContainerPasses" class="info-chart"></mat-card>
+      <mat-card id="chartContainerGrades" class="info-chart"></mat-card>
+    </div>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

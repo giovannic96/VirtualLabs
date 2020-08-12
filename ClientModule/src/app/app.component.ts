@@ -1,11 +1,8 @@
-import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import {Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AuthService} from './services/auth.service';
-import {HomeComponent} from './components/main/home/home.component';
-import {Course} from './models/course.model';
 import {CourseService} from './services/course.service';
 
 @Component({
@@ -22,7 +19,6 @@ export class AppComponent {
               private router: Router,
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog) {
-
 
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {
