@@ -1,9 +1,10 @@
-import {Component} from '@angular/core';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AuthService} from './services/auth.service';
 import {CourseService} from './services/course.service';
+import {HomeComponent} from "./components/main/home/home.component";
 
 @Component({
   selector: 'app-root',
@@ -13,12 +14,17 @@ import {CourseService} from './services/course.service';
 export class AppComponent {
   title = 'VirtualLabs';
   userLoggedIn: boolean;
+  menuHidden: boolean;
 
   constructor(private authService: AuthService,
               private courseService: CourseService,
               private router: Router,
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog) {
+
+    this.courseService.hideMenuIcon.subscribe(hideMenu => {
+      this.menuHidden = hideMenu;
+    });
 
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {

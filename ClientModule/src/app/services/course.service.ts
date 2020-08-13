@@ -7,7 +7,7 @@ import {Course} from '../models/course.model';
 import {Team} from '../models/team.model';
 import {TeamProposal} from '../models/team-proposal.model';
 import {VmModel} from '../models/vm-model.model';
-import {Professor} from "../models/professor.model";
+import {Professor} from '../models/professor.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +19,12 @@ export class CourseService {
 
   private _selectedCourse: BehaviorSubject<Course>;
   public clicksOnMenu: Subject<Event>;
+  public hideMenuIcon: Subject<boolean>;
 
   constructor(private httpClient: HttpClient) {
     this._selectedCourse = new BehaviorSubject<Course>(null);
     this.clicksOnMenu = new Subject<Event>();
+    this.hideMenuIcon = new Subject<boolean>();
   }
 
   getSelectedCourse(): Observable<Course> {
