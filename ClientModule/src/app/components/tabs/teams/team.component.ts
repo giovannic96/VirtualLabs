@@ -103,13 +103,13 @@ export class TeamComponent implements OnInit {
     }
   }
 
-  openEmailDialog(team: Team) {
+  openEmailDialog(students: Student[]) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
-    const emails = team.members.map(s => s.username);
+    const emails = students.map(s => s.username);
     dialogConfig.data = {
       to: emails,
       subject: '',
