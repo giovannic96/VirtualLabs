@@ -236,6 +236,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseName}/editVmModel")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void editVmModel(@PathVariable String courseName, @RequestBody VmModelDTO vmModelDTO) {
         Optional<VmModelDTO> currentVmModel = vmService.getCourseVmModel(courseName);

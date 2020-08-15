@@ -119,6 +119,7 @@ API
 
 *Vms*
 * DELETE http://ip_address:port/api/vms/:vmId
+* DELETE http://ip_address:port/api/vms/vmModels/:vmModelId
 
 *Teams*
 * DELETE http://ip_address:port/api/teams/:teamId

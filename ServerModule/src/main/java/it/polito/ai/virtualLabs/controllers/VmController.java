@@ -114,4 +114,14 @@ public class VmController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The vm with id '" + vmId + "' was not found");
         vmService.removeVm(vmId);
     }
+
+    @DeleteMapping("/vmModels/{vmModelId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
+    @ResponseStatus(HttpStatus.OK)
+    public void removeVmModel(@PathVariable Long vmModelId) {
+        Optional<VmModelDTO> vmModel = vmService.getVmModel(vmModelId);
+        if (!vmModel.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The vm model with id '" + vmModelId + "' was not found");
+        vmService.removeVmModel(vmModelId);
+    }
 }

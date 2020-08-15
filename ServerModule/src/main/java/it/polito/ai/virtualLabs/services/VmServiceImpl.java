@@ -275,6 +275,20 @@ public class VmServiceImpl implements VmService {
         return true;
     }
 
+    @Override
+    public void removeVmModel(Long vmModelId) {
+        if(!vmModelRepository.existsById(vmModelId))
+            throw new VmModelNotFoundException("The vm model with id " + vmModelId + " does not exist");
+
+        //remove vmModel
+        VmModel vmModel = vmModelRepository.getOne(vmModelId);
+        vmModel.setProfessor(null);
+        vmModel.setCourse(null);
+
+        vmModelRepository.delete(vmModel);
+        vmModelRepository.flush();
+    }
+
     private boolean resourcesExceeded(List<Vm> teamVms, VmModel vmModel, int vCPU, int ram, int disk) {
         int totRam = 0, totDisk = 0, totVCpu = 0;
 
