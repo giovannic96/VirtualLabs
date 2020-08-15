@@ -28,4 +28,16 @@ export class VmService {
       );
   }
 
+  deleteVmModel(vmModelId: number) {
+    return this.httpClient
+      .delete(`${this.API_PATH}/vmModels/${vmModelId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`deleteVmModel error: ${err.message}`);
+        })
+      );
+  }
+
 }

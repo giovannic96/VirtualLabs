@@ -15,9 +15,9 @@
         <mat-label>Operating system</mat-label>
         <mat-select formControlName="os">
           <mat-option value="win10">Windows 10</mat-option>
-          <mat-option value="ubuntu">Ubuntu 20.04</mat-option>
-          <mat-option value="debian">Debian buster</mat-option>
-          <mat-option value="macos">Mac OS X Cheetah 10.0</mat-option>
+          <mat-option value="ubuntu_20_4">Ubuntu 20.04</mat-option>
+          <mat-option value="debian_buster">Debian buster</mat-option>
+          <mat-option value="macos_cheetah_10">Mac OS X Cheetah 10.0</mat-option>
         </mat-select>
         <mat-error>You must select a valid OS</mat-error>
       </mat-form-field>
@@ -38,7 +38,7 @@
         </div>
       </ng-container>
       <ng-container>
-        <mat-card-subtitle>Max RAM - {{ramSlider.value}} Gb</mat-card-subtitle>
+        <mat-card-subtitle>Max RAM - {{ramSlider.value}} GB</mat-card-subtitle>
         <mat-slider formControlName="maxRam" #ramSlider step="8" min="0" max="64"></mat-slider>
         <div class="custom-slider-error-container">
           <h5 class="custom-slider-error-message"
@@ -77,10 +77,9 @@
       </ng-container>
     </div>
   </div>
-  <h3 matLine *ngIf="vmModelFormGroup.errors">Aituo</h3>
   <mat-divider style="margin-top: 1em;"></mat-divider>
   <div class="vm-model-buttons-div">
     <button mat-raised-button mat-dialog-close color="warn">CANCEL</button>
-    <button mat-raised-button color="primary">CREATE</button>
+    <button mat-raised-button color="primary">{{data.modelExists ? 'EDIT' : 'CREATE'}}</button>
   </div>
 </form>

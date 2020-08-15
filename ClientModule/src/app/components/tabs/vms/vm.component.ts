@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
-import {catchError, concatAll, concatMap, filter, map, mergeAll, mergeMap, tap, toArray} from 'rxjs/operators';
-import {forkJoin, Observable, of} from 'rxjs';
+import {concatMap, filter, mergeMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
-import {Vm} from '../../../models/vm.model';
 import {MatDialog} from '@angular/material/dialog';
-import {LoginDialogComponent} from '../../../auth/login-dialog.component';
 import {VmModelSettingsDialogComponent} from './vm-model-settings-dialog.component';
 import {VmModel} from '../../../models/vm-model.model';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {MyDialogComponent} from '../../../helpers/my-dialog.component';
 
 @Component({
   selector: 'app-vm',
@@ -47,32 +46,53 @@ export class VmComponent implements OnInit {
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getVmModel(course.name)),
       concatMap(vmModel => {
+        console.log(vmModel);
         this.vmModel = vmModel;
         return this.vmService.getVmModelProfessor(vmModel.id);
       })).subscribe(professor => this.vmModel.professor = professor,
-      error => this.vmModel = null);
+      error => {
+        if (this.vmModel)
+          this.vmModel.professor = null;
+      });
 
   }
 
   ngOnInit(): void {
   }
 
-  openDialog(action: string) {
-    // TODO: usare 'action' per dire al dialog se creare o modificare il model
+  async openDialog() {
 
-    const dialogRef = this.dialog.open(VmModelSettingsDialogComponent, {disableClose: true});
+    const data = {modelExists: false, vmModel: this.vmModel};
+    if (this.vmModel) {
+      data.modelExists = true;
+    }
 
-    let course: Course;
-    const subscription = this.currentCourse.subscribe(currentCourse => course = currentCourse);
+    const dialogRef = this.dialog.open(VmModelSettingsDialogComponent, {disableClose: true, data});
 
-    dialogRef.afterClosed().pipe(concatMap((vmModel: VmModel) => {
-      if (!!vmModel) {
-        return this.courseService.setVmModel(course.name, vmModel.getDTO());
+    const course: Course = this.courseService.getSelectedCourseValue();
+
+    const dialogResponse: VmModel = await dialogRef.afterClosed().toPromise();
+    if (!!dialogResponse) {
+      let successMessage: string;
+      let errorMessage: string;
+      let vmModelRequest: Observable<boolean>;
+      if (this.vmModel) {
+        successMessage = 'Vm model edited successfully';
+        errorMessage = 'Vm model editing failed';
+        vmModelRequest = this.courseService.editVmModel(course.name, dialogResponse.getDTO());
+      } else {
+        successMessage = 'Vm model created successfully';
+        errorMessage = 'Vm model creation failed';
+        vmModelRequest = this.courseService.setVmModel(course.name, dialogResponse.getDTO());
       }
-    })).subscribe(response => this.mySnackBar.openSnackBar('Vm model created successfully', MessageType.SUCCESS, 3),
-      error => this.mySnackBar.openSnackBar('Vm model creation failed', MessageType.ERROR, 3));
 
-    subscription.unsubscribe();
+      vmModelRequest.pipe(concatMap(() => this.courseService.getVmModel(course.name)))
+      .subscribe(vmModel => {
+        // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+        this.vmModel = vmModel;
+        this.mySnackBar.openSnackBar(successMessage, MessageType.SUCCESS, 3);
+      }, error => this.mySnackBar.openSnackBar(errorMessage, MessageType.ERROR, 3));
+    }
   }
 
   calcDiskLabel(value: number) {
@@ -82,5 +102,24 @@ export class VmComponent implements OnInit {
       return (value / 1024).toFixed(1) + ' TB';
     else
       return (value / 1024) + ' TB';
+  }
+
+  async deleteVmModel() {
+    if (this.vmModel) {
+      const areYouSure: Promise<boolean> = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+          message: 'Warning! Deleting a vm model you will delete also ALL vms related to it'
+        }}).afterClosed().toPromise();
+
+      if (areYouSure) {
+        this.vmService.deleteVmModel(this.vmModel.id).subscribe(
+          () => {
+            this.vmModel = null;
+            this.teamList.forEach(team => team.vms = []);
+            this.mySnackBar.openSnackBar('Vm model deleted successfully', MessageType.SUCCESS, 3);
+          },
+          error => this.mySnackBar.openSnackBar('Vm model deletion failed', MessageType.ERROR, 3)
+        );
+      }
+    }
   }
 }

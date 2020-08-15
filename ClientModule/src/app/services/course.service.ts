@@ -35,6 +35,10 @@ export class CourseService {
     this._selectedCourse.next(course);
   }
 
+  getSelectedCourseValue(): Course {
+    return this._selectedCourse.getValue();
+  }
+
   getAll(): Observable<Course[]> {
     return this.httpClient
       .get<Course[]>(`${this.API_PATH}`)
@@ -179,6 +183,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`getProfessors error: ${err.message}`);
+        })
+      );
+  }
+
+  editVmModel(courseName: string, vmModel: VmModel) {
+    return this.httpClient
+      .put<boolean>(`${this.API_PATH}/${courseName}/editVmModel`, vmModel)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`editVmModel error: ${err.message}`);
         })
       );
   }

@@ -81,7 +81,8 @@ export class TeamComponent implements OnInit {
   }
 
   findTeam(studentId: string) {
-    return this.teamList.find(team => team.members?.find(student => student.id === studentId));
+    if (this.teamList)
+      return this.teamList.find(team => team.members?.find(student => student.id === studentId));
   }
 
   async openDialog(team: Team) {

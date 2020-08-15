@@ -14,7 +14,7 @@
                 <h4 matLine>{{vmModel.name}}</h4>
               </mat-list-item>
             </mat-list>
-            <mat-card-subtitle class="vm-model-editor-description"><i>Set by Prof. {{vmModel?.professor?.name}} {{vmModel.professor?.surname}}</i></mat-card-subtitle>
+            <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof.' + vmModel.professor.name + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
           </div>
           <ng-template #noVmModel>
             <mat-card-subtitle class="no-vm-model-message">There is no vm model for this course yet</mat-card-subtitle>
@@ -24,7 +24,7 @@
       <div class="vm-model-details" *ngIf="vmModel">
         <div>
           <h4 matLine>Operating system:</h4>
-          <mat-card-subtitle>Windows 10</mat-card-subtitle>
+          <mat-card-subtitle>{{vmModel.os}}</mat-card-subtitle>
         </div>
         <div>
           <h4 matLine>Max resources per team:</h4>
@@ -36,10 +36,10 @@
         </div>
       </div>
       <mat-action-row>
-        <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog('create')">CREATE MODEL</button>
+        <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog()">CREATE MODEL</button>
         <ng-template #vmModelExists>
-          <button mat-raised-button color="warn">DELETE</button>
-          <button mat-raised-button color="primary">EDIT</button>
+          <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
+          <button mat-raised-button color="primary" (click)="openDialog()">EDIT</button>
         </ng-template>
       </mat-action-row>
     </mat-expansion-panel>
