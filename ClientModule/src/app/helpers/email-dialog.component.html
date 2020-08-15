@@ -1,0 +1,31 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>New Message</h2>
+  <form [formGroup]="form">
+    <mat-form-field appearance="outline">
+      <mat-label>To</mat-label>
+      <mat-chip-list #emailList formControlName="to">
+        <mat-chip *ngFor="let email of form.get('to').value">
+          {{email}}
+        </mat-chip>
+      </mat-chip-list>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Subject</mat-label>
+      <input type="email" matInput
+             formControlName="subject">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <textarea matInput
+                rows="12" cols="40"
+                placeholder="Message"
+                formControlName="body">
+      </textarea>
+    </mat-form-field>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button class="mat-raised-button"(click)="close()">CLOSE</button>
+        <button class="mat-raised-button mat-primary"(click)="send()">SEND</button>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</div>

@@ -7,19 +7,24 @@ import {Course} from '../models/course.model';
 import {Team} from '../models/team.model';
 import {TeamProposal} from '../models/team-proposal.model';
 import {VmModel} from '../models/vm-model.model';
+import {Professor} from '../models/professor.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CourseService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
+  private API_PATH = 'http://localhost:8080/API/courses';
+
   private _selectedCourse: BehaviorSubject<Course>;
   public clicksOnMenu: Subject<Event>;
+  public hideMenuIcon: Subject<boolean>;
 
   constructor(private httpClient: HttpClient) {
     this._selectedCourse = new BehaviorSubject<Course>(null);
     this.clicksOnMenu = new Subject<Event>();
+    this.hideMenuIcon = new Subject<boolean>();
   }
 
   getSelectedCourse(): Observable<Course> {
@@ -162,6 +167,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`setVmModel error: ${err.message}`);
+        })
+      );
+  }
+
+  getProfessors(courseName: string): Observable<Professor[]> {
+    return this.httpClient
+      .get<Professor[]>(`${this.API_PATH}/${courseName}/professors`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getProfessors error: ${err.message}`);
         })
       );
   }

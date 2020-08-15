@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {concatMap, filter, flatMap, map, mergeMap, switchMap, take, tap, toArray} from 'rxjs/operators';
-import {forkJoin, from, Observable, of} from 'rxjs';
+import {concatMap, filter, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
 import {Student} from '../../../models/student.model';
 import {StudentService} from '../../../services/student.service';
 import {TeamService} from '../../../services/team.service';
 import {TeamProposal, TeamProposalStatus} from '../../../models/team-proposal.model';
-import {VmModel} from '../../../models/vm-model.model';
 import {MyDialogComponent} from '../../../helpers/my-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {EmailDialogComponent} from '../../../helpers/email-dialog.component';
+import {NotificationService} from '../../../services/notification.service';
 
 @Component({
   selector: 'app-team',
@@ -34,6 +35,7 @@ export class TeamComponent implements OnInit {
   constructor(private courseService: CourseService,
               private studentService: StudentService,
               private teamService: TeamService,
+              private notificationService: NotificationService,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
@@ -99,6 +101,34 @@ export class TeamComponent implements OnInit {
     if (areYouSure) {
       this.deleteTeam(team);
     }
+  }
+
+  openEmailDialog(students: Student[]) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+
+    const emails = students.map(s => s.username);
+    dialogConfig.data = {
+      to: emails,
+      subject: '',
+      body: '',
+    };
+
+    const dialogRef = this.dialog.open(EmailDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      data => {
+        if (data !== undefined) { // i.e. close button was pressed
+          this.notificationService.sendMessage(emails, data.subject, data.body).subscribe( () => {
+            this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
+          }, () => {
+            this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
+          });
+        }
+      }
+    );
   }
 
   deleteTeam(team: Team) {

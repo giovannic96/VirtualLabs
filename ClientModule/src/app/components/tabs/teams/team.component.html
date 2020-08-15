@@ -36,7 +36,7 @@
       </ng-container>
       <mat-action-row>
         <button mat-raised-button color="warn" (click)="openDialog(team)">DELETE TEAM</button>
-        <button mat-raised-button color="primary">SEND MESSAGE</button>
+        <button mat-raised-button color="primary" (click)="openEmailDialog(team.members)">SEND MESSAGE</button>
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
@@ -83,7 +83,7 @@
       <br>
       <em>This team proposal will expire on {{proposal.expiryDate.toLocaleDateString()}} at {{proposal.expiryDate.toLocaleTimeString()}}</em>
       <mat-action-row>
-        <button mat-raised-button color="primary">SEND MESSAGE</button>
+        <button mat-raised-button color="primary" (click)="openEmailDialog(proposal.members)">SEND MESSAGE</button>
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>

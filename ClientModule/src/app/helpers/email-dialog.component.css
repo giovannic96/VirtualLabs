@@ -1,0 +1,30 @@
+.dialog-container {
+  text-align: center;
+  min-width: 42vw;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons-container {
+  display: flex;
+  place-content: flex-end;
+  margin: 0px 0 0;
+  padding: 0px .5em .5em;
+}
+
+.buttons-container button {
+  margin: 0 0px 0 1.3em;
+  width: 100px;
+}
+
+form textarea {
+  resize: none;
+}
+
+h2 {
+  text-align: left;
+  margin-bottom: 26px;
+}
