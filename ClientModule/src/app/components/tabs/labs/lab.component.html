@@ -1,1 +1,74 @@
-<p>lab works!</p>
+<div class="tab-section" *ngIf="assignmentList?.length; else noAssignments">
+  <div class="tab-subtitle">
+    <mat-icon>assignment</mat-icon>
+    <h2>Assignments</h2>
+  </div>
+  <mat-accordion multi="false">
+    <mat-expansion-panel *ngFor="let assignment of this.assignmentList">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{assignment.name}}
+        </mat-panel-title>
+        <mat-panel-description class="panels-description" *ngIf="assignment && assignment.expiryDate">
+          <div class="icons-div">
+            <i>Expires in: {{formatDate(assignment.expiryDate) | date:'medium'}}</i>
+          </div>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <ng-container>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title class="assignment-desc">Description</mat-card-title>
+            <mat-card-subtitle class="assignment-content">{{assignment.content}}</mat-card-subtitle>
+          </mat-card-header>
+        </mat-card>
+      </ng-container>
+
+      <!-- start REPORT accordion -->
+      <ng-container *ngIf="assignment.reports?.length">
+        <mat-card-title class="report-desc">Reports</mat-card-title>
+        <mat-accordion multi="false">
+        <mat-expansion-panel *ngFor="let report of assignment.reports">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{report.grade}}
+            </mat-panel-title>
+            <mat-panel-description class="panels-description" *ngIf="report?.status">
+              <div class="icons-div">
+                <i>{{report.status}}</i>
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <ng-container *ngIf="report.versions?.length">
+            <h4>Versions:</h4>
+            <mat-card *ngFor="let version of report.versions">
+              <mat-card-header>
+                <mat-icon>content_paste</mat-icon>
+                <mat-card-title>{{version.title}}</mat-card-title>
+                <mat-card-subtitle>Content: {{version.content}}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </ng-container>
+          <mat-action-row>
+            <button mat-raised-button color="warn">DELETE REPORT</button>
+            <button mat-raised-button color="primary">EDIT REPORT</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+      </ng-container>
+      <!-- end REPORT accordion-->
+
+      <mat-action-row>
+        <button mat-raised-button color="warn">DELETE ASSIGNMENT</button>
+        <button mat-raised-button color="primary">EDIT ASSIGNMENT</button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<ng-template #noAssignments>
+  <div class="no-assignments-message-container" *ngIf="assignmentList">
+    <mat-card><mat-card-header><mat-card-title>
+      Still no assignment has been published
+    </mat-card-title></mat-card-header></mat-card>
+  </div>
+</ng-template>

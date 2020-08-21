@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.dtos;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.Id;

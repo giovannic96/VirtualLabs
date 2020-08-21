@@ -59,7 +59,7 @@ export class PersonalComponent implements OnInit {
         const splitUrl = this.router.url.split('/');
         if (splitUrl.length > 2) {
           courseList.find(course => {
-            if (course.name === this.router.url.split('/')[2]) {
+            if (course.name.replace(' ', '%20') === this.router.url.split('/')[2]) {
               this.setCurrentCourse(course);
               courseToNavigate = course.name;
               tabToVisit = splitUrl.length > 3 ? this.router.url.split('/')[3] : '';

@@ -46,8 +46,7 @@ public class CourseController {
             String courseInfo = "";
             try {
                 courseInfo = new String(Files.readAllBytes(Paths.get(
-                        "C:\\Users\\giova\\Desktop\\VirtualLabs\\ServerModule\\src\\main\\resources\\static\\"
-                                + c.getName() +".txt")));
+                        "src\\main\\resources\\static\\"+ c.getName() +".txt")));
             } catch (IOException ex) {
                 courseInfo = "";
             }
