@@ -10,11 +10,11 @@
           <div class="vm-model-description" *ngIf="vmModel else noVmModel">
             <mat-list>
               <mat-list-item>
-                <img matListAvatar src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+                <img matListAvatar [src]="getOsImageLogo(this.vmModel.os)">
                 <h4 matLine>{{vmModel.name}}</h4>
               </mat-list-item>
             </mat-list>
-            <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof.' + vmModel.professor.name + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
+            <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof. ' + vmModel.professor.name + ' ' + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
           </div>
           <ng-template #noVmModel>
             <mat-card-subtitle class="no-vm-model-message">There is no vm model for this course yet</mat-card-subtitle>
@@ -22,9 +22,9 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="vm-model-details" *ngIf="vmModel">
-        <div>
+        <div *ngIf="osMap">
           <h4 matLine>Operating system:</h4>
-          <mat-card-subtitle>{{vmModel.os}}</mat-card-subtitle>
+          <mat-card-subtitle>{{osMap.get(vmModel.os)}}</mat-card-subtitle>
         </div>
         <div>
           <h4 matLine>Max resources per team:</h4>
@@ -66,11 +66,11 @@
             </mat-card-title>
             <div class="led-fake-div" [class]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
           </mat-card-header>
-          <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+          <img mat-card-image [src]="getOsImageLogo(this.vmModel.os)"> <!--TODO: da sostituire con il reale contenuto della vm -->
           <mat-card-content>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
-              <button mat-flat-button color="accent">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
+              <button mat-flat-button color="accent" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
               <button mat-flat-button color="primary" [disabled]="!vm.active">ENTER</button>
             </mat-card-footer>
           </mat-card-content>

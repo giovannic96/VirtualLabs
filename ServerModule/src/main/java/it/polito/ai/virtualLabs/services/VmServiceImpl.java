@@ -265,6 +265,7 @@ public class VmServiceImpl implements VmService {
         //TODO: decidere se gestire i vincoli sulle vm già create
 
         curVmModel.setName(vmModelDTO.getName());
+        curVmModel.setOs(vmModelDTO.getOs());
         curVmModel.setMaxVCPU(vmModelDTO.getMaxVCPU());
         curVmModel.setMaxDisk(vmModelDTO.getMaxDisk());
         curVmModel.setMaxRAM(vmModelDTO.getMaxRAM());

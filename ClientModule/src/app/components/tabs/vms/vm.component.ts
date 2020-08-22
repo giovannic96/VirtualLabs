@@ -11,6 +11,7 @@ import {VmModelSettingsDialogComponent} from './vm-model-settings-dialog.compone
 import {VmModel} from '../../../models/vm-model.model';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {Vm} from '../../../models/vm.model';
 
 @Component({
   selector: 'app-vm',
@@ -23,6 +24,7 @@ export class VmComponent implements OnInit {
 
   public vmModel: VmModel;
   public teamList: Team[];
+  public osMap: Map<string, string>;
 
   constructor(private vmService: VmService,
               private teamService: TeamService,
@@ -46,7 +48,6 @@ export class VmComponent implements OnInit {
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getVmModel(course.name)),
       concatMap(vmModel => {
-        console.log(vmModel);
         this.vmModel = vmModel;
         return this.vmService.getVmModelProfessor(vmModel.id);
       })).subscribe(professor => this.vmModel.professor = professor,
@@ -55,6 +56,7 @@ export class VmComponent implements OnInit {
           this.vmModel.professor = null;
       });
 
+    this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class VmComponent implements OnInit {
 
   async openDialog() {
 
-    const data = {modelExists: false, vmModel: this.vmModel};
+    const data = {modelExists: false, vmModel: this.vmModel, osMap: this.osMap};
     if (this.vmModel) {
       data.modelExists = true;
     }
@@ -95,6 +97,10 @@ export class VmComponent implements OnInit {
     }
   }
 
+  getOsImageLogo(osCode: string) {
+    return this.vmService.getVmModelOsLogoUrl(osCode);
+  }
+
   calcDiskLabel(value: number) {
     if (value < 1024)
       return value + ' GB';
@@ -121,5 +127,12 @@ export class VmComponent implements OnInit {
         );
       }
     }
+  }
+
+  toggleVmPower(vm: Vm) {
+    const response = vm.active ? this.vmService.powerOffVm(vm.id) : this.vmService.powerOnVm(vm.id);
+    response.subscribe(() => {
+      vm.active = !vm.active;
+    });
   }
 }

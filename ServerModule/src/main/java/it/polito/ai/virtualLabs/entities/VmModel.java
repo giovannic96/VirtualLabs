@@ -1,10 +1,11 @@
 package it.polito.ai.virtualLabs.entities;
 
 import lombok.Data;
+import org.modelmapper.Converters;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Entity
@@ -23,6 +24,17 @@ public class VmModel {
     private int maxTotVm;
     private int maxActiveVm;
 
+    private static final Map<String, String> osMap;
+    static {
+        Map<String, String> map = new HashMap<>();
+        map.put("win_10", "Windows 10");
+        map.put("ubuntu_20_4", "Ubuntu 20.04");
+        map.put("debian_buster", "Debian buster");
+        map.put("kali_linux", "Kali Linux");
+        map.put("macos_cheetah_10", "Mac OS X Cheetah 10.0");
+        osMap = Collections.unmodifiableMap(map);
+    }
+
     @OneToOne
     @JoinColumn(name = "course_name")
     private Course course;
@@ -33,6 +45,10 @@ public class VmModel {
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor professor;
+
+    public static Map<String, String> getOsMap() {
+        return osMap;
+    }
 
     public void setProfessor(Professor p) {
         if(professor != null)

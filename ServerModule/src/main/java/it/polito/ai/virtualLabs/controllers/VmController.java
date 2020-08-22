@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.VmModel;
 import it.polito.ai.virtualLabs.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -85,6 +87,11 @@ public class VmController {
         return vms;
     }
 
+    @GetMapping("/vmModels/osMap")
+    public Map<String, String> osMap() {
+        return VmModel.getOsMap();
+    }
+
     @PutMapping("/{vmId}")
     @ResponseStatus(HttpStatus.OK)
     public void edit(@PathVariable Long vmId, @RequestBody VmDTO vmDTO) {
@@ -93,6 +100,7 @@ public class VmController {
     }
 
     @PutMapping("/{vmId}/powerOn")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void powerOn(@PathVariable Long vmId) {
         if(!vmService.powerOnVm(vmId))
@@ -100,6 +108,7 @@ public class VmController {
     }
 
     @PutMapping("/{vmId}/powerOff")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void powerOff(@PathVariable Long vmId) {
         if(!vmService.powerOffVm(vmId))

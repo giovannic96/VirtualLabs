@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {VmModel} from '../../../models/vm-model.model';
+import {VmService} from '../../../services/vm.service';
 
 @Component({
   selector: 'app-vm-model-settings-dialog',
@@ -16,9 +17,8 @@ export class VmModelSettingsDialogComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<VmModelSettingsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private cd: ChangeDetectorRef,
-              public formBuilder: FormBuilder) {
-
-
+              public formBuilder: FormBuilder,
+              private vmService: VmService) {
   }
 
   ngOnInit(): void {
@@ -54,6 +54,10 @@ export class VmModelSettingsDialogComponent implements OnInit {
       return (value / 1024).toFixed(1) + ' TB';
     else
       return (value / 1024) + ' TB';
+  }
+
+  getOsImagePreview(osCode: string) {
+    return this.vmService.getVmModelOsPreviewUrl(osCode);
   }
 
   checkForm() {

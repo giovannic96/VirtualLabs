@@ -14,6 +14,11 @@ export class VmService {
   // private API_PATH = 'https://virtuallabs.ns0.it/API/vms';
   private API_PATH = 'http://localhost:8080/API/vms';
 
+  private VM_MODEL_LOGO_URL = 'https://virtuallabs.ns0.it/images/vm_models/logo/';
+  private VM_MODEL_LOGO_FORMAT = '.jpg';
+  private VM_MODEL_PREVIEW_URL = 'https://virtuallabs.ns0.it/images/vm_models/preview/';
+  private VM_MODEL_PREVIEW_FORMAT = '.jpg';
+
   constructor(private httpClient: HttpClient) { }
 
   getVmModelProfessor(vmModelId: number): Observable<Professor> {
@@ -38,6 +43,50 @@ export class VmService {
           return throwError(`deleteVmModel error: ${err.message}`);
         })
       );
+  }
+
+  getOsMap() {
+    return this.httpClient
+      .get(`${this.API_PATH}/vmModels/osMap`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getOsMap error: ${err.message}`);
+        })
+      );
+  }
+
+  powerOnVm(vmId: number) {
+    return this.httpClient
+      .put(`${this.API_PATH}/${vmId}/powerOn`, null)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`powerOnVm error: ${err.message}`);
+        })
+      );
+  }
+
+  powerOffVm(vmId: number) {
+    return this.httpClient
+      .put(`${this.API_PATH}/${vmId}/powerOff`, null)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`powerOffVm error: ${err.message}`);
+        })
+      );
+  }
+
+  getVmModelOsPreviewUrl(osName: string): string {
+    return this.VM_MODEL_PREVIEW_URL + osName + this.VM_MODEL_PREVIEW_FORMAT;
+  }
+
+  getVmModelOsLogoUrl(osName: string): string {
+    return this.VM_MODEL_LOGO_URL + osName + this.VM_MODEL_LOGO_FORMAT;
   }
 
 }

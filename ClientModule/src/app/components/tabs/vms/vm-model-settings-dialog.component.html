@@ -14,16 +14,13 @@
       <mat-form-field>
         <mat-label>Operating system</mat-label>
         <mat-select formControlName="os">
-          <mat-option value="win10">Windows 10</mat-option>
-          <mat-option value="ubuntu_20_4">Ubuntu 20.04</mat-option>
-          <mat-option value="debian_buster">Debian buster</mat-option>
-          <mat-option value="macos_cheetah_10">Mac OS X Cheetah 10.0</mat-option>
+          <mat-option *ngFor="let entry of data.osMap | keyvalue" [value]="entry.key">{{entry.value}}</mat-option>
         </mat-select>
         <mat-error>You must select a valid OS</mat-error>
       </mat-form-field>
       <mat-card class="operating-system-preview-card">
         <mat-card-content>
-          <img mat-card-image src="https://virtuallabs.ns0.it/images/vms/win10.jpg">
+          <img mat-card-image [src]="getOsImagePreview(this.vmModelFormGroup.get('os').value)">
         </mat-card-content>
       </mat-card>
     </div>
