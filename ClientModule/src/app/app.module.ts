@@ -86,7 +86,7 @@ import {MatChipsModule} from "@angular/material/chips";
     MatCardModule,
     MatSelectModule,
     MatSliderModule,
-    MatChipsModule
+    MatChipsModule,
   ],
   exports: [
     RouterModule,

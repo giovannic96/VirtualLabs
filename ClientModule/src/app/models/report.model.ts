@@ -1,10 +1,19 @@
 import {Version} from './version.model';
+import {Student} from './student.model';
+
+export enum ReportStatus {
+  NULL = 'NULL',
+  READ = 'READ',
+  SUBMITTED = 'SUBMITTED',
+  REVISED = 'REVISED',
+}
 
 export class Report {
   private _id: number;
   private _grade: string;
   private _status: string;
   private _versions: Version[];
+  private _owner: Student;
 
   constructor(id: number, grade: string, status: string) {
     this._id = id;
@@ -42,5 +51,13 @@ export class Report {
 
   set versions(value: Version[]) {
     this._versions = value;
+  }
+
+  get owner(): Student {
+    return this._owner;
+  }
+
+  set owner(value: Student) {
+    this._owner = value;
   }
 }

@@ -8,7 +8,7 @@ import {Team} from '../models/team.model';
 import {TeamProposal} from '../models/team-proposal.model';
 import {VmModel} from '../models/vm-model.model';
 import {Professor} from '../models/professor.model';
-import {Assignment} from "../models/assignment.model";
+import {Assignment} from '../models/assignment.model';
 
 @Injectable({
   providedIn: 'root'
