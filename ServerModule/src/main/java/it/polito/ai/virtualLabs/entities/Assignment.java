@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.entities;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,8 @@ public class Assignment {
 
     private LocalDateTime expiryDate;
 
+    @Column(name = "content", length = 1024)
+    @Length(max = 1024)
     private String content;
 
     @ManyToOne

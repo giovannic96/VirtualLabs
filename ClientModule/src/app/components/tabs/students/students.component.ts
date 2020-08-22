@@ -11,7 +11,6 @@ import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {filter, map} from 'rxjs/operators';
 import {MyDialogComponent} from '../../../helpers/my-dialog.component';
-import {EmailDialogComponent} from '../../../helpers/email-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({

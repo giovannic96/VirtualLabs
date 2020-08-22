@@ -8,6 +8,7 @@ import {Team} from '../models/team.model';
 import {TeamProposal} from '../models/team-proposal.model';
 import {VmModel} from '../models/vm-model.model';
 import {Professor} from '../models/professor.model';
+import {Assignment} from '../models/assignment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -95,6 +96,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`UnrollMany error: ${err.message}`);
+        })
+      );
+  }
+
+  getAllAssignments(courseName: string): Observable<Assignment[]> {
+    return this.httpClient
+      .get<Assignment[]>(`${this.API_PATH}/${courseName}/assignments`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetAllAssignments error: ${err.message}`);
         })
       );
   }
