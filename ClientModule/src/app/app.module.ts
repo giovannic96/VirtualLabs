@@ -109,6 +109,12 @@ import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.co
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [LoginDialogComponent, EmailDialogComponent, VersionDialogComponent]
+  entryComponents: [
+    MyDialogComponent,
+    LoginDialogComponent,
+    EmailDialogComponent,
+    VersionDialogComponent,
+    VmModelSettingsDialogComponent
+  ]
 })
 export class AppModule { }
