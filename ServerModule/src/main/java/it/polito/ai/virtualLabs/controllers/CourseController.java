@@ -8,11 +8,13 @@ import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -45,10 +48,8 @@ public class CourseController {
             ModelHelper.enrich(c);
             String courseInfo = "";
             try {
-                courseInfo = new String(Files.readAllBytes(Paths.get(
-                        "C:\\Users\\giova\\Desktop\\VirtualLabs\\ServerModule\\src\\main\\resources\\static\\"
-                                + c.getName() +".txt")));
-            } catch (IOException ex) {
+                courseInfo = new String(getClass().getClassLoader().getResourceAsStream("static/" + c.getName() + ".txt").readAllBytes());
+            } catch (Exception ex) {
                 courseInfo = "";
             }
             c.setInfo(courseInfo);
