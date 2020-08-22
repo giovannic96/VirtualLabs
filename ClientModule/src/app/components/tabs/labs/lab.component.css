@@ -47,18 +47,15 @@ mat-card {
   padding: 0 40px;
 }
 
+.assignment-header {
+  padding: .5em 1.2em;
+}
+
 .assignment-desc {
   text-align: center;
   margin-top: 10px !important;
   margin-bottom: 15px !important;
   font-size: 20px;
-}
-
-.report-desc {
-  text-align: center;
-  margin-bottom: 32px !important;
-  font-size: 20px;
-  color: wheat;
 }
 
 .assignment-bottom {
@@ -78,6 +75,13 @@ mat-card {
 
 .report-panel-header {
   padding: 10px 16px;
+}
+
+.report-desc {
+  text-align: center;
+  margin-bottom: 32px !important;
+  font-size: 20px;
+  color: wheat;
 }
 
 .report-panel-desc {
@@ -124,5 +128,30 @@ mat-card {
 }
 
 .report-accordion {
-  padding: 8px;
+  margin: 8px !important;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, .2), 0 0 0 0 rgba(255, 255, 255, .14), 0 0 3px 0 rgba(255, 255, 255, .8)
+}
+
+.versions-grid {
+  padding: 16px;
+}
+
+.versions-grid > mat-card {
+  width: 200px;
+}
+
+.versions-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.z-depth:hover {
+  box-shadow: 0 8px 8px 8px rgba(0,0,0,.2), 0 8px 8px 0 rgba(0,0,0,.14), 0 8px 8px 0 rgba(0,0,0,.12) !important;
+  transform: translate3d(0,0,0);
+  transition: background .4s cubic-bezier(.25,.8,.25,1),box-shadow 280ms cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+}
+
+.toggleGridBtn {
+  padding-right: 0;
 }
