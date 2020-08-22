@@ -43,6 +43,7 @@ import { EmailDialogComponent } from './helpers/email-dialog.component';
 import { VersionDialogComponent } from './helpers/version-dialog.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layout';
+import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,8 @@ import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layo
     MySnackBarComponent,
     VmModelSettingsDialogComponent,
     MyDialogComponent,
+    EmailDialogComponent,
+    VirtualDesktopComponent,
     EmailDialogComponent,
     VersionDialogComponent,
   ],

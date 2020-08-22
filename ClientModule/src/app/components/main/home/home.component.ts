@@ -9,6 +9,7 @@ import {CourseService} from '../../../services/course.service';
 export class HomeComponent implements OnInit {
 
   constructor(private courseService: CourseService) {
+    this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(true);
   }
 

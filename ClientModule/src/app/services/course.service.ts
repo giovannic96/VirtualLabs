@@ -21,11 +21,13 @@ export class CourseService {
   private _selectedCourse: BehaviorSubject<Course>;
   public clicksOnMenu: Subject<Event>;
   public hideMenuIcon: Subject<boolean>;
+  public hideMenu: Subject<boolean>;
 
   constructor(private httpClient: HttpClient) {
     this._selectedCourse = new BehaviorSubject<Course>(null);
     this.clicksOnMenu = new Subject<Event>();
     this.hideMenuIcon = new Subject<boolean>();
+    this.hideMenu = new Subject<boolean>();
   }
 
   getSelectedCourse(): Observable<Course> {

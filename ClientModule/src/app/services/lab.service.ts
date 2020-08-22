@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Student} from "../models/student.model";
-import {catchError, retry} from "rxjs/operators";
-import {throwError} from "rxjs";
-import {Report} from "../models/report.model";
-import {Version} from "../models/version.model";
+import {Student} from '../models/student.model';
+import {catchError, retry} from 'rxjs/operators';
+import {throwError} from 'rxjs';
+import {Report} from '../models/report.model';
+import {Version} from '../models/version.model';
 
 @Injectable({
   providedIn: 'root'

@@ -48,6 +48,7 @@ export class PersonalComponent implements OnInit {
     this.allCourses = new Array<Course>();
     this.selectedCourseName = '';
 
+    this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(false);
 
     this.courseService.getAll().subscribe(courseList => {

@@ -4,7 +4,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AuthService} from './services/auth.service';
 import {CourseService} from './services/course.service';
-import {HomeComponent} from "./components/main/home/home.component";
 
 @Component({
   selector: 'app-root',
@@ -14,6 +13,7 @@ import {HomeComponent} from "./components/main/home/home.component";
 export class AppComponent {
   title = 'VirtualLabs';
   userLoggedIn: boolean;
+  menuIconHidden: boolean;
   menuHidden: boolean;
 
   constructor(private authService: AuthService,
@@ -22,9 +22,8 @@ export class AppComponent {
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog) {
 
-    this.courseService.hideMenuIcon.subscribe(hideMenu => {
-      this.menuHidden = hideMenu;
-    });
+    this.courseService.hideMenuIcon.subscribe(hideMenuIcon => this.menuIconHidden = hideMenuIcon);
+    this.courseService.hideMenu.subscribe(hideMenu => this.menuHidden = hideMenu);
 
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {

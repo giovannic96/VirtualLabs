@@ -1,0 +1,40 @@
+.dynamic-menu {
+  display: flex;
+  justify-content: space-between;
+  padding: .2em 1.5em .6em;
+  align-items: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background: aquamarine;
+  width: 50%;
+  text-align: center;
+  margin: -2.8em auto 0;
+  transition: 1s;
+  transition-delay: 1s;
+}
+
+.dynamic-menu:hover {
+  margin-top: 0;
+  transition-delay: 0s;
+}
+
+.vm-stats, .stat-element {
+  display: flex;
+  align-items: center;
+}
+
+.stat-element img {
+  margin-left: 1.4em;
+  margin-right: .4em;
+  max-height: 1.5em;
+  opacity: .7;
+}
+
+.fake-desktop-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}

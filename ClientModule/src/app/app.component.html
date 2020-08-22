@@ -1,5 +1,5 @@
-<mat-toolbar color="primary">
-  <mat-icon *ngIf="!menuHidden" (click)="toggleSidenav($event)" aria-hidden="false" aria-label="Menu">menu</mat-icon>
+<mat-toolbar color="primary" *ngIf="!menuHidden">
+  <mat-icon *ngIf="!menuIconHidden" (click)="toggleSidenav($event)" aria-hidden="false" aria-label="Menu">menu</mat-icon>
   <a id="title" routerLink="/home" routerLinkActive="active"><img class="logo" src="assets/logo_app.png"></a>
   <span class="fill-remaining-space"></span>
   <div class="log-button-div">
