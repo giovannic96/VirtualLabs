@@ -70,12 +70,19 @@ export class LabComponent implements OnInit {
               assignment.reports = reports;
               this.allReports.set(assignment.id, assignment.reports);
               this.filteredReports.set(assignment.id, assignment.reports);
+              // this.filteredReports.get(assignment.id).sort((a, b) => Report.sortData(a, b));
               return reports;
             }),
             tap(report => {
               this.labService.getReportOwner(report.id).subscribe(owner => report.owner = owner);
               this.labService.getReportVersions(report.id).subscribe(versions => report.versions = versions);
-            })).subscribe();
+            })).subscribe(s => {
+          const statusCheckedNames: string[] = this.reportStatusFilter.filter(rsf => rsf.checked).map(r => r.name);
+          this.allReports.forEach((v, k) => {
+            this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
+            this.filteredReports.get(k).sort((a, b) => Report.sortData(a, b));
+          });
+        });
       })).subscribe();
   }
 
@@ -143,6 +150,7 @@ export class LabComponent implements OnInit {
     const statusCheckedNames: string[] = this.reportStatusFilter.filter(rsf => rsf.checked).map(r => r.name);
     this.allReports.forEach((v, k) => {
       this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
+      this.filteredReports.get(k).sort((a, b) => Report.sortData(a, b));
     });
   }
 }

@@ -24,7 +24,7 @@
       <div class="info-divider"></div>
 
       <!-- start REPORT accordion -->
-      <ng-container *ngIf="assignment.reports?.length">
+      <ng-container *ngIf="filteredReports?.size">
         <mat-card class="report-card-container">
           <mat-card-title class="report-desc">Reports</mat-card-title>
           <div class="report-status-filter">
