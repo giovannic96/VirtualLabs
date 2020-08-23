@@ -31,7 +31,7 @@
             <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
               <mat-checkbox
                 [color]="rep.color"
-                (change)="statusFilterChanged()"
+                (change)="filterReports()"
                 [(ngModel)]="rep.checked">
                 {{rep.name}}
               </mat-checkbox>

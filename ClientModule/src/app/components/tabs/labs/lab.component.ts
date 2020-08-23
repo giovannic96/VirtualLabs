@@ -1,14 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {concatMap, filter, tap} from 'rxjs/operators';
+import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {Observable, Observer, of, Subject} from 'rxjs';
+import {forkJoin, Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {VersionDialogComponent} from '../../../helpers/version-dialog.component';
 import {ThemePalette} from '@angular/material/core';
+import {Student} from '../../../models/student.model';
+import {Version} from '../../../models/version.model';
 
 export interface ReportStatusFilter {
   name: string;
@@ -59,30 +61,36 @@ export class LabComponent implements OnInit {
 
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getAllAssignments(course.name)),
-      concatMap(assignmentList => {
+      mergeMap(assignmentList => {
         this.assignmentList = assignmentList;
         return assignmentList;
       }),
       tap(assignment => {
         this.labService.getAssignmentReports(assignment.id)
           .pipe(
-            concatMap(reports => {
+            mergeMap(reports => {
               assignment.reports = reports;
               this.allReports.set(assignment.id, assignment.reports);
               this.filteredReports.set(assignment.id, assignment.reports);
               // this.filteredReports.get(assignment.id).sort((a, b) => Report.sortData(a, b));
+              const ownerRequests: Observable<Student>[] = [];
+              const versionRequests: Observable<Version[]>[] = [];
+              reports.forEach(report => {
+                ownerRequests.push(this.labService.getReportOwner(report.id));
+                versionRequests.push(this.labService.getReportVersions(report.id));
+              });
+
+              forkJoin(ownerRequests).subscribe(owners => {
+                reports.forEach((report, i) => reports[i].owner = owners[i]);
+                this.filterReports();
+              });
+
+              forkJoin(versionRequests).subscribe(versions => {
+                reports.forEach((report, i) => reports[i].versions = versions[i]);
+              });
+
               return reports;
-            }),
-            tap(report => {
-              this.labService.getReportOwner(report.id).subscribe(owner => report.owner = owner);
-              this.labService.getReportVersions(report.id).subscribe(versions => report.versions = versions);
-            })).subscribe(s => {
-          const statusCheckedNames: string[] = this.reportStatusFilter.filter(rsf => rsf.checked).map(r => r.name);
-          this.allReports.forEach((v, k) => {
-            this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
-            this.filteredReports.get(k).sort((a, b) => Report.sortData(a, b));
-          });
-        });
+            })).subscribe();
       })).subscribe();
   }
 
@@ -146,7 +154,7 @@ export class LabComponent implements OnInit {
     this.gridColumns = this.gridColumns === 3 ? 4 : 3;
   }
 
-  statusFilterChanged() {
+  filterReports() {
     const statusCheckedNames: string[] = this.reportStatusFilter.filter(rsf => rsf.checked).map(r => r.name);
     this.allReports.forEach((v, k) => {
       this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));

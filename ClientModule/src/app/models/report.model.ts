@@ -74,20 +74,14 @@ export class Report {
 
   static sortData(a: Report, b: Report) {
     // sort data by statusDate, then owner surname, then owner name, then owner matricola
-    if (this.formatDate(a.statusDate).getTime() > this.formatDate(b.statusDate).getTime()) { return 1; }
-    if (this.formatDate(a.statusDate).getTime() < this.formatDate(b.statusDate).getTime()) { return -1; }
-    if (this.formatDate(a.statusDate).getTime() === this.formatDate(b.statusDate).getTime()) {
-      if (a.owner.surname.toLowerCase() > b.owner.surname.toLowerCase()) { return 1; }
-      if (a.owner.surname.toLowerCase() < b.owner.surname.toLowerCase()) { return -1; }
-      if (a.owner.surname.toLowerCase() === b.owner.surname.toLowerCase()) {
-        if (a.owner.name.toLowerCase() > b.owner.name.toLowerCase()) { return 1; }
-        if (a.owner.name.toLowerCase() < b.owner.name.toLowerCase()) { return -1; }
-        if (a.owner.name.toLowerCase() === b.owner.name.toLowerCase()) {
-          if (a.owner.id.toLowerCase() > b.owner.id.toLowerCase()) { return 1; }
-          if (a.owner.id.toLowerCase() < b.owner.id.toLowerCase()) { return -1; }
-        }
-      }
-    }
+    if (this.formatDate(a.statusDate).getTime() < this.formatDate(b.statusDate).getTime()) { return 1; }
+    if (this.formatDate(a.statusDate).getTime() > this.formatDate(b.statusDate).getTime()) { return -1; }
+    if (a.owner.surname.toLowerCase() > b.owner.surname.toLowerCase()) { return 1; }
+    if (a.owner.surname.toLowerCase() < b.owner.surname.toLowerCase()) { return -1; }
+    if (a.owner.name.toLowerCase() > b.owner.name.toLowerCase()) { return 1; }
+    if (a.owner.name.toLowerCase() < b.owner.name.toLowerCase()) { return -1; }
+    if (a.owner.id.toLowerCase() > b.owner.id.toLowerCase()) { return 1; }
+    if (a.owner.id.toLowerCase() < b.owner.id.toLowerCase()) { return -1; }
     return 0;
   }
 
