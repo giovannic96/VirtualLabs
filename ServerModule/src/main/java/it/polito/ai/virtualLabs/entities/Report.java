@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Report {
 
     @Enumerated(EnumType.STRING)
     private ReportStatus status;
+
+    private LocalDateTime statusDate;
 
     @Min(0)
     @Max(30)

@@ -5,11 +5,13 @@ import lombok.Data;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 public class ReportDTO extends RepresentationModel<ReportDTO> {
     @Id
     Long id;
     Report.ReportStatus status;
+    LocalDateTime statusDate;
     float grade;
 }
