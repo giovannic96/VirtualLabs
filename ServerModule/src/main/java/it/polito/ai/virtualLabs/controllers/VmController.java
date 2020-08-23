@@ -47,6 +47,16 @@ public class VmController {
         return ModelHelper.enrich(owner.get());
     }
 
+    @GetMapping("/{vmId}/vmModel")
+    public VmModelDTO vmModelByVmId(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+        Optional<VmModelDTO> vmModel = vmService.getVmModelForVm(vmId);
+        if(!vm.isPresent() || !vmModel.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+
+        return ModelHelper.enrich(vmModel.get());
+    }
+
     @GetMapping("/vmModels")
     public List<VmModelDTO> allVmModels() {
         return vmService.getAllVmModels()

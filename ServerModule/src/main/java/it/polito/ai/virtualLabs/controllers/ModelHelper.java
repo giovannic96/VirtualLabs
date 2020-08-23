@@ -12,8 +12,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ModelHelper {
 
-    private static final String PHOTO_SERVER_PATH = "https://virtuallabs.ns0.it/images/user_profiles/";
-    private static final String PHOTO_FORMAT = "png";
+    private static final String USER_PHOTO_SERVER_PATH = "https://virtuallabs.ns0.it/images/user_profiles/";
+    private static final String USER_PHOTO_FORMAT = "png";
+    private static final String VM_CONTENT_SERVER_PATH = "https://virtuallabs.ns0.it/images/vm_models/desktop/";
+    private static final String VM_CONTENT_FORMAT = "jpg";
 
 
     public static CourseDTO enrich(CourseDTO courseDTO) {
@@ -56,10 +58,12 @@ public class ModelHelper {
 
     public static VmDTO enrich(VmDTO vmDTO) {
 
-        Link selfLink = linkTo(methodOn(VmController.class).vmModel(vmDTO.getId())).withSelfRel();
+        Link selfLink = linkTo(methodOn(VmController.class).getOne(vmDTO.getId())).withSelfRel();
         Link student = linkTo(methodOn(VmController.class).owner(vmDTO.getId())).withRel("owner");
         Link team = linkTo(methodOn(VmController.class).team(vmDTO.getId())).withRel("team");
-        Link vmModel = linkTo(methodOn(VmController.class).vmModel(vmDTO.getId())).withRel("vmModel");
+        Link vmModel = linkTo(methodOn(VmController.class).vmModelByVmId(vmDTO.getId())).withRel("vmModel");
+
+        vmDTO.setContent(VM_CONTENT_SERVER_PATH + vmDTO.getContent() + "." + VM_CONTENT_FORMAT);
 
         vmDTO.add(
                 selfLink,
@@ -153,7 +157,7 @@ public class ModelHelper {
         Link vms = linkTo(methodOn(StudentController.class).vms(studentDTO.getId())).withRel("vms");
         Link reports = linkTo(methodOn(StudentController.class).reports(studentDTO.getId())).withRel("reports");
 
-        studentDTO.setPhoto(PHOTO_SERVER_PATH + studentDTO.getPhoto() + "." + PHOTO_FORMAT);
+        studentDTO.setPhoto(USER_PHOTO_SERVER_PATH + studentDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
 
         studentDTO.add(
                 selfLink,

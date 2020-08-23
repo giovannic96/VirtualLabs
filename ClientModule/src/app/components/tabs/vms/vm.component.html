@@ -64,14 +64,14 @@
             <mat-card-title>
               Vm#2
             </mat-card-title>
-            <div class="led-fake-div" [class]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+            <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
           </mat-card-header>
-          <img mat-card-image [src]="getOsImageLogo(this.vmModel.os)"> <!--TODO: da sostituire con il reale contenuto della vm -->
+          <img mat-card-image [src]="vm.content"> <!--TODO: da sostituire con il reale contenuto della vm -->
           <mat-card-content>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
               <button mat-flat-button color="accent" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
-              <button mat-flat-button color="primary" [disabled]="!vm.active">ENTER</button>
+              <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
             </mat-card-footer>
           </mat-card-content>
         </mat-card>

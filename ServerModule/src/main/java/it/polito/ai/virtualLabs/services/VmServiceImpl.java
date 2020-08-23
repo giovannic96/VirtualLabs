@@ -13,11 +13,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -219,6 +219,9 @@ public class VmServiceImpl implements VmService {
         vm.setOwner(userRepository.getStudentById(studentId));
         vm.setTeam(team);
         vm.setVmModel(vmModel);
+
+        Random random = new Random();
+        vm.setContent(vmModel.getOs() + "_v" + random.nextInt(10));
 
         vmRepository.saveAndFlush(vm);
         return true;

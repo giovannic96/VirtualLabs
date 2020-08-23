@@ -1,28 +1,43 @@
+<div class="loader-overlay" [class.loader-overlay-hidden]="loadComplete">
+  <div class="loader-container">
+    <div class="loader-images-container">
+      <ng-container>
+        <img src="assets/vm_loader.gif">
+        <img src="assets/favicon_70x70.png">
+      </ng-container>
+    </div>
+    <mat-card-title>LOADING</mat-card-title>
+    <div class="tips-container">
+      <h4>Tips: </h4>
+      <h4>{{chosenTip}}</h4>
+    </div>
+  </div>
+</div>
 <div class="desktop-container">
   <div class="dynamic-menu">
     <div class="vm-stats">
       <mat-card-subtitle>Usages: </mat-card-subtitle>
       <div class="stat-element">
         <img mat-card-image src="assets/cpu.png">
-        <mat-card-subtitle>80%</mat-card-subtitle>
+        <mat-card-subtitle>{{stats.cpu}}%</mat-card-subtitle>
       </div>
       <div class="stat-element">
         <img mat-card-image src="assets/ram.png">
-        <mat-card-subtitle>30%</mat-card-subtitle>
+        <mat-card-subtitle>{{stats.ram}}%</mat-card-subtitle>
       </div>
       <div class="stat-element">
         <img mat-card-image src="assets/disk.png">
-        <mat-card-subtitle>15%</mat-card-subtitle>
+        <mat-card-subtitle>{{stats.disk}}%</mat-card-subtitle>
       </div>
     </div>
     <div class="action-buttons">
-      <button mat-icon-button>
-        <mat-icon>settings</mat-icon>
+      <button mat-icon-button (click)="openInfoDialog()">
+        <mat-icon>info</mat-icon>
       </button>
-      <button mat-icon-button>
+      <button mat-icon-button (click)="backToCourses()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
   </div>
-  <img class="fake-desktop-image" src="assets/menu-start-windows-10-2020.png">
+  <img class="fake-desktop-image" [src]="currentVm.content">
 </div>

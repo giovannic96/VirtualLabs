@@ -4,6 +4,7 @@ export class Vm {
   private _vcpu: number;
   private _ram: number;
   private _disk: number;
+  private _content: string;
 
   get id(): number {
     return this._id;
@@ -45,4 +46,11 @@ export class Vm {
     this._disk = value;
   }
 
+  get content(): string {
+    return this._content;
+  }
+
+  set content(value: string) {
+    this._content = value;
+  }
 }

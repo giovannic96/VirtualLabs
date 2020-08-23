@@ -1,0 +1,18 @@
+.info-section {
+  margin-bottom: 1em;
+}
+
+.setting-element {
+  display: flex;
+  align-items: center;
+}
+
+.setting-element img {
+  width: 1.8em;
+  height: 1.8em;
+  margin-right: 1.5em;
+}
+
+.setting-element mat-card-subtitle {
+  margin: 0;
+}

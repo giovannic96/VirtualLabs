@@ -12,6 +12,7 @@ import {VmModel} from '../../../models/vm-model.model';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {MyDialogComponent} from '../../../helpers/my-dialog.component';
 import {Vm} from '../../../models/vm.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-vm',
@@ -29,6 +30,7 @@ export class VmComponent implements OnInit {
   constructor(private vmService: VmService,
               private teamService: TeamService,
               private courseService: CourseService,
+              private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
@@ -131,8 +133,10 @@ export class VmComponent implements OnInit {
 
   toggleVmPower(vm: Vm) {
     const response = vm.active ? this.vmService.powerOffVm(vm.id) : this.vmService.powerOnVm(vm.id);
-    response.subscribe(() => {
-      vm.active = !vm.active;
-    });
+    response.subscribe(() => vm.active = !vm.active);
+  }
+
+  openVm(vm: Vm) {
+    this.vmService.encodeAndNavigate(vm);
   }
 }

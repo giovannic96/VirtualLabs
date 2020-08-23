@@ -13,4 +13,5 @@ public class VmDTO extends RepresentationModel<VmDTO> {
     int vCPU;
     int RAM;
     int disk;
+    String content;
 }

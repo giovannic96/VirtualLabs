@@ -44,6 +44,7 @@ import { VersionDialogComponent } from './helpers/version-dialog.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.component';
+import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.co
     VirtualDesktopComponent,
     EmailDialogComponent,
     VersionDialogComponent,
+    VmInfoDialogComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -114,7 +116,8 @@ import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.co
     LoginDialogComponent,
     EmailDialogComponent,
     VersionDialogComponent,
-    VmModelSettingsDialogComponent
+    VmModelSettingsDialogComponent,
+    VmInfoDialogComponent
   ]
 })
 export class AppModule { }

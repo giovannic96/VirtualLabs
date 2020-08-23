@@ -1,0 +1,40 @@
+<div>
+  <mat-card>
+    <div class="info-section">
+      <mat-card-subtitle>Vm info:</mat-card-subtitle>
+      <mat-card-header>
+        <img mat-card-avatar [src]="getVmModelLogo()">
+        <mat-card-title>Vm#{{data.vm.id}}</mat-card-title>
+        <mat-card-subtitle>OS: <b>{{osMap?.get(data.vmModel.os)}}</b></mat-card-subtitle>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="info-section">
+      <mat-card-subtitle>Created by:</mat-card-subtitle>
+      <mat-card-header>
+        <img mat-card-avatar [src]="data.vmOwner.photo">
+        <mat-card-title>{{data.vmOwner.name}} {{data.vmOwner.surname}} ({{data.vmOwner.id}})</mat-card-title>
+        <mat-card-subtitle>Team: <b>{{data.vmTeam.name}}</b></mat-card-subtitle>
+        <mat-card-subtitle>Course: <b>{{data.vmCourse.name}}</b></mat-card-subtitle>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="info-section">
+      <mat-card-subtitle>Settings:</mat-card-subtitle>
+      <div>
+        <div class="setting-element">
+          <img src="assets/cpu.png">
+          <mat-card-subtitle>Cpu: <b>{{data.vm.vcpu}} core</b> on {{data.vmModel.maxVCPU}} core max available</mat-card-subtitle>
+        </div>
+        <div class="setting-element">
+          <img src="assets/ram.png">
+          <mat-card-subtitle>Ram: <b>{{data.vm.ram}} GB</b> on {{data.vmModel.maxRAM}} GB max available</mat-card-subtitle>
+        </div>
+        <div class="setting-element">
+          <img src="assets/disk.png">
+          <mat-card-subtitle>Disk: <b>{{data.vm.disk}} GB</b> on {{data.vmModel.maxDisk}} GB max available</mat-card-subtitle>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>

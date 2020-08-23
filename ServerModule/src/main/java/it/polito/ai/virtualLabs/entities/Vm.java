@@ -29,6 +29,8 @@ public class Vm {
     @JoinColumn(name = "vmModel_id")
     private VmModel vmModel;
 
+    private String content;
+
     public void setTeam(Team t) {
         if(team != null)
             team.getVms().remove(this);
