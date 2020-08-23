@@ -155,3 +155,51 @@ mat-card {
 .toggleGridBtn {
   padding-right: 0;
 }
+
+::ng-deep .mat-checkbox-checked.mat-warn .mat-checkbox-ripple .mat-ripple-element {
+  opacity: 0.03 !important;
+  background-color: #02b2ff!important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-warn .mat-checkbox-background,.mat-checkbox-indeterminate.mat-warn .mat-checkbox-background {
+  background-color: #02b2ff;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-ripple .mat-ripple-element {
+  opacity: 0.03 !important;
+  background-color: #818181!important;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,.mat-checkbox-indeterminate .mat-checkbox-background {
+  background-color: #818181;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-ripple .mat-ripple-element {
+  opacity: 0.03 !important;
+  background-color: #07ff15!important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #07ff15;
+}
+
+::ng-deep .mat-checkbox-checked.mat-primary .mat-checkbox-ripple .mat-ripple-element {
+  opacity: 0.03 !important;
+  background-color: #ff8400!important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-primary .mat-checkbox-background,.mat-checkbox-indeterminate.mat-primary .mat-checkbox-background {
+  background-color: #ff8400;
+}
+
+::ng-deep .mat-checkbox-label {
+  color: white;
+  margin-right: 25px;
+}
+
+.report-status-filter {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+

@@ -1,16 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
 import {concatMap, filter, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {Observable} from 'rxjs';
+import {Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
-import {Student} from "../../../models/student.model";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {EmailDialogComponent} from "../../../helpers/email-dialog.component";
-import {MessageType} from "../../../helpers/my-snack-bar.component";
-import {VersionDialogComponent} from "../../../helpers/version-dialog.component";
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {VersionDialogComponent} from '../../../helpers/version-dialog.component';
+import {ThemePalette} from '@angular/material/core';
+
+export interface ReportStatusFilter {
+  name: string;
+  checked: boolean;
+  color: ThemePalette;
+}
 
 @Component({
   selector: 'app-lab',
@@ -23,11 +27,23 @@ export class LabComponent implements OnInit {
   public assignmentList: Assignment[];
   public gridColumns = 3;
 
+  allReports: Map<number, Report[]>;
+  filteredReports: Map<number, Report[]>;
+  reportStatusFilter: ReportStatusFilter[];
+
   constructor(private courseService: CourseService,
               private labService: LabService,
               private dialog: MatDialog) {
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
+    this.allReports = new Map<number, Report[]>();
+    this.filteredReports = new Map<number, Report[]>();
+    this.reportStatusFilter = [
+      {name : ReportStatus.NULL, checked : true, color: undefined},
+      {name : ReportStatus.READ, checked : true, color: 'primary'},
+      {name : ReportStatus.SUBMITTED, checked : true, color: 'accent'},
+      {name : ReportStatus.REVISED, checked : true, color: 'warn'},
+    ];
 
     /*
     this.currentCourse.pipe(
@@ -52,6 +68,8 @@ export class LabComponent implements OnInit {
           .pipe(
             concatMap(reports => {
               assignment.reports = reports;
+              this.allReports.set(assignment.id, assignment.reports);
+              this.filteredReports.set(assignment.id, assignment.reports);
               return reports;
             }),
             tap(report => {
@@ -119,5 +137,12 @@ export class LabComponent implements OnInit {
 
   toggleGridColumns() {
     this.gridColumns = this.gridColumns === 3 ? 4 : 3;
+  }
+
+  statusFilterChanged() {
+    const statusCheckedNames: string[] = this.reportStatusFilter.filter(rsf => rsf.checked).map(r => r.name);
+    this.allReports.forEach((v, k) => {
+      this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
+    });
   }
 }

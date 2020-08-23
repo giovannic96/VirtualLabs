@@ -27,9 +27,19 @@
       <ng-container *ngIf="assignment.reports?.length">
         <mat-card class="report-card-container">
           <mat-card-title class="report-desc">Reports</mat-card-title>
+          <div class="report-status-filter">
+            <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
+              <mat-checkbox
+                [color]="rep.color"
+                (change)="statusFilterChanged()"
+                [(ngModel)]="rep.checked">
+                {{rep.name}}
+              </mat-checkbox>
+            </section>
+          </div>
           <div class="report-accordion">
           <mat-accordion multi="false">
-            <mat-expansion-panel *ngFor="let report of assignment.reports">
+            <mat-expansion-panel *ngFor="let report of this.filteredReports.get(assignment.id)">
               <mat-expansion-panel-header class="report-panel-header">
 
                 <!-- OLD MAT PANEL TITLE TODO remember to add report.grade to previous mat-card (div)
@@ -49,7 +59,7 @@
                     </div>
                   </div>
                   <div class="icons-div report-status-container">
-                    <span class="report-status-text">{{report.status}}</span>
+                    <!-- <span class="report-status-text">{{report.status}}</span> -->
                     <span [style.background-color]="getColorForStatus(report.status)" class="report-status-circle"></span>
                   </div>
                 </mat-panel-description>
