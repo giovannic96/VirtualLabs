@@ -31,4 +31,5 @@ public interface VmService {
     boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId); // TESTED
     boolean editVmModelSettings(Long vmModelId, VmModelDTO vmModelDTO);
     void removeVmModel(Long vmModelId);
+    void changeVmContentRandom(Long vmId);
 }

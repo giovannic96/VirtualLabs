@@ -220,8 +220,7 @@ public class VmServiceImpl implements VmService {
         vm.setTeam(team);
         vm.setVmModel(vmModel);
 
-        Random random = new Random();
-        vm.setContent(vmModel.getOs() + "_v" + random.nextInt(10));
+        vm.setContent(vmModel.getOs() + "_v0");
 
         vmRepository.saveAndFlush(vm);
         return true;
@@ -291,6 +290,18 @@ public class VmServiceImpl implements VmService {
 
         vmModelRepository.delete(vmModel);
         vmModelRepository.flush();
+    }
+
+    @Override
+    public void changeVmContentRandom(Long vmId) {
+        if(!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
+
+        Vm vm = vmRepository.getOne(vmId);
+        Random random = new Random();
+        vm.setContent(vm.getVmModel().getOs() + "_v" + (random.nextInt(6) + 1));
+
+        vmRepository.saveAndFlush(vm);
     }
 
     private boolean resourcesExceeded(List<Vm> teamVms, VmModel vmModel, int vCPU, int ram, int disk) {

@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,6 +54,8 @@ public class VmController {
         Optional<VmModelDTO> vmModel = vmService.getVmModelForVm(vmId);
         if(!vm.isPresent() || !vmModel.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+
+        vmService.changeVmContentRandom(vmId);
 
         return ModelHelper.enrich(vmModel.get());
     }
