@@ -96,7 +96,6 @@ public class TeamServiceImpl implements TeamService {
         if(userRepository.studentExistsById(student.getId()))
             return false;
         student.setPhoto(Base64.getEncoder().withoutPadding().encodeToString(String.valueOf(System.currentTimeMillis()).getBytes()));
-        System.out.println(student.getPhoto());
         Student s = modelMapper.map(student, Student.class);
         userRepository.saveAndFlush(s);
         return true;

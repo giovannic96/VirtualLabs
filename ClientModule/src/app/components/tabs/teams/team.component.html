@@ -28,7 +28,7 @@
         <h4>VMs:</h4>
         <mat-card *ngFor="let vm of team.vms; let i = index">
           <mat-card-header>
-            <img src="https://w0.pngwave.com/png/997/157/virtualbox-computer-icons-virtual-machine-operating-systems-virtualization-boxing-png-clip-art.png" mat-card-avatar>
+            <img src="assets/vm_icon.png" mat-card-avatar>
             <mat-card-title>VM#{{i+1}}</mat-card-title>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
           </mat-card-header>
@@ -75,7 +75,7 @@
       <h4>It will be composed by:</h4>
       <mat-card *ngFor="let member of proposal.members">
         <mat-card-header>
-          <img src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png" mat-card-avatar>
+          <img [src]="member.photo" mat-card-avatar>
           <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
           <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
         </mat-card-header>
@@ -103,7 +103,7 @@
         <mat-divider></mat-divider>
         <mat-list>
           <mat-list-item *ngFor="let student of teamedUpStudents">
-            <img matListAvatar src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png">
+            <img matListAvatar [src]="student.photo">
             <div class="teamed-up-student-info">
               <h3 matLine class="teamed-up-student-label">{{student.name}} {{student.surname}} - {{student.id}}</h3>
               <mat-card-subtitle><em>{{findTeam(student.id)?.name}}</em></mat-card-subtitle>
@@ -120,7 +120,7 @@
         <mat-divider></mat-divider>
         <mat-list>
           <mat-list-item *ngFor="let student of notTeamedUpStudents">
-            <img matListAvatar src="https://png2.kisspng.com/sh/9e146ab6376599c9f5ae4662361958de/L0KzQYm3VsI0N6t1hJH0aYP2gLBuTfNwdaF6jNd7LXnmf7B6TfF3aaVmip98b3Pscb20jfVlcZIyet54Zz3pf7B7TfF4baR0RdNBYYTkgn7wgB9vNWZnStcEOXO3RIGCVsI0NmU7TKUEMUi0QYa5Wcc5OGc8TqQBNEaxgLBu/kisspng-computer-icons-avatar-social-media-blog-font-aweso-avatar-icon-5b2e99c4409623.4643918115297806762646.png">
+            <img matListAvatar [src]="student.photo">
             <h3 matLine>{{student.name}} {{student.surname}} - {{student.id}}</h3>
           </mat-list-item>
         </mat-list>

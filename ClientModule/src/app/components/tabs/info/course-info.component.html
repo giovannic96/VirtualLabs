@@ -11,7 +11,7 @@
         <div class="info-row-content info-row-content-professor">
           <mat-list>
             <mat-list-item *ngFor="let professor of courseProfessors">
-              <img matListAvatar src="https://dt2sdf0db8zob.cloudfront.net/wp-content/uploads/2019/12/9-Best-Online-Avatars-and-How-to-Make-Your-Own-for-Free-image1-5.png">
+              <img matListAvatar [src]="professor.photo">
               <div class="info-professor-name-container">
                 <h3 matLine class="info-professor-name-label">{{professor.name}} {{professor.surname}}</h3>
               </div>
