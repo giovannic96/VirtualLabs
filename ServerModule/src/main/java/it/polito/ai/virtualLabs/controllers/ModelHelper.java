@@ -15,7 +15,7 @@ public class ModelHelper {
     private static final String USER_PHOTO_SERVER_PATH = "https://virtuallabs.ns0.it/images/user_profiles/";
     private static final String USER_PHOTO_FORMAT = "png";
     private static final String VM_CONTENT_SERVER_PATH = "https://virtuallabs.ns0.it/images/vm_models/desktop/";
-    private static final String VM_CONTENT_FORMAT = "jpg";
+    private static final String VM_CONTENT_FORMAT = "png";
 
 
     public static CourseDTO enrich(CourseDTO courseDTO) {
