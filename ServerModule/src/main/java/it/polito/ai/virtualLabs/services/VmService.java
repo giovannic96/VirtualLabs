@@ -28,7 +28,7 @@ public interface VmService {
     boolean editVmResources(Long vmId, int vCPU, int ram, int disk); //TESTED
     boolean powerOnVm(Long vmId); //TESTED
     boolean powerOffVm(Long vmId); //TESTED
-    boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId); //TESTED
+    boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId); // TESTED
     boolean editVmModelSettings(Long vmModelId, VmModelDTO vmModelDTO);
     void removeVmModel(Long vmModelId);
 }
