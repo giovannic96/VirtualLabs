@@ -66,7 +66,7 @@
             </mat-card-title>
             <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
           </mat-card-header>
-          <img mat-card-image [src]="vm.content"> <!--TODO: da sostituire con il reale contenuto della vm -->
+          <img mat-card-image [src]="vm.active ? vm.content : 'assets/black_screen.png'">
           <mat-card-content>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
