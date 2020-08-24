@@ -93,7 +93,6 @@ export class VirtualDesktopComponent implements OnInit {
     }).afterClosed().toPromise();
 
     if (areYouSure) {
-      console.log('sono arrivato fino a qui');
       this.router.navigate(['courses', this.vmCourse.name, 'vms']);
     }
   }

@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
+import {concatMap, filter, last, map, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {forkJoin, Observable, Observer, of, Subject} from 'rxjs';
+import {forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
@@ -47,22 +47,13 @@ export class LabComponent implements OnInit {
       {name : ReportStatus.REVISED, checked : true, color: 'warn'},
     ];
 
-    /*
-    this.currentCourse.pipe(
-      concatMap(course => this.courseService.getAllAssignments(course.name)),
-      concatMap(assignmentList => {
-        this.assignmentList = assignmentList;
-        return assignmentList;
-      }),
-      tap(assignment => {
-        this.labService.getAssignmentReports(assignment.id).subscribe(reports => assignment.reports = reports);
-      })).subscribe();
-    */
+    let assignmentCounter: number;
 
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getAllAssignments(course.name)),
       mergeMap(assignmentList => {
         this.assignmentList = assignmentList;
+        assignmentCounter = assignmentList.length;
         return assignmentList;
       }),
       tap(assignment => {
@@ -72,7 +63,7 @@ export class LabComponent implements OnInit {
               assignment.reports = reports;
               this.allReports.set(assignment.id, assignment.reports);
               this.filteredReports.set(assignment.id, assignment.reports);
-              // this.filteredReports.get(assignment.id).sort((a, b) => Report.sortData(a, b));
+
               const ownerRequests: Observable<Student>[] = [];
               const versionRequests: Observable<Version[]>[] = [];
               reports.forEach(report => {
@@ -82,7 +73,9 @@ export class LabComponent implements OnInit {
 
               forkJoin(ownerRequests).subscribe(owners => {
                 reports.forEach((report, i) => reports[i].owner = owners[i]);
-                this.filterReports();
+                assignmentCounter--;
+                if (!assignmentCounter)
+                  this.filterReports();
               });
 
               forkJoin(versionRequests).subscribe(versions => {

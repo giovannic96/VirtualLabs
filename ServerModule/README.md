@@ -66,10 +66,12 @@ API
 * GET	http://ip_address:port/api/vms/:vmId/team
 * GET	http://ip_address:port/api/vms/:vmId/owner
 * GET	http://ip_address:port/api/vms/vmModels
+* GET	http://ip_address:port/api/vms/vmModels/osMap                   //TO ADD TO POSTMAN
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/course
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/professor
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
+* GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vmModel      //TO ADD TO POSTMAN
 
 *Notification*
 * GET	http://ip_address:port/notification/accept?tpId=:tpId&token=:token
