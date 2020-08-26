@@ -59,11 +59,9 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="team-vms-container" *ngIf="team.vms?.length">
-        <mat-card *ngFor="let vm of team.vms">
+        <mat-card *ngFor="let vm of team.vms; let i = index">
           <mat-card-header>
-            <mat-card-title>
-              Vm#2
-            </mat-card-title>
+            <mat-card-title>Vm#{{i+1}}</mat-card-title>
             <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
           </mat-card-header>
           <img mat-card-image [src]="vm.active ? vm.content : 'assets/black_screen.png'">
