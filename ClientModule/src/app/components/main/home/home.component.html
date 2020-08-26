@@ -1,2 +1,186 @@
-<h1>Home page</h1>
-<h2><a routerLink="/courses">Go to courses</a></h2>
+<!--<h1>Home page</h1>
+<h2><a routerLink="/courses">Go to courses</a></h2> -->
+<div class="main-container">
+  <div class="first-section">
+    <div class="first-section-left-side">
+      <div>
+        <h1>Virtual Labs</h1>
+        <p>Nothing can stop a team</p>
+        <div class="buttons-container">
+          <button mat-stroked-button color="primary">Signup now</button>
+          <button mat-flat-button color="primary">Login</button>
+          <button mat-flat-button color="accent" routerLink="/courses">Go to courses... (temp)</button>
+        </div>
+      </div>
+    </div>
+    <div class="first-section-right-side">
+      <img src="/assets/homepage_images/banners/team-3373638_1920-1030x673.jpg">
+    </div>
+  </div>
+  <div class="second-section">
+    <div class="second-section-presentation">
+      <h1>A new way of working together</h1>
+      <h3>Discover the integrated management system that will make life easier for students and teachers</h3>
+    </div>
+    <div class="second-section-card-container">
+      <mat-card>
+        <img mat-card-image src="/assets/homepage_images/banners/prof_on_desktop.jpg">
+        <mat-card-content>
+          <mat-card-title>Course management</mat-card-title>
+          <mat-card-subtitle>
+            Teachers can easily manage the teaching plan of their courses quickly and efficiently.
+            Assigning a task, communicating with a team and evaluating student work has never been easier.
+          </mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <img mat-card-image src="/assets/homepage_images/banners/vm_diagram.jpg">
+        <mat-card-content>
+          <mat-card-title>VM creation</mat-card-title>
+          <mat-card-subtitle>
+            There is no longer a need for huge resources to guarantee a performing and reliable work environment.
+            By creating infinite virtual machines students can carry out their group work without any problem.
+          </mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <img mat-card-image src="/assets/homepage_images/banners/student_on_notebook.jpg">
+        <mat-card-content>
+          <mat-card-title>Lab assignment</mat-card-title>
+          <mat-card-subtitle>
+            Students will have at their disposal a simple and intuitive portal through which to provide the reports requested by the professor.
+            A practical system to check the outcome and the grade of their work.
+          </mat-card-subtitle>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <div class="third-section">
+    <div class="third-section-left-side">
+      <div class="third-section-logos-row">
+        <div><img src="/assets/homepage_images/partners/polito.png"></div>
+        <div><img src="/assets/homepage_images/partners/spring.png"></div>
+        <div><img src="/assets/homepage_images/partners/angular.png"></div>
+      </div>
+      <div class="third-section-logos-row">
+        <div><img src="/assets/homepage_images/partners/vmware.png"></div>
+        <div><img src="/assets/homepage_images/partners/oracle.png"></div>
+        <div><img src="/assets/homepage_images/partners/mysql.png"></div>
+      </div>
+    </div>
+    <div class="third-section-right-side">
+      <div>
+        <h1>Frameworks and technologies</h1>
+        <p>Using the best development software makes our application fast, reliable and cross-platform</p>
+      </div>
+    </div>
+  </div>
+  <div class="banner-section">
+    <img src="/assets/homepage_images/banners/distant-learning.jpg">
+  </div>
+  <div class="fourth-section">
+    <h1>Benefits of a Virtual Machine</h1>
+    <div class="fourth-section-row">
+      <div class="fourth-section-feature">
+        <img src="/assets/homepage_images/vm_features/flexibility.png">
+        <h4>Operational flexibility</h4>
+        <p>Operate separate instances of multiple OS types</p>
+      </div>
+      <div class="fourth-section-feature">
+        <img src="/assets/homepage_images/vm_features/overhead.png">
+        <h4>Reducing overhead</h4>
+        <p>Run multiple virtual machines on the same underlying hardware</p>
+      </div>
+      <div class="fourth-section-feature">
+        <img src="/assets/homepage_images/vm_features/centralization.png">
+        <h4>Centralization</h4>
+        <p>Consolidate systems to simplify management</p>
+      </div>
+    </div>
+    <div class="fourth-section-row">
+      <div class="fourth-section-feature">
+        <img src="/assets/homepage_images/vm_features/scalability.png">
+        <h4>Scalability</h4>
+        <p>Easily scale your virtual environment as your business grows</p>
+      </div>
+      <div class="fourth-section-feature">
+        <img src="/assets/homepage_images/vm_features/recovery.png">
+        <h4>Disaster recovery</h4>
+        <p>Restore data and system states from VM instances</p>
+      </div>
+    </div>
+  </div>
+  <div class="banner-section">
+    <img src="/assets/homepage_images/banners/cross_platform_filled.jpg">
+  </div>
+  <div class="fifth-section">
+    <h1>Download desktop app</h1>
+    <div class="fifth-section-os-logos">
+      <img src="/assets/homepage_images/os_logos/windows_100x100.png">
+      <img src="/assets/homepage_images/os_logos/apple_100x100.png">
+      <img src="/assets/homepage_images/os_logos/linux_100x100.png">
+    </div>
+    <button mat-flat-button color="primary">Download app</button>
+  </div>
+  <div class="last-section">
+    <div class="last-section-row">
+      <div class="last-section-list-container">
+        <h4>What's new</h4>
+        <ul class="last-section-list">
+          <li>VirtualLabs X</li>
+          <li>Features</li>
+          <li>Cross-platform Apps</li>
+          <li>AWS Integration</li>
+          <li>Compatibility</li>
+        </ul>
+      </div>
+      <div class="last-section-list-container">
+        <h4>Education</h4>
+        <ul class="last-section-list">
+          <li>VirtualLabs for students</li>
+          <li>VirtualLabs for professors</li>
+          <li>Deals for students & parents</li>
+          <li>Rieducational Channel</li>
+          <li>Special didactic programs</li>
+          <li>Polito agreement</li>
+        </ul>
+      </div>
+      <div class="last-section-list-container">
+        <h4>Developer</h4>
+        <ul class="last-section-list">
+          <li>Developer Center</li>
+          <li>Github Projects</li>
+          <li>VirtualLabs developer program</li>
+          <li>Security</li>
+        </ul>
+      </div>
+      <div class="last-section-list-container">
+        <h4>Company</h4>
+        <ul class="last-section-list">
+          <li>Careers</li>
+          <li>About VirtualLabs</li>
+          <li>Contacts</li>
+          <li>Work with us</li>
+          <li>Accessibility</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-content">
+      <div class="footer-lang">
+        <img src="/assets/icons/globe_50x50.png">
+        <p>English (United States)</p>
+      </div>
+      <div class="footer-links">
+        <p>Sitemap</p>
+        <p>Privacy & cookies</p>
+        <p>Terms of use</p>
+        <p>Trademark</p>
+        <p>Safety & eco</p>
+        <p>About our ads</p>
+        <p>© 2020 Mhackeroni. - All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</div>
