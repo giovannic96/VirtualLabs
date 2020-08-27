@@ -27,7 +27,7 @@ export class LabComponent implements OnInit {
 
   private currentCourse: Observable<Course>;
   public assignmentList: Assignment[];
-  public gridColumns = 3;
+  public gridColumns = 4;
 
   allReports: Map<number, Report[]>;
   filteredReports: Map<number, Report[]>;
@@ -45,6 +45,7 @@ export class LabComponent implements OnInit {
       {name : ReportStatus.READ, checked : true, color: 'primary'},
       {name : ReportStatus.SUBMITTED, checked : true, color: 'accent'},
       {name : ReportStatus.REVISED, checked : true, color: 'warn'},
+      {name : ReportStatus.GRADED, checked : true, color: 'accent'},
     ];
 
     let assignmentCounter: number;
@@ -132,10 +133,13 @@ export class LabComponent implements OnInit {
         return '#ff8400';
       }
       case ReportStatus.SUBMITTED: {
-        return '#07ff15';
+        return '#ffe602';
       }
       case ReportStatus.REVISED: {
         return '#02b2ff';
+      }
+      case ReportStatus.GRADED: {
+        return '#07ff15';
       }
       default: {
         return '#000000';

@@ -42,6 +42,7 @@ public class Report {
         READ,
         SUBMITTED,
         REVISED,
+        GRADED,
     }
 
     public void setAssignment(Assignment a) {

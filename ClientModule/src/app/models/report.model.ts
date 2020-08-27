@@ -6,6 +6,7 @@ export enum ReportStatus {
   READ = 'READ',
   SUBMITTED = 'SUBMITTED',
   REVISED = 'REVISED',
+  GRADED = 'GRADED',
 }
 
 export class Report {
