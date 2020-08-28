@@ -38,13 +38,15 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
-import { MyDialogComponent } from './helpers/my-dialog.component';
-import { EmailDialogComponent } from './helpers/email-dialog.component';
-import { VersionDialogComponent } from './helpers/version-dialog.component';
+import { MyDialogComponent } from './helpers/dialog/my-dialog.component';
+import { EmailDialogComponent } from './helpers/dialog/email-dialog.component';
+import { VersionDialogComponent } from './helpers/dialog/version-dialog.component';
+import { GradeDialogComponent } from './helpers/dialog/grade-dialog.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layout';
-import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.component';
+import { VirtualDesktopComponent } from './components/vm_viewer/virtual-desktop.component';
 import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
+import { GradeNumberDirective } from './helpers/grade-number.directive';
 
 @NgModule({
   declarations: [
@@ -67,7 +69,9 @@ import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.com
     VirtualDesktopComponent,
     EmailDialogComponent,
     VersionDialogComponent,
+    GradeDialogComponent,
     VmInfoDialogComponent,
+    GradeNumberDirective,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -116,6 +120,7 @@ import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.com
     LoginDialogComponent,
     EmailDialogComponent,
     VersionDialogComponent,
+    GradeDialogComponent,
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent
   ]

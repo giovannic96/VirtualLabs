@@ -12,7 +12,7 @@ import {concatMap} from 'rxjs/operators';
 import {VmModelSettingsDialogComponent} from '../tabs/vms/vm-model-settings-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {VmInfoDialogComponent} from './vm-info-dialog.component';
-import {MyDialogComponent} from '../../helpers/my-dialog.component';
+import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
 
 @Component({
   selector: 'app-virtual-desktop',

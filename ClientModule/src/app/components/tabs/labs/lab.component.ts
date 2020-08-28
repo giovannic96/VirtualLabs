@@ -7,10 +7,13 @@ import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {VersionDialogComponent} from '../../../helpers/version-dialog.component';
+import {VersionDialogComponent} from '../../../helpers/dialog/version-dialog.component';
+import {GradeDialogComponent} from '../../../helpers/dialog/grade-dialog.component';
 import {ThemePalette} from '@angular/material/core';
 import {Student} from '../../../models/student.model';
 import {Version} from '../../../models/version.model';
+import {NotificationService} from '../../../services/notification.service';
+import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 
 export interface ReportStatusFilter {
   name: string;
@@ -35,7 +38,9 @@ export class LabComponent implements OnInit {
 
   constructor(private courseService: CourseService,
               private labService: LabService,
-              private dialog: MatDialog) {
+              private notificationService: NotificationService,
+              private dialog: MatDialog,
+              private mySnackBar: MySnackBarComponent) {
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
     this.allReports = new Map<number, Report[]>();
@@ -119,6 +124,38 @@ export class LabComponent implements OnInit {
             this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
           });
            */
+        }
+      }
+    );
+  }
+
+  openGradeDialog(lastVersion: Version, student: Student, assignment: string) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+
+    dialogConfig.data = {
+      version: lastVersion,
+      comment: '',
+      grade: undefined,
+    };
+
+    const emails = [student.username];
+    const dialogRef = this.dialog.open(GradeDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      data => {
+        if (data !== undefined) { // i.e. close button was pressed
+          const subject = 'Report evaluation';
+          const comment = data.comment === '' ? '' : 'Comment of the Professor: \"' + data.comment + '\"\n';
+          const body = 'The report for the assignment \'' + assignment + '\' was evaluated.\nYour grade is: '
+                        + data.grade + '.\n' + comment;
+          this.notificationService.sendMessage(emails, subject, body).subscribe( () => {
+            this.mySnackBar.openSnackBar('Email sent successfully to the student', MessageType.SUCCESS, 3);
+          }, () => {
+            this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
+          });
         }
       }
     );

@@ -1,0 +1,31 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>{{version.title}}</h2>
+  <div>
+    <img mat-card-image src="https://videohive.img.customer.envatousercontent.com/files/261073186/code_2_img.jpg?auto=compress%2Cformat&fit=crop&crop=top&max-h=8000&max-w=590&s=c268466cffeccb3cae326841014d38fb" alt="version_content">
+    <!-- TODO add correct image later: <div>Content: {{version.content}}</div> -->
+    <form [formGroup]="form">
+      <div class="grade-container">
+        <mat-label class="label-grade">Grade:</mat-label>
+        <mat-form-field class="form-field-grade" appearance="legacy">
+          <div class="grade-suffix">
+            <input #grade type="textbox" class="form-control" matInput name="grade" formControlName="grade" appGradeNumber>
+          </div>
+        </mat-form-field>
+        <mat-label class="label-grade-example">(ex. 28.5)</mat-label>
+      </div>
+      <mat-form-field class="form-field-comment" appearance="outline">
+      <textarea matInput
+                rows="3" cols="40"
+                placeholder="Add a comment..."
+                formControlName="comment">
+      </textarea>
+      </mat-form-field>
+    </form>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button class="mat-raised-button" (click)="close()">CLOSE</button>
+        <button class="mat-raised-button mat-primary" (click)="confirm(grade.value)">CONFIRM</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</div>

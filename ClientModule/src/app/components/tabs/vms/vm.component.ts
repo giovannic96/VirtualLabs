@@ -10,7 +10,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {VmModelSettingsDialogComponent} from './vm-model-settings-dialog.component';
 import {VmModel} from '../../../models/vm-model.model';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {Vm} from '../../../models/vm.model';
 import {Router} from '@angular/router';
 

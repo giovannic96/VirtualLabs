@@ -87,13 +87,9 @@
                       <img mat-card-image src="https://videohive.img.customer.envatousercontent.com/files/261073186/code_2_img.jpg?auto=compress%2Cformat&fit=crop&crop=top&max-h=8000&max-w=590&s=c268466cffeccb3cae326841014d38fb" alt="version_content">
                       <mat-card-content>
                         <p>
-                          <i>Added: {{formatDate(version.submissionDate) | date:'medium'}}</i>
+                          <i>{{formatDate(version.submissionDate) | date:'medium'}}</i>
                         </p>
                       </mat-card-content>
-                      <mat-card-actions>
-                        <button mat-button (click)="openVersionDialog(version.title, version.content)">VIEW</button>
-                        <button mat-button>GRADE</button>
-                      </mat-card-actions>
                     </mat-card>
                   </div>
                 </div>
@@ -108,8 +104,10 @@
                 -->
               </ng-container>
               <mat-action-row>
-                <button mat-raised-button color="warn">DELETE REPORT</button>
-                <button mat-raised-button color="primary">GRADE REPORT</button>
+                <button mat-raised-button color="accent">REVIEW REPORT</button>
+                <button mat-raised-button color="primary"
+                        (click)="openGradeDialog(report.versions[report.versions.length-1], report.owner, assignment.name)"
+                        [disabled]="!(!!report.versions?.length)">GRADE REPORT</button>
               </mat-action-row>
             </mat-expansion-panel>
           </mat-accordion>

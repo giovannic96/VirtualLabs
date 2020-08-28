@@ -10,7 +10,7 @@ import {CourseService} from '../../../services/course.service';
 import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {filter, map} from 'rxjs/operators';
-import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 
 @Component({

@@ -9,10 +9,10 @@ import {Student} from '../../../models/student.model';
 import {StudentService} from '../../../services/student.service';
 import {TeamService} from '../../../services/team.service';
 import {TeamProposal, TeamProposalStatus} from '../../../models/team-proposal.model';
-import {MyDialogComponent} from '../../../helpers/my-dialog.component';
+import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {EmailDialogComponent} from '../../../helpers/email-dialog.component';
+import {EmailDialogComponent} from '../../../helpers/dialog/email-dialog.component';
 import {NotificationService} from '../../../services/notification.service';
 
 @Component({

@@ -1,0 +1,78 @@
+.dialog-container {
+  text-align: center;
+  min-width: 22vw;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  /*justify-content: space-between;*/
+}
+
+form textarea {
+  resize: none;
+}
+
+.buttons-container {
+  display: flex;
+  place-content: flex-end;
+  margin: 0px 0 0;
+  padding: 0px .5em .5em;
+}
+
+.buttons-container button {
+  margin: 0 0px 0 1.3em;
+  width: 100px;
+}
+
+h2 {
+  text-align: left;
+  margin-bottom: 26px;
+}
+
+img {
+  max-width: 100%;
+}
+
+.form-field-comment {
+  /*width: 82%;*/
+}
+
+.form-field-grade {
+  width: 11%;
+}
+
+.label-grade {
+  margin-left: 2px;
+  margin-right: 11px;
+  font-weight: 500;
+}
+
+.label-grade-example {
+  font-style: italic;
+  margin-left: 14px;
+  font-weight: 400;
+  color: rgba(0,0,0,.54);
+}
+
+.grade-container {
+  text-align: left;
+}
+
+.grade-suffix {
+  display: inline-block;
+  position: relative;
+}
+
+.grade-suffix::after {
+  position: absolute;
+  right: .2em;
+  transition: all .05s ease-in-out;
+  content: '/30';
+  color: rgba(0,0,0,.54);
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
+}
