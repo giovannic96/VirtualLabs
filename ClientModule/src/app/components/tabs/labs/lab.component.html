@@ -66,7 +66,6 @@
               </mat-expansion-panel-header>
               <ng-container *ngIf="report.versions?.length">
                 <div class="versions-header">
-                  <h4>Versions:</h4>
                   <button mat-button (click)="toggleGridColumns()" fxHide.lt-md>
                     <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 4">view_module</mat-icon>
                     <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
@@ -93,21 +92,12 @@
                     </mat-card>
                   </div>
                 </div>
-                <!--
-                <mat-card *ngFor="let version of report.versions">
-                  <mat-card-header>
-                    <mat-icon>content_paste</mat-icon>
-                    <mat-card-title>{{version.title}}</mat-card-title>
-                    <mat-card-subtitle>Content: {{version.content}}</mat-card-subtitle>
-                  </mat-card-header>
-                </mat-card>
-                -->
               </ng-container>
               <mat-action-row>
                 <button mat-raised-button color="accent">REVIEW REPORT</button>
                 <button mat-raised-button color="primary"
                         (click)="openGradeDialog(report.versions[report.versions.length-1], report.owner, assignment.name)"
-                        [disabled]="!(!!report.versions?.length)">GRADE REPORT</button>
+                        [disabled]="!(!!report.versions?.length) || report.status === 'REVISED'">GRADE REPORT</button>
               </mat-action-row>
             </mat-expansion-panel>
           </mat-accordion>

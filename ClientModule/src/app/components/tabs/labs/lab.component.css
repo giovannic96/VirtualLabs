@@ -147,6 +147,12 @@ mat-card {
   justify-content: space-between;
 }
 
+.versions-header button {
+  margin: 0 16px;
+  border: 1.1px solid rgba(71, 71, 71, 0.68);
+  cursor: pointer;
+}
+
 .z-depth:hover {
   box-shadow: 0 8px 8px 8px rgba(0,0,0,.2), 0 8px 8px 0 rgba(0,0,0,.14), 0 8px 8px 0 rgba(0,0,0,.12) !important;
   transform: translate3d(0,0,0);
@@ -156,6 +162,7 @@ mat-card {
 
 .toggleGridBtn {
   padding-right: 0;
+  cursor: pointer;
 }
 
 ::ng-deep .mat-checkbox-checked.mat-warn .mat-checkbox-ripple .mat-ripple-element {
