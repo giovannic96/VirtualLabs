@@ -8,10 +8,9 @@ export class Assignment {
   private _content: string;
   private _reports: Report[];
 
-  constructor(id: number, name: string, releaseDate: string, expiryDate: string, content: string) {
+  constructor(id: number, name: string, expiryDate: string, content: string) {
     this._id = id;
     this._name = name;
-    this._releaseDate = releaseDate;
     this._expiryDate = expiryDate;
     this._content = content;
   }
@@ -62,5 +61,14 @@ export class Assignment {
 
   set reports(value: Report[]) {
     this._reports = value;
+  }
+
+  getDTO(): any {
+    // here we don't need releaseDate because it is set by the server
+    return {
+      name: this.name,
+      expiryDate: this.expiryDate,
+      content: this.content
+    };
   }
 }

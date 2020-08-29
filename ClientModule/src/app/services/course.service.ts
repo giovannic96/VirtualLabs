@@ -178,14 +178,14 @@ export class CourseService {
       );
   }
 
-  setVmModel(courseName: string, vmModel: VmModel) {
+  getAssignment(courseName: string): Observable<Assignment> {
     return this.httpClient
-      .post<boolean>(`${this.API_PATH}/${courseName}/setVmModel`, vmModel)
+      .get<Assignment>(`${this.API_PATH}/${courseName}/assignment`)
       .pipe(
-        retry(3),
+        retry(1),
         catchError( err => {
           console.error(err);
-          return throwError(`setVmModel error: ${err.message}`);
+          return throwError(`getAssignment error: ${err.message}`);
         })
       );
   }
@@ -202,6 +202,18 @@ export class CourseService {
       );
   }
 
+  setVmModel(courseName: string, vmModel: VmModel) {
+    return this.httpClient
+      .post<boolean>(`${this.API_PATH}/${courseName}/setVmModel`, vmModel)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`setVmModel error: ${err.message}`);
+        })
+      );
+  }
+
   editVmModel(courseName: string, vmModel: VmModel) {
     return this.httpClient
       .put<boolean>(`${this.API_PATH}/${courseName}/editVmModel`, vmModel)
@@ -210,6 +222,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`editVmModel error: ${err.message}`);
+        })
+      );
+  }
+
+  addAssignment(courseName: string, assignment: Assignment) {
+    return this.httpClient
+      .post<boolean>(`${this.API_PATH}/${courseName}/addAssignment`, assignment)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`addAssignment error: ${err.message}`);
         })
       );
   }

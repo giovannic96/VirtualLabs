@@ -5,6 +5,7 @@ import {catchError, retry} from 'rxjs/operators';
 import {Subject, throwError} from 'rxjs';
 import {Report} from '../models/report.model';
 import {Version} from '../models/version.model';
+import {Assignment} from '../models/assignment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,18 @@ export class LabService {
   private API_PATH = 'http://localhost:8080/API/labs';
 
   constructor(private httpClient: HttpClient) { }
+
+  getAssignment(assignmentId: number) {
+    return this.httpClient
+      .get<Assignment>(`${this.API_PATH}/assignments/${assignmentId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getAssignment error: ${err.message}`);
+        })
+      );
+  }
 
   getAssignmentReports(assignmentId: number) {
     return this.httpClient
@@ -48,6 +61,18 @@ export class LabService {
         catchError( err => {
           console.error(err);
           return throwError(`GetReportOwner error: ${err.message}`);
+        })
+      );
+  }
+
+  editAssignment(assignmentId: number, assignment: Assignment) {
+    return this.httpClient
+      .put<boolean>(`${this.API_PATH}/assignments/${assignmentId}`, assignment)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`editAssignment error: ${err.message}`);
         })
       );
   }

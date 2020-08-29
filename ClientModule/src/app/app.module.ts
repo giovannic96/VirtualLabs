@@ -47,6 +47,10 @@ import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layo
 import { VirtualDesktopComponent } from './components/vm_viewer/virtual-desktop.component';
 import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
 import { GradeNumberDirective } from './helpers/grade-number.directive';
+import { AssignmentDialogComponent } from './helpers/dialog/assignment-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [
@@ -71,6 +75,7 @@ import { GradeNumberDirective } from './helpers/grade-number.directive';
     VersionDialogComponent,
     GradeDialogComponent,
     VmInfoDialogComponent,
+    AssignmentDialogComponent,
     GradeNumberDirective,
   ],
   imports: [
@@ -102,11 +107,16 @@ import { GradeNumberDirective } from './helpers/grade-number.directive';
     FlexLayoutModule,
     FlexModule,
     ExtendedModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatMomentDateModule,
   ],
   exports: [
     RouterModule,
   ],
   providers: [
+    MatDatepickerModule,
+    MatNativeDateModule,
     MySnackBarComponent,
     {
       provide: HTTP_INTERCEPTORS,
@@ -122,7 +132,8 @@ import { GradeNumberDirective } from './helpers/grade-number.directive';
     VersionDialogComponent,
     GradeDialogComponent,
     VmModelSettingsDialogComponent,
-    VmInfoDialogComponent
+    VmInfoDialogComponent,
+    AssignmentDialogComponent,
   ]
 })
 export class AppModule { }

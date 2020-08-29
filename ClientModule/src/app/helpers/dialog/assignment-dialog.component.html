@@ -1,0 +1,29 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>{{data.modelExists ? 'Edit' : 'New'}} Assignment</h2>
+  <form  [formGroup]="assignmentFormGroup" (ngSubmit)="checkForm()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+      <mat-error>The name is <b>required</b></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Content</mat-label>
+      <input matInput formControlName="content">
+      <mat-error>The content is <b>required</b></mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Expiry Date</mat-label>
+      <input readonly matInput class="formControl" formControlName="expiryDate"
+              [min]="minDate" [max]="maxDate" [matDatepicker]="picker" (click)="picker.open()">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error>The expiry date is <b>required</b></mat-error>
+    </mat-form-field>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button mat-dialog-close class="mat-raised-button">CLOSE</button>
+        <button class="mat-raised-button mat-primary">{{data.modelExists ? 'CONFIRM' : 'CREATE'}}</button>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</div>

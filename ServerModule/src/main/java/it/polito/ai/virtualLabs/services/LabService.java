@@ -27,6 +27,6 @@ public interface LabService {
     boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId); //TESTED
     boolean addVersionToReport(VersionDTO versionDTO, Long reportId); //TESTED
     boolean removeAssignment(Long assignmentId); //TESTED
-    boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate); //TESTED
+    boolean editAssignment(Long assignmentId, AssignmentDTO assignmentDTO); //TESTED
     boolean gradeReport(Long reportId, float grade);
 }

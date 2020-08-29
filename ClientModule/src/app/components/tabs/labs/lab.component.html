@@ -30,6 +30,8 @@
           <div class="report-status-filter">
             <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
               <mat-checkbox
+                [ngClass]="{'filter-checkbox-submitted': rep.name === ReportStatus.SUBMITTED,
+                            'filter-checkbox-graded': rep.name === ReportStatus.GRADED}"
                 [color]="rep.color"
                 (change)="filterReports()"
                 [(ngModel)]="rep.checked">
@@ -112,16 +114,26 @@
         </div>
         <div>
           <button mat-raised-button color="warn">DELETE ASSIGNMENT</button>
-          <button mat-raised-button color="primary">EDIT ASSIGNMENT</button>
+          <button mat-raised-button color="primary" (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
         </div>
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
+  <ng-container [ngTemplateOutlet]="fabAddAssignment"></ng-container>
 </div>
 <ng-template #noAssignments>
   <div class="no-assignments-message-container" *ngIf="assignmentList">
-    <mat-card><mat-card-header><mat-card-title>
+    <mat-card style="margin-bottom: 0"><mat-card-header><mat-card-title>
       Still no assignment has been published
     </mat-card-title></mat-card-header></mat-card>
+    <ng-container [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  </div>
+</ng-template>
+<ng-template #fabAddAssignment>
+  <div class="add-btn-container">
+    <button class="icon-btn add-btn" (click)="openAssignmentDialog()">
+      <div class="add-icon"></div>
+      <div class="btn-txt"><strong>ADD</strong></div>
+    </button>
   </div>
 </ng-template>

@@ -14,6 +14,7 @@ import {Student} from '../../../models/student.model';
 import {Version} from '../../../models/version.model';
 import {NotificationService} from '../../../services/notification.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
 
 export interface ReportStatusFilter {
   name: string;
@@ -31,6 +32,7 @@ export class LabComponent implements OnInit {
   private currentCourse: Observable<Course>;
   public assignmentList: Assignment[];
   public gridColumns = 4;
+  public ReportStatus = ReportStatus;
 
   allReports: Map<number, Report[]>;
   filteredReports: Map<number, Report[]>;
@@ -101,6 +103,14 @@ export class LabComponent implements OnInit {
     return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
   }
 
+  localDateTimeToString(localDateTime: string): string {
+    // ex. FROM '2022-12-21T14:10:46' TO '2022,12,21,14,10,46'
+    const dateTime = localDateTime.toString().split('T');
+    const date = dateTime[0].split('-');
+    const time = dateTime[1].split(':');
+    return '' + date[0] + ',' + date[1] + ',' + date[2] + ',' + time[0] + ',' + time[1] + ',' + time[2];
+  }
+
   openVersionDialog(versionTitle: string, versionContent: string) {
     const dialogConfig = new MatDialogConfig();
 
@@ -159,6 +169,43 @@ export class LabComponent implements OnInit {
         }
       }
     );
+  }
+
+  async openAssignmentDialog(assignment: Assignment = null, isEdit: boolean = false) {
+
+    const data = {modelExists: isEdit, assignment};
+    const dialogRef = this.dialog.open(AssignmentDialogComponent, {disableClose: true, data});
+    const course: Course = this.courseService.getSelectedCourseValue();
+    const dialogResponse: Assignment = await dialogRef.afterClosed().toPromise();
+
+    if (!!dialogResponse) {
+
+      if (isEdit) {
+        this.labService.editAssignment(assignment.id, dialogResponse.getDTO())
+          .pipe(
+            concatMap( () => this.labService.getAssignment(assignment.id))
+          )
+          .subscribe(asmnt => {
+            // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+            const a = this.assignmentList.find(el => el.id === asmnt.id);
+            a.name = asmnt.name;
+            a.content = asmnt.content;
+            a.expiryDate = this.localDateTimeToString(asmnt.expiryDate);
+            this.mySnackBar.openSnackBar('Assignment edited successfully', MessageType.SUCCESS, 3);
+          }, error => this.mySnackBar.openSnackBar('Assignment editing failed', MessageType.ERROR, 3));
+      }
+      else {
+        this.courseService.addAssignment(course.name, dialogResponse.getDTO())
+          .pipe(
+            concatMap( () => this.courseService.getAllAssignments(course.name))
+          )
+          .subscribe(asmntList => {
+            // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+            this.assignmentList = asmntList;
+            this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
+          }, error => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
+      }
+    }
   }
 
   getColorForStatus(status: string) {

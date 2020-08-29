@@ -21,8 +21,4 @@ export class VersionDialogComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  close() {
-    this.dialogRef.close();
-  }
 }
