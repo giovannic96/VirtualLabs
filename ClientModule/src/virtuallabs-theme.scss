@@ -1,0 +1,39 @@
+@import '~@angular/material/theming';
+
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+$VirtualLabs-primary: mat-palette($mat-indigo);
+$VirtualLabs-accent: mat-palette($mat-pink, A200, A100, A400);
+$VirtualLabs-warn: mat-palette($mat-red);
+
+/*
+$custom-test: (
+  warning :  #FFC116,
+  success :  #0a630f,
+  danger:    #c00000,
+  contrast: (
+    warning :  #000000,
+    success :  #FFFFFF,
+    danger:    #FFFFFF,
+  )
+);
+
+$custom-test: mat-palette($custom-test, test);
+
+*/
+
+$VirtualLabs-theme: mat-light-theme($VirtualLabs-primary, $VirtualLabs-accent, $VirtualLabs-warn);
+
+/*
+$VirtualLabs-theme: map_merge($VirtualLabs-theme, (test: $custom-test));
+
+$test: map-get($VirtualLabs-theme, test);
+
+.mat-success {
+  background-color: mat-color($test, success);
+  color: mat-color($test, danger);
+}
+
+*/
+@include angular-material-theme($VirtualLabs-theme);
