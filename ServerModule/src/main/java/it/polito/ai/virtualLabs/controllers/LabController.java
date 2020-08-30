@@ -103,9 +103,16 @@ public class LabController {
     @PostMapping("/reports/{reportId}/submitVersion")
     @ResponseStatus(HttpStatus.CREATED)
     public VersionDTO submitVersion(@PathVariable Long reportId, @RequestBody VersionDTO versionDTO) {
-        if(labService.addVersionToReport(versionDTO, reportId))
+        if(!labService.addVersionToReport(versionDTO, reportId))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
         return ModelHelper.enrich(versionDTO);
+    }
+
+    @PostMapping("/versions/{versionId}/review")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void reviewVersion(@PathVariable Long versionId, @RequestBody String review) {
+        if(!labService.reviewVersion(versionId, review))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
     }
 
     @PutMapping("/reports/{reportId}/gradeReport")

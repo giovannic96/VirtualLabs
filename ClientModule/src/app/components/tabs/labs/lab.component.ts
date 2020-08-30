@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {concatMap, filter, last, map, mergeMap, tap} from 'rxjs/operators';
+import {concatMap, delay, filter, last, map, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
 import {forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
@@ -101,29 +101,36 @@ export class LabComponent implements OnInit {
     return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
   }
 
-  openVersionDialog(versionTitle: string, versionContent: string) {
+  openVersionDialog(version: Version, reportId: number, assignmentId: number) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
+    dialogConfig.autoFocus = false;
 
-    dialogConfig.data = {
-      title: versionTitle,
-      content: versionContent
-    };
+    dialogConfig.data = version;
 
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
-      data => {
-        if (data !== undefined) { // i.e. close button was pressed
-          /*
-          this.notificationService.sendMessage(emails, data.subject, data.body).subscribe( () => {
-            this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
-          }, () => {
-            this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
+      request => {
+        if (request !== undefined) { // i.e. close button was pressed
+          request.subscribe(() => {
+            this.mySnackBar.openSnackBar('Review uploaded successfully', MessageType.SUCCESS, 3);
+            this.labService.getReportVersions(reportId).subscribe(versions => {
+                this.allReports.get(assignmentId).find(report => report.id === reportId).versions = versions;
+            });
+
+            /* //TODO: to set notification service with the correct information
+            thi
+            this.notificationService.sendMessage(emails, data.subject, data.body).pipe(delay(3)).subscribe( () => {
+              this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
+            }, () => {
+              this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
+            });
+            */
+          }, error => {
+            this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 5);
           });
-           */
         }
       }
     );

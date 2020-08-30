@@ -12,5 +12,7 @@ public class VersionDTO extends RepresentationModel<VersionDTO> {
     Long id;
     String title;
     String content;
+    boolean revised;
+    String review; //On DTO only
     LocalDateTime submissionDate;
 }

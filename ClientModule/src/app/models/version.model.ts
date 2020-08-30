@@ -2,6 +2,8 @@ export class Version {
   private _id: number;
   private _title: string;
   private _content: string;
+  private _review: string;
+  private _revised: boolean;
   private _submissionDate: string;
 
   constructor(id: number, title: string, content: string, submissionDate: string) {
@@ -33,6 +35,22 @@ export class Version {
 
   set content(value: string) {
     this._content = value;
+  }
+
+  get review(): string {
+    return this._review;
+  }
+
+  set review(value: string) {
+    this._review = value;
+  }
+
+  get revised(): boolean {
+    return this._revised;
+  }
+
+  set revised(value: boolean) {
+    this._revised = value;
   }
 
   get submissionDate(): string {

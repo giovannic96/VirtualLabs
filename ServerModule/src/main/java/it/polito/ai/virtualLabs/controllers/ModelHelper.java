@@ -2,6 +2,8 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
+import it.polito.ai.virtualLabs.services.LabService;
+import it.polito.ai.virtualLabs.services.LabServiceImpl;
 import org.springframework.hateoas.Link;
 
 import java.util.List;
@@ -12,10 +14,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ModelHelper {
 
-    private static final String USER_PHOTO_SERVER_PATH = "https://virtuallabs.ns0.it/images/user_profiles/";
+    private static final String USER_PHOTO_SERVER_URL = "https://virtuallabs.ns0.it/images/user_profiles/";
     private static final String USER_PHOTO_FORMAT = "jpg";
-    private static final String VM_CONTENT_SERVER_PATH = "https://virtuallabs.ns0.it/images/vm_models/desktop/";
+    private static final String VM_CONTENT_SERVER_URL = "https://virtuallabs.ns0.it/images/vm_models/desktop/";
     private static final String VM_CONTENT_FORMAT = "png";
+    private static final String VERSION_CONTENT_SERVER_URL = "https://virtuallabs.ns0.it/images/lab/versions/";
+    private static final String VERSION_CONTENT_FORMAT = "png";
+    private static final String REVIEW_IMAGE_SERVER_URL = "https://virtuallabs.ns0.it/images/lab/reviews/";
+    private static final String REVIEW_IMAGE_FORMAT = "png";
 
 
     public static CourseDTO enrich(CourseDTO courseDTO) {
@@ -63,7 +69,7 @@ public class ModelHelper {
         Link team = linkTo(methodOn(VmController.class).team(vmDTO.getId())).withRel("team");
         Link vmModel = linkTo(methodOn(VmController.class).vmModelByVmId(vmDTO.getId())).withRel("vmModel");
 
-        vmDTO.setContent(VM_CONTENT_SERVER_PATH + vmDTO.getContent() + "." + VM_CONTENT_FORMAT);
+        vmDTO.setContent(VM_CONTENT_SERVER_URL + vmDTO.getContent() + "." + VM_CONTENT_FORMAT);
 
         vmDTO.add(
                 selfLink,
@@ -108,6 +114,14 @@ public class ModelHelper {
     public static VersionDTO enrich(VersionDTO versionDTO) {
         Link selfLink = linkTo(methodOn(LabController.class).version(versionDTO.getId())).withSelfRel();
         Link report = linkTo(methodOn(LabController.class).reportForVersion(versionDTO.getId())).withRel("reports");
+
+
+        String imageCode = versionDTO.getContent();
+        versionDTO.setContent(VERSION_CONTENT_SERVER_URL + imageCode + "." + VERSION_CONTENT_FORMAT);
+        if(versionDTO.isRevised())
+            versionDTO.setReview(REVIEW_IMAGE_SERVER_URL + imageCode + "." + REVIEW_IMAGE_FORMAT);
+        else
+            versionDTO.setReview(null);
 
         versionDTO.add(
                 selfLink,
@@ -157,7 +171,7 @@ public class ModelHelper {
         Link vms = linkTo(methodOn(StudentController.class).vms(studentDTO.getId())).withRel("vms");
         Link reports = linkTo(methodOn(StudentController.class).reports(studentDTO.getId())).withRel("reports");
 
-        studentDTO.setPhoto(USER_PHOTO_SERVER_PATH + studentDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
+        studentDTO.setPhoto(USER_PHOTO_SERVER_URL + studentDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
 
         studentDTO.add(
                 selfLink,
@@ -177,7 +191,7 @@ public class ModelHelper {
         Link vmModels = linkTo(methodOn(ProfessorController.class).vmModels(professorDTO.getId())).withRel("vmModels");
         Link assignments = linkTo(methodOn(ProfessorController.class).assignments(professorDTO.getId())).withRel("assignments");
 
-        professorDTO.setPhoto(USER_PHOTO_SERVER_PATH + professorDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
+        professorDTO.setPhoto(USER_PHOTO_SERVER_URL + professorDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
 
         professorDTO.add(
                 selfLink,

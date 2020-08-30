@@ -14,7 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +26,12 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class LabServiceImpl implements LabService {
+
+    private static final String VERSION_CONTENT_PATH = "home/pi/Desktop/VirtualLabs/images/lab/versions/";
+    private static final String VERSION_CONTENT_FORMAT = "png";
+    private static final String REVIEW_IMAGE_PATH = "home/pi/Desktop/VirtualLabs/images/lab/reviews/";
+    //private static final String REVIEW_IMAGE_PATH = "C:/Users/Dario/Desktop/";
+    private static final String REVIEW_IMAGE_FORMAT = "png";
 
     @Autowired
     AssignmentRepository assignmentRepository;
@@ -217,11 +227,23 @@ public class LabServiceImpl implements LabService {
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
         Report report = reportRepository.getOne(reportId);
-        Version version = modelMapper.map(versionDTO, Version.class);
 
         //check if there is already a version with same timestamp in that report
         if(report.getVersions().stream().anyMatch(v -> v.getSubmissionDate().isEqual(versionDTO.getSubmissionDate())))
             return false;
+
+        Version version = modelMapper.map(versionDTO, Version.class);
+
+        byte[] image = Base64.getDecoder().decode(version.getContent());
+        String imageName = report.getOwner().getId() + "|" + System.currentTimeMillis();
+
+        try (FileOutputStream file = new FileOutputStream(VERSION_CONTENT_PATH + imageName + "." + VERSION_CONTENT_FORMAT )) {
+            file.write(image);
+        } catch (IOException ex) {
+            return false;
+        }
+
+        version.setContent(Base64.getEncoder().withoutPadding().encodeToString(imageName.getBytes()));
 
         //add version to report
         version.setReport(report);
@@ -280,5 +302,32 @@ public class LabServiceImpl implements LabService {
 
         reportRepository.saveAndFlush(report);
         return true;
+    }
+
+    @Override
+    public boolean reviewVersion(Long versionId, String review) {
+        if(!reportRepository.existsById(versionId))
+            throw new ReportNotFoundException("The version with id " + versionId + " does not exist");
+
+        Version version = versionRepository.getOne(versionId);
+        byte[] image = Base64.getDecoder().decode(review);
+
+        try {
+            File file = new File(REVIEW_IMAGE_PATH + version.getContent() + "." + REVIEW_IMAGE_FORMAT);
+            file.createNewFile();
+            FileOutputStream fileStream = new FileOutputStream(file, false);
+
+            fileStream.write(image);
+            fileStream.close();
+
+            version.setRevised(true);
+            versionRepository.saveAndFlush(version);
+
+            return true;
+        } catch (IOException ex) {
+            System.out.println(ex);
+            return false;
+        }
+
     }
 }

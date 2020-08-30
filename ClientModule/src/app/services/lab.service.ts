@@ -51,4 +51,16 @@ export class LabService {
         })
       );
   }
+
+  submitReviewOnVersion(versionId: number, imageUrl: string) {
+    return this.httpClient
+      .post(`${this.API_PATH}/versions/${versionId}/review`, imageUrl)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`SubmitReview error: ${err.message}`);
+        })
+      );
+  }
 }

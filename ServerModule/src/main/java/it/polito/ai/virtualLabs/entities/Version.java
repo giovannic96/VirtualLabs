@@ -1,6 +1,8 @@
 package it.polito.ai.virtualLabs.entities;
 
+import lombok.Builder;
 import lombok.Data;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -17,6 +19,8 @@ public class Version {
     private String title;
 
     private String content;
+
+    private boolean revised = false;
 
     private LocalDateTime submissionDate;
 

@@ -47,6 +47,9 @@ import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layo
 import { VirtualDesktopComponent } from './components/vm_viewer/virtual-desktop.component';
 import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
 import { GradeNumberDirective } from './helpers/grade-number.directive';
+import { CanvasComponent } from './helpers/canvas.component';
+import { ColorCircleModule } from 'ngx-color/circle';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -72,6 +75,7 @@ import { GradeNumberDirective } from './helpers/grade-number.directive';
     GradeDialogComponent,
     VmInfoDialogComponent,
     GradeNumberDirective,
+    CanvasComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -102,6 +106,8 @@ import { GradeNumberDirective } from './helpers/grade-number.directive';
     FlexLayoutModule,
     FlexModule,
     ExtendedModule,
+    ColorCircleModule,
+    MatTooltipModule,
   ],
   exports: [
     RouterModule,

@@ -2,6 +2,8 @@ package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +31,5 @@ public interface LabService {
     boolean removeAssignment(Long assignmentId); //TESTED
     boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate); //TESTED
     boolean gradeReport(Long reportId, float grade);
+    boolean reviewVersion(Long versionId, String review);
 }
