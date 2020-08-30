@@ -15,6 +15,7 @@ import {Version} from '../../../models/version.model';
 import {NotificationService} from '../../../services/notification.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
+import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 
 export interface ReportStatusFilter {
   name: string;
@@ -253,5 +254,29 @@ export class LabComponent implements OnInit {
       this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
       this.filteredReports.get(k).sort((a, b) => Report.sortData(a, b));
     });
+  }
+
+  async deleteAssignment(assignmentId: number) {
+    // Prepare the message
+    const message = 'This will delete also all the reports and the versions related to this assignment';
+
+    // Open a dialog and get the response as an 'await'
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    // Check the response when dialog closes
+    if (areYouSure) {
+      this.labService.deleteAssignment(assignmentId).subscribe(() => {
+        this.mySnackBar.openSnackBar('Assignment deleted successfully', MessageType.SUCCESS, 3);
+        const index = this.assignmentList.findIndex(a => a.id === assignmentId);
+        this.assignmentList.splice(index, 1);
+      }, error => {
+        this.mySnackBar.openSnackBar('Impossible to delete this assignment', MessageType.ERROR, 5);
+      });
+    }
   }
 }

@@ -88,4 +88,16 @@ export class LabService {
         })
       );
   }
+
+  deleteAssignment(assignmentId: number) {
+    return this.httpClient
+      .delete(`${this.API_PATH}/assignments/${assignmentId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`deleteAssignment error: ${err.message}`);
+        })
+      );
+  }
 }

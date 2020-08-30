@@ -114,7 +114,7 @@
           <i>Assigned on: {{formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
         </div>
         <div>
-          <button mat-raised-button color="warn">DELETE ASSIGNMENT</button>
+          <button mat-raised-button color="warn" (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
           <button mat-raised-button color="primary" (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
         </div>
       </mat-action-row>
