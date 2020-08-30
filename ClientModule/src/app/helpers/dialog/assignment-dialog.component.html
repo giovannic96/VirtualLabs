@@ -1,0 +1,37 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>{{data.modelExists ? 'Edit' : 'New'}} Assignment</h2>
+  <form  [formGroup]="assignmentFormGroup" (ngSubmit)="checkForm()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" [maxLength]="255">
+      <mat-error>The name is <b>required</b></mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <textarea matInput
+                rows="12" cols="40"
+                placeholder="Insert content here..."
+                formControlName="content"
+                [maxLength]="MAX_CONTENT_LENGTH"
+                #assignmentContent>
+      </textarea>
+      <div class="count-div">
+        <div class="count-text" >{{assignmentContent.value?.length}}/{{MAX_CONTENT_LENGTH}}</div>
+      </div>
+      <mat-error>The content is <b>required</b></mat-error>
+    </mat-form-field>
+    <mat-form-field class="expiry-date-input" appearance="fill">
+      <mat-label class="expiry-date-input">Expiry Date</mat-label>
+      <input readonly matInput class="formControl expiry-date-input" formControlName="expiryDate"
+              [min]="minDate" [max]="maxDate" [matDatepicker]="picker" (click)="picker.open()">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error>The expiry date is <b>required</b></mat-error>
+    </mat-form-field>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button mat-dialog-close class="mat-raised-button">CLOSE</button>
+        <button class="mat-raised-button mat-primary">{{data.modelExists ? 'CONFIRM' : 'CREATE'}}</button>
+      </mat-dialog-actions>
+    </div>
+  </form>
+</div>

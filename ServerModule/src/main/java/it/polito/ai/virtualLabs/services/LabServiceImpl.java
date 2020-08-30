@@ -48,17 +48,26 @@ public class LabServiceImpl implements LabService {
 
     @Override
     public Optional<ReportDTO> getReport(Long reportId) {
-        return Optional.empty();
+        if (!reportRepository.existsById(reportId))
+            return Optional.empty();
+        return reportRepository.findById(reportId)
+                .map(r -> modelMapper.map(r, ReportDTO.class));
     }
 
     @Override
     public Optional<AssignmentDTO> getAssignment(Long assignmentId) {
-        return Optional.empty();
+        if (!assignmentRepository.existsById(assignmentId))
+            return Optional.empty();
+        return assignmentRepository.findById(assignmentId)
+                .map(a -> modelMapper.map(a, AssignmentDTO.class));
     }
 
     @Override
     public Optional<VersionDTO> getVersion(Long versionId) {
-        return Optional.empty();
+        if (!versionRepository.existsById(versionId))
+            return Optional.empty();
+        return versionRepository.findById(versionId)
+                .map(v -> modelMapper.map(v, VersionDTO.class));
     }
 
     @Override
@@ -184,6 +193,8 @@ public class LabServiceImpl implements LabService {
 
         Course course = courseRepository.getOne(courseName);
         Professor professor = userRepository.getProfessorById(professorId);
+        assignmentDTO.setReleaseDate(LocalDateTime.now());
+        assignmentDTO.setExpiryDate(assignmentDTO.getExpiryDate());
         Assignment assignment = modelMapper.map(assignmentDTO, Assignment.class);
 
         //check if there is already an assignment with that name in that course
@@ -264,22 +275,24 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public boolean editAssignment(Long assignmentId, String name, String content, LocalDateTime expiryDate) {
+    public boolean editAssignment(Long assignmentId, AssignmentDTO assignmentDTO) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
         //check date and name constraints
         Assignment assignment = assignmentRepository.getOne(assignmentId);
-        if(expiryDate.isBefore(LocalDateTime.now()) ||
-            assignment.getCourse().getAssignments().stream().anyMatch(a -> a.getName().equals(name)))
+        if(assignmentDTO.getExpiryDate().isBefore(LocalDateTime.now()) ||
+                (!assignment.getName().equals(assignmentDTO.getName()) &&
+                assignment.getCourse().getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName()))))
             return false;
 
         //edit assignment
-        assignment.setName(name);
-        assignment.setContent(content);
-        assignment.setExpiryDate(expiryDate);
+        assignment.setName(assignmentDTO.getName());
+        assignment.setContent(assignmentDTO.getContent());
+        assignment.setExpiryDate(assignmentDTO.getExpiryDate());
 
         assignmentRepository.saveAndFlush(assignment);
+
         return true;
     }
 

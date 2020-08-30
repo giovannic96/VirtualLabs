@@ -1,8 +1,10 @@
 package it.polito.ai.virtualLabs.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -20,6 +22,8 @@ public class Assignment {
 
     private LocalDateTime releaseDate;
 
+    @DateTimeFormat(iso = ISO.DATE_TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;
 
     @Column(name = "content", length = 1024)

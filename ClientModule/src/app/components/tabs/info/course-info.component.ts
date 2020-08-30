@@ -23,7 +23,6 @@ export class CourseInfoComponent implements OnInit {
 
     this.currentCourse.subscribe(
       data => {
-        console.log(data);
         if (data && data.info && data.info.length !== 0) {
           try {
             // parse json file

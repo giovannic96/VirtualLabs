@@ -117,8 +117,9 @@ public class CourseController {
     @GetMapping("/{courseName}/assignments")
     public List<AssignmentDTO> assignments(@PathVariable String courseName) {
         List<AssignmentDTO> assignments = labService.getCourseAssignments(courseName);
-        for(AssignmentDTO a : assignments)
+        for(AssignmentDTO a : assignments) {
             ModelHelper.enrich(a);
+        }
         return assignments;
     }
 
@@ -192,12 +193,12 @@ public class CourseController {
         Optional<ProfessorDTO> professor = teamService.getProfessorByUsername(userDetails.getUsername());
 
         if(!professor.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel recupero delle informazioni sull'utente: " + userDetails.getUsername());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
     }*/
 
-    // TODO: just for tests, remove it and decomment method above
+    // TODO: just for tests, remove it and decomment method above when we will implement the login functionality
     @PostMapping("/{courseName}/setVmModel")
     @ResponseStatus(HttpStatus.CREATED)
     public void setVmModelToCourse(@PathVariable String courseName,
@@ -205,7 +206,33 @@ public class CourseController {
 
 
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Errore nel settaggio del vm model al corso: " + courseName);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
+    }
+
+    /*
+    @PostMapping("/{courseName}/addAssignment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addAssignmentToCourse(@PathVariable String courseName,
+                                         @RequestBody AssignmentDTO assignmentDTO,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+
+        Optional<ProfessorDTO> professor = teamService.getProfessorByUsername(userDetails.getUsername());
+
+        if(!professor.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
+        if(!labService.addAssignmentToCourse(assignmentDTO, courseName, professor.get().getId()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on adding assignment to course: " + courseName);
+    }*/
+
+    // TODO: just for tests, remove it and decomment method above when we will implement the login functionality
+    @PostMapping("/{courseName}/addAssignment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addAssignmentToCourse(@PathVariable String courseName,
+                                   @RequestBody AssignmentDTO assignmentDTO) {
+
+
+        if(!labService.addAssignmentToCourse(assignmentDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on adding assignment to course: " + courseName);
     }
 
     @PutMapping("/{courseName}")

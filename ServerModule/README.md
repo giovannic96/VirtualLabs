@@ -87,6 +87,7 @@ API
 * POST http://ip_address:port/api/courses/:courseName/enrollMany
 * POST http://ip_address:port/api/courses/:courseName/unrollMany
 * POST http://ip_address:port/api/courses/:courseName/setVmModel
+* POST http://ip_address:port/api/courses/:courseName/addAssignment
 
 *Teams*
 * POST http://ip_address:port/api/teams/addTeamProposal
@@ -95,7 +96,6 @@ API
 *Labs*
 * POST http://ip_address:port/api/labs/reports/:reportId/submitVersion
 * POST http://ip_address:port/api/labs/versions/:versionId/review       TO ADD TO POSTMAN
-* POST http://ip_address:port/api/labs/assignments                      TO ADD TO POSTMAN
 
 *Notification*
 * POST	http://ip_address:port/notification/private/sendMessage

@@ -47,6 +47,10 @@ import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layo
 import { VirtualDesktopComponent } from './components/vm_viewer/virtual-desktop.component';
 import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
 import { GradeNumberDirective } from './helpers/grade-number.directive';
+import { AssignmentDialogComponent } from './helpers/dialog/assignment-dialog.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CanvasComponent } from './helpers/canvas.component';
 import { ColorCircleModule } from 'ngx-color/circle';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -74,6 +78,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     VersionDialogComponent,
     GradeDialogComponent,
     VmInfoDialogComponent,
+    AssignmentDialogComponent,
     GradeNumberDirective,
     CanvasComponent,
   ],
@@ -106,6 +111,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     FlexLayoutModule,
     FlexModule,
     ExtendedModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatMomentDateModule,
     ColorCircleModule,
     MatTooltipModule,
   ],
@@ -113,6 +121,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     RouterModule,
   ],
   providers: [
+    MatDatepickerModule,
+    MatNativeDateModule,
     MySnackBarComponent,
     {
       provide: HTTP_INTERCEPTORS,
@@ -128,7 +138,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     VersionDialogComponent,
     GradeDialogComponent,
     VmModelSettingsDialogComponent,
-    VmInfoDialogComponent
+    VmInfoDialogComponent,
+    AssignmentDialogComponent,
   ]
 })
 export class AppModule { }

@@ -126,4 +126,17 @@ public class LabController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in grading the report with id: " + reportId);
     }
 
+    @PutMapping("/assignments/{assignmentId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
+    @ResponseStatus(HttpStatus.OK)
+    public void editAssignment(@PathVariable Long assignmentId, @RequestBody AssignmentDTO assignmentDTO) {
+        Optional<AssignmentDTO> currentAssignment = labService.getAssignment(assignmentId);
+
+        if(!currentAssignment.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The assignment with id '"+ assignmentId +"' was not found");
+        if(!labService.editAssignment(currentAssignment.get().getId(), assignmentDTO))
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The assignment named '" + assignmentDTO.getName() + "' was not modified");
+    }
+
+
 }

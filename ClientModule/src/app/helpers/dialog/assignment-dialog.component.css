@@ -1,0 +1,45 @@
+.dialog-container {
+  text-align: center;
+  min-width: 42vw;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form textarea {
+  resize: none;
+}
+
+.buttons-container {
+  display: flex;
+  place-content: flex-end;
+  margin: 0 0 0;
+  padding: 0 .5em .5em;
+}
+
+.buttons-container button {
+  margin: 0 0 0 1.3em;
+  width: 100px;
+}
+
+h2 {
+  text-align: left;
+  margin-bottom: 26px;
+}
+
+.count-div {
+  text-align: right;
+  color: grey;
+  font-size: 14px;
+  border-left:0;
+}
+
+.count-text {
+  margin-top:15px;
+}
+
+.expiry-date-input {
+  cursor: pointer;
+}
