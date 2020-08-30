@@ -33,6 +33,7 @@ export class AssignmentDialogComponent implements OnInit {
   public formIsInvalid = false;
   minDate: Date;
   maxDate: Date;
+  MAX_CONTENT_LENGTH = 1024;
 
   constructor(public dialogRef: MatDialogRef<AssignmentDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -66,6 +67,12 @@ export class AssignmentDialogComponent implements OnInit {
       return;
     }
 
+    // check if data submitted are the same as before
+    if (this.equalToPrevious()) {
+      this.dialogRef.close(new Assignment(0, '', '', ''));
+      return;
+    }
+
     // create new assignment
     const assignment = new Assignment(null,
       this.assignmentFormGroup.get('name').value,
@@ -73,6 +80,13 @@ export class AssignmentDialogComponent implements OnInit {
       this.assignmentFormGroup.get('content').value);
 
     this.dialogRef.close(assignment);
+  }
+
+  equalToPrevious(): boolean {
+    return this.data.assignment.name === this.assignmentFormGroup.get('name').value
+      && this.data.assignment.content === this.assignmentFormGroup.get('content').value
+      && this.toDateOnly(this.data.assignment.expiryDate) ===
+      this.toLocalDateTime(new Date(this.assignmentFormGroup.get('expiryDate').value.toDate())).substr(0, 10);
   }
 
   toLocalDateTime(date: Date): string {

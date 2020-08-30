@@ -180,30 +180,35 @@ export class LabComponent implements OnInit {
 
     if (!!dialogResponse) {
 
-      if (isEdit) {
-        this.labService.editAssignment(assignment.id, dialogResponse.getDTO())
-          .pipe(
-            concatMap( () => this.labService.getAssignment(assignment.id))
-          )
-          .subscribe(asmnt => {
-            // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
-            const a = this.assignmentList.find(el => el.id === asmnt.id);
-            a.name = asmnt.name;
-            a.content = asmnt.content;
-            a.expiryDate = this.localDateTimeToString(asmnt.expiryDate);
-            this.mySnackBar.openSnackBar('Assignment edited successfully', MessageType.SUCCESS, 3);
-          }, error => this.mySnackBar.openSnackBar('Assignment editing failed', MessageType.ERROR, 3));
+      if (dialogResponse.name === '') {
+        this.mySnackBar.openSnackBar('Assignment was not modified: data are the same', MessageType.WARNING, 3);
       }
       else {
-        this.courseService.addAssignment(course.name, dialogResponse.getDTO())
-          .pipe(
-            concatMap( () => this.courseService.getAllAssignments(course.name))
-          )
-          .subscribe(asmntList => {
-            // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
-            this.assignmentList = asmntList;
-            this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
-          }, error => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
+        if (isEdit) {
+          this.labService.editAssignment(assignment.id, dialogResponse.getDTO())
+            .pipe(
+              concatMap( () => this.labService.getAssignment(assignment.id))
+            )
+            .subscribe(asmnt => {
+              // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+              const a = this.assignmentList.find(el => el.id === asmnt.id);
+              a.name = asmnt.name;
+              a.content = asmnt.content;
+              a.expiryDate = this.localDateTimeToString(asmnt.expiryDate);
+              this.mySnackBar.openSnackBar('Assignment edited successfully', MessageType.SUCCESS, 3);
+            }, error => this.mySnackBar.openSnackBar('Assignment editing failed', MessageType.ERROR, 3));
+        }
+        else {
+          this.courseService.addAssignment(course.name, dialogResponse.getDTO())
+            .pipe(
+              concatMap( () => this.courseService.getAllAssignments(course.name))
+            )
+            .subscribe(asmntList => {
+              // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+              this.assignmentList = asmntList;
+              this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
+            }, error => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
+        }
       }
     }
   }

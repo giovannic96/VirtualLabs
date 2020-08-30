@@ -8,6 +8,10 @@ form {
   flex-direction: column;
 }
 
+form textarea {
+  resize: none;
+}
+
 .buttons-container {
   display: flex;
   place-content: flex-end;
@@ -23,4 +27,19 @@ form {
 h2 {
   text-align: left;
   margin-bottom: 26px;
+}
+
+.count-div {
+  text-align: right;
+  color: grey;
+  font-size: 14px;
+  border-left:0;
+}
+
+.count-text {
+  margin-top:15px;
+}
+
+.expiry-date-input {
+  cursor: pointer;
 }
