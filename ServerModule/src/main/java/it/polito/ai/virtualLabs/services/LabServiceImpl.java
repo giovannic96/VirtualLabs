@@ -1,5 +1,6 @@
 package it.polito.ai.virtualLabs.services;
 
+import it.polito.ai.virtualLabs.controllers.ModelHelper;
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.*;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -185,7 +187,7 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId) {
+    public Long addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
         if(!userRepository.professorExistsById(professorId))
@@ -199,14 +201,24 @@ public class LabServiceImpl implements LabService {
 
         //check if there is already an assignment with that name in that course
         if(course.getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName())))
-            return false;
+            return 0L;
+
+        assignmentRepository.saveAndFlush(assignment);
+
+        course.getStudents().forEach(student -> {
+            Report report = new Report();
+            report.setGrade(0);
+            report.setStatus(Report.ReportStatus.NULL);
+            report.setStatusDate(LocalDateTime.now());
+            student.addReport(report);
+            assignment.addReport(report);
+        });
 
         //add assignment to course and professor
         assignment.setCourse(course);
         assignment.setProfessor(professor);
 
-        assignmentRepository.saveAndFlush(assignment);
-        return true;
+        return assignment.getId();
     }
 
     @Override

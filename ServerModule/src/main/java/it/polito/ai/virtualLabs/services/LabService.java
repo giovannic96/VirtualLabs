@@ -2,9 +2,6 @@ package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +22,7 @@ public interface LabService {
     Optional<AssignmentDTO> getAssignmentForReport(Long reportId);
     Optional<CourseDTO> getAssignmentCourse(Long assignmentId);
 
-    boolean addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId); //TESTED
+    Long addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId); //TESTED
     boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId); //TESTED
     boolean addVersionToReport(VersionDTO versionDTO, Long reportId); //TESTED
     boolean removeAssignment(Long assignmentId); //TESTED

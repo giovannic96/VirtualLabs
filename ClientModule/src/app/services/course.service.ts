@@ -228,7 +228,7 @@ export class CourseService {
 
   addAssignment(courseName: string, assignment: Assignment) {
     return this.httpClient
-      .post<boolean>(`${this.API_PATH}/${courseName}/addAssignment`, assignment)
+      .post<number>(`${this.API_PATH}/${courseName}/addAssignment`, assignment)
       .pipe(
         retry(3),
         catchError( err => {
