@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {concatMap, delay, filter, last, map, mergeMap, tap} from 'rxjs/operators';
+import {catchError, concatMap, delay, filter, last, map, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
+import {EMPTY, forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
@@ -140,29 +140,42 @@ export class LabComponent implements OnInit {
     );
   }
 
-  openGradeDialog(lastVersion: Version, student: Student, assignment: string) {
+  openGradeDialog(report: Report, assignment) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
     dialogConfig.data = {
-      version: lastVersion,
+      version: report.versions[report.versions.length - 1],
       comment: '',
       grade: undefined,
     };
 
-    const emails = [student.username];
+    const emails = [report.owner.username];
     const dialogRef = this.dialog.open(GradeDialogComponent, dialogConfig);
-
     dialogRef.afterClosed().subscribe(
       data => {
         if (data !== undefined) { // i.e. close button was pressed
-          const subject = 'Report evaluation';
-          const comment = data.comment === '' ? '' : 'Comment of the Professor: \"' + data.comment + '\"\n';
-          const body = 'The report for the assignment \'' + assignment + '\' was evaluated.\nYour grade is: '
-                        + data.grade + '.\n' + comment;
-          this.notificationService.sendMessage(emails, subject, body).subscribe( () => {
+          this.labService.gradeReport(report.id, data.grade).pipe(
+            catchError(err => {
+              this.mySnackBar.openSnackBar('Error while grading report', MessageType.ERROR, 3);
+              return EMPTY;
+            }),
+            concatMap(() => {
+              report.grade = data.grade;
+              report.status = ReportStatus.GRADED;
+
+              this.mySnackBar.openSnackBar('Report graded successfully', MessageType.SUCCESS, 3);
+
+              const subject = 'Report evaluation';
+              const comment = data.comment === '' ? '' : 'Comment of the Professor: \"' + data.comment + '\"\n';
+              const body = 'The report for the assignment \'' + assignment.name + '\' was evaluated.\nYour grade is: '
+                + data.grade + '.\n' + comment;
+              return this.notificationService.sendMessage(emails, subject, body);
+            }),
+            delay(3)
+          ).subscribe( () => {
             this.mySnackBar.openSnackBar('Email sent successfully to the student', MessageType.SUCCESS, 3);
           }, () => {
             this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);

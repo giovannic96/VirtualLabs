@@ -98,8 +98,10 @@
               <mat-action-row>
                 <button mat-raised-button color="accent">REVIEW REPORT</button>
                 <button mat-raised-button color="primary"
-                        (click)="openGradeDialog(report.versions[report.versions.length-1], report.owner, assignment.name)"
-                        [disabled]="!(!!report.versions?.length) || report.status === 'REVISED'">GRADE REPORT</button>
+                        (click)="openGradeDialog(report, assignment)"
+                        [disabled]="(!report.versions?.length)
+                                    || report.status === ReportStatus.REVISED
+                                    || report.status === ReportStatus.GRADED">GRADE REPORT</button>
               </mat-action-row>
             </mat-expansion-panel>
           </mat-accordion>

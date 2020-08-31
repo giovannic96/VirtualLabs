@@ -116,6 +116,7 @@ public class LabController {
     }
 
     @PutMapping("/reports/{reportId}/gradeReport")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Float> input) {
         if(!input.containsKey("grade"))

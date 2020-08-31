@@ -324,6 +324,7 @@ public class LabServiceImpl implements LabService {
 
         //grade report
         report.setGrade(grade);
+        report.setStatus(Report.ReportStatus.GRADED);
 
         reportRepository.saveAndFlush(report);
         return true;

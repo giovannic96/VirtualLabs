@@ -100,4 +100,16 @@ export class LabService {
         })
       );
   }
+
+  gradeReport(reportId: number, grade: number) {
+    return this.httpClient
+      .put(`${this.API_PATH}/reports/${reportId}/gradeReport`, {grade})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GradeReport error: ${err.message}`);
+        })
+      );
+  }
 }
