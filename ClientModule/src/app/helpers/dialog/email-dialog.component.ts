@@ -35,4 +35,8 @@ export class EmailDialogComponent implements OnInit {
   send() {
     this.dialogRef.close(this.form.value);
   }
+
+  close() {
+    this.dialogRef.close();
+  }
 }

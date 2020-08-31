@@ -36,4 +36,8 @@ export class GradeDialogComponent implements OnInit {
     this.form.controls.grade.setValue(Number(grade));
     this.dialogRef.close(this.form.value);
   }
+
+  close() {
+    this.dialogRef.close();
+  }
 }

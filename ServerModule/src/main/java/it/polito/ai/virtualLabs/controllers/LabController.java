@@ -137,5 +137,15 @@ public class LabController {
         if(!labService.editAssignment(currentAssignment.get().getId(), assignmentDTO))
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The assignment named '" + assignmentDTO.getName() + "' was not modified");
     }
+
+    @DeleteMapping("/assignments/{assignmentId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
+    @ResponseStatus(HttpStatus.OK)
+    public void removeAssignment(@PathVariable Long assignmentId) {
+        Optional<AssignmentDTO> assignment = labService.getAssignment(assignmentId);
+        if (!assignment.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The assignment with id '" + assignmentId + "' was not found");
+        labService.removeAssignment(assignmentId);
+    }
 }
 
