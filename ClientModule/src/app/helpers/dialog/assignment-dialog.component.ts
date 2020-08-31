@@ -68,7 +68,7 @@ export class AssignmentDialogComponent implements OnInit {
     }
 
     // check if data submitted are the same as before
-    if (this.equalToPrevious()) {
+    if (this.data.assignment && this.equalToPrevious()) {
       this.dialogRef.close(new Assignment(0, '', '', ''));
       return;
     }
@@ -98,7 +98,7 @@ export class AssignmentDialogComponent implements OnInit {
   }
 
   toDateOnly(date: string): string {
-    // ex. FROM '2020,7,1,23,59,59' TO '2022-12-21'
+    // ex. FROM '2020,7,1,23,59,59' TO '2022-07-01'
     const dateSplit = date.toString().split(',');
     const day = (`0${dateSplit[2]}`).slice(-2); // add '0' in front of the day number, if necessary
     const month = (`0${dateSplit[1]}`).slice(-2); // add '0' in front of the month number, if necessary

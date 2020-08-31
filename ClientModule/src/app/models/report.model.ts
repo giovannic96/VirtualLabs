@@ -11,13 +11,13 @@ export enum ReportStatus {
 
 export class Report {
   private _id: number;
-  private _grade: string;
+  private _grade: number;
   private _status: string;
   private _statusDate: string;
   private _versions: Version[];
   private _owner: Student;
 
-  constructor(id: number, grade: string, status: string, statusDate: string) {
+  constructor(id: number, grade: number, status: string, statusDate: string) {
     this._id = id;
     this._grade = grade;
     this._status = status;
@@ -32,11 +32,11 @@ export class Report {
     this._id = value;
   }
 
-  get grade(): string {
+  get grade(): number {
     return this._grade;
   }
 
-  set grade(value: string) {
+  set grade(value: number) {
     this._grade = value;
   }
 
@@ -88,5 +88,14 @@ export class Report {
   public static formatDate(date: string): Date {
     const splitted = date.toString().split(',').map(s => Number(s));
     return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
+  }
+
+  getDTO(): any {
+    // here we don't need releaseDate because it is set by the server
+    return {
+      grade: this.grade,
+      status: this.status,
+      statusDate: this.statusDate
+    };
   }
 }

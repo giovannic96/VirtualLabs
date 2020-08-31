@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Student} from '../models/student.model';
-import {forkJoin, Observable, of, throwError} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
 import {Team} from '../models/team.model';
+import {Report} from '../models/report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -63,18 +64,6 @@ export class StudentService {
       );
   }
 
-  delete(studentId: string): Observable<Student> {
-    return this.httpClient
-      .delete<Student>(`${this.API_PATH}/${studentId}`)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`Delete error: ${err.message}`);
-        })
-      );
-  }
-
   getCourses(studentId: string): Observable<Student[]> {
     return this.httpClient
       .get<Student[]>(`${this.API_PATH}/${studentId}/courses`)
@@ -99,4 +88,27 @@ export class StudentService {
       );
   }
 
+  addReport(studentId: string, courseName: string, assignmentId: number, report: Report) {
+    return this.httpClient
+      .post<boolean>(`${this.API_PATH}/${studentId}/courses/${courseName}/assignments/${assignmentId}/addReport`, report)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`addReport error: ${err.message}`);
+        })
+      );
+  }
+
+  delete(studentId: string): Observable<Student> {
+    return this.httpClient
+      .delete<Student>(`${this.API_PATH}/${studentId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`Delete error: ${err.message}`);
+        })
+      );
+  }
 }

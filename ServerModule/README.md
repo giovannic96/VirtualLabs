@@ -96,6 +96,9 @@ API
 *Labs*
 * POST http://ip_address:port/api/labs/reports/:reportId/submitVersion
 
+*Students*
+* POST http://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/addReport // TO ADD TO POSTMAN
+
 *Notification*
 * POST	http://ip_address:port/notification/private/sendMessage
 

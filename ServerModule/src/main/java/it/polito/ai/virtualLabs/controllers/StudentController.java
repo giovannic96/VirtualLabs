@@ -85,6 +85,15 @@ public class StudentController {
         return reports;
     }
 
+    @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")
+    @ResponseStatus(HttpStatus.CREATED)
+    public boolean addReports(@PathVariable String studentId, @PathVariable String courseName,
+                           @PathVariable Long assignmentId, @RequestBody ReportDTO reportDTO) {
+        if(!labService.addReportToAssignment(reportDTO, assignmentId, studentId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in inserting the report to the assignment with id: " + assignmentId);
+        return true;
+    }
+
     /*
     @PostMapping({"","/"})
     public StudentDTO addStudent(@RequestBody StudentDTO studentDTO) {

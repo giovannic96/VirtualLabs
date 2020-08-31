@@ -15,6 +15,7 @@ import {Version} from '../../../models/version.model';
 import {NotificationService} from '../../../services/notification.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
+import {StudentService} from '../../../services/student.service';
 
 export interface ReportStatusFilter {
   name: string;
@@ -41,6 +42,7 @@ export class LabComponent implements OnInit {
   constructor(private courseService: CourseService,
               private labService: LabService,
               private notificationService: NotificationService,
+              private studentService: StudentService,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
@@ -68,9 +70,9 @@ export class LabComponent implements OnInit {
         this.labService.getAssignmentReports(assignment.id)
           .pipe(
             mergeMap(reports => {
-              assignment.reports = reports;
-              this.allReports.set(assignment.id, assignment.reports);
-              this.filteredReports.set(assignment.id, assignment.reports);
+
+              // assign reports to the current assignment
+              this.setReportsToAssignment(assignment, reports);
 
               const ownerRequests: Observable<Student>[] = [];
               const versionRequests: Observable<Version[]>[] = [];
@@ -80,14 +82,18 @@ export class LabComponent implements OnInit {
               });
 
               forkJoin(ownerRequests).subscribe(owners => {
-                reports.forEach((report, i) => reports[i].owner = owners[i]);
+                // assign owner to each report
+                this.setOwnerToReports(reports, owners);
+
+                // update UI (only when all assignments have been processed)
                 assignmentCounter--;
                 if (!assignmentCounter)
                   this.filterReports();
               });
 
               forkJoin(versionRequests).subscribe(versions => {
-                reports.forEach((report, i) => reports[i].versions = versions[i]);
+                // assign version to each report
+                this.setVersionToReports(reports, versions);
               });
 
               return reports;
@@ -96,19 +102,6 @@ export class LabComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
-
-  formatDate(date: string) {
-    const splitted = date.toString().split(',').map(s => Number(s));
-    return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
-  }
-
-  localDateTimeToString(localDateTime: string): string {
-    // ex. FROM '2022-12-21T14:10:46' TO '2022,12,21,14,10,46'
-    const dateTime = localDateTime.toString().split('T');
-    const date = dateTime[0].split('-');
-    const time = dateTime[1].split(':');
-    return '' + date[0] + ',' + date[1] + ',' + date[2] + ',' + time[0] + ',' + time[1] + ',' + time[2];
   }
 
   openVersionDialog(versionTitle: string, versionContent: string) {
@@ -190,8 +183,11 @@ export class LabComponent implements OnInit {
               concatMap( () => this.labService.getAssignment(assignment.id))
             )
             .subscribe(asmnt => {
+              // find selected assignment
               // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
               const a = this.assignmentList.find(el => el.id === asmnt.id);
+
+              // edit selected assignment
               a.name = asmnt.name;
               a.content = asmnt.content;
               a.expiryDate = this.localDateTimeToString(asmnt.expiryDate);
@@ -200,17 +196,64 @@ export class LabComponent implements OnInit {
         }
         else {
           this.courseService.addAssignment(course.name, dialogResponse.getDTO())
-            .pipe(
-              concatMap( () => this.courseService.getAllAssignments(course.name))
-            )
-            .subscribe(asmntList => {
-              // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
-              this.assignmentList = asmntList;
-              this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
-            }, error => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
+            .subscribe(() => {
+
+              const assignmentList = this.courseService.getAllAssignments(course.name);
+              const students = this.courseService.getEnrolled(course.name);
+
+              forkJoin([assignmentList, students]).subscribe(results => {
+                // refresh the assignment list
+                // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
+                this.assignmentList = results[0];
+
+                // find the assignment inserted, by assignmentName
+                const insertedAssignment = this.assignmentList.find(a => a.name === dialogResponse.name);
+
+                // add one report for each student of the course (with status NULL)
+                const studentIds = results[1].map(s => s.id);
+                const newReport = new Report(
+                  null, 0, 'NULL', this.toLocalDateTime(insertedAssignment.releaseDate.toString()));
+
+                const reportRequests: Observable<boolean>[] = [];
+                studentIds.forEach(id => {
+                  reportRequests.push(this.studentService.addReport(id, course.name, insertedAssignment.id, newReport.getDTO()));
+                });
+
+                // get all reports of the inserted assignment
+                forkJoin(reportRequests).subscribe(requests => {
+                  this.labService.getAssignmentReports(insertedAssignment.id).subscribe(reportList => {
+
+                    // assign reports to the inserted assignment
+                    this.setReportsToAssignment(insertedAssignment, reportList);
+
+                    // assign owner to each report
+                    this.setOwnerToReports(insertedAssignment.reports, results[1]);
+
+                    // update UI
+                    this.filterReports();
+
+                    this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
+                  }, () => this.mySnackBar.openSnackBar('Reports reading failed', MessageType.ERROR, 3));
+                }, () => this.mySnackBar.openSnackBar('Reports creation failed', MessageType.ERROR, 3));
+              });
+            }, () => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
         }
       }
     }
+  }
+
+  setReportsToAssignment(assignment: Assignment, reportList: Report[]) {
+    assignment.reports = reportList;
+    this.allReports.set(assignment.id, assignment.reports);
+    this.filteredReports.set(assignment.id, assignment.reports);
+  }
+
+  setOwnerToReports(reports, owners) {
+    reports.forEach((report, i) => reports[i].owner = owners[i]);
+  }
+
+  setVersionToReports(reports, versions) {
+    reports.forEach((report, i) => reports[i].versions = versions[i]);
   }
 
   getColorForStatus(status: string) {
@@ -246,5 +289,29 @@ export class LabComponent implements OnInit {
       this.filteredReports.set(k, this.allReports.get(k).filter(rep => statusCheckedNames.includes(rep.status)));
       this.filteredReports.get(k).sort((a, b) => Report.sortData(a, b));
     });
+  }
+
+  formatDate(date: string) {
+    const splitted = date.toString().split(',').map(s => Number(s));
+    return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
+  }
+
+  localDateTimeToString(localDateTime: string): string {
+    // ex. FROM '2022-12-21T14:10:46' TO '2022,12,21,14,10,46'
+    const dateTime = localDateTime.toString().split('T');
+    const date = dateTime[0].split('-');
+    const time = dateTime[1].split(':');
+    return '' + date[0] + ',' + date[1] + ',' + date[2] + ',' + time[0] + ',' + time[1] + ',' + time[2];
+  }
+
+  toLocalDateTime(date: string): string {
+    // ex. FROM '2020,7,1,18,20,2' TO '2022-07-01T18:20:02'
+    const dateSplit = date.toString().split(',');
+    const day = (`0${dateSplit[2]}`).slice(-2); // add '0' in front of the number, if necessary
+    const month = (`0${dateSplit[1]}`).slice(-2); // add '0' in front of the number, if necessary
+    const hours = (`0${dateSplit[3]}`).slice(-2); // add '0' in front of the number, if necessary
+    const minutes = (`0${dateSplit[4]}`).slice(-2); // add '0' in front of the number, if necessary
+    const seconds = (`0${dateSplit[5]}`).slice(-2); // add '0' in front of the  number, if necessary
+    return '' + dateSplit[0] + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
   }
 }

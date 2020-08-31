@@ -103,7 +103,7 @@ public class LabController {
     @PostMapping("/reports/{reportId}/submitVersion")
     @ResponseStatus(HttpStatus.CREATED)
     public VersionDTO submitVersion(@PathVariable Long reportId, @RequestBody VersionDTO versionDTO) {
-        if(labService.addVersionToReport(versionDTO, reportId))
+        if(!labService.addVersionToReport(versionDTO, reportId))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
         return ModelHelper.enrich(versionDTO);
     }
@@ -130,6 +130,5 @@ public class LabController {
         if(!labService.editAssignment(currentAssignment.get().getId(), assignmentDTO))
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The assignment named '" + assignmentDTO.getName() + "' was not modified");
     }
-
-
 }
+

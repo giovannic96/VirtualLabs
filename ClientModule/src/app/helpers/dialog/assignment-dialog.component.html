@@ -19,10 +19,10 @@
       </div>
       <mat-error>The content is <b>required</b></mat-error>
     </mat-form-field>
-    <mat-form-field class="expiry-date-input" appearance="fill">
+    <mat-form-field class="expiry-date-input" appearance="fill" (click)="picker.open()">
       <mat-label class="expiry-date-input">Expiry Date</mat-label>
       <input readonly matInput class="formControl expiry-date-input" formControlName="expiryDate"
-              [min]="minDate" [max]="maxDate" [matDatepicker]="picker" (click)="picker.open()">
+              [min]="minDate" [max]="maxDate" [matDatepicker]="picker">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error>The expiry date is <b>required</b></mat-error>
