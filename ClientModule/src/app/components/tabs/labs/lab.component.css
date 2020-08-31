@@ -84,6 +84,19 @@ mat-card {
   color: wheat;
 }
 
+.version-desc {
+  text-align: center;
+  font-size: 20px;
+  color: wheat;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding-top: 16px;
+  padding-bottom: 20px;
+}
+
+.version-desc.mat-card-title {
+  margin-bottom: 0;
+}
+
 .report-panel-desc {
   justify-content: space-between;
 }
@@ -127,6 +140,12 @@ mat-card {
   padding: 12px;
 }
 
+.version-card-container {
+  margin-top: 20px;
+  box-shadow: none;
+  padding: 12px;
+}
+
 .report-accordion {
   margin: 8px !important;
   box-shadow: 0 0 0 0 rgba(255, 255, 255, .2), 0 0 0 0 rgba(255, 255, 255, .14), 0 0 3px 0 rgba(255, 255, 255, .8)
@@ -151,6 +170,37 @@ mat-card {
   margin: 0 16px;
   border: 1.1px solid rgba(71, 71, 71, 0.68);
   cursor: pointer;
+}
+
+.versions-header-student {
+  display: flex;
+  justify-content: space-between;
+  color: wheat;
+  background-color: rgba(0, 0, 0, 0.8);
+  flex-basis: 32%;
+}
+
+.versions-header-student button {
+  border: 1.1px solid rgba(71, 71, 71, 0.68);
+  cursor: pointer;
+}
+
+.report-history-container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+}
+
+.report-history-desc {
+  flex-basis: 37%;
+}
+
+.report-history-right {
+  flex: auto;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .z-depth:hover {

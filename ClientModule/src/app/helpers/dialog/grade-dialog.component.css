@@ -6,7 +6,6 @@
 form {
   display: flex;
   flex-direction: column;
-  /*justify-content: space-between;*/
 }
 
 form textarea {
@@ -16,12 +15,12 @@ form textarea {
 .buttons-container {
   display: flex;
   place-content: flex-end;
-  margin: 0px 0 0;
-  padding: 0px .5em .5em;
+  margin: 0 0 0;
+  padding: 0 .5em .5em;
 }
 
 .buttons-container button {
-  margin: 0 0px 0 1.3em;
+  margin: 0 0 0 1.3em;
   width: 100px;
 }
 
@@ -32,10 +31,6 @@ h2 {
 
 img {
   max-width: 100%;
-}
-
-.form-field-comment {
-  /*width: 82%;*/
 }
 
 .form-field-grade {
