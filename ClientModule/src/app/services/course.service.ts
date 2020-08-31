@@ -178,18 +178,6 @@ export class CourseService {
       );
   }
 
-  getAssignment(courseName: string): Observable<Assignment> {
-    return this.httpClient
-      .get<Assignment>(`${this.API_PATH}/${courseName}/assignment`)
-      .pipe(
-        retry(1),
-        catchError( err => {
-          console.error(err);
-          return throwError(`getAssignment error: ${err.message}`);
-        })
-      );
-  }
-
   getProfessors(courseName: string): Observable<Professor[]> {
     return this.httpClient
       .get<Professor[]>(`${this.API_PATH}/${courseName}/professors`)
