@@ -227,12 +227,15 @@ public class CourseController {
     // TODO: just for tests, remove it and decomment method above when we will implement the login functionality
     @PostMapping("/{courseName}/addAssignment")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addAssignmentToCourse(@PathVariable String courseName,
+    public Long addAssignmentToCourse(@PathVariable String courseName,
                                    @RequestBody AssignmentDTO assignmentDTO) {
 
 
-        if(!labService.addAssignmentToCourse(assignmentDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
+        Long generatedId = labService.addAssignmentToCourse(assignmentDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId());
+        if( generatedId == 0)
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on adding assignment to course: " + courseName);
+
+        return generatedId;
     }
 
     @PutMapping("/{courseName}")
