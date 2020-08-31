@@ -1,0 +1,23 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>New Version</h2>
+  <div>
+    <form [formGroup]="form">
+      <mat-form-field>
+        <mat-label>Title</mat-label>
+        <input matInput name="title" formControlName="title" [maxLength]="255">
+        <mat-error>The title is <b>required</b></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Content</mat-label>
+        <input matInput name="content" formControlName="content">
+        <mat-error>The content is <b>required</b></mat-error>
+      </mat-form-field>
+    </form>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button class="mat-raised-button" (click)="close()">CLOSE</button>
+        <button class="mat-raised-button mat-primary" (click)="confirm()">CONFIRM</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</div>

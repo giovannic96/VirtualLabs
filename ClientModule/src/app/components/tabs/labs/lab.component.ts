@@ -17,6 +17,7 @@ import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.co
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
+import {AddVersionDialogComponent} from "../../../helpers/dialog/add-version-dialog.component";
 
 export interface ReportStatusFilter {
   name: string;
@@ -318,6 +319,21 @@ export class LabComponent implements OnInit {
     }
   }
 
+  async openAddVersionDialog() {
+
+    const data = {
+      title: '',
+      content: '',
+    };
+    const dialogRef = this.dialog.open(AddVersionDialogComponent, {disableClose: true, data});
+    const dialogResponse: any = await dialogRef.afterClosed().toPromise();
+
+    if (!!dialogResponse) {
+      console.log(dialogResponse.title);
+      console.log(dialogResponse.content);
+    }
+  }
+
   setReportsToAssignment(assignment: Assignment, reportList: Report[]) {
     assignment.reports = reportList;
     this.allReports.set(assignment.id, assignment.reports);
@@ -330,6 +346,14 @@ export class LabComponent implements OnInit {
 
   setVersionToReports(reports, versions) {
     reports.forEach((report, i) => reports[i].versions = versions[i]);
+  }
+
+  getReportForStudent(assignment: Assignment, studentId: string) {
+    return assignment.reports?.find(r => r.owner?.id === studentId);
+  }
+
+  isProfessor() {
+    return false;
   }
 
   getColorForStatus(status: string) {

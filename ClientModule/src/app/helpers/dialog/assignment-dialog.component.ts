@@ -57,7 +57,6 @@ export class AssignmentDialogComponent implements OnInit {
       this.assignmentFormGroup.get('expiryDate').setValue(moment(this.toDateOnly(assignment.expiryDate)));
       this.cd.detectChanges();
     }
-
   }
 
   checkForm() {

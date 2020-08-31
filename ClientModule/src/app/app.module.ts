@@ -47,13 +47,15 @@ import { ExtendedModule, FlexLayoutModule, FlexModule } from '@angular/flex-layo
 import { VirtualDesktopComponent } from './components/vm_viewer/virtual-desktop.component';
 import { VmInfoDialogComponent } from './components/vm_viewer/vm-info-dialog.component';
 import { GradeNumberDirective } from './helpers/grade-number.directive';
+import { VarDirective } from './helpers/ng-var.directive';
 import { AssignmentDialogComponent } from './helpers/dialog/assignment-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
 import { CanvasComponent } from './helpers/canvas.component';
 import { ColorCircleModule } from 'ngx-color/circle';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
 
 @NgModule({
   declarations: [
@@ -77,9 +79,11 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,
+    AddVersionDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     GradeNumberDirective,
+    VarDirective,
     CanvasComponent,
   ],
   imports: [
@@ -137,6 +141,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,
+    AddVersionDialogComponent,
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
