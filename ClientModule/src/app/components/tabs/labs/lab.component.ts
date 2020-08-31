@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {concatMap, filter, last, map, mergeMap, tap} from 'rxjs/operators';
+import {concatMap, delay, filter, last, map, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
 import {forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
 import {Course} from '../../../models/course.model';
@@ -16,6 +16,7 @@ import {NotificationService} from '../../../services/notification.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
 import {StudentService} from '../../../services/student.service';
+import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 
 export interface ReportStatusFilter {
   name: string;
@@ -104,29 +105,36 @@ export class LabComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openVersionDialog(versionTitle: string, versionContent: string) {
+  openVersionDialog(version: Version, reportId: number, assignmentId: number) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
+    dialogConfig.autoFocus = false;
 
-    dialogConfig.data = {
-      title: versionTitle,
-      content: versionContent
-    };
+    dialogConfig.data = version;
 
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
-      data => {
-        if (data !== undefined) { // i.e. close button was pressed
-          /*
-          this.notificationService.sendMessage(emails, data.subject, data.body).subscribe( () => {
-            this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
-          }, () => {
-            this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
+      request => {
+        if (request !== undefined) { // i.e. close button was pressed
+          request.subscribe(() => {
+            this.mySnackBar.openSnackBar('Review uploaded successfully', MessageType.SUCCESS, 3);
+            this.labService.getReportVersions(reportId).subscribe(versions => {
+                this.allReports.get(assignmentId).find(report => report.id === reportId).versions = versions;
+            });
+
+            /* //TODO: to set notification service with the correct information
+            thi
+            this.notificationService.sendMessage(emails, data.subject, data.body).pipe(delay(3)).subscribe( () => {
+              this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
+            }, () => {
+              this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
+            });
+            */
+          }, error => {
+            this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 5);
           });
-           */
         }
       }
     );
@@ -239,6 +247,30 @@ export class LabComponent implements OnInit {
             }, () => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
         }
       }
+    }
+  }
+
+  async deleteAssignment(assignmentId: number) {
+    // Prepare the message
+    const message = 'This will delete also all the reports and the versions related to this assignment';
+
+    // Open a dialog and get the response as an 'await'
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    // Check the response when dialog closes
+    if (areYouSure) {
+      this.labService.deleteAssignment(assignmentId).subscribe(() => {
+        this.mySnackBar.openSnackBar('Assignment deleted successfully', MessageType.SUCCESS, 3);
+        const index = this.assignmentList.findIndex(a => a.id === assignmentId);
+        this.assignmentList.splice(index, 1);
+      }, error => {
+        this.mySnackBar.openSnackBar('Impossible to delete this assignment', MessageType.ERROR, 5);
+      });
     }
   }
 

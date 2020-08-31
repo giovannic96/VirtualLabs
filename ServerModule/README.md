@@ -95,6 +95,7 @@ API
 
 *Labs*
 * POST http://ip_address:port/api/labs/reports/:reportId/submitVersion
+* POST http://ip_address:port/api/labs/versions/:versionId/review       TO ADD TO POSTMAN
 
 *Students*
 * POST http://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/addReport // TO ADD TO POSTMAN
@@ -116,7 +117,7 @@ API
 
 *Labs* 
 * PUT	http://ip_address:port/api/labs/reports/:reportId/gradeReport
-* PUT	http://ip_address:port/api/labs/assignments/:assignmentId
+* PUT   http://ip_address:port/api/labs/assignments/:assignmentId          //TO ADD TO POSTMAN
 
 ---
 **DELETE**
@@ -131,3 +132,6 @@ API
 *Teams*
 * DELETE http://ip_address:port/api/teams/:teamId
 * DELETE http://ip_address:port/api/teams/teamProposals/:teamProposalId
+
+*Labs*
+* DELETE http://ip_address:port/api/labs/assignments/:assignmentId      //TO ADD TO POSTMAN

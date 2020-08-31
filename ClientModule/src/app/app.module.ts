@@ -51,6 +51,9 @@ import { AssignmentDialogComponent } from './helpers/dialog/assignment-dialog.co
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { CanvasComponent } from './helpers/canvas.component';
+import { ColorCircleModule } from 'ngx-color/circle';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -77,6 +80,7 @@ import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     GradeNumberDirective,
+    CanvasComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -110,6 +114,8 @@ import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment
     MatDatepickerModule,
     MatNativeDateModule,
     MatMomentDateModule,
+    ColorCircleModule,
+    MatTooltipModule,
   ],
   exports: [
     RouterModule,

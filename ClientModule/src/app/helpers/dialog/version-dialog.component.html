@@ -1,13 +1,58 @@
 <div class="dialog-container">
-  <h2 mat-dialog-title>{{title}}</h2>
-  <div>
-    <img mat-card-image src="https://videohive.img.customer.envatousercontent.com/files/261073186/code_2_img.jpg?auto=compress%2Cformat&fit=crop&crop=top&max-h=8000&max-w=590&s=c268466cffeccb3cae326841014d38fb" alt="version_content">
-    <!-- TODO add correct image later: <div>Content: {{content}}</div> -->
+  <h2 mat-dialog-title>{{version.title}}</h2>
+  <ng-template [ngIf]="!reviewInProgress" [ngIfElse]="reviewBlock">
+    <div class="image-container image-container-view">
+      <img [draggable]="false" [src]="version.content" alt="version_content">
+      <img #review *ngIf="version.revised"
+           [hidden] = reviewIsHidden
+           [draggable]="false"
+           [src]="version.review + '?' + currentTimestamp()"
+           alt="version_review"> <!-- The timestamp above is a workaround to prevent cache effect for this image -->
+    </div>
     <div class="buttons-container">
       <mat-dialog-actions>
-        <button mat-dialog-close class="mat-raised-button">CLOSE</button>
-        <button class="mat-raised-button mat-primary">REVIEW</button>
+        <button mat-raised-button
+                (click)="toggleReview()"
+                [disabled]="!version.revised"
+                color="accent">{{reviewIsHidden ? 'SHOW REVIEW' : 'HIDE REVIEW'}}</button>
+      </mat-dialog-actions>
+      <mat-dialog-actions>
+        <button mat-raised-button (click)="close()">CLOSE</button>
+        <div matTooltip="This version has been revised already"
+                      [matTooltipDisabled]="!version.revised">
+          <button mat-raised-button
+                  color="primary"
+                  [disabled]="version.revised"
+                  (click)="reviewInProgress=true">REVIEW</button>
+        </div>
       </mat-dialog-actions>
     </div>
-  </div>
+  </ng-template>
+  <ng-template #reviewBlock>
+    <div class="colors-container">
+      <color-circle [color]="currentColor"
+                    [colors]="colors"
+                    [width]="'100%'"
+                    (onChange)="changePenColor($event)"></color-circle>
+    </div>
+    <div class="image-container image-container-review">
+      <img #content [draggable]="false" [src]="version.content" alt="version_content">
+      <app-canvas #appCanvas
+                  [height]="max(content.height, 1)"
+                  [width]="max(content.width, 1)"
+                  [penColor]="currentColor"></app-canvas>
+    </div>
+    <div class="checkbox-container">
+      <mat-checkbox color="primary" labelPosition="before">Check this if you want to grade report after review</mat-checkbox>
+    </div>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button mat-raised-button color="accent" (click)="resetCanvas()">RESET</button>
+      </mat-dialog-actions>
+      <mat-dialog-actions>
+        <button mat-raised-button color="warn" (click)="reviewInProgress=false">BACK WITHOUT SAVING</button>
+        <button mat-raised-button color="primary" (click)="closeAndSubmit()">REVIEW</button>
+      </mat-dialog-actions>
+    </div>
+  </ng-template>
 </div>

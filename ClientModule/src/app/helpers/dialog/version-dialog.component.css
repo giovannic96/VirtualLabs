@@ -1,18 +1,74 @@
 .dialog-container {
   text-align: center;
   min-width: 42vw;
+  max-height: 90vh;
+}
+
+.colors-container {
+  margin: 1em 0;
+  background-color: #efefef;
+  border-radius: 2em;
+}
+
+::ng-deep .circle-picker {
+  margin: 0 !important;
+  padding: .5em 0;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+::ng-deep .circle-swatch {
+  margin: 0 !important;
+}
+
+.image-container {
+  position: relative;
+}
+
+.image-container-view img:first-child {
+  width: 100%;
+}
+
+.image-container-view img:nth-child(2) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.image-container-review img {
+  width: 100%;
+}
+
+.image-container app-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  cursor: url("src/assets/other/pen_cursor_filled_32.png"), auto;
+}
+
+.checkbox-container {
+  font-style: italic;
+  font-weight: lighter;
+  text-align: right;
+  padding-top: .4em;
 }
 
 .buttons-container {
   display: flex;
-  place-content: flex-end;
-  margin: 0px 0 0;
-  padding: 0px .5em .5em;
+  justify-content: space-between;
+  margin: 0;
 }
 
 .buttons-container button {
-  margin: 0 0px 0 1.3em;
-  width: 100px;
+  padding: 0 1em;
+  margin-right: 1.3em;
+  width: max-content;
+}
+
+.buttons-container button:last-child {
+  margin-right: unset;
 }
 
 h2 {

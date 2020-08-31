@@ -210,7 +210,7 @@ mat-card {
   background-color: #07ff15!important;
 }
 
-::ng-deep .mat-checkbox-label {
+.report-status-filter section {
   color: white;
   margin-right: 25px;
 }

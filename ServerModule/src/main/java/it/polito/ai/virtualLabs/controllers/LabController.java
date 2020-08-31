@@ -108,6 +108,13 @@ public class LabController {
         return ModelHelper.enrich(versionDTO);
     }
 
+    @PostMapping("/versions/{versionId}/review")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void reviewVersion(@PathVariable Long versionId, @RequestBody String review) {
+        if(!labService.reviewVersion(versionId, review))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
+    }
+
     @PutMapping("/reports/{reportId}/gradeReport")
     @ResponseStatus(HttpStatus.OK)
     public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Float> input) {

@@ -65,6 +65,18 @@ export class LabService {
       );
   }
 
+  submitReviewOnVersion(versionId: number, imageUrl: string) {
+    return this.httpClient
+      .post(`${this.API_PATH}/versions/${versionId}/review`, imageUrl)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`SubmitReview error: ${err.message}`);
+        })
+      );
+  }
+
   editAssignment(assignmentId: number, assignment: Assignment) {
     return this.httpClient
       .put<boolean>(`${this.API_PATH}/assignments/${assignmentId}`, assignment)
@@ -73,6 +85,18 @@ export class LabService {
         catchError( err => {
           console.error(err);
           return throwError(`editAssignment error: ${err.message}`);
+        })
+      );
+  }
+
+  deleteAssignment(assignmentId: number) {
+    return this.httpClient
+      .delete(`${this.API_PATH}/assignments/${assignmentId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`deleteAssignment error: ${err.message}`);
         })
       );
   }
