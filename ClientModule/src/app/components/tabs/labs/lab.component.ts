@@ -17,7 +17,7 @@ import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.co
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
-import {AddVersionDialogComponent} from "../../../helpers/dialog/add-version-dialog.component";
+import {AddVersionDialogComponent} from '../../../helpers/dialog/add-version-dialog.component';
 
 export interface ReportStatusFilter {
   name: string;
