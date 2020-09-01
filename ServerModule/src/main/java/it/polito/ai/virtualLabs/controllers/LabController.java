@@ -3,12 +3,15 @@ package it.polito.ai.virtualLabs.controllers;
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.Report;
 import it.polito.ai.virtualLabs.services.LabService;
+import it.polito.ai.virtualLabs.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +22,9 @@ public class LabController {
 
     @Autowired
     LabService labService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping("/assignments/{assignmentId}")
     public AssignmentDTO assignment(@PathVariable Long assignmentId) {
@@ -121,13 +127,31 @@ public class LabController {
     @PutMapping("/reports/{reportId}/gradeReport")
     @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
-    public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Float> input) {
-        if(!input.containsKey("grade"))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Object> input) {
+        if(!input.containsKey("grade") || !input.containsKey("comment"))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
-        float grade = input.get("grade");
+        Float grade = Float.valueOf(input.get("grade").toString());
         if(!labService.gradeReport(reportId, grade))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in grading the report with id: " + reportId);
+
+        if(!this.labService.getReport(reportId).isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report with id " + reportId + " was not found");
+
+        String assignmentName = this.labService.getAssignmentForReport(reportId).get().getName();
+        String subject = "Report evaluation";
+        String comment = input.get("comment") == "" ?
+                "Professor didn't leave a comment" :
+                "Comment of the Professor: " + input.get("comment");
+        String body = "The report for the assignment " + assignmentName + "was evaluated.\n\nYour grade is: " + input.get("grade") + "."
+                + "\n" + comment;
+
+        String userEmail = this.labService.getReportOwner(reportId).get().getUsername();
+        try {
+            this.notificationService.sendMessage(userEmail, subject, body);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Error while sending email");
+        }
     }
 
     @PutMapping("/reports/{reportId}/markAsRead")

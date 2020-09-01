@@ -333,7 +333,6 @@ public class TeamServiceImpl implements TeamService {
         return retList;
     }
 
-    //TODO: da testare
     @Override
     public List<Boolean> addAndEnroll(Reader r, String courseName) {
         List<StudentDTO> students;
