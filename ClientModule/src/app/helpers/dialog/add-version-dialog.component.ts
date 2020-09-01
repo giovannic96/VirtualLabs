@@ -24,8 +24,7 @@ export class AddVersionDialogComponent implements OnInit {
   loading: boolean;
   loadingProgress = {loaded: 0, total: 100};
 
-  constructor(private fb: FormBuilder,
-              private dialogRef: MatDialogRef<AddVersionDialogComponent>,
+  constructor(private dialogRef: MatDialogRef<AddVersionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data,
               private labService: LabService,
               private mySnackBar: MySnackBarComponent) {
@@ -37,6 +36,9 @@ export class AddVersionDialogComponent implements OnInit {
   }
 
   confirm() {
+    if (this.titleControl.invalid)
+      return;
+
     this.loading = true;
 
     const formData = new FormData();
@@ -44,7 +46,7 @@ export class AddVersionDialogComponent implements OnInit {
     formData.append('file', this.currentFile);
     this.labService.submitVersionOnReport(this.report.id, formData).subscribe(event => {
       if (event.type === HttpEventType.Response) {
-        this.mySnackBar.openSnackBar('Version submitted successfully', MessageType.SUCCESS, 3);
+        this.mySnackBar.openSnackBar('Version submitted successfully', MessageType.SUCCESS, 3000);
         setTimeout(() => this.dialogRef.close(true), 3000);
       }
       if (event.type === HttpEventType.UploadProgress) {

@@ -287,7 +287,6 @@ export class LabComponent implements OnInit {
     const dialogRef = this.dialog.open(AddVersionDialogComponent, {disableClose: true, data});
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
-    console.log(dialogResponse);
     if (dialogResponse) {
       this.labService.getReportVersions(report.id).subscribe(versions => report.versions = versions);
     }
