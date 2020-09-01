@@ -39,6 +39,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
 import { MyDialogComponent } from './helpers/dialog/my-dialog.component';
+import { AllTeamedUpDialogComponent } from './helpers/dialog/all-teamed-up-dialog.component';
 import { EmailDialogComponent } from './helpers/dialog/email-dialog.component';
 import { VersionDialogComponent } from './helpers/dialog/version-dialog.component';
 import { GradeDialogComponent } from './helpers/dialog/grade-dialog.component';
@@ -51,12 +52,15 @@ import { VarDirective } from './helpers/ng-var.directive';
 import { AssignmentDialogComponent } from './helpers/dialog/assignment-dialog.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatMomentDateModule, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { CanvasComponent } from './helpers/canvas.component';
 import { ColorCircleModule } from 'ngx-color/circle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { TeamProposalDialogComponent } from './helpers/dialog/team-proposal-dialog.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -80,7 +84,9 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,
+    TeamProposalDialogComponent,
     AddVersionDialogComponent,
+    AllTeamedUpDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     GradeNumberDirective,
@@ -121,6 +127,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatMomentDateModule,
     ColorCircleModule,
     MatTooltipModule,
+    DragDropModule,
+    ScrollingModule,
     MatProgressBarModule,
   ],
   exports: [
@@ -143,7 +151,9 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,
+    AllTeamedUpDialogComponent,
     AddVersionDialogComponent,
+    TeamProposalDialogComponent,
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,

@@ -14,11 +14,13 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {EmailDialogComponent} from '../../../helpers/dialog/email-dialog.component';
 import {NotificationService} from '../../../services/notification.service';
+import {TeamProposalDialogComponent} from '../../../helpers/dialog/team-proposal-dialog.component';
+import {AllTeamedUpDialogComponent} from '../../../helpers/dialog/all-teamed-up-dialog.component';
 
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
-  styleUrls: ['./team.component.css']
+  styleUrls: ['./team.component.css', '../../../helpers/add-btn-round.css']
 })
 export class TeamComponent implements OnInit {
 
@@ -132,6 +134,32 @@ export class TeamComponent implements OnInit {
     );
   }
 
+  openAllTeamedUpDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    this.dialog.open(AllTeamedUpDialogComponent, dialogConfig);
+  }
+
+  async openTeamProposalDialog(teamedUpStudents: Student[]) {
+    const course: Course = this.courseService.getSelectedCourseValue();
+
+    const data = {
+      teamName: '',
+      students: teamedUpStudents,
+      minTeamSize: course.minTeamSize,
+      maxTeamSize: course.maxTeamSize,
+    };
+    const dialogRef = this.dialog.open(TeamProposalDialogComponent, {disableClose: true, data});
+    const dialogResponse: any = await dialogRef.afterClosed().toPromise();
+
+    if (!!dialogResponse) {
+      console.log(dialogResponse.teamName);
+      console.log(dialogResponse.students);
+
+    }
+  }
+
   deleteTeam(team: Team) {
     this.teamList.splice(this.teamList.indexOf(team), 1);
     this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
@@ -142,4 +170,7 @@ export class TeamComponent implements OnInit {
     });
   }
 
+  isProfessor() {
+    return false;
+  }
 }

@@ -25,6 +25,7 @@
       <div class="info-divider"></div>
 
       <ng-container [ngSwitch]="isProfessor() && filteredReports?.size ? 'parent' : 'student'">
+
         <!-- start REPORTS section TODO remember to add report.grade somewhere -->
         <ng-container *ngSwitchCase="'parent'">
           <mat-card class="report-card-container">
@@ -144,6 +145,7 @@
           </mat-card>
         </ng-container>
         <!-- end VERSIONS section (student only) -->
+
       </ng-container>
 
       <mat-action-row class="assignment-bottom">

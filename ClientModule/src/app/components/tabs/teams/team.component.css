@@ -19,6 +19,10 @@ mat-icon {
   margin: 1.5em 0;
 }
 
+.no-teams-message-container mat-card {
+  margin-bottom: 0;
+}
+
 mat-panel-title {
   font-size: large;
 }
@@ -56,4 +60,9 @@ mat-card {
 .teamed-up-student-label {
   font-size: medium;
   margin: 0 0 5px 0;
+}
+
+.pending-teams-bottom {
+  justify-content: space-between;
+  color: rgba(0,0,0,.54);
 }
