@@ -28,7 +28,7 @@ export interface ReportStatusFilter {
 @Component({
   selector: 'app-lab',
   templateUrl: './lab.component.html',
-  styleUrls: ['./lab.component.css']
+  styleUrls: ['./lab.component.css', '../../../helpers/add-btn-round.css']
 })
 export class LabComponent implements OnInit {
 
@@ -353,7 +353,7 @@ export class LabComponent implements OnInit {
   }
 
   isProfessor() {
-    return false;
+    return true;
   }
 
   getColorForStatus(status: string) {

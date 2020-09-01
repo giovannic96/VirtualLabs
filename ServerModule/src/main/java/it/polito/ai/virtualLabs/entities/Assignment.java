@@ -22,8 +22,8 @@ public class Assignment {
 
     private LocalDateTime releaseDate;
 
-    /*@DateTimeFormat(iso = ISO.DATE_TIME)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")*/
+    @DateTimeFormat(iso = ISO.DATE_TIME)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime expiryDate;
 
     @Column(name = "content", length = 1024)
