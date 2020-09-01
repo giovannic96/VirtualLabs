@@ -120,8 +120,23 @@ public class LabController {
     @PostMapping("/versions/{versionId}/review")
     @ResponseStatus(HttpStatus.CREATED)
     public void reviewVersion(@PathVariable Long versionId, @RequestBody String review) {
-        if(!labService.reviewVersion(versionId, review))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
+        //if(!labService.reviewVersion(versionId, review))
+            //throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
+
+        ReportDTO reportDTO = this.labService.getReportForVersion(versionId).get();
+        StudentDTO studentDTO = this.labService.getReportOwner(reportDTO.getId()).get();
+        String assignmentName = this.labService.getAssignmentForReport(reportDTO.getId()).get().getName();
+        String userEmail = studentDTO.getUsername();
+
+        String subject = "Review submitted on last version";
+        String body = "Your last version of the assignment " + assignmentName
+                + " has been revised by the professor.\nGo to your personal page to view the review.";
+
+        try {
+            this.notificationService.sendMessage(userEmail, subject, body);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Error while sending email");
+        }
     }
 
     @PutMapping("/reports/{reportId}/gradeReport")

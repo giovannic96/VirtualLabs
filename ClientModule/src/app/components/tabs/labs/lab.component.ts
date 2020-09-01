@@ -123,26 +123,18 @@ export class LabComponent implements OnInit {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data) { // i.e. close button was pressed
-          this.labService.submitReviewOnVersion(data.versionId, data.reviewImage).subscribe(response => {
-
-            this.mySnackBar.openSnackBar('Review uploaded successfully', MessageType.SUCCESS, 3);
+          this.labService.submitReviewOnVersion(data.versionId, data.reviewImage).subscribe(() => {
+            this.mySnackBar.openSnackBar('Review uploaded and email sent successfully', MessageType.SUCCESS, 3);
             this.labService.getReportVersions(report.id).subscribe(versions => {
                 this.allReports.get(assignment.id).find(r => r.id === report.id).versions = versions;
+                if (data.gradeAfter)
+                  this.openGradeDialog(report, assignment);
             });
-
-            if (data.gradeAfter)
-              this.openGradeDialog(report, assignment);
-
-            /* //TODO: to set notification service with the correct information
-            thi
-            this.notificationService.sendMessage(emails, data.subject, data.body).pipe(delay(3)).subscribe( () => {
-              this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
-            }, () => {
-              this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
-            });
-            */
-          }, error => {
-            this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 5);
+          }, err => {
+            if (err.status === 503)
+              this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
+            else
+              this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 3);
           });
         }
       }
