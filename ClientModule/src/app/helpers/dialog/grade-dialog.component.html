@@ -1,8 +1,7 @@
 <div class="dialog-container">
   <h2 mat-dialog-title>{{version.title}}</h2>
   <div>
-    <img mat-card-image src="https://videohive.img.customer.envatousercontent.com/files/261073186/code_2_img.jpg?auto=compress%2Cformat&fit=crop&crop=top&max-h=8000&max-w=590&s=c268466cffeccb3cae326841014d38fb" alt="version_content">
-    <!-- TODO add correct image later: <div>Content: {{version.content}}</div> -->
+    <img mat-card-image [src]="version.content" alt="version_content">
     <form [formGroup]="form">
       <div class="grade-container">
         <mat-label class="label-grade">Grade:</mat-label>
