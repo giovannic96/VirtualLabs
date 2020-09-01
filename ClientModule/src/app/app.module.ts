@@ -56,6 +56,7 @@ import { CanvasComponent } from './helpers/canvas.component';
 import { ColorCircleModule } from 'ngx-color/circle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.c
     MatMomentDateModule,
     ColorCircleModule,
     MatTooltipModule,
+    MatProgressBarModule,
   ],
   exports: [
     RouterModule,

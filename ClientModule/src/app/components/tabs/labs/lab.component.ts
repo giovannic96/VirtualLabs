@@ -253,48 +253,6 @@ export class LabComponent implements OnInit {
             this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
           }, () => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
         }
-
-              /*
-              const assignmentList = this.courseService.getAllAssignments(course.name);
-              const students = this.courseService.getEnrolled(course.name);
-
-              forkJoin([assignmentList, students]).subscribe(results => {
-                // refresh the assignment list
-                this.assignmentList = results[0];
-
-                // find the assignment inserted, by assignmentName
-                const insertedAssignment = this.assignmentList.find(a => a.name === dialogResponse.name);
-
-                // add one report for each student of the course (with status NULL)
-                const studentIds = results[1].map(s => s.id);
-                const newReport = new Report(
-                  null, 0, 'NULL', this.toLocalDateTime(insertedAssignment.releaseDate.toString()));
-
-                const reportRequests: Observable<boolean>[] = [];
-                studentIds.forEach(id => {
-                  reportRequests.push(this.studentService.addReport(id, course.name, insertedAssignment.id, newReport.getDTO()));
-                });
-
-                // get all reports of the inserted assignment
-                forkJoin(reportRequests).subscribe(requests => {
-                  this.labService.getAssignmentReports(insertedAssignment.id).subscribe(reportList => {
-
-                    // assign reports to the inserted assignment
-                    this.setReportsToAssignment(insertedAssignment, reportList);
-
-                    // assign owner to each report
-                    this.setOwnerToReports(insertedAssignment.reports, results[1]);
-
-                    // update UI
-                    this.filterReports();
-
-                    this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
-                  }, () => this.mySnackBar.openSnackBar('Reports reading failed', MessageType.ERROR, 3));
-                }, () => this.mySnackBar.openSnackBar('Reports creation failed', MessageType.ERROR, 3));
-              });
-
-            }, () => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));*/
-
       }
     }
   }
@@ -323,18 +281,15 @@ export class LabComponent implements OnInit {
     }
   }
 
-  async openAddVersionDialog() {
+  async openAddVersionDialog(report: Report) {
 
-    const data = {
-      title: '',
-      content: '',
-    };
+    const data = report;
     const dialogRef = this.dialog.open(AddVersionDialogComponent, {disableClose: true, data});
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
-    if (!!dialogResponse) {
-      console.log(dialogResponse.title);
-      console.log(dialogResponse.content);
+    console.log(dialogResponse);
+    if (dialogResponse) {
+      this.labService.getReportVersions(report.id).subscribe(versions => report.versions = versions);
     }
   }
 
@@ -357,7 +312,7 @@ export class LabComponent implements OnInit {
   }
 
   isProfessor() {
-    return true;
+    return false;
   }
 
   getColorForStatus(status: string) {

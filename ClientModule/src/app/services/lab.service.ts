@@ -65,6 +65,21 @@ export class LabService {
       );
   }
 
+  submitVersionOnReport(reportId: number, formData: FormData) {
+    return this.httpClient
+      .post(`${this.API_PATH}/reports/${reportId}/submitVersion`, formData, {
+        reportProgress: true,
+        observe: 'events'
+      })
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`SubmitVersion error: ${err.message}`);
+        })
+      );
+  }
+
   submitReviewOnVersion(versionId: number, imageUrl: string) {
     return this.httpClient
       .post(`${this.API_PATH}/versions/${versionId}/review`, imageUrl)

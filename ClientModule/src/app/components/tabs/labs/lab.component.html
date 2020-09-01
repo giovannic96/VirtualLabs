@@ -66,7 +66,7 @@
                       <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
                     </button>
                   </div>
-                  <div class="versions-grid" fxLayout="row wrap" fxLayoutGap="16px grid">
+                  <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
                     <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
                          *ngFor="let version of report.versions; last as isLast">
                       <mat-card class="mat-elevation-z4 z-depth" (click)="openVersionDialog(version, report.id, assignment.id, isLast)">
@@ -104,7 +104,7 @@
 
         <!-- start VERSIONS section (student only) -->
         <ng-container *ngSwitchCase="'student'">
-          <mat-card *ngVar="getReportForStudent(assignment, 's532456') as studentReport" class="version-card-container">
+          <mat-card *ngVar="getReportForStudent(assignment, 's123113') as studentReport" class="version-card-container">
             <div class="report-history-container">
               <div class="report-history-right"></div>
               <div class="report-history-desc">
@@ -118,7 +118,7 @@
               </div>
             </div>
             <ng-container *ngIf="studentReport?.versions?.length">
-              <div class="versions-grid" fxLayout="row wrap" fxLayoutGap="16px grid">
+              <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
                 <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
                      *ngFor="let version of studentReport?.versions; last as isLast">
                   <mat-card class="mat-elevation-z4 z-depth"
@@ -155,7 +155,7 @@
           <button mat-raised-button color="primary" *ngIf="isProfessor()"
                   (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
           <button mat-raised-button color="primary" *ngIf="!isProfessor()"
-                  (click)="openAddVersionDialog()">ADD VERSION</button>
+                  (click)="openAddVersionDialog(getReportForStudent(assignment, 's123113'))">ADD VERSION</button>
         </div>
       </mat-action-row>
     </mat-expansion-panel>

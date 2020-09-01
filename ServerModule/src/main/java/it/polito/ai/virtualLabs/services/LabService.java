@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public interface LabService {
 
     Long addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId); //TESTED
     boolean addReportToAssignment(ReportDTO reportDTO, Long assignmentId, String studentId); //TESTED
-    boolean addVersionToReport(VersionDTO versionDTO, Long reportId); //TESTED
+    boolean addVersionToReport(Long reportId, String title, MultipartFile file); //TESTED
     boolean removeAssignment(Long assignmentId); //TESTED
     boolean editAssignment(Long assignmentId, AssignmentDTO assignmentDTO); //TESTED
     boolean gradeReport(Long reportId, float grade);
