@@ -69,8 +69,6 @@ export class LabComponent implements OnInit {
         return assignmentList;
       }),
       tap(assignment => {
-        console.log(this.formatDate(assignment.expiryDate).valueOf(), Date.now(),
-          this.formatDate(assignment.expiryDate).valueOf() > Date.now());
         this.labService.getAssignmentReports(assignment.id)
           .pipe(
             mergeMap(reports => {
@@ -108,7 +106,7 @@ export class LabComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openVersionDialog(version: Version, reportId: number, assignmentId: number, isLast: boolean) {
+  openVersionDialog(version: Version, report: Report, assignment: Assignment, isLast: boolean) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
@@ -122,13 +120,22 @@ export class LabComponent implements OnInit {
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
-      request => {
-        if (request !== undefined) { // i.e. close button was pressed
-          request.subscribe(() => {
+      data => {
+        if (data) { // i.e. close button was pressed
+          /*
+          versionId: this.version.id,
+            reviewImage: canvas.toDataURL().split(',')[1],
+            gradeAfter: this.checkbox.checked
+          */
+          this.labService.submitReviewOnVersion(data.versionId, data.reviewImage).subscribe(response => {
+
             this.mySnackBar.openSnackBar('Review uploaded successfully', MessageType.SUCCESS, 3);
-            this.labService.getReportVersions(reportId).subscribe(versions => {
-                this.allReports.get(assignmentId).find(report => report.id === reportId).versions = versions;
+            this.labService.getReportVersions(report.id).subscribe(versions => {
+                this.allReports.get(assignment.id).find(r => r.id === report.id).versions = versions;
             });
+
+            if (data.gradeAfter)
+              this.openGradeDialog(report, assignment);
 
             /* //TODO: to set notification service with the correct information
             thi
@@ -373,8 +380,8 @@ export class LabComponent implements OnInit {
     return '' + dateSplit[0] + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
   }
 
-  openLastVersion(report: Report, assignmentId: number) {
-    this.openVersionDialog(report.versions[report.versions.length - 1], report.id, assignmentId, true);
+  openLastVersion(report: Report, assignment: Assignment) {
+    this.openVersionDialog(report.versions[report.versions.length - 1], report, assignment, true);
   }
 
   isGradable(report: Report, assignment: Assignment): boolean {

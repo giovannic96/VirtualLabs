@@ -6,6 +6,7 @@ import {LabService} from '../../services/lab.service';
 import {CanvasComponent} from '../canvas.component';
 import {Version} from '../../models/version.model';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
+import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-version-dialog',
@@ -22,6 +23,7 @@ export class VersionDialogComponent implements OnInit {
 
   @ViewChild('appCanvas') canvasComponent: CanvasComponent;
   @ViewChild('review') review: ElementRef<HTMLImageElement>;
+  @ViewChild('checkbox') checkbox: MatCheckbox;
 
   public colors: string[] = ['#000', '#9c27b0', '#3f51b5', '#03a9f4', '#009688',
                             '#8bc34a', '#ffeb3b', '#ff9800', '#795548', '#f44336', '#fff'];
@@ -55,8 +57,13 @@ export class VersionDialogComponent implements OnInit {
 
   closeAndSubmit() {
     const canvas = this.canvasComponent.canvas.nativeElement;
-    const req = this.labService.submitReviewOnVersion(this.version.id, canvas.toDataURL().split(',')[1]);
-    this.dialogRef.close(req);
+    const data = {
+      versionId: this.version.id,
+      reviewImage: canvas.toDataURL().split(',')[1],
+      gradeAfter: this.checkbox.checked
+    };
+    //const req = this.labService.submitReviewOnVersion(this.version.id, );
+    this.dialogRef.close(data);
   }
 
   toggleReview() {

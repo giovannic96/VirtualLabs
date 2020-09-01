@@ -70,7 +70,7 @@
                   <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
                     <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
                          *ngFor="let version of report.versions; last as isLast">
-                      <mat-card class="mat-elevation-z4 z-depth" (click)="openVersionDialog(version, report.id, assignment.id, isLast)">
+                      <mat-card class="mat-elevation-z4 z-depth" (click)="openVersionDialog(version, report, assignment, isLast)">
                         <mat-card-header>
                           <mat-card-title>{{version.title}}</mat-card-title>
                           <div *ngIf="isLast" class="triangle">
@@ -90,7 +90,7 @@
                 </ng-container>
                 <mat-action-row>
                   <button mat-raised-button color="accent"
-                          (click)="openLastVersion(report, assignment.id)"
+                          (click)="openLastVersion(report, assignment)"
                           [disabled]="!report.versions?.length">VIEW LAST VERSION</button>
                   <button mat-raised-button color="primary"
                           (click)="openGradeDialog(report, assignment)"
@@ -123,7 +123,7 @@
                 <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
                      *ngFor="let version of studentReport?.versions; last as isLast">
                   <mat-card class="mat-elevation-z4 z-depth"
-                            (click)="openVersionDialog(version, studentReport?.id, assignment.id, isLast)">
+                            (click)="openVersionDialog(version, studentReport, assignment, isLast)">
                     <mat-card-header>
                       <mat-card-title>{{version.title}}</mat-card-title>
                       <div *ngIf="isLast" class="triangle">
