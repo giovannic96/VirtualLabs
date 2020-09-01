@@ -13,6 +13,7 @@ import it.polito.ai.virtualLabs.services.exceptions.version.VersionNotFoundExcep
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class LabServiceImpl implements LabService {
 
     private static final String VERSION_CONTENT_PATH = "home/pi/Desktop/VirtualLabs/images/lab/versions/";
+    //private static final String VERSION_CONTENT_PATH = "C:/Users/Dario/Desktop/";
     private static final String VERSION_CONTENT_FORMAT = "png";
     private static final String REVIEW_IMAGE_PATH = "home/pi/Desktop/VirtualLabs/images/lab/reviews/";
     //private static final String REVIEW_IMAGE_PATH = "C:/Users/Dario/Desktop/";
@@ -208,8 +210,6 @@ public class LabServiceImpl implements LabService {
         course.getStudents().forEach(student -> {
             Report report = new Report();
             report.setGrade(0);
-            report.setStatus(Report.ReportStatus.NULL);
-            report.setStatusDate(LocalDateTime.now());
             student.addReport(report);
             assignment.addReport(report);
         });
@@ -245,31 +245,27 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public boolean addVersionToReport(VersionDTO versionDTO, Long reportId) {
+    public boolean addVersionToReport(Long reportId, String title, MultipartFile file) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
         Report report = reportRepository.getOne(reportId);
 
-        //check if there is already a version with same timestamp in that report
-        if(report.getVersions().stream().anyMatch(v -> v.getSubmissionDate().isEqual(versionDTO.getSubmissionDate())))
-            return false;
+        Version version = new Version();
+        version.setTitle(title);
 
-        Version version = modelMapper.map(versionDTO, Version.class);
-
-        byte[] image = Base64.getDecoder().decode(version.getContent());
         String imageName = report.getOwner().getId() + "|" + System.currentTimeMillis();
+        version.setContent(Base64.getEncoder().withoutPadding().encodeToString(imageName.getBytes()));
 
-        try (FileOutputStream file = new FileOutputStream(VERSION_CONTENT_PATH + imageName + "." + VERSION_CONTENT_FORMAT )) {
-            file.write(image);
+        try (FileOutputStream stream = new FileOutputStream(VERSION_CONTENT_PATH + version.getContent() + "." + VERSION_CONTENT_FORMAT )) {
+            stream.write(file.getBytes());
         } catch (IOException ex) {
             return false;
         }
 
-        version.setContent(Base64.getEncoder().withoutPadding().encodeToString(imageName.getBytes()));
-
-        //add version to report
         version.setReport(report);
+        report.setStatus(Report.ReportStatus.SUBMITTED);
+        report.setStatusDate(LocalDateTime.now());
 
         versionRepository.saveAndFlush(version);
         return true;
@@ -325,6 +321,7 @@ public class LabServiceImpl implements LabService {
         //grade report
         report.setGrade(grade);
         report.setStatus(Report.ReportStatus.GRADED);
+        report.setStatusDate(LocalDateTime.now());
 
         reportRepository.saveAndFlush(report);
         return true;
@@ -345,15 +342,33 @@ public class LabServiceImpl implements LabService {
 
             fileStream.write(image);
             fileStream.close();
-
-            version.setRevised(true);
-            versionRepository.saveAndFlush(version);
-
-            return true;
         } catch (IOException ex) {
-            System.out.println(ex);
             return false;
         }
 
+        version.setRevised(true);
+        version.getReport().setStatus(Report.ReportStatus.REVISED);
+        version.getReport().setStatusDate(LocalDateTime.now());
+        versionRepository.saveAndFlush(version);
+
+        return true;
+
+    }
+
+    @Override
+    public boolean markReportAsRead(Long reportId) {
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        Report report = this.reportRepository.getOne(reportId);
+        if(report.getStatus()!= Report.ReportStatus.NULL)
+            return false;
+
+        report.setStatus(Report.ReportStatus.READ);
+        report.setStatusDate(LocalDateTime.now());
+
+        reportRepository.saveAndFlush(report);
+
+        return true;
     }
 }

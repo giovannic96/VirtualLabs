@@ -153,8 +153,6 @@ mat-card {
 
 .versions-grid {
   padding: 16px;
-  flex-direction: row-reverse!important;
-  place-content: flex-end!important;
 }
 
 .versions-grid > mat-card {

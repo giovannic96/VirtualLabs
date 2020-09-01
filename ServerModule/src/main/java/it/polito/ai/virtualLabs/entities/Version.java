@@ -22,7 +22,7 @@ public class Version {
 
     private boolean revised = false;
 
-    private LocalDateTime submissionDate;
+    private LocalDateTime submissionDate = LocalDateTime.now();
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "report_id")

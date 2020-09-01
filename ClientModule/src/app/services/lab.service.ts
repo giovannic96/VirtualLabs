@@ -65,6 +65,21 @@ export class LabService {
       );
   }
 
+  submitVersionOnReport(reportId: number, formData: FormData) {
+    return this.httpClient
+      .post(`${this.API_PATH}/reports/${reportId}/submitVersion`, formData, {
+        reportProgress: true,
+        observe: 'events'
+      })
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`SubmitVersion error: ${err.message}`);
+        })
+      );
+  }
+
   submitReviewOnVersion(versionId: number, imageUrl: string) {
     return this.httpClient
       .post(`${this.API_PATH}/versions/${versionId}/review`, imageUrl)
@@ -109,6 +124,18 @@ export class LabService {
         catchError( err => {
           console.error(err);
           return throwError(`GradeReport error: ${err.message}`);
+        })
+      );
+  }
+
+  markReportAsRead(reportId: number) {
+    return this.httpClient
+      .put(`${this.API_PATH}/reports/${reportId}/markAsRead`, null)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`MarkAsRead error: ${err.message}`);
         })
       );
   }

@@ -59,7 +59,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
 import { TeamProposalDialogComponent } from './helpers/dialog/team-proposal-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import {ScrollingModule} from "@angular/cdk/scrolling";
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
     MatTooltipModule,
     DragDropModule,
     ScrollingModule,
+    MatProgressBarModule,
   ],
   exports: [
     RouterModule,

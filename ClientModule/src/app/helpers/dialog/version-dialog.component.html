@@ -16,10 +16,11 @@
                 [disabled]="!version.revised"
                 color="accent">{{reviewIsHidden ? 'SHOW REVIEW' : 'HIDE REVIEW'}}</button>
       </mat-dialog-actions>
+      <mat-card-subtitle *ngIf="!isLastVersion">This is not the last version</mat-card-subtitle>
       <mat-dialog-actions>
         <button mat-raised-button (click)="close()">CLOSE</button>
         <div matTooltip="This version has been revised already"
-                      [matTooltipDisabled]="!version.revised">
+                      [matTooltipDisabled]="!version.revised" *ngIf="isLastVersion">
           <button mat-raised-button
                   color="primary"
                   [disabled]="version.revised"
@@ -42,8 +43,8 @@
                   [width]="max(content.width, 1)"
                   [penColor]="currentColor"></app-canvas>
     </div>
-    <div class="checkbox-container">
-      <mat-checkbox color="primary" labelPosition="before">Check this if you want to grade report after review</mat-checkbox>
+    <div class="checkbox-container" >
+      <mat-checkbox #checkbox color="primary" labelPosition="before">Grade report after review</mat-checkbox>
     </div>
     <div class="buttons-container">
       <mat-dialog-actions>

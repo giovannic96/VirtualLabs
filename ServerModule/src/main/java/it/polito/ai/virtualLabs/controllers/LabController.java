@@ -6,6 +6,7 @@ import it.polito.ai.virtualLabs.services.LabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -102,10 +103,12 @@ public class LabController {
 
     @PostMapping("/reports/{reportId}/submitVersion")
     @ResponseStatus(HttpStatus.CREATED)
-    public VersionDTO submitVersion(@PathVariable Long reportId, @RequestBody VersionDTO versionDTO) {
-        if(!labService.addVersionToReport(versionDTO, reportId))
+    public void submitVersion(@PathVariable Long reportId,
+                                    @RequestParam("title") String title,
+                                    @RequestParam("file") MultipartFile file) {
+
+        if(!labService.addVersionToReport(reportId, title, file))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
-        return ModelHelper.enrich(versionDTO);
     }
 
     @PostMapping("/versions/{versionId}/review")
@@ -125,6 +128,14 @@ public class LabController {
         float grade = input.get("grade");
         if(!labService.gradeReport(reportId, grade))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in grading the report with id: " + reportId);
+    }
+
+    @PutMapping("/reports/{reportId}/markAsRead")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
+    @ResponseStatus(HttpStatus.OK)
+    public void markReportAsRead(@PathVariable Long reportId) {
+        if(!labService.markReportAsRead(reportId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in updating report " + reportId + "status");
     }
 
     @PutMapping("/assignments/{assignmentId}")

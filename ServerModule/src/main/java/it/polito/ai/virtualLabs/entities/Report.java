@@ -18,9 +18,9 @@ public class Report {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private ReportStatus status;
+    private ReportStatus status = ReportStatus.NULL;
 
-    private LocalDateTime statusDate;
+    private LocalDateTime statusDate = LocalDateTime.now();
 
     @Min(0)
     @Max(30)
