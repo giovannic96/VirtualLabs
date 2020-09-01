@@ -354,4 +354,21 @@ public class LabServiceImpl implements LabService {
         return true;
 
     }
+
+    @Override
+    public boolean markReportAsRead(Long reportId) {
+        if(!reportRepository.existsById(reportId))
+            throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        Report report = this.reportRepository.getOne(reportId);
+        if(report.getStatus()!= Report.ReportStatus.NULL)
+            return false;
+
+        report.setStatus(Report.ReportStatus.READ);
+        report.setStatusDate(LocalDateTime.now());
+
+        reportRepository.saveAndFlush(report);
+
+        return true;
+    }
 }

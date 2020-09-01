@@ -30,4 +30,5 @@ public interface LabService {
     boolean editAssignment(Long assignmentId, AssignmentDTO assignmentDTO); //TESTED
     boolean gradeReport(Long reportId, float grade);
     boolean reviewVersion(Long versionId, String review);
+    boolean markReportAsRead(Long reportId);
 }

@@ -4,7 +4,8 @@
     <h2>Assignments</h2>
   </div>
   <mat-accordion multi="false">
-    <mat-expansion-panel *ngFor="let assignment of this.assignmentList">
+    <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
+                         (opened)="markAsRead(getReportForStudent(assignment, 's123113'))">
       <mat-expansion-panel-header class="assignment-header">
         <mat-panel-title>
           {{assignment.name}}

@@ -311,7 +311,7 @@ export class LabComponent implements OnInit {
   }
 
   isProfessor() {
-    return false;
+    return true;
   }
 
   getColorForStatus(status: string) {
@@ -382,6 +382,17 @@ export class LabComponent implements OnInit {
       return report.status === ReportStatus.SUBMITTED;
     } else {
       return !!report.versions?.length && report.status !== ReportStatus.GRADED;
+    }
+  }
+
+  markAsRead(report: Report) {
+    if (this.isProfessor())
+      return;
+
+    if (report.status === ReportStatus.NULL) {
+      this.labService.markReportAsRead(report.id).subscribe(() => {
+        report.status = ReportStatus.READ;
+      });
     }
   }
 }

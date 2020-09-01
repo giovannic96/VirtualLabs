@@ -130,6 +130,14 @@ public class LabController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in grading the report with id: " + reportId);
     }
 
+    @PutMapping("/reports/{reportId}/markAsRead")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
+    @ResponseStatus(HttpStatus.OK)
+    public void markReportAsRead(@PathVariable Long reportId) {
+        if(!labService.markReportAsRead(reportId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in updating report " + reportId + "status");
+    }
+
     @PutMapping("/assignments/{assignmentId}")
     @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)

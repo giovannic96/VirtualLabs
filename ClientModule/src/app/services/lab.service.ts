@@ -127,4 +127,16 @@ export class LabService {
         })
       );
   }
+
+  markReportAsRead(reportId: number) {
+    return this.httpClient
+      .put(`${this.API_PATH}/reports/${reportId}/markAsRead`, null)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`MarkAsRead error: ${err.message}`);
+        })
+      );
+  }
 }
