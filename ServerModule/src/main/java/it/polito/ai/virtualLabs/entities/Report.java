@@ -24,7 +24,7 @@ public class Report {
 
     @Min(0)
     @Max(30)
-    private float grade;
+    private Float grade = null;
 
     @ManyToOne
     @JoinColumn(name = "assignment_id")
