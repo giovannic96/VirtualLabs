@@ -58,6 +58,7 @@
 .buttons-container {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   margin: 0;
 }
 
@@ -69,6 +70,11 @@
 
 .buttons-container button:last-child {
   margin-right: unset;
+}
+
+.buttons-container mat-card-subtitle {
+  color: red;
+  margin: 0 1em;
 }
 
 h2 {

@@ -18,6 +18,7 @@ export class VersionDialogComponent implements OnInit {
   reviewIsHidden: boolean;
 
   version: Version;
+  isLastVersion: boolean;
 
   @ViewChild('appCanvas') canvasComponent: CanvasComponent;
   @ViewChild('review') review: ElementRef<HTMLImageElement>;
@@ -30,7 +31,8 @@ export class VersionDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) data,
               private mySnackBar: MySnackBarComponent,
               private labService: LabService) {
-    this.version = data;
+    this.version = data.version;
+    this.isLastVersion = data.isLast;
 
     this.currentColor = this.colors[0];
   }

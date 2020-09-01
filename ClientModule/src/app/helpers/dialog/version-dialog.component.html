@@ -16,10 +16,11 @@
                 [disabled]="!version.revised"
                 color="accent">{{reviewIsHidden ? 'SHOW REVIEW' : 'HIDE REVIEW'}}</button>
       </mat-dialog-actions>
+      <mat-card-subtitle *ngIf="!isLastVersion">This is not the last version</mat-card-subtitle>
       <mat-dialog-actions>
         <button mat-raised-button (click)="close()">CLOSE</button>
         <div matTooltip="This version has been revised already"
-                      [matTooltipDisabled]="!version.revised">
+                      [matTooltipDisabled]="!version.revised" *ngIf="isLastVersion">
           <button mat-raised-button
                   color="primary"
                   [disabled]="version.revised"

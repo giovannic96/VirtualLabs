@@ -69,6 +69,8 @@ export class LabComponent implements OnInit {
         return assignmentList;
       }),
       tap(assignment => {
+        console.log(this.formatDate(assignment.expiryDate).valueOf(), Date.now(),
+          this.formatDate(assignment.expiryDate).valueOf() > Date.now());
         this.labService.getAssignmentReports(assignment.id)
           .pipe(
             mergeMap(reports => {
@@ -106,13 +108,16 @@ export class LabComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  openVersionDialog(version: Version, reportId: number, assignmentId: number) {
+  openVersionDialog(version: Version, reportId: number, assignmentId: number, isLast: boolean) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
 
-    dialogConfig.data = version;
+    dialogConfig.data = {
+      version,
+      isLast
+    };
 
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
 
@@ -255,7 +260,6 @@ export class LabComponent implements OnInit {
 
               forkJoin([assignmentList, students]).subscribe(results => {
                 // refresh the assignment list
-                // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
                 this.assignmentList = results[0];
 
                 // find the assignment inserted, by assignmentName
@@ -353,7 +357,7 @@ export class LabComponent implements OnInit {
   }
 
   isProfessor() {
-    return false;
+    return true;
   }
 
   getColorForStatus(status: string) {
@@ -413,5 +417,17 @@ export class LabComponent implements OnInit {
     const minutes = (`0${dateSplit[4]}`).slice(-2); // add '0' in front of the number, if necessary
     const seconds = (`0${dateSplit[5]}`).slice(-2); // add '0' in front of the  number, if necessary
     return '' + dateSplit[0] + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
+  }
+
+  openLastVersion(report: Report, assignmentId: number) {
+    this.openVersionDialog(report.versions[report.versions.length - 1], report.id, assignmentId, true);
+  }
+
+  isGradable(report: Report, assignment: Assignment): boolean {
+    if (this.formatDate(assignment.expiryDate).valueOf() > Date.now()) {
+      return report.status === ReportStatus.SUBMITTED;
+    } else {
+      return !!report.versions?.length && report.status !== ReportStatus.GRADED;
+    }
   }
 }
