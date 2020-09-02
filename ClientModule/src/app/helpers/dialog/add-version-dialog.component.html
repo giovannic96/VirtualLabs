@@ -21,10 +21,13 @@
     </div>
     <div class="buttons-container">
       <mat-dialog-actions>
-        <input hidden type="file" accept="image/*" #fileUpload (change)="showPreview(fileUpload)">
+        <input hidden type="file" accept="image/*" #fileUpload (change)="checkAndShowPreview(fileUpload)">
         <button mat-raised-button (click)="close()">CLOSE</button>
-        <button mat-raised-button  type="button" [color]="currentFile ? 'accent' : 'primary'"
-                (click)="fileUpload.click()">{{currentFile ? 'CHANGE' : 'UPLOAD'}}</button>
+        <div>
+          <button mat-raised-button  type="button" [color]="currentFile ? 'accent' : 'primary'"
+                  (click)="fileUpload.click()">{{currentFile ? 'CHANGE' : 'UPLOAD'}}</button>
+          <mat-card-subtitle [class.warning-label]="sizeExceeded">(Max size {{MAX_FILE_SIZE}}MB)</mat-card-subtitle>
+        </div>
         <button mat-raised-button color="primary" *ngIf="currentFile" (click)="confirm()">CONFIRM</button>
       </mat-dialog-actions>
     </div>

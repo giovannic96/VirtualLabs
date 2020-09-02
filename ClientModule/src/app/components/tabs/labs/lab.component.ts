@@ -291,7 +291,7 @@ export class LabComponent implements OnInit {
   }
 
   isProfessor() {
-    return true;
+    return false;
   }
 
   getColorForStatus(status: string) {
@@ -369,7 +369,7 @@ export class LabComponent implements OnInit {
     if (this.isProfessor())
       return;
 
-    if (report.status === ReportStatus.NULL) {
+    if (report?.status === ReportStatus.NULL) {
       this.labService.markReportAsRead(report.id).subscribe(() => {
         report.status = ReportStatus.READ;
       });
