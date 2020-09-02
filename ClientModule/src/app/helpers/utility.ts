@@ -4,11 +4,11 @@ import * as CanvasJS from './canvasjs.min';
 export default class Utility {
 
   getMyId() {
-    return 's123456';
+    return localStorage.getItem('virtuallabs_studentId');
   }
 
   isProfessor() {
-    return true;
+    return JSON.parse(localStorage.getItem('virtuallabs_isProfessor'));
   }
 
   localDateTimeToString(localDateTime: string): string {
