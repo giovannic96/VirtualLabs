@@ -13,5 +13,5 @@ public class ReportDTO extends RepresentationModel<ReportDTO> {
     Long id;
     Report.ReportStatus status;
     LocalDateTime statusDate;
-    float grade;
+    Float grade;
 }

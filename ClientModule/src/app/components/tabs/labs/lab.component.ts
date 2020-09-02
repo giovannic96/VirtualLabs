@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
-import {catchError, concatMap, delay, filter, last, map, mergeMap, tap} from 'rxjs/operators';
+import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {EMPTY, forkJoin, from, Observable, Observer, of, Subject} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
@@ -19,6 +19,7 @@ import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {AddVersionDialogComponent} from '../../../helpers/dialog/add-version-dialog.component';
 import Utility from '../../../helpers/utility';
+import {HttpErrorResponse} from '@angular/common/http';
 
 export interface ReportStatusFilter {
   name: string;
@@ -127,31 +128,18 @@ export class LabComponent implements OnInit {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data) { // i.e. close button was pressed
-          /*
-          versionId: this.version.id,
-            reviewImage: canvas.toDataURL().split(',')[1],
-            gradeAfter: this.checkbox.checked
-          */
-          this.labService.submitReviewOnVersion(data.versionId, data.reviewImage).subscribe(response => {
-
-            this.mySnackBar.openSnackBar('Review uploaded successfully', MessageType.SUCCESS, 3);
+          this.labService.submitReviewOnVersion(data.versionId, data.reviewImage).subscribe(() => {
+            this.mySnackBar.openSnackBar('Review uploaded and email sent successfully', MessageType.SUCCESS, 3);
             this.labService.getReportVersions(report.id).subscribe(versions => {
                 this.allReports.get(assignment.id).find(r => r.id === report.id).versions = versions;
+                if (data.gradeAfter)
+                  this.openGradeDialog(report, assignment);
             });
-
-            if (data.gradeAfter)
-              this.openGradeDialog(report, assignment);
-
-            /* //TODO: to set notification service with the correct information
-            thi
-            this.notificationService.sendMessage(emails, data.subject, data.body).pipe(delay(3)).subscribe( () => {
-              this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
-            }, () => {
-              this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
-            });
-            */
-          }, error => {
-            this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 5);
+          }, err => {
+            if (err.status === 503)
+              this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
+            else
+              this.mySnackBar.openSnackBar('Something gone wrong uploading review', MessageType.ERROR, 3);
           });
         }
       }
@@ -165,9 +153,7 @@ export class LabComponent implements OnInit {
     dialogConfig.autoFocus = true;
 
     dialogConfig.data = {
-      version: report.versions[report.versions.length - 1],
-      comment: '',
-      grade: undefined,
+      version: report.versions[report.versions.length - 1]
     };
 
     const emails = [report.owner.username];
@@ -175,28 +161,15 @@ export class LabComponent implements OnInit {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data !== undefined) { // i.e. close button was pressed
-          this.labService.gradeReport(report.id, data.grade).pipe(
-            catchError(err => {
+          this.labService.gradeReport(report.id, data).subscribe(() => {
+            report.grade = data.grade;
+            report.status = ReportStatus.GRADED;
+            this.mySnackBar.openSnackBar('Report graded and email sent successfully', MessageType.SUCCESS, 3);
+          }, err => {
+            if (err.status === 503)
+              this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
+            else
               this.mySnackBar.openSnackBar('Error while grading report', MessageType.ERROR, 3);
-              return EMPTY;
-            }),
-            concatMap(() => {
-              report.grade = data.grade;
-              report.status = ReportStatus.GRADED;
-
-              this.mySnackBar.openSnackBar('Report graded successfully', MessageType.SUCCESS, 3);
-
-              const subject = 'Report evaluation';
-              const comment = data.comment === '' ? '' : 'Comment of the Professor: \"' + data.comment + '\"\n';
-              const body = 'The report for the assignment \'' + assignment.name + '\' was evaluated.\nYour grade is: '
-                + data.grade + '.\n' + comment;
-              return this.notificationService.sendMessage(emails, subject, body);
-            }),
-            delay(3)
-          ).subscribe( () => {
-            this.mySnackBar.openSnackBar('Email sent successfully to the student', MessageType.SUCCESS, 3);
-          }, () => {
-            this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
           });
         }
       }
@@ -350,7 +323,7 @@ export class LabComponent implements OnInit {
     if (this.utility.isProfessor())
       return;
 
-    if (report.status === ReportStatus.NULL) {
+    if (report?.status === ReportStatus.NULL) {
       this.labService.markReportAsRead(report.id).subscribe(() => {
         report.status = ReportStatus.READ;
       });

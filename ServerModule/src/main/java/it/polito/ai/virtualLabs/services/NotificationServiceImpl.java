@@ -205,8 +205,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String calcBody(Long tpId, String token) {
+        /*
         final String confirmURL = "http://localhost:8080/notification/accept?tpId="+tpId+"&token="+token;
         final String rejectURL = "http://localhost:8080/notification/reject?tpId="+tpId+"&token="+token;
+        */
+        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId="+tpId+"&token="+token;
+        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId="+tpId+"&token="+token;
+
         final String confirmBody = "Click here to confirm the proposal: ";
         final String rejectBody = "Click here to reject the proposal: ";
 

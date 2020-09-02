@@ -33,13 +33,13 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("/accept")
+    @PostMapping("/accept")
     @ResponseStatus(HttpStatus.OK)
     public void accept(@RequestParam Long tpId, @RequestParam String token) {
         notificationService.accept(tpId, token);
     }
 
-    @GetMapping("/reject")
+    @PostMapping("/reject")
     @ResponseStatus(HttpStatus.OK)
     public void reject(@RequestParam Long tpId, @RequestParam String token) {
         notificationService.reject(tpId, token);

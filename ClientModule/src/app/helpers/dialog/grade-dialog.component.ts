@@ -1,9 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Version} from '../../models/version.model';
-import {Student} from "../../models/student.model";
 
 @Component({
   selector: 'app-grade-dialog',
@@ -21,20 +20,25 @@ export class GradeDialogComponent implements OnInit {
               private dialogRef: MatDialogRef<GradeDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data) {
     this.version = data.version;
-    this.comment = data.comment;
-    this.grade = data.grade;
   }
 
   ngOnInit() {
     this.form = this.fb.group({
-      comment: [this.comment],
-      grade: [this.grade],
+      comment: '',
+      grade: ['', Validators.required],
     });
   }
 
-  confirm(grade: string) {
-    this.form.controls.grade.setValue(Number(grade));
-    this.dialogRef.close(this.form.value);
+  confirm() {
+    if (this.form.invalid)
+      return;
+
+    const response = {
+      grade: this.form.get('grade').value,
+      comment: this.form.get('comment').value
+    };
+
+    this.dialogRef.close(response);
   }
 
   close() {

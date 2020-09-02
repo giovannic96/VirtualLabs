@@ -15,11 +15,14 @@ import {HttpEventType} from '@angular/common/http';
 })
 export class AddVersionDialogComponent implements OnInit {
 
+  readonly MAX_FILE_SIZE = 10;
+
   titleControl: FormControl;
   report: Report;
 
   currentFileUrl: string | ArrayBuffer;
   currentFile: File;
+  sizeExceeded: boolean;
 
   loading: boolean;
   loadingProgress = {loaded: 0, total: 100};
@@ -63,15 +66,20 @@ export class AddVersionDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  showPreview(input: HTMLInputElement) {
+  checkAndShowPreview(input: HTMLInputElement) {
     const file = input.files?.item(0);
     if (!file)
       return;
 
+    this.sizeExceeded = file.size / 1048576 > this.MAX_FILE_SIZE;
+    if (this.sizeExceeded) {
+      return;
+    }
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
-    reader.onload = (response) => {
+    reader.onloadend = (response) => {
       this.currentFileUrl = reader.result;
       this.currentFile = file;
     };

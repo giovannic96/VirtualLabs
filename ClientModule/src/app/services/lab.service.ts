@@ -116,14 +116,14 @@ export class LabService {
       );
   }
 
-  gradeReport(reportId: number, grade: number) {
+  gradeReport(reportId: number, data: any) {
     return this.httpClient
-      .put(`${this.API_PATH}/reports/${reportId}/gradeReport`, {grade})
+      .put(`${this.API_PATH}/reports/${reportId}/gradeReport`, data)
       .pipe(
         retry(3),
         catchError( err => {
           console.error(err);
-          return throwError(`GradeReport error: ${err.message}`);
+          return throwError(err);
         })
       );
   }

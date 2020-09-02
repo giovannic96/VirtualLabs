@@ -1,6 +1,5 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.controllers.ModelHelper;
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.*;
@@ -20,10 +19,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -209,7 +208,6 @@ public class LabServiceImpl implements LabService {
 
         course.getStudents().forEach(student -> {
             Report report = new Report();
-            report.setGrade(0);
             student.addReport(report);
             assignment.addReport(report);
         });
@@ -305,18 +303,26 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public boolean gradeReport(Long reportId, float grade) {
+    public boolean gradeReport(Long reportId, Float grade) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
-        //check if grade is not positive
-        if(grade <= 0.0f)
+        //check if grade is > 0 and <= 30
+        if(grade <= 0 || grade >= 30)
             return false;
 
         //check if there is already a grade for that report
         Report report = reportRepository.getOne(reportId);
-        if(report.getGrade() != 0.0f)
-            return false;
+
+        //if the assignment is not expired yet, the report must be SUBMITTED
+        //if the assignment expired, the report can be graded if it isn't already and if it has at least one version
+        if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now())) {
+            if(report.getStatus() != Report.ReportStatus.SUBMITTED)
+                return false;
+        } else {
+            if(report.getVersions().isEmpty() && report.getGrade() != null)
+                return false;
+        }
 
         //grade report
         report.setGrade(grade);
@@ -333,6 +339,29 @@ public class LabServiceImpl implements LabService {
             throw new ReportNotFoundException("The version with id " + versionId + " does not exist");
 
         Version version = versionRepository.getOne(versionId);
+        Report report = version.getReport();
+
+        //check if this version has been revised already
+        if(version.isRevised())
+            return false;
+
+        //check if the assignment is expired
+        if(report.getAssignment().getExpiryDate().isBefore(LocalDateTime.now())) {
+            return false;
+        } else { //if not, the report status must be SUBMITTED
+            if(report.getStatus() != Report.ReportStatus.SUBMITTED)
+                return false;
+
+            //check if this version is last version submitted by the student
+            AtomicBoolean isLast = new AtomicBoolean(true);
+            report.getVersions().forEach(ver -> {
+                if (ver.getSubmissionDate().isAfter(version.getSubmissionDate()))
+                    isLast.set(false);
+            });
+            if(!isLast.get())
+                return false;
+        }
+
         byte[] image = Base64.getDecoder().decode(review);
 
         try {

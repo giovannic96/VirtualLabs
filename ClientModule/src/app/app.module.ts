@@ -62,6 +62,7 @@ import { HasAlreadyProposedDialogComponent } from './helpers/dialog/has-already-
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ProposalResponseComponent } from './components/main/proposal_response/proposal-response.component';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     GradeNumberDirective,
     VarDirective,
     CanvasComponent,
+    ProposalResponseComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
