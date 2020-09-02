@@ -9,7 +9,7 @@ export enum TeamProposalStatus {
 export class TeamProposal {
 
   private _id: number;
-  private _expiryDate: Date;
+  private _expiryDate: string;
   private _teamName: string;
   private _status: string;
   private _statusDesc: string;
@@ -25,11 +25,11 @@ export class TeamProposal {
     this._id = value;
   }
 
-  get expiryDate(): Date {
+  get expiryDate(): string {
     return this._expiryDate;
   }
 
-  set expiryDate(value: Date) {
+  set expiryDate(value: string) {
     this._expiryDate = value;
   }
 

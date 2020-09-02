@@ -135,11 +135,7 @@ export class CourseService {
           console.error(err);
           return throwError(`GetAllProposals error: ${err.message}`);
         })
-      )
-      .pipe(map(teamProposal => {
-        teamProposal.forEach(proposal => proposal.expiryDate = new Date(proposal.expiryDate));
-        return teamProposal;
-      }));
+      );
   }
 
   getTeamedUpStudents(courseName: string): Observable<Student[]> {

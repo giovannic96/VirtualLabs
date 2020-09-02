@@ -13,6 +13,7 @@ import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.co
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {Vm} from '../../../models/vm.model';
 import {Router} from '@angular/router';
+import Utility from '../../../helpers/utility';
 
 @Component({
   selector: 'app-vm',
@@ -27,12 +28,16 @@ export class VmComponent implements OnInit {
   public teamList: Team[];
   public osMap: Map<string, string>;
 
+  public utility: Utility;
+
   constructor(private vmService: VmService,
               private teamService: TeamService,
               private courseService: CourseService,
               private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
+
+    this.utility = new Utility();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
@@ -101,15 +106,6 @@ export class VmComponent implements OnInit {
 
   getOsImageLogo(osCode: string) {
     return this.vmService.getVmModelOsLogoUrl(osCode);
-  }
-
-  calcDiskLabel(value: number) {
-    if (value < 1024)
-      return value + ' GB';
-    else if (value % 1024)
-      return (value / 1024).toFixed(1) + ' TB';
-    else
-      return (value / 1024) + ' TB';
   }
 
   async deleteVmModel() {

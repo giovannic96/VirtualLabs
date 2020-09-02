@@ -8,9 +8,9 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
   templateUrl: 'simple-info-dialog.component.html',
   styleUrls: ['./are-you-sure-dialog.component.css']
 })
-export class AllTeamedUpDialogComponent implements OnInit {
+export class HasAlreadyProposedDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<AllTeamedUpDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<HasAlreadyProposedDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
 
   }

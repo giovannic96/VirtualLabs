@@ -40,18 +40,18 @@
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
-  <ng-container *ngIf="!isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
 </div>
 <ng-template #noTeams>
   <div class="no-teams-message-container" *ngIf="teamList">
     <mat-card><mat-card-header><mat-card-title>
       Still no team has been formed
     </mat-card-title></mat-card-header></mat-card>
-    <ng-container *ngIf="!isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+    <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
   </div>
 </ng-template>
 
-<div class="tab-section pending-proposal-section" *ngIf="isProfessor() && pendingProposals">
+<div class="tab-section pending-proposal-section" *ngIf="utility.isProfessor() && pendingProposals">
   <div class="tab-subtitle">
     <mat-icon>pending_actions</mat-icon>
     <h2>Pending team proposals</h2>
@@ -85,7 +85,7 @@
       <br>
       <mat-action-row class="pending-teams-bottom">
         <div class="icons-div">
-          <i>This team proposal will expire on {{proposal.expiryDate.toLocaleDateString()}} at {{proposal.expiryDate.toLocaleTimeString()}}</i>
+          <i>This team proposal will expire on: {{utility.formatDate(proposal.expiryDate) | date:'medium'}}</i>
         </div>
         <button mat-raised-button color="primary" (click)="openEmailDialog(proposal.members)">SEND MESSAGE</button>
       </mat-action-row>
@@ -133,7 +133,7 @@
   </div>
 </div>
 
-<div class="tab-section proposal-history-section" *ngIf="isProfessor() && allProposals && allProposals?.length">
+<div class="tab-section proposal-history-section" *ngIf="utility.isProfessor() && allProposals && allProposals?.length">
   <div class="tab-subtitle">
     <mat-icon>history</mat-icon>
     <h2>Proposals history</h2>
@@ -143,7 +143,10 @@
 <ng-template #fabAddAssignment>
   <div class="add-btn-container">
     <button class="icon-btn add-btn"
-            (click)="notTeamedUpStudents?.length ? openTeamProposalDialog(notTeamedUpStudents) : openAllTeamedUpDialog()">
+            (click)="hasAlreadyProposed(utility.getMyId()) ?
+            openHasAlreadyProposedDialog('Sorry, It seems that you have already proposed a team.') :
+            notTeamedUpStudents?.length ? openTeamProposalDialog(notTeamedUpStudents) :
+            openAllTeamedUpDialog('Sorry, all the students are teamed up.')">
       <div class="add-icon"></div>
       <div class="btn-txt"><strong>PROPOSE</strong></div>
     </button>

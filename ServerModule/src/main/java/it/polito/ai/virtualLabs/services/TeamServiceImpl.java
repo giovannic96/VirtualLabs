@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.Reader;
 import java.time.LocalDateTime;
@@ -442,7 +443,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) {
+    public Long proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) throws MessagingException {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
@@ -484,19 +485,21 @@ public class TeamServiceImpl implements TeamService {
         proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
         proposal.setCreatorId(userRepository.getStudentByUsername(creatorUsername).getId());
 
-        teamProposalRepository.saveAndFlush(proposal);
+        teamProposalRepository.save(proposal);
         for(Student s : students) {
             s.addTeamProposal(proposal);
         }
 
         //send email to all members
         try {
-            //notificationService.notifyTeam(proposal.getId(), memberIds);
+            notificationService.notifyTeam(proposal.getId(), memberIds);
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        catch (MessagingException e) {
+            throw new MessagingException("Error on sending the email to the students");
         }
-        return modelMapper.map(proposal, TeamProposalDTO.class);
+
+        teamProposalRepository.flush();
+        return proposal.getId();
     }
 
     @Override

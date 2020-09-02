@@ -43,7 +43,7 @@
         </div>
       </ng-container>
       <ng-container>
-        <mat-card-subtitle>Max Disk - {{calcDiskLabel(diskSlider.value)}}</mat-card-subtitle>
+        <mat-card-subtitle>Max Disk - {{utility.calcDiskLabel(diskSlider.value)}}</mat-card-subtitle>
         <mat-slider formControlName="maxDisk" #diskSlider step="512" min="0" max="4096"></mat-slider>
         <div class="custom-slider-error-container">
           <h5 class="custom-slider-error-message"

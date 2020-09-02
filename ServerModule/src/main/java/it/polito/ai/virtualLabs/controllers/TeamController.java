@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.Option;
+import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
 import java.util.*;
 
 @RestController
@@ -83,6 +83,7 @@ public class TeamController {
         return members;
     }
 
+    /*
     @PostMapping("/addTeamProposal")
     @ResponseStatus(HttpStatus.OK)
     public TeamProposalDTO addTeamProposal(@RequestBody Map<String, Object> input,
@@ -97,6 +98,29 @@ public class TeamController {
 
         List<String> studentIds = (List<String>)input.get("studentIds");
         return ModelHelper.enrich(teamService.proposeTeam(courseName, teamName, studentIds, userDetails.getUsername()));
+    }
+    */
+
+    // TODO delete this method and decomment method above when we will implement the login functionality
+    @PostMapping("/addTeamProposal")
+    @ResponseStatus(HttpStatus.OK)
+    public Long addTeamProposal(@RequestBody Map<String, Object> input) {
+        if(!input.containsKey("teamName")
+                || !input.containsKey("courseName")
+                || !input.containsKey("studentIds"))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        String teamName = (String)input.get("teamName");
+        String courseName = (String)input.get("courseName");
+        List<String> studentIds = (List<String>)input.get("studentIds");
+
+        try {
+            return teamService.proposeTeam(courseName, teamName, studentIds, "reuseitmarketapp@gmail.com");
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 
     @PostMapping("/{teamId}/createVm")

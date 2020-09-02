@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 public class TeamProposalDTO extends RepresentationModel<TeamProposalDTO> {
     @Id
     Long id;
-
-    @JsonFormat(pattern="MM-dd-yyyy HH:mm:ss")
     LocalDateTime expiryDate;
     String teamName;
     TeamProposal.TeamProposalStatus status;

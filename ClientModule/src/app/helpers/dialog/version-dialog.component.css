@@ -73,7 +73,10 @@
 }
 
 .buttons-container mat-card-subtitle {
-  color: red;
+  color: #ff0000e0;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 14px;
   margin: 0 1em;
 }
 

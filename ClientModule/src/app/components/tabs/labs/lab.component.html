@@ -5,14 +5,14 @@
   </div>
   <mat-accordion multi="false">
     <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
-                         (opened)="markAsRead(getReportForStudent(assignment, 's123113'))">
+                         (opened)="markAsRead(getReportForStudent(assignment, utility.getMyId()))">
       <mat-expansion-panel-header class="assignment-header">
         <mat-panel-title>
           {{assignment.name}}
         </mat-panel-title>
         <mat-panel-description class="panels-description" *ngIf="assignment && assignment.expiryDate">
           <div class="icons-div">
-            <i>Expires in: {{formatDate(assignment.expiryDate) | date:'medium'}}</i>
+            <i>Expires in: {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -24,7 +24,7 @@
       </ng-container>
       <div class="info-divider"></div>
 
-      <ng-container [ngSwitch]="isProfessor() && filteredReports?.size ? 'parent' : 'student'">
+      <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'parent' : 'student'">
 
         <!-- start REPORTS section TODO remember to add report.grade somewhere -->
         <ng-container *ngSwitchCase="'parent'">
@@ -57,7 +57,7 @@
                       </div>
                     </div>
                     <div class="icons-div report-status-container">
-                      <span [style.background-color]="getColorForStatus(report.status)" class="report-status-circle"></span>
+                      <span [style.background-color]="utility.getColorForStatus(report.status)" class="report-status-circle"></span>
                     </div>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
@@ -82,7 +82,7 @@
                         <img mat-card-image [src]="version.content" alt="version_content">
                         <mat-card-content>
                           <p>
-                            <i>{{formatDate(version.submissionDate) | date:'medium'}}</i>
+                            <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
                           </p>
                         </mat-card-content>
                       </mat-card>
@@ -106,7 +106,7 @@
 
         <!-- start VERSIONS section (student only) -->
         <ng-container *ngSwitchCase="'student'">
-          <mat-card *ngVar="getReportForStudent(assignment, 's123113') as studentReport" class="version-card-container">
+          <mat-card *ngVar="getReportForStudent(assignment, utility.getMyId()) as studentReport" class="version-card-container">
             <div class="report-history-container">
               <div class="report-history-right"></div>
               <div class="report-history-desc">
@@ -135,7 +135,7 @@
                     <img mat-card-image [src]="version.content" alt="version_content">
                     <mat-card-content>
                       <p>
-                        <i>{{formatDate(version.submissionDate) | date:'medium'}}</i>
+                        <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
                       </p>
                     </mat-card-content>
                   </mat-card>
@@ -150,20 +150,20 @@
 
       <mat-action-row class="assignment-bottom">
         <div class="icons-div">
-          <i>Assigned on: {{formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
+          <i>Assigned on: {{utility.formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
         </div>
         <div>
-          <button mat-raised-button color="warn" *ngIf="isProfessor()"
+          <button mat-raised-button color="warn" *ngIf="utility.isProfessor()"
                   (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
-          <button mat-raised-button color="primary" *ngIf="isProfessor()"
+          <button mat-raised-button color="primary" *ngIf="utility.isProfessor()"
                   (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
-          <button mat-raised-button color="primary" *ngIf="!isProfessor()"
-                  (click)="openAddVersionDialog(getReportForStudent(assignment, 's123113'))">ADD VERSION</button>
+          <button mat-raised-button color="primary" *ngIf="!utility.isProfessor()"
+                  (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()))">ADD VERSION</button>
         </div>
       </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
-  <ng-container *ngIf="isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
 </div>
 <ng-template #noAssignments>
   <div class="no-assignments-message-container" *ngIf="assignmentList">

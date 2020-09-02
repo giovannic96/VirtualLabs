@@ -9,10 +9,10 @@ import {Team} from '../../models/team.model';
 import {Course} from '../../models/course.model';
 import {forkJoin, Observable, timer} from 'rxjs';
 import {concatMap} from 'rxjs/operators';
-import {VmModelSettingsDialogComponent} from '../tabs/vms/vm-model-settings-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {VmInfoDialogComponent} from './vm-info-dialog.component';
 import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
+import Utility from '../../helpers/utility';
 
 @Component({
   selector: 'app-virtual-desktop',
@@ -36,12 +36,16 @@ export class VirtualDesktopComponent implements OnInit {
   ];
   public chosenTip: string;
 
+  public utility: Utility;
+
   constructor(private courseService: CourseService,
               private vmService: VmService,
               private route: ActivatedRoute,
               private router: Router,
-              private dialog: MatDialog)
-  {
+              private dialog: MatDialog) {
+
+    this.utility = new Utility();
+
     const loadingTimer = timer(5000);
     loadingTimer.subscribe(() => this.loadComplete = true);
 
@@ -70,16 +74,16 @@ export class VirtualDesktopComponent implements OnInit {
     const statsTimer = timer(1000, 1000);
 
     statsTimer.subscribe(() => {
-      this.stats.cpu = this.getRandom(10, 50);
-      this.stats.ram = this.getRandom(10, 50);
-      this.stats.disk = this.getRandom(10, 50);
+      this.stats.cpu = this.utility.getRandom(10, 50);
+      this.stats.ram = this.utility.getRandom(10, 50);
+      this.stats.disk = this.utility.getRandom(10, 50);
     });
   }
 
   ngOnInit(): void {}
 
   chooseRandomTip(): string {
-    return this.tips[this.getRandom(0, this.tips.length - 1)];
+    return this.tips[this.utility.getRandom(0, this.tips.length - 1)];
   }
 
   async backToCourses() {
@@ -95,10 +99,6 @@ export class VirtualDesktopComponent implements OnInit {
     if (areYouSure) {
       this.router.navigate(['courses', this.vmCourse.name, 'vms']);
     }
-  }
-
-  public getRandom(from: number, to: number): number {
-    return Math.floor(Math.random() * (to + 1)) + from;
   }
 
   openInfoDialog() {

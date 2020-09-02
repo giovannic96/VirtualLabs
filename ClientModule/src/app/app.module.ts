@@ -58,6 +58,7 @@ import { ColorCircleModule } from 'ngx-color/circle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
 import { TeamProposalDialogComponent } from './helpers/dialog/team-proposal-dialog.component';
+import { HasAlreadyProposedDialogComponent } from './helpers/dialog/has-already-proposed-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -85,6 +86,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     VersionDialogComponent,
     GradeDialogComponent,
     TeamProposalDialogComponent,
+    HasAlreadyProposedDialogComponent,
     AddVersionDialogComponent,
     AllTeamedUpDialogComponent,
     VmInfoDialogComponent,
@@ -154,6 +156,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     AllTeamedUpDialogComponent,
     AddVersionDialogComponent,
     TeamProposalDialogComponent,
+    HasAlreadyProposedDialogComponent,
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,

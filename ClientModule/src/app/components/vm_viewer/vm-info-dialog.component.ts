@@ -1,8 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Vm} from '../../models/vm.model';
 import {VmService} from '../../services/vm.service';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-vm-settings-dialog',

@@ -3,6 +3,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {VmModel} from '../../../models/vm-model.model';
 import {VmService} from '../../../services/vm.service';
+import Utility from '../../../helpers/utility';
 
 @Component({
   selector: 'app-vm-model-settings-dialog',
@@ -14,11 +15,15 @@ export class VmModelSettingsDialogComponent implements OnInit {
   public vmModelFormGroup: FormGroup;
   public formIsInvalid = false;
 
+  public utility: Utility;
+
   constructor(public dialogRef: MatDialogRef<VmModelSettingsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private cd: ChangeDetectorRef,
               public formBuilder: FormBuilder,
               private vmService: VmService) {
+
+    this.utility = new Utility();
   }
 
   ngOnInit(): void {
@@ -47,21 +52,11 @@ export class VmModelSettingsDialogComponent implements OnInit {
     }
   }
 
-  calcDiskLabel(value: number) {
-    if (value < 1024)
-      return value + ' GB';
-    else if (value % 1024)
-      return (value / 1024).toFixed(1) + ' TB';
-    else
-      return (value / 1024) + ' TB';
-  }
-
   getOsImagePreview(osCode: string) {
     return this.vmService.getVmModelOsPreviewUrl(osCode);
   }
 
   checkForm() {
-
     if (this.vmModelFormGroup.invalid) {
       this.formIsInvalid = true;
       return;

@@ -3,8 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {Student} from '../models/student.model';
 import {catchError, retry} from 'rxjs/operators';
 import {throwError} from 'rxjs';
-import {Team} from '../models/team.model';
 import {Vm} from '../models/vm.model';
+import {TeamProposal} from '../models/team-proposal.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,18 @@ export class TeamService {
   private API_PATH = 'http://localhost:8080/API/teams';
 
   constructor(private httpClient: HttpClient) { }
+
+  getTeamProposal(teamProposalId: number) {
+    return this.httpClient
+      .get<TeamProposal>(`${this.API_PATH}/teamProposals/${teamProposalId}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getTeamProposal error: ${err.message}`);
+        })
+      );
+  }
 
   getTeamMembers(teamId: number) {
     return this.httpClient
@@ -60,6 +72,18 @@ export class TeamService {
         catchError(err => {
           console.error(err);
           return throwError(`GetVms error: ${err.message}`);
+        })
+      );
+  }
+
+  proposeTeam(teamName: string, courseName: string, studentIds: string[]) {
+    return this.httpClient
+      .post<number>(`${this.API_PATH}/addTeamProposal`, {teamName, courseName, studentIds})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`ProposeTeam error: ${err.message}`);
         })
       );
   }

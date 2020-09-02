@@ -18,6 +18,7 @@ import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dial
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {AddVersionDialogComponent} from '../../../helpers/dialog/add-version-dialog.component';
+import Utility from '../../../helpers/utility';
 
 export interface ReportStatusFilter {
   name: string;
@@ -41,12 +42,16 @@ export class LabComponent implements OnInit {
   filteredReports: Map<number, Report[]>;
   reportStatusFilter: ReportStatusFilter[];
 
+  public utility: Utility;
+
   constructor(private courseService: CourseService,
               private labService: LabService,
               private notificationService: NotificationService,
               private studentService: StudentService,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
+
+    this.utility = new Utility();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
     this.allReports = new Map<number, Report[]>();
@@ -224,7 +229,7 @@ export class LabComponent implements OnInit {
               // edit selected assignment
               a.name = asmnt.name;
               a.content = asmnt.content;
-              a.expiryDate = this.localDateTimeToString(asmnt.expiryDate);
+              a.expiryDate = this.utility.localDateTimeToString(asmnt.expiryDate);
               this.mySnackBar.openSnackBar('Assignment edited successfully', MessageType.SUCCESS, 3);
             }, error => this.mySnackBar.openSnackBar('Assignment editing failed', MessageType.ERROR, 3));
         }
@@ -232,8 +237,8 @@ export class LabComponent implements OnInit {
           this.courseService.addAssignment(course.name, dialogResponse.getDTO()).pipe(
             concatMap(newId => this.labService.getAssignment(newId)),
             concatMap(newAssignment => {
-              newAssignment.expiryDate = this.localDateTimeToString(newAssignment.expiryDate);
-              newAssignment.releaseDate = this.localDateTimeToString(newAssignment.releaseDate);
+              newAssignment.expiryDate = this.utility.localDateTimeToString(newAssignment.expiryDate);
+              newAssignment.releaseDate = this.utility.localDateTimeToString(newAssignment.releaseDate);
               dialogResponse = newAssignment;
               return this.labService.getAssignmentReports(newAssignment.id);
             }),
@@ -317,33 +322,6 @@ export class LabComponent implements OnInit {
     return assignment.reports?.find(r => r.owner?.id === studentId);
   }
 
-  isProfessor() {
-    return true;
-  }
-
-  getColorForStatus(status: string) {
-    switch (status) {
-      case ReportStatus.NULL: {
-        return '#818181';
-      }
-      case ReportStatus.READ: {
-        return '#ff8400';
-      }
-      case ReportStatus.SUBMITTED: {
-        return '#ffe602';
-      }
-      case ReportStatus.REVISED: {
-        return '#02b2ff';
-      }
-      case ReportStatus.GRADED: {
-        return '#07ff15';
-      }
-      default: {
-        return '#000000';
-      }
-    }
-  }
-
   toggleGridColumns() {
     this.gridColumns = this.gridColumns === 3 ? 4 : 3;
   }
@@ -356,36 +334,12 @@ export class LabComponent implements OnInit {
     });
   }
 
-  formatDate(date: string) {
-    const splitted = date.toString().split(',').map(s => Number(s));
-    return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
-  }
-
-  localDateTimeToString(localDateTime: string): string {
-    // ex. FROM '2022-12-21T14:10:46' TO '2022,12,21,14,10,46'
-    const dateTime = localDateTime.toString().split('T');
-    const date = dateTime[0].split('-');
-    const time = dateTime[1].split(':');
-    return '' + date[0] + ',' + date[1] + ',' + date[2] + ',' + time[0] + ',' + time[1] + ',' + time[2];
-  }
-
-  toLocalDateTime(date: string): string {
-    // ex. FROM '2020,7,1,18,20,2' TO '2022-07-01T18:20:02'
-    const dateSplit = date.toString().split(',');
-    const day = (`0${dateSplit[2]}`).slice(-2); // add '0' in front of the number, if necessary
-    const month = (`0${dateSplit[1]}`).slice(-2); // add '0' in front of the number, if necessary
-    const hours = (`0${dateSplit[3]}`).slice(-2); // add '0' in front of the number, if necessary
-    const minutes = (`0${dateSplit[4]}`).slice(-2); // add '0' in front of the number, if necessary
-    const seconds = (`0${dateSplit[5]}`).slice(-2); // add '0' in front of the  number, if necessary
-    return '' + dateSplit[0] + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
-  }
-
   openLastVersion(report: Report, assignment: Assignment) {
     this.openVersionDialog(report.versions[report.versions.length - 1], report, assignment, true);
   }
 
   isGradable(report: Report, assignment: Assignment): boolean {
-    if (this.formatDate(assignment.expiryDate).valueOf() > Date.now()) {
+    if (this.utility.formatDate(assignment.expiryDate).valueOf() > Date.now()) {
       return report.status === ReportStatus.SUBMITTED;
     } else {
       return !!report.versions?.length && report.status !== ReportStatus.GRADED;
@@ -393,7 +347,7 @@ export class LabComponent implements OnInit {
   }
 
   markAsRead(report: Report) {
-    if (this.isProfessor())
+    if (this.utility.isProfessor())
       return;
 
     if (report.status === ReportStatus.NULL) {

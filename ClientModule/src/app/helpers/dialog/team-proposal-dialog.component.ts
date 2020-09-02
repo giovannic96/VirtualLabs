@@ -50,7 +50,7 @@ export class TeamProposalDialogComponent implements OnInit {
     this.form = this.fb.group({
       teamName: [this.teamName, Validators.required],
     });
-    this.initial = this.students;
+    this.initial = [...this.students]; // copy the content, not the reference
   }
 
   drop(event: CdkDragDrop<Student[]>) {
@@ -62,7 +62,7 @@ export class TeamProposalDialogComponent implements OnInit {
     }
   }
 
-  checkForm(proposedStudents: Student[]) {
+  checkForm() {
     this.onAddErrAnim = false;
 
     // check if team name has been inserted
@@ -82,7 +82,7 @@ export class TeamProposalDialogComponent implements OnInit {
   }
 
   confirm(proposedStudents: Student[]) {
-    if (!this.checkForm(proposedStudents))
+    if (!this.checkForm())
       return;
 
     const data = {

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {concatMap, filter, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {catchError, concatMap, filter, tap} from 'rxjs/operators';
+import {EMPTY, Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
 import {Student} from '../../../models/student.model';
@@ -16,6 +16,8 @@ import {EmailDialogComponent} from '../../../helpers/dialog/email-dialog.compone
 import {NotificationService} from '../../../services/notification.service';
 import {TeamProposalDialogComponent} from '../../../helpers/dialog/team-proposal-dialog.component';
 import {AllTeamedUpDialogComponent} from '../../../helpers/dialog/all-teamed-up-dialog.component';
+import {HasAlreadyProposedDialogComponent} from '../../../helpers/dialog/has-already-proposed-dialog.component';
+import Utility from '../../../helpers/utility';
 
 @Component({
   selector: 'app-team',
@@ -34,12 +36,16 @@ export class TeamComponent implements OnInit {
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
 
+  public utility: Utility;
+
   constructor(private courseService: CourseService,
               private studentService: StudentService,
               private teamService: TeamService,
               private notificationService: NotificationService,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
+
+    this.utility = new Utility();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
@@ -134,19 +140,20 @@ export class TeamComponent implements OnInit {
     );
   }
 
-  openAllTeamedUpDialog() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    this.dialog.open(AllTeamedUpDialogComponent, dialogConfig);
+  openAllTeamedUpDialog(message: string) {
+    this.dialog.open(AllTeamedUpDialogComponent, {disableClose: true, data: { message }});
   }
 
-  async openTeamProposalDialog(teamedUpStudents: Student[]) {
+  openHasAlreadyProposedDialog(message: string) {
+    this.dialog.open(HasAlreadyProposedDialogComponent, {disableClose: true, data: { message }});
+  }
+
+  async openTeamProposalDialog(notTeamedUpStudents: Student[]) {
     const course: Course = this.courseService.getSelectedCourseValue();
 
     const data = {
       teamName: '',
-      students: teamedUpStudents,
+      students: notTeamedUpStudents,
       minTeamSize: course.minTeamSize,
       maxTeamSize: course.maxTeamSize,
     };
@@ -154,9 +161,25 @@ export class TeamComponent implements OnInit {
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
     if (!!dialogResponse) {
-      console.log(dialogResponse.teamName);
-      console.log(dialogResponse.students);
-
+      const studentIds = dialogResponse.students.map(s => s.id);
+      this.teamService.proposeTeam(dialogResponse.teamName, course.name, studentIds)
+        .pipe(
+        catchError(err => {
+          if (err.status === 503)
+            this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
+          else
+            this.mySnackBar.openSnackBar('Team proposal failed', MessageType.ERROR, 3);
+          return EMPTY;
+        }),
+        concatMap(tpId => this.teamService.getTeamProposal(tpId))
+        )
+        .subscribe(teamProposal => {
+          teamProposal.creator = dialogResponse.students.find(s => s.id === teamProposal.creatorId);
+          teamProposal.members = dialogResponse.students;
+          teamProposal.expiryDate = this.utility.localDateTimeToString(teamProposal.expiryDate);
+          this.pendingProposals.push(teamProposal);
+          this.mySnackBar.openSnackBar('Team proposed successfully', MessageType.SUCCESS, 3);
+        });
     }
   }
 
@@ -170,7 +193,11 @@ export class TeamComponent implements OnInit {
     });
   }
 
-  isProfessor() {
-    return false;
+  hasAlreadyProposed(studentId: string) {
+    let found = false;
+    this.pendingProposals.forEach(tp => {
+      found = tp.members.some(s => s.id === studentId);
+    });
+    return found;
   }
 }

@@ -3,6 +3,7 @@ package it.polito.ai.virtualLabs.services;
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
 
+import javax.mail.MessagingException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public interface TeamService {
     List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
 
-    TeamProposalDTO proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername); //TESTED
+    Long proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) throws MessagingException; //TESTED
     void deleteTeam(Long teamId); //TESTED
     void deleteTeamProposal(Long teamProposalId);
     List<StudentDTO>getTeamMembers(Long TeamId); //TESTED

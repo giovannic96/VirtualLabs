@@ -49,15 +49,10 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendMessage(String address, String subject, String body) throws MailException, MessagingException {
-
-        /*SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(address);
-        message.setSubject(subject);
-        message.setText(body);*/
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
-        String htmlMsg = "<h1> messaggio di <b>PROVA</b></h1>";
-        helper.setText(htmlMsg, true);
+        String headerBody = "<h2><b>You have been invited on a team!</b></h2>\n";
+        helper.setText(headerBody + body, true);
         helper.setTo(address);
         helper.setSubject(subject);
 
@@ -210,11 +205,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String calcBody(Long tpId, String token) {
-        final String confirmURL = "http://localhost:8080/API/notification/accept/?tpId="+tpId+"&token="+token;
-        final String rejectURL = "http://localhost:8080/API/notification/reject/?tpId="+tpId+"&token="+token;
+        final String confirmURL = "http://localhost:8080/notification/accept?tpId="+tpId+"&token="+token;
+        final String rejectURL = "http://localhost:8080/notification/reject?tpId="+tpId+"&token="+token;
         final String confirmBody = "Click here to confirm the proposal: ";
         final String rejectBody = "Click here to reject the proposal: ";
 
-        return confirmBody + confirmURL + "\n\n" + rejectBody + rejectURL;
+        return confirmBody + confirmURL + "<br><br>" + rejectBody + rejectURL;
     }
 }
