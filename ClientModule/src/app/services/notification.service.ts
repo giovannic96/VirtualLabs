@@ -24,4 +24,16 @@ export class NotificationService {
         })
       );
   }
+
+  responseToProposal(action: string, tpId: string, token: string) {
+    return this.httpClient
+      .post<any>(`${this.API_PATH}/` + action, null, {params: {tpId, token}})
+      .pipe(
+        retry(1),
+        catchError( err => {
+          console.error(err);
+          return throwError(`Proposal response error: ${err.message}`);
+        })
+      );
+  }
 }
