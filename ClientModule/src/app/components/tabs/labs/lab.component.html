@@ -9,10 +9,14 @@
       <mat-expansion-panel-header class="assignment-header">
         <mat-panel-title>
           {{assignment.name}}
+          <span [className]="assignmentStatusMap.get(assignment.id)?.className">
+            <b>{{assignmentStatusMap.get(assignment.id)?.label}}</b>
+          </span>
         </mat-panel-title>
-        <mat-panel-description class="panels-description" *ngIf="assignment && assignment.expiryDate">
+        <mat-panel-description class="panels-description" *ngIf="assignment">
           <div class="icons-div">
-            <i>Expires in: {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
+            <i>{{isAssignmentExpired(assignment) ? 'Expired' : 'Expires'}} in:
+              {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -26,7 +30,6 @@
 
       <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'parent' : 'student'">
 
-        <!-- start REPORTS section TODO remember to add report.grade somewhere -->
         <ng-container *ngSwitchCase="'parent'">
           <mat-card class="report-card-container">
             <mat-card-title class="report-desc">Reports</mat-card-title>
@@ -57,6 +60,7 @@
                       </div>
                     </div>
                     <div class="icons-div report-status-container">
+                      <h2 class="grade-label">{{report.grade}}</h2>
                       <span [style.background-color]="utility.getColorForStatus(report.status)" class="report-status-circle"></span>
                     </div>
                   </mat-panel-description>
@@ -95,7 +99,7 @@
                           [disabled]="!report.versions?.length">VIEW LAST VERSION</button>
                   <button mat-raised-button color="primary"
                           (click)="openGradeDialog(report, assignment)"
-                          [disabled]="!isGradable(report, assignment)">GRADE REPORT</button>
+                          *ngIf="isReportGradable(report, assignment)">GRADE REPORT</button>
                 </mat-action-row>
               </mat-expansion-panel>
             </mat-accordion>
@@ -152,12 +156,17 @@
         <div class="icons-div">
           <i>Assigned on: {{utility.formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
         </div>
-        <div>
+        <div style="display: flex" *ngVar="getReportForStudent(assignment, utility.getMyId())?.grade as grade">
+          <ng-container *ngIf="grade !== null && !utility.isProfessor()">
+            <span>Grade obtained: </span>
+            <span class="grade-label">{{grade}}</span>
+          </ng-container>
           <button mat-raised-button color="warn" *ngIf="utility.isProfessor()"
                   (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
           <button mat-raised-button color="primary" *ngIf="utility.isProfessor()"
                   (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
-          <button mat-raised-button color="primary" *ngIf="!utility.isProfessor()"
+          <button mat-raised-button color="primary"
+                  *ngIf="!utility.isProfessor() && isReportSubmittable(assignment)"
                   (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()))">ADD VERSION</button>
         </div>
       </mat-action-row>

@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
 import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {forkJoin, Observable} from 'rxjs';
+import {forkJoin, Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
@@ -32,7 +32,7 @@ export interface ReportStatusFilter {
   templateUrl: './lab.component.html',
   styleUrls: ['./lab.component.css', '../../../helpers/add-btn-round.css']
 })
-export class LabComponent implements OnInit {
+export class LabComponent implements OnInit, AfterViewInit {
 
   private currentCourse: Observable<Course>;
   public assignmentList: Assignment[];
@@ -42,6 +42,7 @@ export class LabComponent implements OnInit {
   allReports: Map<number, Report[]>;
   filteredReports: Map<number, Report[]>;
   reportStatusFilter: ReportStatusFilter[];
+  assignmentStatusMap: Map<number, {label: string, className: string}>;
 
   public utility: Utility;
 
@@ -64,6 +65,7 @@ export class LabComponent implements OnInit {
       {name : ReportStatus.REVISED, checked : true, color: 'warn'},
       {name : ReportStatus.GRADED, checked : true, color: 'accent'},
     ];
+    this.assignmentStatusMap = new Map<number, {label: string, className: string}>();
 
     let assignmentCounter: number;
 
@@ -95,8 +97,10 @@ export class LabComponent implements OnInit {
 
                 // update UI (only when all assignments have been processed)
                 assignmentCounter--;
-                if (!assignmentCounter)
+                if (!assignmentCounter) {
                   this.filterReports();
+                  this.assignmentList.forEach(a => this.setAssignmentStatusLabel(a));
+                }
               });
 
               forkJoin(versionRequests).subscribe(versions => {
@@ -109,6 +113,9 @@ export class LabComponent implements OnInit {
       })).subscribe();
   }
 
+  ngAfterViewInit(): void {
+  }
+
   ngOnInit(): void {
   }
 
@@ -118,9 +125,14 @@ export class LabComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
 
+    const isRevisable = isLast && this.utility.isProfessor()
+                        && this.isAssignmentExpired(assignment)
+                        && report.status === ReportStatus.SUBMITTED;
+
     dialogConfig.data = {
       version,
-      isLast
+      isLast,
+      isRevisable,
     };
 
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
@@ -311,12 +323,63 @@ export class LabComponent implements OnInit {
     this.openVersionDialog(report.versions[report.versions.length - 1], report, assignment, true);
   }
 
-  isGradable(report: Report, assignment: Assignment): boolean {
-    if (this.utility.formatDate(assignment.expiryDate).valueOf() > Date.now()) {
-      return report.status === ReportStatus.SUBMITTED;
+  isReportGradable(report: Report, assignment: Assignment): boolean {
+    return this.isAssignmentExpired(assignment) &&
+            report.status === ReportStatus.SUBMITTED;
+  }
+
+  isReportSubmittable(assignment: Assignment): boolean {
+    const status = this.getReportForStudent(assignment, this.utility.getMyId())?.status;
+    return status === ReportStatus.READ || status === ReportStatus.REVISED;
+  }
+
+  isAssignmentExpired(assignment: Assignment): boolean {
+    return this.utility.formatDate(assignment.expiryDate).valueOf() < Date.now();
+  }
+
+  setAssignmentStatusLabel(assignment: Assignment) {
+    let label: string;
+    let className: string;
+    if (this.utility.isProfessor()) {
+      if (this.isAssignmentExpired(assignment)) {
+        const isSomeoneToGrade = this.allReports.get(assignment.id)?.find(report => report.status !== ReportStatus.GRADED);
+        if (isSomeoneToGrade) {
+          className = 'status-span-expired';
+          label = 'EXPIRED';
+        }
+        else {
+          className = 'status-span-completed';
+          label = 'COMPLETED';
+        }
+      } else {
+        className = 'status-span-in-progress';
+        label = 'IN PROGRESS';
+      }
     } else {
-      return !!report.versions?.length && report.status !== ReportStatus.GRADED;
+      const status = this.getReportForStudent(assignment, this.utility.getMyId())?.status;
+      switch (status) {
+        case ReportStatus.NULL:
+          className = 'status-span-new';
+          label = 'NEW';
+          break;
+        case ReportStatus.REVISED:
+          className = 'status-span-revised';
+          label = 'REVISED';
+          break;
+        case ReportStatus.GRADED:
+          className = 'status-span-graded';
+          label = 'GRADED';
+          break;
+        case ReportStatus.SUBMITTED:
+          className = 'status-span-submitted';
+          label = 'SUBMITTED';
+          break;
+        default:
+          className = 'status-span-in-progress';
+          label = 'IN PROGRESS';
+      }
     }
+    this.assignmentStatusMap.set(assignment.id, {label, className});
   }
 
   markAsRead(report: Report) {

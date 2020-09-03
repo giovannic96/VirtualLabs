@@ -8,8 +8,8 @@ import {catchError, retry} from 'rxjs/operators';
 })
 export class NotificationService {
 
-  // private API_PATH = 'https://virtuallabs.ns0.it/notification';
-  private API_PATH = 'http://localhost:8080/notification';
+  private API_PATH = 'https://virtuallabs.ns0.it/notification';
+  // private API_PATH = 'http://localhost:8080/notification';
 
   constructor(private httpClient: HttpClient) { }
 

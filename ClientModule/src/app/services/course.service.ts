@@ -15,8 +15,8 @@ import {Assignment} from '../models/assignment.model';
 })
 export class CourseService {
 
-  // private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
-  private API_PATH = 'http://localhost:8080/API/courses';
+  private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
+  // private API_PATH = 'http://localhost:8080/API/courses';
 
   private _selectedCourse: BehaviorSubject<Course>;
   public clicksOnMenu: Subject<Event>;

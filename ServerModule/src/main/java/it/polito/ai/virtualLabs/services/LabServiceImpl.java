@@ -157,6 +157,25 @@ public class LabServiceImpl implements LabService {
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
 
         Course c = courseRepository.getOne(courseName);
+        List<Assignment> assignments = c.getAssignments();
+
+        assignments.forEach(assignment -> {
+            if(assignment.getExpiryDate().isBefore(LocalDateTime.now())) {
+                assignment.getReports().forEach(report -> {
+                    if(report.getVersions().isEmpty()) {
+                        report.setStatus(Report.ReportStatus.GRADED);
+                        report.setStatusDate(LocalDateTime.now());
+                        report.setGrade(0f);
+                    } else {
+                        if(report.getStatus() != Report.ReportStatus.SUBMITTED) {
+                            report.setStatus(Report.ReportStatus.SUBMITTED);
+                            report.setStatusDate(LocalDateTime.now());
+                        }
+                    }
+                });
+            }
+        });
+
         return c.getAssignments()
                 .stream()
                 .map(a -> modelMapper.map(a, AssignmentDTO.class))
@@ -243,11 +262,15 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public boolean addVersionToReport(Long reportId, String title, MultipartFile file) {
+    public boolean addVersionToReport(Long reportId, String title, MultipartFile inputFile) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
         Report report = reportRepository.getOne(reportId);
+
+        //if assignment is expired you cannot to add a new version unless its revised or read
+        if(report.getStatus() != Report.ReportStatus.REVISED || report.getStatus() != Report.ReportStatus.READ)
+            return false;
 
         Version version = new Version();
         version.setTitle(title);
@@ -255,8 +278,12 @@ public class LabServiceImpl implements LabService {
         String imageName = report.getOwner().getId() + "|" + System.currentTimeMillis();
         version.setContent(Base64.getEncoder().withoutPadding().encodeToString(imageName.getBytes()));
 
-        try (FileOutputStream stream = new FileOutputStream(VERSION_CONTENT_PATH + version.getContent() + "." + VERSION_CONTENT_FORMAT )) {
-            stream.write(file.getBytes());
+        try {
+            File file = new File(VERSION_CONTENT_PATH + version.getContent() + "." + VERSION_CONTENT_FORMAT);
+            file.createNewFile();
+            FileOutputStream stream = new FileOutputStream(file);
+            stream.write(inputFile.getBytes());
+            stream.close();
         } catch (IOException ex) {
             return false;
         }
@@ -314,15 +341,9 @@ public class LabServiceImpl implements LabService {
         //check if there is already a grade for that report
         Report report = reportRepository.getOne(reportId);
 
-        //if the assignment is not expired yet, the report must be SUBMITTED
-        //if the assignment expired, the report can be graded if it isn't already and if it has at least one version
-        if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now())) {
-            if(report.getStatus() != Report.ReportStatus.SUBMITTED)
-                return false;
-        } else {
-            if(report.getVersions().isEmpty() && report.getGrade() != null)
-                return false;
-        }
+        //the assignment must be aexpired and the report must be submitted
+        if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now()) && report.getStatus() != Report.ReportStatus.SUBMITTED)
+            return false;
 
         //grade report
         report.setGrade(grade);
@@ -341,26 +362,23 @@ public class LabServiceImpl implements LabService {
         Version version = versionRepository.getOne(versionId);
         Report report = version.getReport();
 
-        //check if this version has been revised already
-        if(version.isRevised())
+        //check that the assignment is expired
+        if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now()))
             return false;
 
-        //check if the assignment is expired
-        if(report.getAssignment().getExpiryDate().isBefore(LocalDateTime.now())) {
+        //report status must be submitted in order to be revised
+        if(report.getStatus() != Report.ReportStatus.SUBMITTED)
             return false;
-        } else { //if not, the report status must be SUBMITTED
-            if(report.getStatus() != Report.ReportStatus.SUBMITTED)
-                return false;
 
-            //check if this version is last version submitted by the student
-            AtomicBoolean isLast = new AtomicBoolean(true);
-            report.getVersions().forEach(ver -> {
-                if (ver.getSubmissionDate().isAfter(version.getSubmissionDate()))
-                    isLast.set(false);
-            });
-            if(!isLast.get())
-                return false;
-        }
+        //check if this version is last version submitted by the student
+        AtomicBoolean isLast = new AtomicBoolean(true);
+        report.getVersions().forEach(ver -> {
+            if (ver.getSubmissionDate().isAfter(version.getSubmissionDate()))
+                isLast.set(false);
+        });
+        if(!isLast.get())
+            return false;
+
 
         byte[] image = Base64.getDecoder().decode(review);
 
@@ -390,7 +408,7 @@ public class LabServiceImpl implements LabService {
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
         Report report = this.reportRepository.getOne(reportId);
-        if(report.getStatus()!= Report.ReportStatus.NULL)
+        if(report.getStatus() != Report.ReportStatus.NULL)
             return false;
 
         report.setStatus(Report.ReportStatus.READ);

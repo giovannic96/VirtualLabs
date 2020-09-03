@@ -51,6 +51,18 @@ mat-card {
   padding: .5em 1.2em;
 }
 
+.assignment-header span {
+  margin-left: 1.5em;
+}
+
+.status-span-new { color: #337ab7 }
+.status-span-in-progress { color: #FFC107 }
+.status-span-submitted { color: #cb4747 }
+.status-span-expired { color: #cb4747 }
+.status-span-revised { color: slateblue }
+.status-span-graded { color: #54ba54 }
+.status-span-completed { color: #54ba54 }
+
 .assignment-desc {
   text-align: center;
   margin-top: 10px !important;
@@ -67,6 +79,14 @@ mat-card {
   display: flex;
   flex-direction: row;
   padding: 10px;
+}
+
+.grade-label {
+  margin: 0 1em 0 .5em;
+  color: #3f51b5;
+  font-size: 1.8em;
+  font-family: Roboto, sans-serif;
+  font-weight: bold;
 }
 
 .report-header-text {
@@ -153,6 +173,8 @@ mat-card {
 
 .versions-grid {
   padding: 16px;
+  flex-flow: row-reverse wrap !important;
+  justify-content: flex-end;
 }
 
 .versions-grid > mat-card {
@@ -309,3 +331,9 @@ mat-card {
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
+@supports (-webkit-text-stroke: .5px currentColor) {
+  .assignment-header span {
+    -webkit-text-stroke: .5px currentColor;
+    -webkit-text-fill-color: white;
+  }
+}

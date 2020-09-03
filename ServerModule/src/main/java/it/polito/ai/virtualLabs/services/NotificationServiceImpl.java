@@ -51,8 +51,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendMessage(String address, String subject, String body) throws MailException, MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
-        String headerBody = "<h2><b>You have been invited on a team!</b></h2>\n";
-        helper.setText(headerBody + body, true);
+        helper.setText(body, true);
         helper.setTo(address);
         helper.setSubject(subject);
 
@@ -209,12 +208,13 @@ public class NotificationServiceImpl implements NotificationService {
         final String confirmURL = "http://localhost:8080/notification/accept?tpId="+tpId+"&token="+token;
         final String rejectURL = "http://localhost:8080/notification/reject?tpId="+tpId+"&token="+token;
         */
-        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId="+tpId+"&token="+token;
-        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId="+tpId+"&token="+token;
+        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId=" + tpId + "&token=" + token;
+        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId=" + tpId + "&token=" + token;
 
-        final String confirmBody = "Click here to confirm the proposal: ";
-        final String rejectBody = "Click here to reject the proposal: ";
+        final String confirmBody = "Click here to confirm the proposal: " + confirmURL;
+        final String rejectBody = "Click here to reject the proposal: " + rejectURL;
 
-        return confirmBody + confirmURL + "<br><br>" + rejectBody + rejectURL;
+        String headerBody = "<h2><b>You have been invited on a team!</b></h2><br>";
+        return headerBody + confirmBody + "<br><br>" + rejectBody;
     }
 }

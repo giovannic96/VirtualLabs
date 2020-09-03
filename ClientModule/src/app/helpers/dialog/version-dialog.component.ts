@@ -7,6 +7,7 @@ import {CanvasComponent} from '../canvas.component';
 import {Version} from '../../models/version.model';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 import {MatCheckbox} from '@angular/material/checkbox';
+import Utility from '../utility';
 
 @Component({
   selector: 'app-version-dialog',
@@ -20,6 +21,7 @@ export class VersionDialogComponent implements OnInit {
 
   version: Version;
   isLastVersion: boolean;
+  isVersionRevisable: boolean;
 
   @ViewChild('appCanvas') canvasComponent: CanvasComponent;
   @ViewChild('review') review: ElementRef<HTMLImageElement>;
@@ -29,12 +31,17 @@ export class VersionDialogComponent implements OnInit {
                             '#8bc34a', '#ffeb3b', '#ff9800', '#795548', '#f44336', '#fff'];
   public currentColor;
 
+  public utility: Utility;
+
   constructor(private dialogRef: MatDialogRef<VersionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data,
               private mySnackBar: MySnackBarComponent,
               private labService: LabService) {
+    this.utility = new Utility();
+
     this.version = data.version;
     this.isLastVersion = data.isLast;
+    this.isVersionRevisable = data.isRevisable;
 
     this.currentColor = this.colors[0];
   }

@@ -11,8 +11,8 @@ import {Report} from '../models/report.model';
 })
 export class StudentService {
 
-  // private API_PATH = 'https://virtuallabs.ns0.it/API/students';
-  private API_PATH = 'http://localhost:8080/API/students';
+  private API_PATH = 'https://virtuallabs.ns0.it/API/students';
+  // private API_PATH = 'http://localhost:8080/API/students';
 
   constructor(private httpClient: HttpClient) { }
 
