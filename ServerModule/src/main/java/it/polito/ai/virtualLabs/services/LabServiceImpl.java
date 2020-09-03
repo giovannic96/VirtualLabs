@@ -167,7 +167,7 @@ public class LabServiceImpl implements LabService {
                         report.setStatusDate(LocalDateTime.now());
                         report.setGrade(0f);
                     } else {
-                        if(report.getStatus() != Report.ReportStatus.SUBMITTED) {
+                        if(report.getStatus() == Report.ReportStatus.NULL || report.getStatus() == Report.ReportStatus.READ) {
                             report.setStatus(Report.ReportStatus.SUBMITTED);
                             report.setStatusDate(LocalDateTime.now());
                         }
@@ -268,8 +268,8 @@ public class LabServiceImpl implements LabService {
 
         Report report = reportRepository.getOne(reportId);
 
-        //if assignment is expired you cannot to add a new version unless its revised or read
-        if(report.getStatus() != Report.ReportStatus.REVISED || report.getStatus() != Report.ReportStatus.READ)
+        //if assignment is expired you cannot add a new version unless its revised or read
+        if(report.getStatus() != Report.ReportStatus.REVISED && report.getStatus() != Report.ReportStatus.READ)
             return false;
 
         Version version = new Version();
@@ -334,14 +334,14 @@ public class LabServiceImpl implements LabService {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
-        //check if grade is > 0 and <= 30
-        if(grade <= 0 || grade >= 30)
+        //check if grade is >= 0 and <= 30
+        if(grade < 0 || grade > 30)
             return false;
 
         //check if there is already a grade for that report
         Report report = reportRepository.getOne(reportId);
 
-        //the assignment must be aexpired and the report must be submitted
+        //the assignment must be expired and the report must be submitted
         if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now()) && report.getStatus() != Report.ReportStatus.SUBMITTED)
             return false;
 
