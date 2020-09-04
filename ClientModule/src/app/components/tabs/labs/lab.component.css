@@ -273,11 +273,11 @@ mat-card {
 
 ::ng-deep .filter-checkbox-graded.mat-checkbox-checked mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-ripple .mat-ripple-element {
   opacity: 0.03 !important;
-  background-color: #07ff15!important;
+  background-color: limegreen!important;
 }
 
 ::ng-deep .filter-checkbox-graded.mat-checkbox-checked .mat-checkbox-layout .mat-checkbox-inner-container .mat-checkbox-background {
-  background-color: #07ff15!important;
+  background-color: limegreen!important;
 }
 
 .report-status-filter section {

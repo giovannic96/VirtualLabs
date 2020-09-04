@@ -96,24 +96,23 @@ table tbody tr td {
 }
 
 .info-charts-container {
-  margin: 1em;
   display: flex;
+  flex-flow: row wrap;
   justify-content: space-between;
-  padding: 10px;
+  padding: 0 .5em;
+  gap: 2em;
 }
 
 .info-chart {
   height: 370px;
-  width: 80%;
-  margin-left:auto;
-  margin-right:auto;
+  width: 100%;
   margin-top: .6em;
-  padding-left: 0;
+  flex: 1 1 43%;
   box-shadow:  0 1px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 2px 0 rgba(0, 0, 0, 0.12)
 }
 
-#chartContainerPasses {
-  margin-right: 3em;
+.info-chart canvas {
+  max-width: 100% !important;
 }
 
 .info-charts-card-container {

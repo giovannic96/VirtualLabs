@@ -41,8 +41,9 @@ mat-card {
 
 .student-lists-container {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   justify-content: space-between;
+  gap: 2em
 }
 
 .student-list-title {
@@ -50,7 +51,8 @@ mat-card {
 }
 
 .student-list {
-  width: 48%
+  min-width: fit-content;
+  flex: 1 1 auto;
 }
 
 .teamed-up-student-info {

@@ -1,6 +1,8 @@
 .team-vms-container {
-  display: grid;
-  grid-template-columns: 33.3% 33.3% 33.3%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  gap: 2em;
 }
 
 mat-icon {
@@ -8,7 +10,10 @@ mat-icon {
 }
 
 mat-card {
-  margin: 0 .5em;
+  min-width: 250px;
+  max-width: 400px;
+  flex: 1 1 30%;
+  text-align: center;
 }
 
 mat-list {
