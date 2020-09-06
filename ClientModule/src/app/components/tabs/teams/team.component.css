@@ -16,7 +16,7 @@ mat-icon {
 }
 
 .no-teams-message-container {
-  margin: 1.5em 0;
+  margin: .2em 0;
 }
 
 .no-teams-message-container mat-card {
@@ -67,4 +67,138 @@ mat-card {
 .pending-teams-bottom {
   justify-content: space-between;
   color: rgba(0,0,0,.54);
+}
+
+.team-section-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.team-section-title > mat-card {
+  margin-bottom: 10px;
+}
+
+.team-sections-divider {
+  display: block;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: rgba(0,0,0,.12);
+}
+
+.team-section-container {
+  width: 45%;
+}
+
+.team-section-container h3 {
+  margin-top: 18px;
+  text-align: center;
+}
+
+.my-team-mat-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.my-team-section-content {
+  margin-top: 38px;
+  margin-bottom: 20px;
+}
+
+.my-team-section-content mat-card {
+  box-shadow: none;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.my-team-section-content mat-card mat-card-header mat-card-title {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.proposal-message-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  /*background-color: #fee715;*/
+  /*color: #101820;*/
+  background: linear-gradient(to right, #FF4E50, #F9D423);
+  color: white;
+  border-radius: unset;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+
+.proposal-message-actions-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.proposal-message-title {
+  margin-bottom: 0!important;
+}
+
+.proposal-message-action-accept {
+  margin-right: 10px;
+}
+@keyframes rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.proposal-message-container {
+  position: relative;
+  z-index: 0;
+  border-radius: 3px;
+  overflow: hidden;
+  padding: 2px;
+  margin-top: 4px;
+}
+
+.proposal-message-container::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  left: -101%;
+  top: -50%;
+  width: 300%;
+  height: 200%;
+  background-color: #FFD400;
+  background-repeat: no-repeat;
+  background-size: 50% 50%, 50% 50%;
+  background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+  /*background-image: linear-gradient(#ffd500, #ffa613), linear-gradient(#ff961a, #fb8200), linear-gradient(#fdd20e, #fdd20e);*/
+  background-image: linear-gradient(#FFFFB7, #FFF192, #FFEA61, #FFDD3C, #FFD400);
+  -webkit-animation: rotate 4s linear infinite;
+  animation: rotate 4s linear infinite;
+ }
+
+.proposal-message-container::after {
+   content: '';
+   position: absolute;
+   z-index: -1;
+   left: 6px;
+   top: 6px;
+   width: calc(100% - 12px);
+   height: calc(100% - 12px);
+   background: white;
+   border-radius: 5px;
+ }
+
+.no-vms-card {
+  padding-left: 16px!important;
+}
+
+.no-vms-header {
+  justify-content: center;
+}
+
+.no-vms-text {
+  color: rgba(0, 0, 0, 0.54);
 }

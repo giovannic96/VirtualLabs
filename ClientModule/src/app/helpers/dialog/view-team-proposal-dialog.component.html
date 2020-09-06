@@ -1,0 +1,32 @@
+<button mat-icon-button class="close-button" (click)="close()">
+  <mat-icon class="close-icon">close</mat-icon>
+</button>
+<div class="dialog-container">
+  <h2 mat-dialog-title>Team Proposal Info</h2>
+  <div>
+    <div>
+      <div class="members-text"><span><b>Members</b></span></div>
+      <div class="student-list">
+        <div class="proposal-members-box" *ngFor="let member of proposal.members"
+             [ngStyle]="{'background-color': (member.id === proposal.creatorId) ? '#cbcbcb' : 'initial'}">
+          <mat-card class="student-card">
+            <mat-card-header [ngStyle]="{'background-color': (member.id === proposal.creatorId) ? '#cbcbcb' : 'initial'}">
+              <img [src]="member.photo" mat-card-avatar>
+              <mat-card-title>{{member.name}} {{member.surname}} {{member.id === proposal.creatorId ? ' (creator)' : ''}}</mat-card-title>
+              <mat-card-subtitle><em>{{member.id}}</em></mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
+      </div>
+      <div class="proposal-expiry-date">
+        <i>This team proposal will expire on: {{utility.formatDate(proposal.expiryDate) | date:'medium'}}</i>
+      </div>
+    </div>
+    <div class="buttons-container">
+      <mat-dialog-actions>
+        <button class="mat-raised-button mat-warn" (click)="reject()">REJECT</button>
+        <button class="mat-raised-button mat-primary" (click)="confirm()">JOIN TEAM</button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</div>

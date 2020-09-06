@@ -85,6 +85,11 @@ public class StudentController {
         return reports;
     }
 
+    @GetMapping("/{studentId}/courses/{courseName}/checkAcceptedProposals")
+    public boolean hasAcceptedProposals(@PathVariable String studentId, @PathVariable String courseName) {
+        return teamService.hasAcceptedProposals(studentId, courseName);
+    }
+
     @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean addReports(@PathVariable String studentId, @PathVariable String courseName,

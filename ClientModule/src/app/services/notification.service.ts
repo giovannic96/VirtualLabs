@@ -8,8 +8,8 @@ import {catchError, retry} from 'rxjs/operators';
 })
 export class NotificationService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/notification';
-  // private API_PATH = 'http://localhost:8080/notification';
+  // private API_PATH = 'https://virtuallabs.ns0.it/notification';
+  private API_PATH = 'http://localhost:8080/notification';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -25,14 +25,26 @@ export class NotificationService {
       );
   }
 
-  responseToProposal(action: string, tpId: string, token: string) {
+  responseToProposalByToken(action: string, tpId: number, token: string) {
     return this.httpClient
-      .post<any>(`${this.API_PATH}/` + action, null, {params: {tpId, token}})
+      .post<boolean>(`${this.API_PATH}/` + action + 'ByToken',  null, {params: {tpId: tpId.toString(), token}})
       .pipe(
         retry(1),
         catchError( err => {
           console.error(err);
-          return throwError(`Proposal response error: ${err.message}`);
+          return throwError(`ResponseToProposalByToken error: ${err.message}`);
+        })
+      );
+  }
+
+  responseToProposalById(action: string, tpId: number, studentId: string) {
+    return this.httpClient
+      .post<boolean>(`${this.API_PATH}/` + action + 'ById', null, {params: {tpId: tpId.toString(), studentId}})
+      .pipe(
+        retry(1),
+        catchError( err => {
+          console.error(err);
+          return throwError(`ResponseToProposalById error: ${err.message}`);
         })
       );
   }

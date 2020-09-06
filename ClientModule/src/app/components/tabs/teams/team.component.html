@@ -1,53 +1,116 @@
-<div class="tab-section formed-teams-section" *ngIf="teamList?.length; else noTeams">
+<ng-container *ngIf="!hasAcceptedAProposal && myPendingProposals?.length">
+  <div *ngFor="let proposal of myPendingProposals" class="proposal-message-container">
+    <mat-card class="proposal-message-card">
+      <mat-card-header>
+        <mat-card-title class="proposal-message-title">
+          You have received a team proposal from <em>{{proposal.teamName}}</em> !
+        </mat-card-title>
+      </mat-card-header>
+      <div class="proposal-message-actions-container">
+        <div>
+          <button mat-stroked-button (click)="openViewTeamProposalDialog(proposal)">VIEW PROPOSAL</button>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</ng-container>
+
+<div class="tab-section formed-teams-section">
   <div class="tab-subtitle">
     <mat-icon>groups</mat-icon>
-    <h2>Teams</h2>
+    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team'}}</h2>
   </div>
-  <mat-accordion multi="false">
-    <mat-expansion-panel *ngFor="let team of this.teamList">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{team.name}}
-        </mat-panel-title>
-        <mat-panel-description class="team-panels-description">
-          <div class="icons-div">
-            <mat-icon>person</mat-icon><span>{{team.members ? team.members.length : 0}}</span>
-            <mat-icon>desktop_windows</mat-icon><span>{{team.vms? team.vms.length : 0}}</span>
-          </div>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <h4>Composed by:</h4>
-      <mat-card *ngFor="let member of team.members">
-        <mat-card-header>
-          <img [src]="member.photo" mat-card-avatar>
-          <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
-          <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
-        </mat-card-header>
-      </mat-card>
-      <ng-container *ngIf="team.vms?.length">
-        <h4>VMs:</h4>
-        <mat-card *ngFor="let vm of team.vms; let i = index">
-          <mat-card-header>
-            <img src="/assets/icons/vm_icon.png" mat-card-avatar>
-            <mat-card-title>VM#{{i+1}}</mat-card-title>
-            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
-          </mat-card-header>
-        </mat-card>
-      </ng-container>
-      <mat-action-row>
-        <button mat-raised-button color="warn" (click)="openDialog(team)">DELETE TEAM</button>
-        <button mat-raised-button color="primary" (click)="openEmailDialog(team.members)">SEND MESSAGE</button>
-      </mat-action-row>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  <ng-container *ngIf="teamList?.length; else noTeams">
+    <ng-container *ngIf="utility.isProfessor(); else myTeamSection">
+      <mat-accordion multi="false">
+        <mat-expansion-panel *ngFor="let team of this.teamList">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{team.name}}
+            </mat-panel-title>
+            <mat-panel-description class="team-panels-description">
+              <div class="icons-div">
+                <mat-icon>person</mat-icon><span>{{team.members ? team.members.length : 0}}</span>
+                <mat-icon>desktop_windows</mat-icon><span>{{team.vms? team.vms.length : 0}}</span>
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <h4>Composed by:</h4>
+          <mat-card *ngFor="let member of team.members">
+            <mat-card-header>
+              <img [src]="member.photo" mat-card-avatar>
+              <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+              <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+          <ng-container *ngIf="team.vms?.length">
+            <h4>VMs:</h4>
+            <mat-card *ngFor="let vm of team.vms; let i = index">
+              <mat-card-header>
+                <img src="/assets/icons/vm_icon.png" mat-card-avatar>
+                <mat-card-title>VM#{{i+1}}</mat-card-title>
+                <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </ng-container>
+          <mat-action-row>
+            <button mat-raised-button color="warn" (click)="openDialog(team)">DELETE TEAM</button>
+            <button mat-raised-button color="primary" (click)="openEmailDialog(team.members)">SEND MESSAGE</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-container>
+  </ng-container>
 </div>
 <ng-template #noTeams>
   <div class="no-teams-message-container" *ngIf="teamList">
     <mat-card><mat-card-header><mat-card-title>
-      Still no team has been formed
+      {{isInATeamProposal(utility.getMyId()) ? 'Waiting for the response, all the students must accept the proposal...' : 'Still no team has been formed'}}
     </mat-card-title></mat-card-header></mat-card>
-    <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+    <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddTeamProposal"></ng-container>
+  </div>
+</ng-template>
+<ng-template #myTeamSection>
+  <ng-container *ngIf="myTeam && myTeam?.members?.length; else noTeams">
+    <mat-card class="my-team-mat-card">
+      <div class="team-section-container">
+        <h3 class="team-section-title">Members</h3>
+        <mat-divider></mat-divider>
+        <div class="my-team-section-content">
+          <mat-card *ngFor="let member of myTeam?.members">
+            <mat-card-header>
+              <img [src]="member.photo" mat-card-avatar>
+              <mat-card-title>{{member.name}} {{member.surname}} {{member.id === utility.getMyId() ? ' (you)' : ''}}</mat-card-title>
+              <mat-card-subtitle>{{member.id}}</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
+      </div>
+      <mat-divider class="team-sections-divider" [vertical]="true"></mat-divider>
+      <div class="team-section-container">
+        <h3 class="team-section-title">Vms</h3>
+        <ng-container *ngIf="myTeam?.vms?.length; else noVms">
+          <div class="my-team-section-content">
+            <mat-card *ngFor="let vm of myTeam.vms; let i = index">
+              <mat-card-header>
+                <img src="/assets/icons/vm_icon.png" mat-card-avatar>
+                <mat-card-title>VM#{{i+1}}</mat-card-title>
+                <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </div>
+        </ng-container>
+      </div>
+    </mat-card>
+  </ng-container>
+</ng-template>
+<ng-template #noVms>
+  <div class="my-team-section-content">
+    <mat-card class="no-vms-card">
+      <mat-card-header class="no-vms-header">
+        <mat-card-title><em class="no-vms-text">There are no vms yet</em></mat-card-title>
+      </mat-card-header>
+    </mat-card>
   </div>
 </ng-template>
 
@@ -140,13 +203,11 @@
   </div>
 </div>
 
-<ng-template #fabAddAssignment>
-  <div class="add-btn-container">
+<ng-template #fabAddTeamProposal>
+  <div *ngIf="!isAlreadyTeamedUp() && !isInATeamProposal(utility.getMyId()) && notTeamedUpStudents?.length"
+       class="add-btn-container">
     <button class="icon-btn add-btn"
-            (click)="hasAlreadyProposed(utility.getMyId()) ?
-            openHasAlreadyProposedDialog('Sorry, It seems that you have already proposed a team.') :
-            notTeamedUpStudents?.length ? openTeamProposalDialog(notTeamedUpStudents) :
-            openAllTeamedUpDialog('Sorry, all the students are teamed up.')">
+            (click)="openTeamProposalDialog(notTeamedUpStudents, utility.getMyId())">
       <div class="add-icon"></div>
       <div class="btn-txt"><strong>PROPOSE</strong></div>
     </button>

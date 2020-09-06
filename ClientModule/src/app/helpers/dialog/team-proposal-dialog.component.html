@@ -17,7 +17,8 @@
         [cdkDropListConnectedTo]="[proposedList]"
         class="student-list"
         (cdkDropListDropped)="drop($event)">
-        <div class="drag-drop-box" *ngFor="let student of initial" cdkDrag>
+        <div class="drag-drop-box" *ngFor="let student of initial" cdkDrag [cdkDragDisabled]="student.id === myId">
+          <div class="custom-placeholder" *cdkDragPlaceholder></div>
           <mat-card class="student-card">
             <mat-card-header>
               <img [src]="student.photo" mat-card-avatar>
@@ -25,7 +26,6 @@
               <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
             </mat-card-header>
           </mat-card>
-          <img *cdkDragPreview [src]="student.photo" [alt]="student.name">
         </div>
       </div>
     </div>
@@ -37,19 +37,25 @@
         [cdkDropListData]="proposed"
         [cdkDropListConnectedTo]="[initialList]"
         class="student-list"
+        cdkDropListSortingDisabled
         (cdkDropListDropped)="drop($event)">
-        <ng-container *ngIf="proposed.length > 0; else emptyProposedStudents">
-          <div class="drag-drop-box" *ngFor="let student of proposed" cdkDrag>
-            <mat-card class="student-card">
-                <mat-card-header>
-                <img [src]="student.photo" mat-card-avatar>
-                <mat-card-title>{{student.name}} {{student.surname}}</mat-card-title>
-                <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
-              </mat-card-header>
-            </mat-card>
-            <img *cdkDragPreview [src]="student.photo" [alt]="student.name">
-          </div>
-        </ng-container>
+        <div class="drag-drop-box" *ngFor="let student of proposed" cdkDrag [cdkDragDisabled]="student.id === myId">
+          <div class="custom-placeholder" *cdkDragPlaceholder></div>
+          <mat-card class="student-card">
+              <mat-card-header>
+              <img [src]="student.photo" mat-card-avatar>
+              <mat-card-title>{{student.name}} {{student.surname}} {{student.id === myId ? ' (you)' : ''}}</mat-card-title>
+              <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
+        <div class="drag-drop-box empty-proposed-box" *ngIf="isOnlyMe()">
+          <mat-card style="text-align: center" class="student-card">
+            <mat-card-header>
+              <mat-card-subtitle>Drag student here</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        </div>
       </div>
     </div>
     <div [@error]="onAddErrAnim" class="warning-message">
@@ -63,12 +69,3 @@
     </div>
   </div>
 </div>
-<ng-template #emptyProposedStudents>
-  <div class="drag-drop-box empty-proposed-box">
-    <mat-card style="text-align: center" class="student-card">
-      <mat-card-header>
-        <mat-card-subtitle>Drag student here</mat-card-subtitle>
-      </mat-card-header>
-    </mat-card>
-  </div>
-</ng-template>

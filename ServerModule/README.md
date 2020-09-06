@@ -16,6 +16,7 @@ API
 * GET	http://ip_address:port/api/courses/:courseName/teamedUp
 * GET	http://ip_address:port/api/courses/:courseName/notTeamedUp
 * GET	http://ip_address:port/api/courses/:courseName/teams
+* GET	http://ip_address:port/api/courses/:courseName/teams/:teamName
 * GET	http://ip_address:port/api/courses/:courseName/professors
 * GET	http://ip_address:port/api/courses/:courseName/vmModel
 * GET	http://ip_address:port/api/courses/:courseName/teamProposals
@@ -34,6 +35,7 @@ API
 * GET	http://ip_address:port/api/students/:studentId
 * GET	http://ip_address:port/api/students/:studentId/reports
 * GET	http://ip_address:port/api/students/:studentId/courses
+* GET	http://ip_address:port/api/students/:studentId/courses/:courseName/checkAcceptedProposals   // TO ADD TO POSTMAN
 * GET	http://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/reports
 * GET	http://ip_address:port/api/students/:studentId/teams
 * GET	http://ip_address:port/api/students/:studentId/vms
@@ -73,10 +75,6 @@ API
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vms
 * GET	http://ip_address:port/api/vms/vmModels/:vmModelId/vmModel      //TO ADD TO POSTMAN
 
-*Notification*
-* GET	http://ip_address:port/notification/accept?tpId=:tpId&token=:token
-* GET	http://ip_address:port/notification/reject?tpId=:tpId&token=:token
-
 ---  
 **POST**
 
@@ -102,6 +100,10 @@ API
 
 *Notification*
 * POST	http://ip_address:port/notification/private/sendMessage
+* POST	http://ip_address:port/notification/acceptByToken?tpId=:tpId&token=:token
+* POST	http://ip_address:port/notification/rejectByToken?tpId=:tpId&token=:token
+* POST	http://ip_address:port/notification/acceptById?tpId=:tpId&studentId=:studentId
+* POST	http://ip_address:port/notification/rejectById?tpId=:tpId&studentId=:studentId
 
 ---
 **PUT**

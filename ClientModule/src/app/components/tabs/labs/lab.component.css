@@ -21,10 +21,22 @@ mat-icon {
 
 mat-panel-title {
   font-size: large;
+  width: 13em;
+}
+
+.status-label-container {
+  width: 10em;
+  text-align: center;
+  padding-left: 3.8em;
 }
 
 .panels-description {
   flex: none;
+  width: 20em;
+}
+
+.panels-description mat-panel-description {
+  float: right;
 }
 
 mat-card {
@@ -51,8 +63,19 @@ mat-card {
   padding: .5em 1.2em;
 }
 
+.assignment-header mat-panel-title {
+  flex: unset;
+}
+
 .assignment-header span {
-  margin-left: 1.5em;
+  font-size: larger;
+  align-self: center;
+  letter-spacing: 1px;
+}
+
+::ng-deep .assignment-header .mat-content {
+  justify-content: space-between;
+  align-items: center;
 }
 
 .status-span-new { color: #337ab7 }
@@ -334,6 +357,5 @@ mat-card {
 @supports (-webkit-text-stroke: .5px currentColor) {
   .assignment-header span {
     -webkit-text-stroke: .5px currentColor;
-    -webkit-text-fill-color: white;
   }
 }

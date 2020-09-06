@@ -105,6 +105,12 @@ public class CourseController {
         return teams;
     }
 
+    @GetMapping("/{courseName}/teams/{teamName}")
+    public TeamDTO team(@PathVariable String courseName, @PathVariable String teamName) {
+        Optional<TeamDTO> team = teamService.getTeamForCourse(teamName, courseName);
+        return team.map(ModelHelper::enrich).orElse(null);
+    }
+
     @GetMapping("/{courseName}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String courseName) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForCourse(courseName);

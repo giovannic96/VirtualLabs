@@ -134,7 +134,6 @@ export class LabComponent implements OnInit, AfterViewInit {
       isLast,
       isRevisable,
     };
-
     const dialogRef = this.dialog.open(VersionDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(

@@ -12,7 +12,7 @@ export class ProposalResponseComponent implements OnInit {
   requestSent: boolean;
 
   action: string;
-  tpId: string;
+  tpId: number;
   token: string;
 
   constructor(private router: Router,
@@ -21,12 +21,12 @@ export class ProposalResponseComponent implements OnInit {
 
   ngOnInit(): void {
     this.action = this.activatedRoute.snapshot.paramMap.get('action');
-    this.tpId = this.activatedRoute.snapshot.queryParamMap.get('tpId');
+    this.tpId = Number(this.activatedRoute.snapshot.queryParamMap.get('tpId'));
     this.token = this.activatedRoute.snapshot.queryParamMap.get('token');
   }
 
   sendRequest() {
-    this.notificationService.responseToProposal(this.action, this.tpId, this.token).subscribe(() => {
+    this.notificationService.responseToProposalByToken(this.action, this.tpId, this.token).subscribe(() => {
       this.requestSent = true;
     });
   }

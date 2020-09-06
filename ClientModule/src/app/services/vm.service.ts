@@ -15,8 +15,8 @@ import {Team} from '../models/team.model';
 })
 export class VmService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/vms';
-  // private API_PATH = 'http://localhost:8080/API/vms';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/vms';
+  private API_PATH = 'http://localhost:8080/API/vms';
 
   private VM_MODEL_LOGO_URL = 'https://virtuallabs.ns0.it/images/vm_models/logo/';
   private VM_MODEL_LOGO_FORMAT = '.jpg';
