@@ -1,11 +1,6 @@
 package it.polito.ai.virtualLabs.services;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import it.polito.ai.virtualLabs.entities.Course;
-import it.polito.ai.virtualLabs.entities.Student;
-import it.polito.ai.virtualLabs.entities.Team;
-import it.polito.ai.virtualLabs.entities.TeamProposal;
+import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.CourseRepository;
 import it.polito.ai.virtualLabs.repositories.TeamProposalRepository;
 import it.polito.ai.virtualLabs.repositories.TeamRepository;
@@ -76,7 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public boolean accept(Long teamProposalId, String token) {
+    public boolean acceptByToken(Long teamProposalId, String token) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
 
@@ -94,6 +89,10 @@ public class NotificationServiceImpl implements NotificationService {
 
         //check the team proposal
         if(!checkProposal(tp, token))
+            return false;
+
+        // reject all the other pending proposals of this student
+        if(!rejectAllTeamProposalsExcept(tp.getId(), tp.getCourse().getName()))
             return false;
 
         //remove token
@@ -119,7 +118,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public boolean reject(Long teamProposalId, String token) {
+    public boolean rejectByToken(Long teamProposalId, String token) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
 
@@ -142,17 +141,49 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyTeam(Long teamProposalId, List<String> studentIds) throws MessagingException {
+    public boolean acceptById(Long teamProposalId, String studentId) {
+        String token = getTokenByStudentId(teamProposalId, studentId);
+        return token != null && acceptByToken(teamProposalId, token);
+    }
 
+    @Override
+    public boolean rejectById(Long teamProposalId, String studentId) {
+        String token = getTokenByStudentId(teamProposalId, studentId);
+        return token != null && rejectByToken(teamProposalId, token);
+    }
+
+    @Override
+    public void notifyTeam(Long teamProposalId, List<String> studentIds) throws MessagingException {
         TeamProposal proposal = teamProposalRepository.getOne(teamProposalId);
         for(String id : studentIds) {
             String username = userRepository.getStudentById(id).getUsername();
             String token = hashToken(username);
 
             sendMessage(username, "VirtualLabs Invitation", calcBody(teamProposalId, token));
-
             proposal.addToken(token);
         }
+    }
+
+    // TODO change the current 'hard-coded' id of the student when we will implement the login functionality
+    private boolean rejectAllTeamProposalsExcept(Long teamProposalId, String courseName) {
+        // reject all that team proposals
+        for(Long proposalId : teamService.getPendingTeamProposalIdsForStudent(courseName, "s123456")) {
+            if(!proposalId.equals(teamProposalId)) {
+                String token = getTokenByStudentId(proposalId, "s123456");
+                if(token != null)
+                    if(!rejectByToken(proposalId, token))
+                        return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public String getTokenByStudentId(Long tpId, String studId) {
+        return teamProposalRepository.getOne(tpId).getTokens().stream().filter(t -> {
+            String username = new String(Base64.getDecoder().decode(t)).split("\\|")[1];
+            return userRepository.getStudentByUsername(username).getId().equals(studId);
+        }).findFirst().orElse(null);
     }
 
     private String hashToken(String username) {
@@ -204,12 +235,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String calcBody(Long tpId, String token) {
+        final String confirmURL = "https://localhost:4200/proposal_response/acceptByToken?tpId="+tpId+"&token="+token;
+        final String rejectURL = "https://localhost:4200/proposal_response/rejectByToken?tpId="+tpId+"&token="+token;
         /*
-        final String confirmURL = "http://localhost:8080/notification/accept?tpId="+tpId+"&token="+token;
-        final String rejectURL = "http://localhost:8080/notification/reject?tpId="+tpId+"&token="+token;
+        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/acceptByToken?tpId=" + tpId + "&token=" + token;
+        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/rejectByToken?tpId=" + tpId + "&token=" + token;
         */
-        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId=" + tpId + "&token=" + token;
-        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId=" + tpId + "&token=" + token;
 
         final String confirmBody = "Click here to confirm the proposal: " + confirmURL;
         final String rejectBody = "Click here to reject the proposal: " + rejectURL;

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
 import {catchError, concatMap, filter, tap} from 'rxjs/operators';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, forkJoin, Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
 import {Student} from '../../../models/student.model';
@@ -15,9 +15,8 @@ import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.co
 import {EmailDialogComponent} from '../../../helpers/dialog/email-dialog.component';
 import {NotificationService} from '../../../services/notification.service';
 import {TeamProposalDialogComponent} from '../../../helpers/dialog/team-proposal-dialog.component';
-import {AllTeamedUpDialogComponent} from '../../../helpers/dialog/all-teamed-up-dialog.component';
-import {HasAlreadyProposedDialogComponent} from '../../../helpers/dialog/has-already-proposed-dialog.component';
 import Utility from '../../../helpers/utility';
+import {ViewTeamProposalDialogComponent} from '../../../helpers/dialog/view-team-proposal-dialog.component';
 
 @Component({
   selector: 'app-team',
@@ -28,10 +27,13 @@ export class TeamComponent implements OnInit {
 
   teams: {team: Team, students: Student[], vms: Vm[]}[] = [];
   private currentCourse: Observable<Course>;
-  public teamList: Team[];
+  public teamList: Team[] = [];
+  public myTeam: Team;
 
   public allProposals: TeamProposal[];
   public pendingProposals: TeamProposal[];
+  public myPendingProposals: TeamProposal[] = [];
+  public hasAcceptedAProposal = false;
 
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
@@ -56,8 +58,7 @@ export class TeamComponent implements OnInit {
         return teamList;
       }),
       tap(team => {
-        this.teamService.getTeamMembers(team.id).subscribe(members => team.members = members);
-        this.teamService.getTeamVms(team.id).subscribe(vms => team.vms = vms);
+        this.setTeamMembersAndVms(team);
     })).subscribe();
 
     this.currentCourse.pipe(
@@ -70,8 +71,24 @@ export class TeamComponent implements OnInit {
         return teamProposalList;
       }),
       tap(proposal => {
+        /*
         this.teamService.getTeamProposalMembers(proposal.id).subscribe(members => proposal.members = members);
         this.studentService.find(proposal.creatorId).subscribe(creator => proposal.creator = creator);
+        */
+        const memberList = this.teamService.getTeamProposalMembers(proposal.id);
+        const proposalCreator = this.studentService.find(proposal.creatorId);
+
+        forkJoin([memberList, proposalCreator]).subscribe(results => {
+          // set team proposal members and vms
+          proposal.members = results[0];
+          proposal.creator = results[1];
+
+          // check if this is one of my team proposals and it is PENDING
+          if (proposal.members.find(m => m.id === this.utility.getMyId())
+              && proposal.status === TeamProposalStatus.PENDING) {
+            this.myPendingProposals.push(proposal);
+          }
+        });
       })).subscribe();
 
     this.currentCourse
@@ -83,6 +100,11 @@ export class TeamComponent implements OnInit {
       .pipe(concatMap(course => {
         return this.courseService.getNotTeamedUpStudents(course.name);
       })).subscribe(studentList => this.notTeamedUpStudents = studentList);
+
+    this.currentCourse
+      .pipe(concatMap(course => {
+        return this.studentService.checkAcceptedProposals(this.utility.getMyId(), course.name);
+      })).subscribe(accepted => this.hasAcceptedAProposal = accepted);
   }
 
   ngOnInit(): void {
@@ -140,20 +162,13 @@ export class TeamComponent implements OnInit {
     );
   }
 
-  openAllTeamedUpDialog(message: string) {
-    this.dialog.open(AllTeamedUpDialogComponent, {disableClose: true, data: { message }});
-  }
-
-  openHasAlreadyProposedDialog(message: string) {
-    this.dialog.open(HasAlreadyProposedDialogComponent, {disableClose: true, data: { message }});
-  }
-
-  async openTeamProposalDialog(notTeamedUpStudents: Student[]) {
+  async openTeamProposalDialog(notTeamedUpStudents: Student[], myId: string) {
     const course: Course = this.courseService.getSelectedCourseValue();
 
     const data = {
       teamName: '',
       students: notTeamedUpStudents,
+      myId,
       minTeamSize: course.minTeamSize,
       maxTeamSize: course.maxTeamSize,
     };
@@ -178,9 +193,82 @@ export class TeamComponent implements OnInit {
           teamProposal.members = dialogResponse.students;
           teamProposal.expiryDate = this.utility.localDateTimeToString(teamProposal.expiryDate);
           this.pendingProposals.push(teamProposal);
+          this.myPendingProposals.push(teamProposal);
+          this.hasAcceptedAProposal = false;
           this.mySnackBar.openSnackBar('Team proposed successfully', MessageType.SUCCESS, 3);
         });
     }
+  }
+
+  async openViewTeamProposalDialog(proposal: TeamProposal) {
+    const data = {
+      proposal,
+    };
+    const dialogRef = this.dialog.open(ViewTeamProposalDialogComponent, {autoFocus: false, disableClose: true, data});
+    const dialogResponse: any = await dialogRef.afterClosed().toPromise();
+
+    if (!!dialogResponse) {
+      if (dialogResponse.confirmed)
+        this.acceptTeamProposal(proposal);
+      else
+        this.rejectTeamProposal(proposal.id);
+    }
+  }
+
+  acceptTeamProposal(tp: TeamProposal) {
+    const course: Course = this.courseService.getSelectedCourseValue();
+
+    this.notificationService.responseToProposalById('accept', tp.id, this.utility.getMyId()).subscribe(resp => {
+      if (resp) {
+        // empty all the other mine pending proposals
+        this.myPendingProposals = [];
+
+        // set my team (and update UI)
+        this.courseService.getTeamByNameAndCourseName(tp.teamName, course.name).subscribe(team => {
+          if (team != null) {
+            this.setTeamMembersAndVms(team);
+            this.teamList.push(team);
+          }
+        });
+        this.mySnackBar.openSnackBar('Team proposal accepted successfully', MessageType.SUCCESS, 3);
+      } else {
+        this.mySnackBar.openSnackBar('Team proposal accept failed', MessageType.ERROR, 3);
+      }
+    });
+  }
+
+  rejectTeamProposal(tpId: number) {
+    this.notificationService.responseToProposalById('reject', tpId, this.utility.getMyId()).subscribe(resp => {
+      if (resp) {
+        // remove rejected team proposal from my pending proposals
+        const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
+        if (tpToReject) {
+          this.myPendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
+          const tpMembers = this.pendingProposals.find(tp => tp.id === tpId).members;
+          tpMembers.splice(tpMembers.map(m => m.id).indexOf(this.utility.getMyId()));
+        }
+
+        this.mySnackBar.openSnackBar('Team proposal rejected successfully', MessageType.SUCCESS, 3);
+      } else {
+        this.mySnackBar.openSnackBar('Team proposal reject failed', MessageType.ERROR, 3);
+      }
+    });
+  }
+
+  setTeamMembersAndVms(team: Team) {
+    const memberList = this.teamService.getTeamMembers(team.id);
+    const vmList = this.teamService.getTeamVms(team.id);
+
+    forkJoin([memberList, vmList]).subscribe(results => {
+      // set team members and vms
+      team.members = results[0];
+      team.vms = results[1];
+
+      // check if this is my team
+      if (team.members.find(m => m.id === this.utility.getMyId())) {
+        this.myTeam = team;
+      }
+    });
   }
 
   deleteTeam(team: Team) {
@@ -193,11 +281,15 @@ export class TeamComponent implements OnInit {
     });
   }
 
-  hasAlreadyProposed(studentId: string) {
+  isInATeamProposal(studentId: string) {
     let found = false;
-    this.pendingProposals.forEach(tp => {
-      found = tp.members.some(s => s.id === studentId);
+    this.pendingProposals?.forEach(tp => {
+      found = tp.members?.some(s => s.id === studentId);
     });
     return found;
+  }
+
+  isAlreadyTeamedUp() {
+    return this.teamedUpStudents?.length > 0 && this.teamedUpStudents?.find(s => s.id === this.utility.getMyId());
   }
 }

@@ -9,16 +9,20 @@
       <mat-expansion-panel-header class="assignment-header">
         <mat-panel-title>
           {{assignment.name}}
-          <span [className]="assignmentStatusMap.get(assignment.id)?.className">
-            <b>{{assignmentStatusMap.get(assignment.id)?.label}}</b>
-          </span>
         </mat-panel-title>
-        <mat-panel-description class="panels-description" *ngIf="assignment">
-          <div class="icons-div">
-            <i>{{isAssignmentExpired(assignment) ? 'Expired' : 'Expires'}} in:
-              {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
-          </div>
-        </mat-panel-description>
+        <div class="status-label-container">
+          <span [className]="assignmentStatusMap.get(assignment.id)?.className">
+              <b>{{assignmentStatusMap.get(assignment.id)?.label}}</b>
+          </span>
+        </div>
+        <div class="panels-description">
+          <mat-panel-description *ngIf="assignment">
+            <div class="icons-div">
+              <i>{{isAssignmentExpired(assignment) ? 'Expired' : 'Expires'}} in:
+                {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
+            </div>
+          </mat-panel-description>
+        </div>
       </mat-expansion-panel-header>
       <ng-container>
           <div>

@@ -567,6 +567,26 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public boolean hasAcceptedProposals(String studentId, String courseName) {
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+
+        List<Long> teamProposalIds = getPendingTeamProposalIdsForStudent(courseName, studentId);
+        if(teamProposalIds.size() == 0)
+            return true; // I don't have any proposal -> simulate that I accepted a previous proposal
+
+        for (Long proposalId: teamProposalIds) {
+            String token = notificationService.getTokenByStudentId(proposalId, studentId);
+            if(token != null)
+                return false;
+        }
+        return true;
+    }
+
+    @Override
     public List<TeamDTO> getTeamsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
@@ -657,5 +677,20 @@ public class TeamServiceImpl implements TeamService {
             throw new TeamNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
         teamRepository.deleteById(teamProposalId);
         teamRepository.flush();
+    }
+
+    @Override
+    public List<Long> getPendingTeamProposalIdsForStudent(String courseName, String studentId) {
+        // get pending team proposals of the course
+        List<TeamProposal> teamProposals = teamProposalRepository
+                .findAllByCourseNameAndStatus(courseName, TeamProposal.TeamProposalStatus.PENDING);
+
+        // get the ids of team proposals where current student is part of
+        return teamProposals
+                .stream()
+                .filter(prop ->
+                        prop.getStudents().stream().map(User::getId).collect(Collectors.toList()).contains(studentId))
+                .map(TeamProposal::getId)
+                .collect(Collectors.toList());
     }
 }

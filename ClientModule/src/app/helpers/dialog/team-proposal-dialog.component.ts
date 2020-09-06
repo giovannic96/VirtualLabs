@@ -12,6 +12,7 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {Student} from '../../models/student.model';
 import {state, style, transition, trigger, useAnimation} from '@angular/animations';
 import { shake } from 'ngx-animate';
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-team-proposal-dialog',
@@ -31,17 +32,19 @@ export class TeamProposalDialogComponent implements OnInit {
 
   teamName: string;
   students: Student[];
+  myId: string;
   minTeamSize: number;
   maxTeamSize: number;
 
-  initial = [];
-  proposed = [];
+  initial: Student[] = [];
+  proposed: Student[] = [];
 
   constructor(private fb: FormBuilder,
               private dialogRef: MatDialogRef<TeamProposalDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data) {
     this.teamName = data.teamName;
     this.students = data.students;
+    this.myId = data.myId;
     this.minTeamSize = data.minTeamSize;
     this.maxTeamSize = data.maxTeamSize;
   }
@@ -50,7 +53,8 @@ export class TeamProposalDialogComponent implements OnInit {
     this.form = this.fb.group({
       teamName: [this.teamName, Validators.required],
     });
-    this.initial = [...this.students]; // copy the content, not the reference
+    this.initial = [...this.students].filter(s => s.id !== this.myId);
+    this.proposed = [[...this.students].find(s => s.id === this.myId)];
   }
 
   drop(event: CdkDragDrop<Student[]>) {
@@ -79,6 +83,10 @@ export class TeamProposalDialogComponent implements OnInit {
     }, 0 );
 
     return !(this.proposed.length <= 0 || this.proposed.length < this.minTeamSize || this.proposed.length > this.maxTeamSize);
+  }
+
+  isOnlyMe() {
+    return this.proposed.length === 1 && this.proposed.find(s => s.id === this.myId);
   }
 
   confirm(proposedStudents: Student[]) {

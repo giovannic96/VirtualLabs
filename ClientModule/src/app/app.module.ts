@@ -39,7 +39,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { VmModelSettingsDialogComponent } from './components/tabs/vms/vm-model-settings-dialog.component';
 import { MyDialogComponent } from './helpers/dialog/my-dialog.component';
-import { AllTeamedUpDialogComponent } from './helpers/dialog/all-teamed-up-dialog.component';
 import { EmailDialogComponent } from './helpers/dialog/email-dialog.component';
 import { VersionDialogComponent } from './helpers/dialog/version-dialog.component';
 import { GradeDialogComponent } from './helpers/dialog/grade-dialog.component';
@@ -58,7 +57,7 @@ import { ColorCircleModule } from 'ngx-color/circle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AddVersionDialogComponent } from './helpers/dialog/add-version-dialog.component';
 import { TeamProposalDialogComponent } from './helpers/dialog/team-proposal-dialog.component';
-import { HasAlreadyProposedDialogComponent } from './helpers/dialog/has-already-proposed-dialog.component';
+import { ViewTeamProposalDialogComponent } from './helpers/dialog/view-team-proposal-dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -87,9 +86,8 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
     VersionDialogComponent,
     GradeDialogComponent,
     TeamProposalDialogComponent,
-    HasAlreadyProposedDialogComponent,
+    ViewTeamProposalDialogComponent,
     AddVersionDialogComponent,
-    AllTeamedUpDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     GradeNumberDirective,
@@ -155,10 +153,9 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,
-    AllTeamedUpDialogComponent,
     AddVersionDialogComponent,
     TeamProposalDialogComponent,
-    HasAlreadyProposedDialogComponent,
+    ViewTeamProposalDialogComponent,
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,

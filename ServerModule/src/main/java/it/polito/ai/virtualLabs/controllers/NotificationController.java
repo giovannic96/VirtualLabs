@@ -10,9 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.mail.MessagingException;
-import java.util.Map;
-
 @Controller
 @RequestMapping("notification")
 public class NotificationController {
@@ -33,16 +30,39 @@ public class NotificationController {
         }
     }
 
-    @PostMapping("/accept")
+    @PostMapping("/acceptByToken")
     @ResponseStatus(HttpStatus.OK)
-    public void accept(@RequestParam Long tpId, @RequestParam String token) {
-        notificationService.accept(tpId, token);
+    @ResponseBody
+    public boolean acceptByToken(@RequestParam Long tpId, @RequestParam String token) {
+        if(!notificationService.acceptByToken(tpId, token))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in accepting the team proposal with id: " + tpId);
+        return true;
     }
 
-    @PostMapping("/reject")
+    @PostMapping("/rejectByToken")
     @ResponseStatus(HttpStatus.OK)
-    public void reject(@RequestParam Long tpId, @RequestParam String token) {
-        notificationService.reject(tpId, token);
+    @ResponseBody
+    public boolean rejectByToken(@RequestParam Long tpId, @RequestParam String token) {
+        if(!notificationService.rejectByToken(tpId, token))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in rejecting the team proposal with id: " + tpId);
+        return true;
     }
 
+    @PostMapping("/acceptById")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public boolean acceptById(@RequestParam Long tpId, @RequestParam String studentId) {
+        if(!notificationService.acceptById(tpId, studentId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in accepting the team proposal with id: " + tpId);
+        return true;
+    }
+
+    @PostMapping("/rejectById")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public boolean rejectById(@RequestParam Long tpId, @RequestParam String studentId) {
+        if(!notificationService.rejectById(tpId, studentId))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in rejecting the team proposal with id: " + tpId);
+        return true;
+    }
 }

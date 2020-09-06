@@ -11,8 +11,8 @@ import {Report} from '../models/report.model';
 })
 export class StudentService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/students';
-  // private API_PATH = 'http://localhost:8080/API/students';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/students';
+  private API_PATH = 'http://localhost:8080/API/students';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -84,6 +84,18 @@ export class StudentService {
         catchError( err => {
           console.error(err);
           return throwError(`GetTeams error: ${err.message}`);
+        })
+      );
+  }
+
+  checkAcceptedProposals(studentId: string, courseName: string) {
+    return this.httpClient
+      .get<boolean>(`${this.API_PATH}/${studentId}/courses/${courseName}/checkAcceptedProposals`)
+      .pipe(
+        retry(3),
+        catchError(err => {
+          console.error(err);
+          return throwError(`CheckAcceptedProposal error: ${err.message}`);
         })
       );
   }

@@ -15,8 +15,8 @@ import {Assignment} from '../models/assignment.model';
 })
 export class CourseService {
 
-  private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
-  // private API_PATH = 'http://localhost:8080/API/courses';
+  // private API_PATH = 'https://virtuallabs.ns0.it/API/courses';
+  private API_PATH = 'http://localhost:8080/API/courses';
 
   private _selectedCourse: BehaviorSubject<Course>;
   public clicksOnMenu: Subject<Event>;
@@ -182,6 +182,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`getProfessors error: ${err.message}`);
+        })
+      );
+  }
+
+  getTeamByNameAndCourseName(teamName: string, courseName: string): Observable<Team> {
+    return this.httpClient
+      .get<Team>(`${this.API_PATH}/${courseName}/teams/${teamName}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetTeamByNameAndCourseName error: ${err.message}`);
         })
       );
   }
