@@ -112,7 +112,7 @@ table tbody tr td {
 }
 
 .info-chart canvas {
-  max-width: 100% !important;
+  width: 100% !important;
 }
 
 .info-charts-card-container {
