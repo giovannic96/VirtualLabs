@@ -144,6 +144,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void deleteTeam(@PathVariable Long teamId) {
         Optional<TeamDTO> team = teamService.getTeam(teamId);

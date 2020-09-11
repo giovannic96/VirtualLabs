@@ -13,8 +13,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private courseService: CourseService) {
-              this.courseService.hideMenu.next(false);
-              this.courseService.hideMenuIcon.next(true);
+    this.courseService.hideMenu.next(false);
+    this.courseService.hideMenuIcon.next(true);
   }
 
   ngOnInit(): void {

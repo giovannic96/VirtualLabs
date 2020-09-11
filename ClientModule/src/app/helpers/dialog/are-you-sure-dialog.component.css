@@ -1,5 +1,5 @@
 .dialog-container {
-  max-width: 25vw;
+  max-width: fit-content;
 }
 
 .messages-container {

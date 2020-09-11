@@ -53,7 +53,11 @@ export class VmModelSettingsDialogComponent implements OnInit {
   }
 
   getOsImagePreview(osCode: string) {
-    return this.vmService.getVmModelOsPreviewUrl(osCode);
+    console.log(osCode);
+    if (osCode)
+      return this.vmService.getVmModelOsPreviewUrl(osCode);
+    else
+      return 'assets/other/no_os_selected.png';
   }
 
   checkForm() {

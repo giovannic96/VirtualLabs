@@ -32,9 +32,9 @@
       </ng-container>
       <div class="info-divider"></div>
 
-      <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'parent' : 'student'">
+      <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
 
-        <ng-container *ngSwitchCase="'parent'">
+        <ng-container *ngSwitchCase="'professor'">
           <mat-card class="report-card-container">
             <mat-card-title class="report-desc">Reports</mat-card-title>
             <div class="report-status-filter">
