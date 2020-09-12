@@ -74,6 +74,9 @@ public class NotificationServiceImpl implements NotificationService {
     public boolean acceptByToken(Long teamProposalId, String token) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
+        Optional<Student> student = getStudentByToken(token);
+        if(!student.isPresent())
+            throw new StudentNotFoundException("The username inside the token '" + token + "' was not found");
 
         //check if any of the students is already teamed up in another team
         TeamProposal tp = teamProposalRepository.getOne(teamProposalId);
@@ -92,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
             return false;
 
         // reject all the other pending proposals of this student
-        if(!rejectAllTeamProposalsExcept(tp.getId(), tp.getCourse().getName()))
+        if(!rejectAllTeamProposalsExcept(tp.getId(), tp.getCourse().getName(), student.get().getId()))
             return false;
 
         //remove token
@@ -121,6 +124,9 @@ public class NotificationServiceImpl implements NotificationService {
     public boolean rejectByToken(Long teamProposalId, String token) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The proposal with id '" + teamProposalId + "' was not found");
+        Optional<Student> student = getStudentByToken(token);
+        if(!student.isPresent())
+            throw new StudentNotFoundException("The username inside the token '" + token + "' was not found");
 
         //check the team proposal
         TeamProposal tp = teamProposalRepository.getOne(teamProposalId);
@@ -132,9 +138,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         //reject the team proposal and add status description
         tp.setStatus(TeamProposal.TeamProposalStatus.REJECTED);
-        String username = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
-        Student s = userRepository.getStudentByUsername(username);
-        tp.setStatusDesc(s.getName() + " " + s.getSurname() + " rejected the proposal");
+        tp.setStatusDesc(student.get().getName() + " " + student.get().getSurname() + " rejected the proposal");
 
         teamProposalRepository.saveAndFlush(tp);
         return true;
@@ -164,12 +168,11 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    // TODO change the current 'hard-coded' id of the student when we will implement the login functionality
-    private boolean rejectAllTeamProposalsExcept(Long teamProposalId, String courseName) {
+    private boolean rejectAllTeamProposalsExcept(Long teamProposalId, String courseName, String studentId) {
         // reject all that team proposals
-        for(Long proposalId : teamService.getPendingTeamProposalIdsForStudent(courseName, "s123456")) {
+        for(Long proposalId : teamService.getPendingTeamProposalIdsForStudent(courseName, studentId)) {
             if(!proposalId.equals(teamProposalId)) {
-                String token = getTokenByStudentId(proposalId, "s123456");
+                String token = getTokenByStudentId(proposalId, studentId);
                 if(token != null)
                     if(!rejectByToken(proposalId, token))
                         return false;
@@ -181,8 +184,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public String getTokenByStudentId(Long tpId, String studId) {
         return teamProposalRepository.getOne(tpId).getTokens().stream().filter(t -> {
-            String username = new String(Base64.getDecoder().decode(t)).split("\\|")[1];
-            return userRepository.getStudentByUsername(username).getId().equals(studId);
+            Optional<Student> s = getStudentByToken(t);
+            return s.isPresent() && s.get().getId().equals(studId);
         }).findFirst().orElse(null);
     }
 
@@ -247,5 +250,11 @@ public class NotificationServiceImpl implements NotificationService {
 
         String headerBody = "<h2><b>You have been invited on a team!</b></h2><br>";
         return headerBody + confirmBody + "<br><br>" + rejectBody;
+    }
+
+    private Optional<Student> getStudentByToken(String token) {
+        String username = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
+        Student s = userRepository.getStudentByUsername(username);
+        return s != null ? Optional.of(s) : Optional.empty();
     }
 }

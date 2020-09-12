@@ -115,7 +115,7 @@ public class TeamController {
         List<String> studentIds = (List<String>)input.get("studentIds");
 
         try {
-            return teamService.proposeTeam(courseName, teamName, studentIds, "reuseitmarketapp@gmail.com");
+            return teamService.proposeTeam(courseName, teamName, studentIds, "virtuallabapp@gmail.com");
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
         } catch (Exception e) {
