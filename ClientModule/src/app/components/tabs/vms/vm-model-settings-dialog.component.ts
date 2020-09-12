@@ -53,7 +53,6 @@ export class VmModelSettingsDialogComponent implements OnInit {
   }
 
   getOsImagePreview(osCode: string) {
-    console.log(osCode);
     if (osCode)
       return this.vmService.getVmModelOsPreviewUrl(osCode);
     else

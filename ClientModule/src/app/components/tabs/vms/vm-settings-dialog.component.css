@@ -1,0 +1,55 @@
+.vm-form-container {
+  display: flex;
+  gap: 3em;
+  margin: 1em 0;
+}
+
+.vm-form-column {
+
+}
+
+.vm-form-column mat-form-field {
+  width: 100%;
+}
+
+mat-slider {
+  width: 100%;
+  margin-bottom: .2em;
+}
+
+h4 {
+  margin-bottom: 2em;
+}
+
+mat-card-title {
+  margin-bottom: 0.5em;
+}
+
+mat-card-subtitle {
+  margin-bottom: 0;
+}
+
+.vm-model-info-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.operating-system-preview-card {
+  margin-top: 1em;
+  padding: 1.5em 1.5em .3em 1.5em;
+  min-width: auto;
+  max-width: 220px;
+}
+
+.custom-slider-error-container {
+  height: 1.2em;
+  margin-bottom: 1em;
+  margin-top: -1em;
+}
+
+.custom-slider-error-message {
+  margin: 0;
+  font-weight: initial;
+  color: #f44336;
+  font-size: 75%;
+}

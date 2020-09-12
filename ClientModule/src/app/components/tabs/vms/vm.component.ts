@@ -14,6 +14,7 @@ import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {Vm} from '../../../models/vm.model';
 import {Router} from '@angular/router';
 import Utility from '../../../helpers/utility';
+import {VmSettingsDialogComponent} from './vm-settings-dialog.component';
 import {StudentService} from '../../../services/student.service';
 
 @Component({
@@ -141,5 +142,15 @@ export class VmComponent implements OnInit {
 
   openVm(vm: Vm) {
     this.vmService.encodeAndNavigate(vm);
+  }
+
+  testVmCreation() {
+    const data = {vmExists: false, vmModel: this.vmModel, osMap: this.osMap};
+    /*
+    if (this.vm) {
+      data.vmExists = true;
+    }*/
+
+    const dialogRef = this.dialog.open(VmSettingsDialogComponent, {disableClose: false, data});
   }
 }

@@ -63,6 +63,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ProposalResponseComponent } from './components/main/proposal_response/proposal-response.component';
 import {MatRadioModule} from '@angular/material/radio';
+import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dialog.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import {MatRadioModule} from '@angular/material/radio';
     VarDirective,
     CanvasComponent,
     ProposalResponseComponent,
+    VmSettingsDialogComponent,
   ],
     imports: [
         RouterModule.forRoot(routes, {enableTracing: false}),
@@ -161,6 +163,7 @@ import {MatRadioModule} from '@angular/material/radio';
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
+    VmSettingsDialogComponent
   ]
 })
 export class AppModule { }
