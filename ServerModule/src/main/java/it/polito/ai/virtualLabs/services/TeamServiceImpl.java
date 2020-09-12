@@ -568,7 +568,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<VmDTO> getTeamVmsForStudentAndCourse(String studentId, String courseName) {
+    public TeamDTO getTeamForStudentAndCourse(String studentId, String courseName) {
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
         if(!courseRepository.existsById(courseName))
@@ -578,12 +578,9 @@ public class TeamServiceImpl implements TeamService {
         Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(s, courseName);
 
         if(!team.isPresent())
-            throw new StudentNotInTeamException("The student with id '" + studentId + "' doesn't have a team in the course named '" + courseName + "'");
+            throw new StudentNotInTeamException("The student with id '" + studentId + "' was not found");
 
-        return team.get().getVms()
-                .stream()
-                .map(vm -> modelMapper.map(vm, VmDTO.class))
-                .collect(Collectors.toList());
+        return modelMapper.map(team.get(), TeamDTO.class);
     }
 
     @Override

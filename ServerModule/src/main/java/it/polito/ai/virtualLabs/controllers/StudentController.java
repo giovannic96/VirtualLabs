@@ -90,9 +90,9 @@ public class StudentController {
         return teamService.hasAcceptedProposals(studentId, courseName);
     }
 
-    @GetMapping("/{studentId}/courses/{courseName}/teamVms")
-    public List<VmDTO> teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
-        return teamService.getTeamVmsForStudentAndCourse(studentId, courseName);
+    @GetMapping("/{studentId}/courses/{courseName}/team")
+    public TeamDTO teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
+        return teamService.getTeamForStudentAndCourse(studentId, courseName);
     }
 
     @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")

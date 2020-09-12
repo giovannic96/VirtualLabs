@@ -34,7 +34,7 @@ public interface TeamService {
     List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName);
     List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
-    List<VmDTO>getTeamVmsForStudentAndCourse(String studentId, String courseName);
+    TeamDTO getTeamForStudentAndCourse(String studentId, String courseName);
     boolean hasAcceptedProposals(String studentId, String courseName);
     List<Long> getPendingTeamProposalIdsForStudent(String courseName, String studentId);
 

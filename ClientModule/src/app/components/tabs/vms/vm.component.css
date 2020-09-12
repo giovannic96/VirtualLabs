@@ -9,7 +9,7 @@ mat-icon {
   cursor: default;
 }
 
-mat-card {
+.team-vms-container mat-card {
   min-width: 250px;
   max-width: 400px;
   flex: 1 1 30%;
@@ -20,19 +20,19 @@ mat-list {
   padding-top: 0;
 }
 
-.mat-card-header {
+.team-vms-container .mat-card-header {
   width: 100%;
   display: inline-flex;
   justify-content: space-between;
   align-items: unset;
 }
 
-mat-card-footer {
+.team-vms-container mat-card-footer {
   text-align: center;
   margin: 1em 0;
 }
 
-mat-card-footer button {
+.team-vms-container mat-card-footer button {
   margin: 0 .5em;
 }
 

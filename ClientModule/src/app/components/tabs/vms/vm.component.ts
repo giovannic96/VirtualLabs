@@ -29,6 +29,7 @@ export class VmComponent implements OnInit {
   public vmModel: VmModel;
   public teamList: Team[];
   public myVms: Vm[];
+  public myTeam: Team;
   public osMap: Map<string, string>;
 
   public utility: Utility;
@@ -68,7 +69,11 @@ export class VmComponent implements OnInit {
       });
 
     this.currentCourse.pipe(
-      concatMap(course => this.studentService.getTeamVmsForStudent(this.utility.getMyId(), course.name)))
+      concatMap(course => this.studentService.getTeamForStudent(this.utility.getMyId(), course.name)),
+      concatMap(team => {
+        this.myTeam = team;
+        return this.teamService.getTeamVms(team.id);
+      }))
       .subscribe(vms => this.myVms = vms);
 
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
@@ -144,12 +149,29 @@ export class VmComponent implements OnInit {
     this.vmService.encodeAndNavigate(vm);
   }
 
-  testVmCreation() {
-    const data = {vmExists: false, vmModel: this.vmModel, osMap: this.osMap};
-    /*
-    if (this.vm) {
+  openVmSettingsDialog(vm?: Vm) {
+
+    const maxVm = this.utility.calcAvailableVmResources(this.myVms, this.vmModel);
+    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
+      alert('ops');
+      return;
+    }
+
+    const data = {
+      vmExists: false,
+      vmModel: this.vmModel,
+      vm,
+      osMap: this.osMap,
+      teamId: this.myTeam.id,
+      maxVm
+    };
+
+    if (vm) {
       data.vmExists = true;
-    }*/
+      data.maxVm.vcpu += vm.vcpu;
+      data.maxVm.ram += vm.ram;
+      data.maxVm.disk += vm.disk;
+    }
 
     const dialogRef = this.dialog.open(VmSettingsDialogComponent, {disableClose: false, data});
   }

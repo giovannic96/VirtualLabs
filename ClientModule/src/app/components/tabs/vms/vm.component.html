@@ -85,21 +85,23 @@
 
 <ng-template #myVmsSection>
   <ng-container *ngIf="myVms?.length; else noVms">
-    <mat-card>
-      <mat-card *ngFor="let vm of myVms; let i = index">
-        <mat-card-header>
-          <mat-card-title>Vm#{{i+1}}</mat-card-title>
-          <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
-        </mat-card-header>
-        <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.jpg'">
-        <mat-card-content>
-          <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{utility.calcDiskLabel(vm.disk)}}</mat-card-subtitle>
-          <mat-card-footer>
-            <button mat-flat-button color="accent" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
-            <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
-          </mat-card-footer>
-        </mat-card-content>
-      </mat-card>
+    <mat-card class="card-for-vms">
+      <div class="team-vms-container">
+        <mat-card *ngFor="let vm of myVms; let i = index">
+          <mat-card-header>
+            <mat-card-title>Vm#{{i+1}}</mat-card-title>
+            <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+          </mat-card-header>
+          <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.jpg'">
+          <mat-card-content>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{utility.calcDiskLabel(vm.disk)}}</mat-card-subtitle>
+            <mat-card-footer>
+              <button mat-flat-button color="accent" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
+              <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
+            </mat-card-footer>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </mat-card>
     <ng-container [ngTemplateOutlet]="fabAddVm"></ng-container>
   </ng-container>
@@ -116,7 +118,7 @@
 
 <ng-template #fabAddVm>
   <div class="add-btn-container">
-    <button class="icon-btn add-btn"> <!--(click)="openVmSettingsDialog(vmModel)-->
+    <button class="icon-btn add-btn" (click)="openVmSettingsDialog()">
       <div class="add-icon"></div>
       <div class="btn-txt"><strong>CREATE</strong></div>
     </button>

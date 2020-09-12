@@ -1,11 +1,14 @@
 .vm-form-container {
   display: flex;
+  flex-flow: row wrap;
+  align-items: center;
   gap: 3em;
   margin: 1em 0;
 }
 
 .vm-form-column {
-
+  min-width: 300px;
+  flex: 1 1;
 }
 
 .vm-form-column mat-form-field {
@@ -31,19 +34,22 @@ mat-card-subtitle {
 
 .vm-model-info-container {
   display: flex;
+  flex: 1 1 30%;
   flex-direction: column;
 }
 
 .operating-system-preview-card {
-  margin-top: 1em;
-  padding: 1.5em 1.5em .3em 1.5em;
+  margin: 2em 0;
+  padding: .5em 1.5em;
   min-width: auto;
-  max-width: 220px;
+  max-width: 250px;
+  align-self: center;
+  text-align: center;
 }
 
 .custom-slider-error-container {
   height: 1.2em;
-  margin-bottom: 1em;
+  margin-bottom: .5em;
   margin-top: -1em;
 }
 
@@ -52,4 +58,12 @@ mat-card-subtitle {
   font-weight: initial;
   color: #f44336;
   font-size: 75%;
+}
+
+.vm-buttons-div {
+  text-align: right;
+}
+
+.vm-buttons-div button {
+  margin: 1em 0 0 1em;
 }

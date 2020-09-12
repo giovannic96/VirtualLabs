@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {VmService} from '../../../services/vm.service';
 import {VmModel} from '../../../models/vm-model.model';
 import {Vm} from '../../../models/vm.model';
+import {TeamService} from '../../../services/team.service';
 
 @Component({
   selector: 'app-vm-settings-dialog',
@@ -23,7 +24,8 @@ export class VmSettingsDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: any,
               private cd: ChangeDetectorRef,
               public formBuilder: FormBuilder,
-              private vmService: VmService) {
+              private vmService: VmService,
+              private teamService: TeamService) {
 
     this.utility = new Utility();
   }
@@ -37,7 +39,6 @@ export class VmSettingsDialogComponent implements OnInit {
 
     this.vmModel = this.data.vmModel;
 
-    /*
     if (this.data.vmExists) {
 
       const vm: Vm = this.data.vm;
@@ -47,7 +48,7 @@ export class VmSettingsDialogComponent implements OnInit {
       this.vmFormGroup.get('disk').setValue(vm.disk);
 
       this.cd.detectChanges();
-    }*/
+    }
   }
 
   getOsImagePreview(osCode: string) {
@@ -63,7 +64,13 @@ export class VmSettingsDialogComponent implements OnInit {
       return;
     }
 
+    const vm: Vm = new Vm();
+    vm.vcpu = this.vmFormGroup.get('vcpu').value;
+    vm.ram = this.vmFormGroup.get('ram').value;
+    vm.disk = this.vmFormGroup.get('disk').value;
+
     //  qui faccio la richiesta e aspetto la risposta
+    //this.teamService.createVm(this.data.teamId, vm);
 
     return; //TODO: remove when tested
     this.dialogRef.close();

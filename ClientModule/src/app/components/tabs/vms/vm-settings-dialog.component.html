@@ -6,39 +6,33 @@
   <div class="vm-form-container">
     <div class="vm-model-info-container">
       <mat-card class="operating-system-preview-card">
-        <mat-card-subtitle>{{data.osMap.get(vmModel.os)}}</mat-card-subtitle>
         <mat-card-content>
           <img mat-card-image [src]="getOsImagePreview(this.vmModel.os)">
         </mat-card-content>
+        <mat-card-subtitle>{{data.osMap.get(vmModel.os)}}</mat-card-subtitle>
       </mat-card>
-      <div *ngIf="data.osMap">
-        <h4 matLine>Max resources available:</h4>
-        <mat-card-subtitle mat-card-subtitle>CPU cores: {{vmModel.maxVCPU}}</mat-card-subtitle>
-        <mat-card-subtitle mat-card-subtitle>RAM: {{vmModel.maxRAM}}GB</mat-card-subtitle>
-        <mat-card-subtitle mat-card-subtitle>Disk: {{utility.calcDiskLabel(vmModel.maxDisk)}}</mat-card-subtitle>
-      </div>
     </div>
     <div class="vm-form-column">
       <h4>Vm resources</h4>
       <ng-container>
-        <mat-card-subtitle>CPU - {{cpuSlider.value}} cores</mat-card-subtitle>
-        <mat-slider formControlName="vcpu" #cpuSlider step="2" min="0" max="32"></mat-slider>
+        <mat-card-subtitle>CPU - {{cpuSlider.value}} cores (max available: {{data.maxVm.vcpu}} cores)</mat-card-subtitle>
+        <mat-slider formControlName="vcpu" #cpuSlider step="1" min="0" [max]="data.maxVm.vcpu"></mat-slider>
         <div class="custom-slider-error-container">
           <h5 class="custom-slider-error-message"
               *ngIf="formIsInvalid && vmFormGroup.get('vcpu').hasError('min')">This value cannot be <b>0</b></h5>
         </div>
       </ng-container>
       <ng-container>
-        <mat-card-subtitle>RAM - {{ramSlider.value}} GB</mat-card-subtitle>
-        <mat-slider formControlName="ram" #ramSlider step="8" min="0" max="64"></mat-slider>
+        <mat-card-subtitle>RAM - {{ramSlider.value}} GB (max available: {{data.maxVm.ram}} GB)</mat-card-subtitle>
+        <mat-slider formControlName="ram" #ramSlider step="1" min="0" [max]="data.maxVm.ram"></mat-slider>
         <div class="custom-slider-error-container">
           <h5 class="custom-slider-error-message"
               *ngIf="formIsInvalid && vmFormGroup.get('ram').hasError('min')">This value cannot be <b>0</b></h5>
         </div>
       </ng-container>
       <ng-container>
-        <mat-card-subtitle>Disk - {{utility.calcDiskLabel(diskSlider.value)}}</mat-card-subtitle>
-        <mat-slider formControlName="disk" #diskSlider step="512" min="0" max="4096"></mat-slider>
+        <mat-card-subtitle>Disk - {{utility.calcDiskLabel(diskSlider.value)}} (max available: {{utility.calcDiskLabel(data.maxVm.disk)}})</mat-card-subtitle>
+        <mat-slider formControlName="disk" #diskSlider step="128" min="0" [max]="data.maxVm.disk"></mat-slider>
         <div class="custom-slider-error-container">
           <h5 class="custom-slider-error-message"
               *ngIf="formIsInvalid && vmFormGroup.get('disk').hasError('min')">This value cannot be <b>0</b></h5>

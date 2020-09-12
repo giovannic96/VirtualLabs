@@ -89,14 +89,14 @@ export class StudentService {
       );
   }
 
-  getTeamVmsForStudent(studentId: string, courseName: string) {
+  getTeamForStudent(studentId: string, courseName: string) {
     return this.httpClient
-      .get<Vm[]>(`${this.API_PATH}/${studentId}/courses/${courseName}/teamVms`)
+      .get<Team>(`${this.API_PATH}/${studentId}/courses/${courseName}/team`)
       .pipe(
         retry(3),
         catchError(err => {
           console.error(err);
-          return throwError(`GetTeamVmsForStudent error: ${err.message}`);
+          return throwError(`GetTeamForStudent error: ${err.message}`);
         })
       );
   }
