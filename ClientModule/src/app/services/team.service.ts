@@ -5,6 +5,7 @@ import {catchError, retry} from 'rxjs/operators';
 import {throwError} from 'rxjs';
 import {Vm} from '../models/vm.model';
 import {TeamProposal} from '../models/team-proposal.model';
+import {Team} from "../models/team.model";
 
 @Injectable({
   providedIn: 'root'

@@ -85,4 +85,12 @@ mat-card-footer button {
   margin: 1em 0;
 }
 
+.no-vms-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
+}
 
+.no-vms-message-container {
+  margin: .2em 0;
+}
