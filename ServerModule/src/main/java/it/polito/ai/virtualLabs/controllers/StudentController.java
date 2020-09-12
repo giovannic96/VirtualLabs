@@ -90,6 +90,11 @@ public class StudentController {
         return teamService.hasAcceptedProposals(studentId, courseName);
     }
 
+    @GetMapping("/{studentId}/courses/{courseName}/teamVms")
+    public List<VmDTO> teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
+        return teamService.getTeamVmsForStudentAndCourse(studentId, courseName);
+    }
+
     @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean addReports(@PathVariable String studentId, @PathVariable String courseName,

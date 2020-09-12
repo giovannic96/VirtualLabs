@@ -36,7 +36,7 @@ API
 * GET	http://ip_address:port/api/students/:studentId/reports
 * GET	http://ip_address:port/api/students/:studentId/courses
 * GET	http://ip_address:port/api/students/:studentId/courses/:courseName/checkAcceptedProposals   // TO ADD TO POSTMAN
-* GET	http://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/reports
+* GET	http://ip_address:port/api/students/:studentId/courses/:courseName/team                     // TO ADD TO POSTMAN
 * GET	http://ip_address:port/api/students/:studentId/teams
 * GET	http://ip_address:port/api/students/:studentId/vms
 * GET	http://ip_address:port/api/students/:studentId/teamProposals

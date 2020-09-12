@@ -12,6 +12,7 @@ import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundE
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotInTeamException;
 import it.polito.ai.virtualLabs.services.exceptions.team.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -563,6 +564,25 @@ public class TeamServiceImpl implements TeamService {
                 .getTeamProposals()
                 .stream()
                 .map(tp -> modelMapper.map(tp, TeamProposalDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<VmDTO> getTeamVmsForStudentAndCourse(String studentId, String courseName) {
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+        if(!courseRepository.existsById(courseName))
+            throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
+
+        Student s = userRepository.getStudentById(studentId);
+        Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(s, courseName);
+
+        if(!team.isPresent())
+            throw new StudentNotInTeamException("The student with id '" + studentId + "' doesn't have a team in the course named '" + courseName + "'");
+
+        return team.get().getVms()
+                .stream()
+                .map(vm -> modelMapper.map(vm, VmDTO.class))
                 .collect(Collectors.toList());
     }
 
