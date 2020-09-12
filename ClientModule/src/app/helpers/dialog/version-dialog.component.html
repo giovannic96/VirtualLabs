@@ -43,8 +43,11 @@
                   [width]="max(content.width, 1)"
                   [penColor]="currentColor"></app-canvas>
     </div>
-    <div class="checkbox-container" >
-      <mat-checkbox #checkbox color="primary" labelPosition="before">Grade report after review</mat-checkbox>
+    <div class="radiobutton-container">
+      <mat-radio-group [(ngModel)]="gradeAfterReview">
+        <mat-radio-button color="accent" [value]="true">Grade Report after review</mat-radio-button>
+        <mat-radio-button color="accent" [value]="false">Ask student for a new submission</mat-radio-button>
+      </mat-radio-group>
     </div>
     <div class="buttons-container">
       <mat-dialog-actions>
