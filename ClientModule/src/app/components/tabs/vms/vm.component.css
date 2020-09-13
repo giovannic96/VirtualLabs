@@ -81,8 +81,10 @@ mat-list {
   margin: 1em 0 0 1em;
 }
 
-.no-vm-model-message {
-  margin: 1em 0;
+.no-vm-model-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
 }
 
 .no-vms-card {
@@ -93,4 +95,36 @@ mat-list {
 
 .no-vms-message-container {
   margin: .2em 0;
+}
+
+.no-vm-model-message-container {
+  margin: .2em 0;
+}
+
+.no-vm-model-message-professor-side {
+  margin-top: 1em;
+}
+
+.vm-settings-led-container {
+  display: flex;
+  align-items: center;
+  margin-top: -.7em;
+}
+
+.vm-settings-container {
+  margin: 0;
+}
+
+.vm-settings-btn {
+  margin-right: .4em;
+}
+
+.vm-settings-icon {
+  padding: 0;
+  cursor: pointer;
+}
+
+.vm-settings-menu-icon {
+  cursor: pointer;
+  margin-right: 0 !important;
 }

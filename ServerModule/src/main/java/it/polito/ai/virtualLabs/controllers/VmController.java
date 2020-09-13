@@ -129,6 +129,7 @@ public class VmController {
     }
 
     @DeleteMapping("/{vmId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void remove(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);

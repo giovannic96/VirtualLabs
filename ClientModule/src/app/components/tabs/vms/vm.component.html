@@ -3,7 +3,7 @@
     <mat-icon>tune</mat-icon>
     <h2>Vm model</h2>
   </div>
-  <mat-accordion>
+  <mat-accordion *ngIf="utility.isProfessor() || (!utility.isProfessor() && vmModel) else noVmModel">
     <mat-expansion-panel hideToggle [expanded]="!vmModel">
       <mat-expansion-panel-header class="vm-model-panel-header">
         <mat-panel-description>
@@ -16,9 +16,6 @@
             </mat-list>
             <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof. ' + vmModel.professor.name + ' ' + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
           </div>
-          <ng-template #noVmModel>
-            <mat-card-subtitle class="no-vm-model-message">There is no vm model for this course yet</mat-card-subtitle>
-          </ng-template>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="vm-model-details" *ngIf="vmModel">
@@ -90,7 +87,24 @@
         <mat-card *ngFor="let vm of myTeam.vms; let i = index">
           <mat-card-header>
             <mat-card-title>Vm#{{i+1}}</mat-card-title>
-            <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+            <div class="vm-settings-led-container">
+              <div class="vm-settings-container">
+                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                  <mat-icon class="vm-settings-icon">settings</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item>
+                    <mat-icon class="vm-settings-menu-icon">edit</mat-icon>
+                    <span>EDIT</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteVm(vm.id)">
+                    <mat-icon color="warn" class="vm-settings-menu-icon">delete</mat-icon>
+                    <span>DELETE</span>
+                  </button>
+                </mat-menu>
+              </div>
+              <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+            </div>
           </mat-card-header>
           <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.jpg'">
           <mat-card-content>
@@ -114,6 +128,17 @@
     </mat-card>
     <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddVm"></ng-container>
   </div>
+</ng-template>
+
+<ng-template #noVmModel>
+  <div class="no-vm-model-message-container">
+    <mat-card class="no-vm-model-card" *ngIf="!utility.isProfessor()">
+      <span>There is no vm model for this course yet</span>
+    </mat-card>
+  </div>
+  <span *ngIf="utility.isProfessor()" class="no-vm-model-message-professor-side">
+    There is no vm model for this course yet
+  </span>
 </ng-template>
 
 <ng-template #fabAddVm>

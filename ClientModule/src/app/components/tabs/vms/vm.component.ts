@@ -141,6 +141,28 @@ export class VmComponent implements OnInit {
     }
   }
 
+  async deleteVm(vmId: number) {
+      const message = 'You are removing the virtual machine from the team ' + this.myTeam?.name;
+      const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+          message,
+          buttonConfirmLabel: 'CONFIRM',
+          buttonCancelLabel: 'CANCEL'
+        }
+      }).afterClosed().toPromise();
+
+      if (areYouSure) {
+        this.vmService.deleteVm(vmId).subscribe(
+          () => {
+            const vmToDelete = this.myTeam?.vms.find(vm => vm.id === vmId);
+            if (vmToDelete)
+              this.myTeam?.vms.splice(this.myTeam.vms.indexOf(vmToDelete), 1);
+            this.mySnackBar.openSnackBar('Virtual machine deleted successfully', MessageType.SUCCESS, 3);
+          },
+          error => this.mySnackBar.openSnackBar('Virtual machine deletion failed', MessageType.ERROR, 3)
+        );
+      }
+  }
+
   toggleVmPower(vm: Vm) {
     const response = vm.active ? this.vmService.powerOffVm(vm.id) : this.vmService.powerOnVm(vm.id);
     response.subscribe(() => vm.active = !vm.active);
