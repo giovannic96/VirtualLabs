@@ -1,3 +1,5 @@
+import {Student} from './student.model';
+
 export class Vm {
   private _id: number;
   private _active: boolean;
@@ -5,6 +7,7 @@ export class Vm {
   private _ram: number;
   private _disk: number;
   private _content: string;
+  private _owner: Student;
 
   get id(): number {
     return this._id;
@@ -52,6 +55,14 @@ export class Vm {
 
   set content(value: string) {
     this._content = value;
+  }
+
+  get owner(): Student {
+    return this._owner;
+  }
+
+  set owner(value: Student) {
+    this._owner = value;
   }
 
   getDTO() {

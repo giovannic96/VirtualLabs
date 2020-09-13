@@ -243,6 +243,9 @@ public class VmServiceImpl implements VmService {
 
         //check resources constraints
         Vm curVm = vmRepository.getOne(vmId);
+        curVm.setVCPU(0);
+        curVm.setRAM(0);
+        curVm.setDisk(0);
         if(resourcesExceeded(curVm.getTeam().getVms(), curVm.getVmModel(), vCPU, ram, disk))
             return false;
 

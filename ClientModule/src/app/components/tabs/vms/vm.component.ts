@@ -3,7 +3,7 @@ import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
 import {concatMap, filter, mergeMap} from 'rxjs/operators';
-import {EMPTY, Observable, of} from 'rxjs';
+import {EMPTY, forkJoin, Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
 import {MatDialog} from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import {Router} from '@angular/router';
 import Utility from '../../../helpers/utility';
 import {VmSettingsDialogComponent} from './vm-settings-dialog.component';
 import {StudentService} from '../../../services/student.service';
+import {Student} from '../../../models/student.model';
 
 @Component({
   selector: 'app-vm',
@@ -76,12 +77,17 @@ export class VmComponent implements OnInit {
       concatMap(team => {
         this.myTeam = team;
         return this.teamService.getTeamVms(team.id);
-      }))
-      .subscribe(vms => {
+      }),
+      mergeMap(vms => {
         this.myTeam.vms = vms;
         if (this.vmModel)
           this.setVmCreatable();
+        const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+        return forkJoin(ownerRequests);
+      })).subscribe(owners => {
+        this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
       });
+
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
 
@@ -175,7 +181,7 @@ export class VmComponent implements OnInit {
       });
     } else {
       if (this.myTeam?.vms.filter(v => v.active).length >= this.vmModel.maxActiveVm)
-        this.mySnackBar.openSnackBar('You have reached max number of active vms', MessageType.ERROR, 5);
+        this.mySnackBar.openSnackBar('Your team have reached max number of active vms', MessageType.ERROR, 5);
       else
         this.vmService.powerOnVm(vm.id).subscribe(() => {
           vm.active = true;
@@ -226,5 +232,9 @@ export class VmComponent implements OnInit {
       }
       this.setVmCreatable();
     });
+  }
+
+  isOwner(ownerId: string) {
+    return ownerId === this.utility.getMyId();
   }
 }
