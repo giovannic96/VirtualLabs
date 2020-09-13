@@ -29,7 +29,9 @@ export class VmComponent implements OnInit {
   public vmModel: VmModel;
   public teamList: Team[];
   public myTeam: Team;
+  public maxVmCreatable: Vm;
   public osMap: Map<string, string>;
+  public isVmCreatable: boolean;
 
   public utility: Utility;
 
@@ -75,8 +77,11 @@ export class VmComponent implements OnInit {
         this.myTeam = team;
         return this.teamService.getTeamVms(team.id);
       }))
-      .subscribe(vms => this.myTeam.vms = vms);
-
+      .subscribe(vms => {
+        this.myTeam.vms = vms;
+        if (this.vmModel)
+          this.setVmCreatable();
+      });
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
 
@@ -164,21 +169,33 @@ export class VmComponent implements OnInit {
   }
 
   toggleVmPower(vm: Vm) {
-    const response = vm.active ? this.vmService.powerOffVm(vm.id) : this.vmService.powerOnVm(vm.id);
-    response.subscribe(() => vm.active = !vm.active);
+    if (vm.active) {
+      this.vmService.powerOffVm(vm.id).subscribe(() => {
+        vm.active = false;
+      });
+    } else {
+      if (this.myTeam?.vms.filter(v => v.active).length >= this.vmModel.maxActiveVm)
+        this.mySnackBar.openSnackBar('You have reached max number of active vms', MessageType.ERROR, 5);
+      else
+        this.vmService.powerOnVm(vm.id).subscribe(() => {
+          vm.active = true;
+        });
+    }
   }
 
   openVm(vm: Vm) {
     this.vmService.encodeAndNavigate(vm);
   }
 
-  openVmSettingsDialog(vm?: Vm) {
+  setVmCreatable() {
+    this.maxVmCreatable = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
+    this.isVmCreatable = !!this.maxVmCreatable.vcpu &&
+                         !!this.maxVmCreatable.ram &&
+                         !!this.maxVmCreatable.disk &&
+                         this.vmModel?.maxTotVm > this.myTeam?.vms?.length;
+  }
 
-    const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
-    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
-      alert('ops');
-      return;
-    }
+  openVmSettingsDialog(vm?: Vm) {
 
     const data = {
       vmExists: false,
@@ -186,7 +203,7 @@ export class VmComponent implements OnInit {
       vm,
       osMap: this.osMap,
       teamId: this.myTeam.id,
-      maxVm
+      maxVm: this.maxVmCreatable
     };
 
     if (vm) {
@@ -194,8 +211,20 @@ export class VmComponent implements OnInit {
       data.maxVm.vcpu += vm.vcpu;
       data.maxVm.ram += vm.ram;
       data.maxVm.disk += vm.disk;
+    } else {
+      if (!this.isVmCreatable)
+        return;
     }
 
     const dialogRef = this.dialog.open(VmSettingsDialogComponent, {disableClose: false, data});
+
+    dialogRef.afterClosed().pipe(filter(res => res)).subscribe((vmResponse: Vm) => {
+      if (data.vmExists) {
+        vm = vmResponse;
+      } else {
+        this.myTeam.vms.push(vmResponse);
+      }
+      this.setVmCreatable();
+    });
   }
 }

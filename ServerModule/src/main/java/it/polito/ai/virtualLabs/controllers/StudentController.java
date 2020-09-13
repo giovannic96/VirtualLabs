@@ -92,7 +92,8 @@ public class StudentController {
 
     @GetMapping("/{studentId}/courses/{courseName}/team")
     public TeamDTO teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
-        return teamService.getTeamForStudentAndCourse(studentId, courseName);
+        TeamDTO team = teamService.getTeamForStudentAndCourse(studentId, courseName);
+        return ModelHelper.enrich(team);
     }
 
     @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")

@@ -93,7 +93,7 @@
                   <mat-icon class="vm-settings-icon">settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                  <button mat-menu-item>
+                  <button mat-menu-item (click)="openVmSettingsDialog(vm)">
                     <mat-icon class="vm-settings-menu-icon">edit</mat-icon>
                     <span>EDIT</span>
                   </button>
@@ -117,7 +117,7 @@
         </mat-card>
       </div>
     </mat-card>
-    <ng-container [ngTemplateOutlet]="fabAddVm"></ng-container>
+    <ng-container *ngIf="isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
   </ng-container>
 </ng-template>
 
@@ -126,7 +126,7 @@
     <mat-card class="no-vms-card">
       <span>Still no virtual machine has been created</span>
     </mat-card>
-    <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddVm"></ng-container>
+    <ng-container *ngIf="!utility.isProfessor() && isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
   </div>
 </ng-template>
 

@@ -6,6 +6,7 @@ import {VmService} from '../../../services/vm.service';
 import {VmModel} from '../../../models/vm-model.model';
 import {Vm} from '../../../models/vm.model';
 import {TeamService} from '../../../services/team.service';
+import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 
 @Component({
   selector: 'app-vm-settings-dialog',
@@ -25,7 +26,8 @@ export class VmSettingsDialogComponent implements OnInit {
               private cd: ChangeDetectorRef,
               public formBuilder: FormBuilder,
               private vmService: VmService,
-              private teamService: TeamService) {
+              private teamService: TeamService,
+              private mySnackBar: MySnackBarComponent) {
 
     this.utility = new Utility();
   }
@@ -69,11 +71,26 @@ export class VmSettingsDialogComponent implements OnInit {
     vm.ram = this.vmFormGroup.get('ram').value;
     vm.disk = this.vmFormGroup.get('disk').value;
 
-    //  qui faccio la richiesta e aspetto la risposta
-    //this.teamService.createVm(this.data.teamId, vm);
+    if (this.data.vmExists) {
+      this.vmService.editVm(this.data.vm.id, vm.getDTO()).subscribe(() => {
+        this.mySnackBar.openSnackBar('Vm edited successfully', MessageType.SUCCESS, 3);
 
-    return; //TODO: remove when tested
-    this.dialogRef.close();
+        this.data.vm.vcpu = vm.vcpu;
+        this.data.vm.ram = vm.ram;
+        this.data.vm.disk = vm.disk;
+
+        this.dialogRef.close(this.data.vm);
+      }, () =>
+        this.mySnackBar.openSnackBar('Vm edit failed', MessageType.ERROR, 5)
+      );
+    } else {
+      this.teamService.createVm(this.data.teamId, vm.getDTO()).subscribe(newVm => {
+          this.mySnackBar.openSnackBar('Vm created successfully', MessageType.SUCCESS, 3);
+          this.dialogRef.close(newVm);
+        }, () =>
+          this.mySnackBar.openSnackBar('Vm creation failed', MessageType.ERROR, 5)
+        );
+    }
   }
 
 }

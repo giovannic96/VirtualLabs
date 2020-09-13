@@ -53,4 +53,12 @@ export class Vm {
   set content(value: string) {
     this._content = value;
   }
+
+  getDTO() {
+    return {
+      vcpu: this._vcpu,
+      ram: this._ram,
+      disk: this._disk
+    };
+  }
 }

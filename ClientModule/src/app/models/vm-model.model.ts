@@ -98,13 +98,13 @@ export class VmModel {
 
   getDTO(): any {
     return {
-      name: this.name,
-      os: this.os,
-      maxVCPU: this.maxVCPU,
-      maxRAM: this.maxRAM,
-      maxDisk: this.maxDisk,
-      maxTotVm: this.maxTotVm,
-      maxActiveVm: this.maxActiveVm
+      name: this._name,
+      os: this._os,
+      maxVCPU: this._maxVCPU,
+      maxRAM: this._maxRAM,
+      maxDisk: this._maxDisk,
+      maxTotVm: this._maxTotVm,
+      maxActiveVm: this._maxActiveVm
     };
   }
 }

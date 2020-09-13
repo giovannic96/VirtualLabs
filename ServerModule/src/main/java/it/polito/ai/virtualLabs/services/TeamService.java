@@ -16,7 +16,7 @@ public interface TeamService {
     boolean addStudent(StudentDTO student); //TESTED
     List<Boolean> addAllStudents(List<StudentDTO> students); //TESTED
     Optional<StudentDTO> getStudent(String studentId); //TESTED
-    Optional<StudentDTO> getStudentByUsername(String studentId);
+    Optional<StudentDTO> getStudentByUsername(String username);
     List<StudentDTO> getAllStudents(); //TESTED
     boolean addProfessor(ProfessorDTO professor); //TESTED
     List<Boolean> addAllProfessors(List<ProfessorDTO> professors); //TESTED

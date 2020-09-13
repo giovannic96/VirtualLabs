@@ -93,9 +93,9 @@ export class Report {
   getDTO(): any {
     // here we don't need releaseDate because it is set by the server
     return {
-      grade: this.grade,
-      status: this.status,
-      statusDate: this.statusDate
+      grade: this._grade,
+      status: this._status,
+      statusDate: this._statusDate
     };
   }
 }
