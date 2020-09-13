@@ -84,14 +84,12 @@ export class VmComponent implements OnInit {
   }
 
   async openDialog() {
-
     const data = {modelExists: false, vmModel: this.vmModel, osMap: this.osMap};
     if (this.vmModel) {
       data.modelExists = true;
     }
 
     const dialogRef = this.dialog.open(VmModelSettingsDialogComponent, {disableClose: true, data});
-
     const course: Course = this.courseService.getSelectedCourseValue();
 
     const dialogResponse: VmModel = await dialogRef.afterClosed().toPromise();
@@ -142,7 +140,7 @@ export class VmComponent implements OnInit {
   }
 
   async deleteVm(vmId: number) {
-      const message = 'You are removing the virtual machine from the team ' + this.myTeam?.name;
+      const message = 'You are removing the virtual machine from the team \'' + this.myTeam?.name + '\'';
       const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
           message,
           buttonConfirmLabel: 'CONFIRM',
@@ -173,7 +171,6 @@ export class VmComponent implements OnInit {
   }
 
   openVmSettingsDialog(vm?: Vm) {
-
     const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
     if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
       alert('ops');
