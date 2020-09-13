@@ -28,7 +28,6 @@ export class VmComponent implements OnInit {
 
   public vmModel: VmModel;
   public teamList: Team[];
-  public myVms: Vm[];
   public myTeam: Team;
   public osMap: Map<string, string>;
 
@@ -59,6 +58,7 @@ export class VmComponent implements OnInit {
 
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getVmModel(course.name)),
+      filter(vmModel => vmModel != null),
       concatMap(vmModel => {
         this.vmModel = vmModel;
         return this.vmService.getVmModelProfessor(vmModel.id);
@@ -70,11 +70,12 @@ export class VmComponent implements OnInit {
 
     this.currentCourse.pipe(
       concatMap(course => this.studentService.getTeamForStudent(this.utility.getMyId(), course.name)),
+      filter(team => team != null),
       concatMap(team => {
         this.myTeam = team;
         return this.teamService.getTeamVms(team.id);
       }))
-      .subscribe(vms => this.myVms = vms);
+      .subscribe(vms => this.myTeam.vms = vms);
 
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
@@ -151,7 +152,7 @@ export class VmComponent implements OnInit {
 
   openVmSettingsDialog(vm?: Vm) {
 
-    const maxVm = this.utility.calcAvailableVmResources(this.myVms, this.vmModel);
+    const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
     if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
       alert('ops');
       return;

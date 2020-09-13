@@ -195,6 +195,12 @@ mat-card {
   padding-left: 16px!important;
 }
 
+.no-teams-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
+}
+
 .no-vms-header {
   justify-content: center;
 }

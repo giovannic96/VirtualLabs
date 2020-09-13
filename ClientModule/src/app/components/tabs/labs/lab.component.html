@@ -1,191 +1,203 @@
-<div class="tab-section" *ngIf="assignmentList?.length; else noAssignments">
+<div class="tab-section">
   <div class="tab-subtitle">
     <mat-icon>assignment</mat-icon>
     <h2>Assignments</h2>
   </div>
-  <mat-accordion multi="false">
-    <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
-                         (opened)="markAsRead(getReportForStudent(assignment, utility.getMyId()))">
-      <mat-expansion-panel-header class="assignment-header">
-        <mat-panel-title>
-          {{assignment.name}}
-        </mat-panel-title>
-        <div class="status-label-container">
+  <ng-container *ngIf="assignmentList?.length; else noAssignments">
+    <mat-accordion multi="false">
+      <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
+                           (opened)="markAsRead(getReportForStudent(assignment, utility.getMyId()))">
+        <mat-expansion-panel-header class="assignment-header">
+          <mat-panel-title>
+            {{assignment.name}}
+          </mat-panel-title>
+          <div class="status-label-container">
           <span [className]="assignmentStatusMap.get(assignment.id)?.className">
               <b>{{assignmentStatusMap.get(assignment.id)?.label}}</b>
           </span>
-        </div>
-        <div class="panels-description">
-          <mat-panel-description *ngIf="assignment">
-            <div class="icons-div">
-              <i>{{isAssignmentExpired(assignment) ? 'Expired' : 'Expires'}} in:
-                {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
-            </div>
-          </mat-panel-description>
-        </div>
-      </mat-expansion-panel-header>
-      <ng-container>
+          </div>
+          <div class="panels-description">
+            <mat-panel-description *ngIf="assignment">
+              <div class="icons-div">
+                <i>{{isAssignmentExpired(assignment) ? 'Expired' : 'Expires'}} in:
+                  {{utility.formatDate(assignment.expiryDate) | date:'medium'}}</i>
+              </div>
+            </mat-panel-description>
+          </div>
+        </mat-expansion-panel-header>
+        <ng-container>
           <div>
             <mat-card-title class="assignment-desc">Description</mat-card-title>
             <mat-card-subtitle class="assignment-content">{{assignment.content}}</mat-card-subtitle>
           </div>
-      </ng-container>
-      <div class="info-divider"></div>
+        </ng-container>
+        <div class="info-divider"></div>
 
-      <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
+        <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
 
-        <ng-container *ngSwitchCase="'professor'">
-          <mat-card class="report-card-container">
-            <mat-card-title class="report-desc">Reports</mat-card-title>
-            <div class="report-status-filter">
-              <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
-                <mat-checkbox
-                  [ngClass]="{'filter-checkbox-submitted': rep.name === ReportStatus.SUBMITTED,
+          <ng-container *ngSwitchCase="'professor'">
+            <mat-card class="report-card-container">
+              <mat-card-title class="report-desc">Reports</mat-card-title>
+              <div class="report-status-filter">
+                <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
+                  <mat-checkbox
+                    [ngClass]="{'filter-checkbox-submitted': rep.name === ReportStatus.SUBMITTED,
                               'filter-checkbox-graded': rep.name === ReportStatus.GRADED}"
-                  [color]="rep.color"
-                  (change)="filterReports()"
-                  [(ngModel)]="rep.checked">
-                  {{rep.name}}
-                </mat-checkbox>
-              </section>
-            </div>
-            <div class="report-accordion">
-            <mat-accordion multi="false">
-              <mat-expansion-panel *ngFor="let report of this.filteredReports.get(assignment.id)">
-                <mat-expansion-panel-header class="report-panel-header">
-                  <mat-panel-description class="report-panel-desc" *ngIf="report?.status">
-                    <div>
-                      <div class="report-header">
-                        <img [src]="report.owner?.photo" mat-card-avatar>
-                        <div class="report-header-text">
-                          <mat-card-title class="report-owner-name">{{report.owner?.name}} {{report.owner?.surname}}</mat-card-title>
-                          <mat-card-subtitle>Matricola: {{report.owner?.id}}</mat-card-subtitle>
+                    [color]="rep.color"
+                    (change)="filterReports()"
+                    [(ngModel)]="rep.checked">
+                    {{rep.name}}
+                  </mat-checkbox>
+                </section>
+              </div>
+              <div class="report-accordion">
+                <mat-accordion multi="false">
+                  <mat-expansion-panel *ngFor="let report of this.filteredReports.get(assignment.id)">
+                    <mat-expansion-panel-header class="report-panel-header">
+                      <mat-panel-description class="report-panel-desc" *ngIf="report?.status">
+                        <div>
+                          <div class="report-header">
+                            <img [src]="report.owner?.photo" mat-card-avatar>
+                            <div class="report-header-text">
+                              <mat-card-title class="report-owner-name">{{report.owner?.name}} {{report.owner?.surname}}</mat-card-title>
+                              <mat-card-subtitle>Matricola: {{report.owner?.id}}</mat-card-subtitle>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="icons-div report-status-container">
+                          <h2 class="grade-label">{{report.grade}}</h2>
+                          <span [style.background-color]="utility.getColorForStatus(report.status)" class="report-status-circle"></span>
+                        </div>
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <ng-container *ngIf="report.versions?.length">
+                      <div class="versions-header">
+                        <button mat-button (click)="toggleGridColumns()" fxHide.lt-md>
+                          <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 4">view_module</mat-icon>
+                          <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
+                        </button>
+                      </div>
+                      <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
+                        <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
+                             *ngFor="let version of report.versions; last as isLast">
+                          <mat-card class="mat-elevation-z4 z-depth" (click)="openVersionDialog(version, report, assignment, isLast)">
+                            <mat-card-header>
+                              <mat-card-title>{{version.title}}</mat-card-title>
+                              <div *ngIf="isLast" class="triangle">
+                                <span class="triangle-span-1">LAST</span>
+                                <span class="triangle-span-2">VERSION</span>
+                              </div>
+                            </mat-card-header>
+                            <img mat-card-image [src]="version.content" alt="version_content">
+                            <mat-card-content>
+                              <p>
+                                <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
+                              </p>
+                            </mat-card-content>
+                          </mat-card>
                         </div>
                       </div>
-                    </div>
-                    <div class="icons-div report-status-container">
-                      <h2 class="grade-label">{{report.grade}}</h2>
-                      <span [style.background-color]="utility.getColorForStatus(report.status)" class="report-status-circle"></span>
-                    </div>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <ng-container *ngIf="report.versions?.length">
-                  <div class="versions-header">
-                    <button mat-button (click)="toggleGridColumns()" fxHide.lt-md>
-                      <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 4">view_module</mat-icon>
-                      <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
-                    </button>
-                  </div>
-                  <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
-                    <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
-                         *ngFor="let version of report.versions; last as isLast">
-                      <mat-card class="mat-elevation-z4 z-depth" (click)="openVersionDialog(version, report, assignment, isLast)">
-                        <mat-card-header>
-                          <mat-card-title>{{version.title}}</mat-card-title>
-                          <div *ngIf="isLast" class="triangle">
-                            <span class="triangle-span-1">LAST</span>
-                            <span class="triangle-span-2">VERSION</span>
-                          </div>
-                        </mat-card-header>
-                        <img mat-card-image [src]="version.content" alt="version_content">
-                        <mat-card-content>
-                          <p>
-                            <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
-                          </p>
-                        </mat-card-content>
-                      </mat-card>
-                    </div>
-                  </div>
-                </ng-container>
-                <mat-action-row>
-                  <button mat-raised-button color="accent"
-                          (click)="openLastVersion(report, assignment)"
-                          [disabled]="!report.versions?.length">VIEW LAST VERSION</button>
-                  <button mat-raised-button color="primary"
-                          (click)="openGradeDialog(report, assignment)"
-                          *ngIf="isReportGradable(report, assignment)">GRADE REPORT</button>
-                </mat-action-row>
-              </mat-expansion-panel>
-            </mat-accordion>
-            </div>
-          </mat-card>
-        </ng-container>
-        <!-- end REPORTS section -->
+                    </ng-container>
+                    <mat-action-row>
+                      <button mat-raised-button color="accent"
+                              (click)="openLastVersion(report, assignment)"
+                              [disabled]="!report.versions?.length">VIEW LAST VERSION</button>
+                      <button mat-raised-button color="primary"
+                              (click)="openGradeDialog(report, assignment)"
+                              *ngIf="isReportGradable(report, assignment)">GRADE REPORT</button>
+                    </mat-action-row>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </mat-card>
+          </ng-container>
+          <!-- end REPORTS section -->
 
-        <!-- start VERSIONS section (student only) -->
-        <ng-container *ngSwitchCase="'student'">
-          <mat-card *ngVar="getReportForStudent(assignment, utility.getMyId()) as studentReport" class="version-card-container">
-            <div class="report-history-container">
-              <div class="report-history-right"></div>
-              <div class="report-history-desc">
-                <mat-card-title class="version-desc">Report history</mat-card-title>
-              </div>
-              <div class="versions-header-student">
-                <button mat-button (click)="toggleGridColumns()" fxHide.lt-md>
-                  <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 4">view_module</mat-icon>
-                  <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
-                </button>
-              </div>
-            </div>
-            <ng-container *ngIf="studentReport?.versions?.length">
-              <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
-                <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
-                     *ngFor="let version of studentReport?.versions; last as isLast">
-                  <mat-card class="mat-elevation-z4 z-depth"
-                            (click)="openVersionDialog(version, studentReport, assignment, isLast)">
-                    <mat-card-header>
-                      <mat-card-title>{{version.title}}</mat-card-title>
-                      <div *ngIf="isLast" class="triangle">
-                        <span class="triangle-span-1">LAST</span>
-                        <span class="triangle-span-2">VERSION</span>
-                      </div>
-                    </mat-card-header>
-                    <img mat-card-image [src]="version.content" alt="version_content">
-                    <mat-card-content>
-                      <p>
-                        <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
-                      </p>
-                    </mat-card-content>
-                  </mat-card>
+          <!-- start VERSIONS section (student only) -->
+          <ng-container *ngSwitchCase="'student'">
+            <mat-card *ngVar="getReportForStudent(assignment, utility.getMyId()) as studentReport" class="version-card-container">
+              <div class="report-history-container">
+                <div class="report-history-right"></div>
+                <div class="report-history-desc">
+                  <mat-card-title class="version-desc">Report history</mat-card-title>
+                </div>
+                <div class="versions-header-student">
+                  <button *ngIf="studentReport?.versions?.length" mat-button (click)="toggleGridColumns()" fxHide.lt-md>
+                    <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 4">view_module</mat-icon>
+                    <mat-icon class="toggleGridBtn" *ngIf="gridColumns === 3">view_comfy</mat-icon>
+                  </button>
                 </div>
               </div>
-            </ng-container>
-          </mat-card>
-        </ng-container>
-        <!-- end VERSIONS section (student only) -->
-
-      </ng-container>
-
-      <mat-action-row class="assignment-bottom">
-        <div class="icons-div">
-          <i>Assigned on: {{utility.formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
-        </div>
-        <div style="display: flex" *ngVar="getReportForStudent(assignment, utility.getMyId())?.grade as grade">
-          <ng-container *ngIf="grade !== null && !utility.isProfessor()">
-            <span>Grade obtained: </span>
-            <span class="grade-label">{{grade}}</span>
+              <ng-container *ngIf="studentReport?.versions?.length; else noVersions">
+                <div class="versions-grid" fxLayout="row wrap-reverse" fxLayoutGap="16px grid">
+                  <div [fxFlex]="(100/gridColumns) + '%'" fxFlex.xs="100%" fxFlex.sm="99%"
+                       *ngFor="let version of studentReport?.versions; last as isLast">
+                    <mat-card class="mat-elevation-z4 z-depth"
+                              (click)="openVersionDialog(version, studentReport, assignment, isLast)">
+                      <mat-card-header>
+                        <mat-card-title>{{version.title}}</mat-card-title>
+                        <div *ngIf="isLast" class="triangle">
+                          <span class="triangle-span-1">LAST</span>
+                          <span class="triangle-span-2">VERSION</span>
+                        </div>
+                      </mat-card-header>
+                      <img mat-card-image [src]="version.content" alt="version_content">
+                      <mat-card-content>
+                        <p>
+                          <i>{{utility.formatDate(version.submissionDate) | date:'medium'}}</i>
+                        </p>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </ng-container>
+            </mat-card>
           </ng-container>
-          <button mat-raised-button color="warn" *ngIf="utility.isProfessor()"
-                  (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
-          <button mat-raised-button color="primary" *ngIf="utility.isProfessor()"
-                  (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
-          <button mat-raised-button color="primary"
-                  *ngIf="!utility.isProfessor() && isReportSubmittable(assignment)"
-                  (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()))">ADD VERSION</button>
-        </div>
-      </mat-action-row>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+          <!-- end VERSIONS section (student only) -->
+
+        </ng-container>
+
+        <mat-action-row class="assignment-bottom">
+          <div class="icons-div">
+            <i>Assigned on: {{utility.formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
+          </div>
+          <div style="display: flex" *ngVar="getReportForStudent(assignment, utility.getMyId())?.grade as grade">
+            <ng-container *ngIf="grade !== null && !utility.isProfessor()">
+              <span>Grade obtained: </span>
+              <span class="grade-label">{{grade}}</span>
+            </ng-container>
+            <button mat-raised-button color="warn" *ngIf="utility.isProfessor()"
+                    (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
+            <button mat-raised-button color="primary" *ngIf="utility.isProfessor()"
+                    (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
+            <button mat-raised-button color="primary"
+                    *ngIf="!utility.isProfessor() && isReportSubmittable(assignment)"
+                    (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()))">ADD VERSION</button>
+          </div>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  </ng-container>
 </div>
-<ng-template #noAssignments>
-  <div class="no-assignments-message-container" *ngIf="assignmentList">
-    <mat-card style="margin-bottom: 0"><mat-card-header><mat-card-title>
-      Still no assignment has been published
-    </mat-card-title></mat-card-header></mat-card>
-    <ng-container [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+
+<ng-template #noVersions>
+  <div class="no-versions-message-container" *ngIf="assignmentList">
+    <mat-card-subtitle class="no-versions-card">
+      Still no version has been added
+    </mat-card-subtitle>
   </div>
 </ng-template>
+
+<ng-template #noAssignments>
+  <div class="no-assignments-message-container" *ngIf="assignmentList">
+    <mat-card class="no-assignments-card">
+      <span>Still no assignment has been published</span>
+    </mat-card>
+    <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+  </div>
+</ng-template>
+
 <ng-template #fabAddAssignment>
   <div class="add-btn-container">
     <button class="icon-btn add-btn" (click)="openAssignmentDialog()">

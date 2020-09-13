@@ -577,10 +577,7 @@ public class TeamServiceImpl implements TeamService {
         Student s = userRepository.getStudentById(studentId);
         Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(s, courseName);
 
-        if(!team.isPresent())
-            throw new StudentNotInTeamException("The student with id '" + studentId + "' was not found");
-
-        return modelMapper.map(team.get(), TeamDTO.class);
+        return team.map(value -> modelMapper.map(value, TeamDTO.class)).orElse(null);
     }
 
     @Override
