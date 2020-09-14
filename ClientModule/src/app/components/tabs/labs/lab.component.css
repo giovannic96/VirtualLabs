@@ -16,7 +16,25 @@ mat-icon {
 }
 
 .no-assignments-message-container {
-  margin: 1.5em 0;
+  margin: .2em 0;
+}
+
+.no-versions-message-container {
+  margin: .2em 0;
+}
+
+.no-assignments-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
+  margin-bottom: 0;
+}
+
+.no-versions-card {
+  text-align: center;
+  font-size: large;
+  font-weight: lighter;
+  margin-top: 1.2em;
 }
 
 mat-panel-title {

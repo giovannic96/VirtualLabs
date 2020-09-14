@@ -115,7 +115,7 @@ public class TeamController {
         List<String> studentIds = (List<String>)input.get("studentIds");
 
         try {
-            return teamService.proposeTeam(courseName, teamName, studentIds, "reuseitmarketapp@gmail.com");
+            return teamService.proposeTeam(courseName, teamName, studentIds, "virtuallabapp@gmail.com");
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
         } catch (Exception e) {
@@ -144,6 +144,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void deleteTeam(@PathVariable Long teamId) {
         Optional<TeamDTO> team = teamService.getTeam(teamId);

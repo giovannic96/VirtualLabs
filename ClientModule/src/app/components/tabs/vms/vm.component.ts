@@ -3,7 +3,7 @@ import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
 import {concatMap, filter, mergeMap} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {EMPTY, forkJoin, Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
 import {MatDialog} from '@angular/material/dialog';
@@ -14,11 +14,14 @@ import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {Vm} from '../../../models/vm.model';
 import {Router} from '@angular/router';
 import Utility from '../../../helpers/utility';
+import {VmSettingsDialogComponent} from './vm-settings-dialog.component';
+import {StudentService} from '../../../services/student.service';
+import {Student} from '../../../models/student.model';
 
 @Component({
   selector: 'app-vm',
   templateUrl: './vm.component.html',
-  styleUrls: ['./vm.component.css']
+  styleUrls: ['./vm.component.css', '../../../helpers/add-btn-round.css']
 })
 export class VmComponent implements OnInit {
 
@@ -26,13 +29,17 @@ export class VmComponent implements OnInit {
 
   public vmModel: VmModel;
   public teamList: Team[];
+  public myTeam: Team;
+  public maxVmCreatable: Vm;
   public osMap: Map<string, string>;
+  public isVmCreatable: boolean;
 
   public utility: Utility;
 
   constructor(private vmService: VmService,
               private teamService: TeamService,
               private courseService: CourseService,
+              private studentService: StudentService,
               private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
@@ -49,11 +56,12 @@ export class VmComponent implements OnInit {
       }),
       mergeMap(team => {
         this.teamService.getTeamVms(team.id).subscribe(vms => team.vms = vms);
-        return of(null);
+        return EMPTY;
       })).subscribe();
 
     this.currentCourse.pipe(
       concatMap(course => this.courseService.getVmModel(course.name)),
+      filter(vmModel => vmModel != null),
       concatMap(vmModel => {
         this.vmModel = vmModel;
         return this.vmService.getVmModelProfessor(vmModel.id);
@@ -63,6 +71,23 @@ export class VmComponent implements OnInit {
           this.vmModel.professor = null;
       });
 
+    this.currentCourse.pipe(
+      concatMap(course => this.studentService.getTeamForStudent(this.utility.getMyId(), course.name)),
+      filter(team => team != null),
+      concatMap(team => {
+        this.myTeam = team;
+        return this.teamService.getTeamVms(team.id);
+      }),
+      mergeMap(vms => {
+        this.myTeam.vms = vms;
+        if (this.vmModel)
+          this.setVmCreatable();
+        const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+        return forkJoin(ownerRequests);
+      })).subscribe(owners => {
+        this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
+      });
+
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
 
@@ -70,14 +95,12 @@ export class VmComponent implements OnInit {
   }
 
   async openDialog() {
-
     const data = {modelExists: false, vmModel: this.vmModel, osMap: this.osMap};
     if (this.vmModel) {
       data.modelExists = true;
     }
 
     const dialogRef = this.dialog.open(VmModelSettingsDialogComponent, {disableClose: true, data});
-
     const course: Course = this.courseService.getSelectedCourseValue();
 
     const dialogResponse: VmModel = await dialogRef.afterClosed().toPromise();
@@ -127,12 +150,95 @@ export class VmComponent implements OnInit {
     }
   }
 
+  async deleteVm(vmId: number) {
+      const message = 'You are removing the virtual machine from the team \'' + this.myTeam?.name + '\'';
+      const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+          message,
+          buttonConfirmLabel: 'CONFIRM',
+          buttonCancelLabel: 'CANCEL'
+        }
+      }).afterClosed().toPromise();
+
+      if (areYouSure) {
+        this.vmService.deleteVm(vmId).subscribe(
+          () => {
+            const vmToDelete = this.myTeam?.vms.find(vm => vm.id === vmId);
+            if (vmToDelete)
+              this.myTeam?.vms.splice(this.myTeam.vms.indexOf(vmToDelete), 1);
+            this.mySnackBar.openSnackBar('Virtual machine deleted successfully', MessageType.SUCCESS, 3);
+          },
+          error => this.mySnackBar.openSnackBar('Virtual machine deletion failed', MessageType.ERROR, 3)
+        );
+      }
+  }
+
   toggleVmPower(vm: Vm) {
-    const response = vm.active ? this.vmService.powerOffVm(vm.id) : this.vmService.powerOnVm(vm.id);
-    response.subscribe(() => vm.active = !vm.active);
+    if (vm.active) {
+      this.vmService.powerOffVm(vm.id).subscribe(() => {
+        vm.active = false;
+      });
+    } else {
+      if (this.myTeam?.vms.filter(v => v.active).length >= this.vmModel.maxActiveVm)
+        this.mySnackBar.openSnackBar('Your team have reached max number of active vms', MessageType.ERROR, 5);
+      else
+        this.vmService.powerOnVm(vm.id).subscribe(() => {
+          vm.active = true;
+        });
+    }
   }
 
   openVm(vm: Vm) {
     this.vmService.encodeAndNavigate(vm);
+  }
+
+  setVmCreatable() {
+    this.maxVmCreatable = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
+    this.isVmCreatable = !!this.maxVmCreatable.vcpu &&
+                         !!this.maxVmCreatable.ram &&
+                         !!this.maxVmCreatable.disk &&
+                         this.vmModel?.maxTotVm > this.myTeam?.vms?.length;
+  }
+
+  openVmSettingsDialog(vm?: Vm) {
+
+    const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
+    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
+      alert('ops');
+      return;
+    }
+
+    const data = {
+      vmExists: false,
+      vmModel: this.vmModel,
+      vm,
+      osMap: this.osMap,
+      teamId: this.myTeam.id,
+      maxVm: this.maxVmCreatable
+    };
+
+    if (vm) {
+      data.vmExists = true;
+      data.maxVm.vcpu += vm.vcpu;
+      data.maxVm.ram += vm.ram;
+      data.maxVm.disk += vm.disk;
+    } else {
+      if (!this.isVmCreatable)
+        return;
+    }
+
+    const dialogRef = this.dialog.open(VmSettingsDialogComponent, {disableClose: false, data});
+
+    dialogRef.afterClosed().pipe(filter(res => res)).subscribe((vmResponse: Vm) => {
+      if (data.vmExists) {
+        vm = vmResponse;
+      } else {
+        this.myTeam.vms.push(vmResponse);
+      }
+      this.setVmCreatable();
+    });
+  }
+
+  isOwner(ownerId: string) {
+    return ownerId === this.utility.getMyId();
   }
 }

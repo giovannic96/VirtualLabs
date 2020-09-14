@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Report} from '../models/report.model';
+import {Vm} from "../models/vm.model";
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +85,18 @@ export class StudentService {
         catchError( err => {
           console.error(err);
           return throwError(`GetTeams error: ${err.message}`);
+        })
+      );
+  }
+
+  getTeamForStudent(studentId: string, courseName: string) {
+    return this.httpClient
+      .get<Team>(`${this.API_PATH}/${studentId}/courses/${courseName}/team`)
+      .pipe(
+        retry(3),
+        catchError(err => {
+          console.error(err);
+          return throwError(`GetTeamForStudent error: ${err.message}`);
         })
       );
   }

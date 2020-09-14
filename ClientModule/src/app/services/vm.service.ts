@@ -158,4 +158,27 @@ export class VmService {
     this.router.navigate(['virtual_desktop', vmParam]);
   }
 
+  editVm(vmId: number, vm: any) {
+    return this.httpClient
+      .put(`${this.API_PATH}/${vmId}`, vm)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`EditVm error: ${err.message}`);
+        })
+      );
+  }
+
+  deleteVm(vmId: number) {
+    return this.httpClient
+      .delete<any>(`${this.API_PATH}/${vmId}`)
+      .pipe(
+        retry(3),
+        catchError(err => {
+          console.error(err);
+          return throwError(`DeleteVm error: ${err.message}`);
+        })
+      );
+  }
 }

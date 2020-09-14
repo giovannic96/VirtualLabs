@@ -1,7 +1,7 @@
 .team-vms-container {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 2em;
 }
 
@@ -9,7 +9,7 @@ mat-icon {
   cursor: default;
 }
 
-mat-card {
+.team-vms-container mat-card {
   min-width: 250px;
   max-width: 400px;
   flex: 1 1 30%;
@@ -20,19 +20,19 @@ mat-list {
   padding-top: 0;
 }
 
-.mat-card-header {
+.team-vms-container .mat-card-header {
   width: 100%;
   display: inline-flex;
   justify-content: space-between;
   align-items: unset;
 }
 
-mat-card-footer {
+.team-vms-container mat-card-footer {
   text-align: center;
   margin: 1em 0;
 }
 
-mat-card-footer button {
+.team-vms-container mat-card-footer button {
   margin: 0 .5em;
 }
 
@@ -81,8 +81,50 @@ mat-card-footer button {
   margin: 1em 0 0 1em;
 }
 
-.no-vm-model-message {
-  margin: 1em 0;
+.no-vm-model-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
 }
 
+.no-vms-card {
+  max-width: unset;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.64);
+}
 
+.no-vms-message-container {
+  margin: .2em 0;
+}
+
+.no-vm-model-message-container {
+  margin: .2em 0;
+}
+
+.no-vm-model-message-professor-side {
+  margin-top: 1em;
+}
+
+.vm-settings-led-container {
+  display: flex;
+  align-items: center;
+  margin-top: -.7em;
+}
+
+.vm-settings-container {
+  margin: 0;
+}
+
+.vm-settings-btn {
+  margin-right: .4em;
+}
+
+.vm-settings-icon {
+  padding: 0;
+  cursor: pointer;
+}
+
+.vm-settings-menu-icon {
+  cursor: pointer;
+  margin-right: 0 !important;
+}

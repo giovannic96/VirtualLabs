@@ -66,9 +66,9 @@ export class Assignment {
   getDTO(): any {
     // here we don't need releaseDate because it is set by the server
     return {
-      name: this.name,
-      expiryDate: this.expiryDate,
-      content: this.content
+      name: this._name,
+      expiryDate: this._expiryDate,
+      content: this._content
     };
   }
 }

@@ -31,6 +31,7 @@ mat-card-subtitle {
 .operating-system-preview-card {
   margin-top: 1em;
   padding: 1.5em 1.5em .3em 1.5em;
+  min-width: auto;
 }
 
 .custom-slider-error-container {

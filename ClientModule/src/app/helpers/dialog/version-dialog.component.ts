@@ -8,6 +8,7 @@ import {Version} from '../../models/version.model';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 import {MatCheckbox} from '@angular/material/checkbox';
 import Utility from '../utility';
+import {MatRadioGroup} from '@angular/material/radio';
 
 @Component({
   selector: 'app-version-dialog',
@@ -23,9 +24,10 @@ export class VersionDialogComponent implements OnInit {
   isLastVersion: boolean;
   isVersionRevisable: boolean;
 
+  gradeAfterReview = true;
+
   @ViewChild('appCanvas') canvasComponent: CanvasComponent;
   @ViewChild('review') review: ElementRef<HTMLImageElement>;
-  @ViewChild('checkbox') checkbox: MatCheckbox;
 
   public colors: string[] = ['#000', '#9c27b0', '#3f51b5', '#03a9f4', '#009688',
                             '#8bc34a', '#ffeb3b', '#ff9800', '#795548', '#f44336', '#fff'];
@@ -67,9 +69,8 @@ export class VersionDialogComponent implements OnInit {
     const data = {
       versionId: this.version.id,
       reviewImage: canvas.toDataURL().split(',')[1],
-      gradeAfter: this.checkbox.checked
+      gradeAfter: this.gradeAfterReview
     };
-    //const req = this.labService.submitReviewOnVersion(this.version.id, );
     this.dialogRef.close(data);
   }
 

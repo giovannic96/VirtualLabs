@@ -88,6 +88,18 @@ export class TeamService {
       );
   }
 
+  createVm(teamId: number, vm: any) {
+    return this.httpClient
+      .post<Vm>(`${this.API_PATH}/${teamId}/createVm`, vm)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`CreateVm error: ${err.message}`);
+        })
+      );
+  }
+
   deleteTeam(teamId: number) {
     return this.httpClient
       .delete<any>(`${this.API_PATH}/${teamId}`)

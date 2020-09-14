@@ -132,9 +132,7 @@ public class CourseController {
     @GetMapping("/{courseName}/vmModel")
     public VmModelDTO vmModel(@PathVariable String courseName) {
         Optional<VmModelDTO> vmModel = vmService.getCourseVmModel(courseName);
-        if(!vmModel.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        return ModelHelper.enrich(vmModel.get());
+        return vmModel.map(ModelHelper::enrich).orElse(null);
     }
 
     @GetMapping("/{courseName}/professors")

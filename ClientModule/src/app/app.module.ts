@@ -62,6 +62,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ProposalResponseComponent } from './components/main/proposal_response/proposal-response.component';
+import {MatRadioModule} from '@angular/material/radio';
+import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dialog.component';
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
@@ -94,6 +97,7 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
     VarDirective,
     CanvasComponent,
     ProposalResponseComponent,
+    VmSettingsDialogComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -132,6 +136,8 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
     DragDropModule,
     ScrollingModule,
     MatProgressBarModule,
+    MatRadioModule,
+    MatMenuModule,
   ],
   exports: [
     RouterModule,
@@ -159,6 +165,7 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
+    VmSettingsDialogComponent
   ]
 })
 export class AppModule { }

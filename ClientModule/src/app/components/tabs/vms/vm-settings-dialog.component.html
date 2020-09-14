@@ -1,0 +1,48 @@
+<form [formGroup]="vmFormGroup" (ngSubmit)="checkForm()">
+  <mat-card-title>
+    Configure vm settings
+  </mat-card-title>
+  <mat-divider></mat-divider>
+  <div class="vm-form-container">
+    <div class="vm-model-info-container">
+      <mat-card class="operating-system-preview-card">
+        <mat-card-content>
+          <img mat-card-image [src]="getOsImagePreview(this.vmModel.os)">
+        </mat-card-content>
+        <mat-card-subtitle>{{data.osMap.get(vmModel.os)}}</mat-card-subtitle>
+      </mat-card>
+    </div>
+    <div class="vm-form-column">
+      <h4>Vm resources</h4>
+      <ng-container>
+        <mat-card-subtitle>CPU - {{cpuSlider.value}} cores (max available: {{data.maxVm.vcpu}} cores)</mat-card-subtitle>
+        <mat-slider formControlName="vcpu" #cpuSlider step="1" min="0" [max]="data.maxVm.vcpu"></mat-slider>
+        <div class="custom-slider-error-container">
+          <h5 class="custom-slider-error-message"
+              *ngIf="formIsInvalid && vmFormGroup.get('vcpu').hasError('min')">This value cannot be <b>0</b></h5>
+        </div>
+      </ng-container>
+      <ng-container>
+        <mat-card-subtitle>RAM - {{ramSlider.value}} GB (max available: {{data.maxVm.ram}} GB)</mat-card-subtitle>
+        <mat-slider formControlName="ram" #ramSlider step="1" min="0" [max]="data.maxVm.ram"></mat-slider>
+        <div class="custom-slider-error-container">
+          <h5 class="custom-slider-error-message"
+              *ngIf="formIsInvalid && vmFormGroup.get('ram').hasError('min')">This value cannot be <b>0</b></h5>
+        </div>
+      </ng-container>
+      <ng-container>
+        <mat-card-subtitle>Disk - {{utility.calcDiskLabel(diskSlider.value)}} (max available: {{utility.calcDiskLabel(data.maxVm.disk)}})</mat-card-subtitle>
+        <mat-slider formControlName="disk" #diskSlider step="128" min="0" [max]="data.maxVm.disk"></mat-slider>
+        <div class="custom-slider-error-container">
+          <h5 class="custom-slider-error-message"
+              *ngIf="formIsInvalid && vmFormGroup.get('disk').hasError('min')">This value cannot be <b>0</b></h5>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <mat-divider style="margin-top: 1em;"></mat-divider>
+  <div class="vm-buttons-div">
+    <button mat-raised-button mat-dialog-close color="warn">CANCEL</button>
+    <button mat-raised-button color="primary">{{data.vmExists ? 'CONFIRM' : 'CREATE'}}</button>
+  </div>
+</form>

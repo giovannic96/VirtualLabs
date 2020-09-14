@@ -106,6 +106,7 @@ public class VmController {
     }
 
     @PutMapping("/{vmId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void edit(@PathVariable Long vmId, @RequestBody VmDTO vmDTO) {
         if(!vmService.editVmResources(vmId, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
@@ -129,6 +130,7 @@ public class VmController {
     }
 
     @DeleteMapping("/{vmId}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void remove(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);

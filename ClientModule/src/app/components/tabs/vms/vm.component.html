@@ -3,7 +3,7 @@
     <mat-icon>tune</mat-icon>
     <h2>Vm model</h2>
   </div>
-  <mat-accordion>
+  <mat-accordion *ngIf="utility.isProfessor() || (!utility.isProfessor() && vmModel) else noVmModel">
     <mat-expansion-panel hideToggle [expanded]="!vmModel">
       <mat-expansion-panel-header class="vm-model-panel-header">
         <mat-panel-description>
@@ -16,9 +16,6 @@
             </mat-list>
             <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof. ' + vmModel.professor.name + ' ' + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
           </div>
-          <ng-template #noVmModel>
-            <mat-card-subtitle class="no-vm-model-message">There is no vm model for this course yet</mat-card-subtitle>
-          </ng-template>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="vm-model-details" *ngIf="vmModel">
@@ -35,7 +32,7 @@
           <mat-card-subtitle>Max vms per team: {{vmModel.maxTotVm}} <br> Max active vms at the same time: {{vmModel.maxActiveVm}}</mat-card-subtitle>
         </div>
       </div>
-      <mat-action-row>
+      <mat-action-row *ngIf="utility.isProfessor()">
         <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog()">CREATE MODEL</button>
         <ng-template #vmModelExists>
           <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
@@ -49,9 +46,13 @@
 <div class="tab-section vms-section" *ngIf="teamList">
   <div class="tab-subtitle">
     <mat-icon>desktop_windows</mat-icon>
-    <h2>Virtual machines</h2>
+    <h2>{{utility.isProfessor() ? 'Virtual machines' : 'My virtual machines'}}</h2>
   </div>
-  <mat-accordion multi="false">
+  <ng-container *ngIf="utility.isProfessor(); else myVmsSection">
+    <mat-accordion multi="false">
+    <mat-card *ngIf="!teamList?.length" class="no-vms-card">
+      <span>There are no virtual machines yet</span>
+    </mat-card>
     <mat-expansion-panel *ngFor="let team of teamList" [disabled]="!team.vms?.length">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -64,7 +65,7 @@
             <mat-card-title>Vm#{{i+1}}</mat-card-title>
             <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
           </mat-card-header>
-          <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.png'">
+          <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.jpg'">
           <mat-card-content>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{utility.calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
@@ -76,4 +77,75 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
+  </ng-container>
 </div>
+
+<ng-template #myVmsSection>
+  <ng-container *ngIf="myTeam?.vms?.length; else noVms">
+    <mat-card class="card-for-vms">
+      <div class="team-vms-container">
+        <mat-card *ngFor="let vm of myTeam.vms; let i = index">
+          <mat-card-header>
+            <mat-card-title>Vm#{{i+1}}</mat-card-title>
+            <div class="vm-settings-led-container">
+              <div class="vm-settings-container" *ngIf="isOwner(vm.owner?.id)">
+                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                  <mat-icon class="vm-settings-icon">settings</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="openVmSettingsDialog(vm)">
+                    <mat-icon class="vm-settings-menu-icon">edit</mat-icon>
+                    <span>EDIT</span>
+                  </button>
+                  <button mat-menu-item (click)="deleteVm(vm.id)">
+                    <mat-icon color="warn" class="vm-settings-menu-icon">delete</mat-icon>
+                    <span>DELETE</span>
+                  </button>
+                </mat-menu>
+              </div>
+              <div class="led-fake-div" [ngClass]="vm.active ? 'led-powered-on' : 'led-powered-off'"></div>
+            </div>
+          </mat-card-header>
+          <img mat-card-image [src]="vm.active ? vm.content : 'assets/other/black_screen.jpg'">
+          <mat-card-content>
+            <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{utility.calcDiskLabel(vm.disk)}}</mat-card-subtitle>
+            <mat-card-footer>
+              <button mat-flat-button color="accent" [disabled]="!isOwner(vm.owner?.id)" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
+              <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
+            </mat-card-footer>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card>
+    <ng-container *ngIf="isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #noVms>
+  <div class="no-vms-message-container">
+    <mat-card class="no-vms-card">
+      <span>Still no virtual machine has been created</span>
+    </mat-card>
+    <ng-container *ngIf="!utility.isProfessor() && isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #noVmModel>
+  <div class="no-vm-model-message-container">
+    <mat-card class="no-vm-model-card" *ngIf="!utility.isProfessor()">
+      <span>There is no vm model for this course yet</span>
+    </mat-card>
+  </div>
+  <span *ngIf="utility.isProfessor()" class="no-vm-model-message-professor-side">
+    There is no vm model for this course yet
+  </span>
+</ng-template>
+
+<ng-template #fabAddVm>
+  <div class="add-btn-container">
+    <button class="icon-btn add-btn" (click)="openVmSettingsDialog()">
+      <div class="add-icon"></div>
+      <div class="btn-txt"><strong>CREATE</strong></div>
+    </button>
+  </div>
+</ng-template>

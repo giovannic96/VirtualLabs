@@ -167,7 +167,6 @@ export class LabComponent implements OnInit, AfterViewInit {
       version: report.versions[report.versions.length - 1]
     };
 
-    const emails = [report.owner.username];
     const dialogRef = this.dialog.open(GradeDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       data => {

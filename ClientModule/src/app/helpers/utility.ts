@@ -1,5 +1,7 @@
 import {ReportStatus} from '../models/report.model';
 import * as CanvasJS from './canvasjs.min';
+import {VmModel} from '../models/vm-model.model';
+import {Vm} from '../models/vm.model';
 
 export default class Utility {
 
@@ -184,5 +186,21 @@ export default class Utility {
 
   public getRandom(from: number, to: number): number {
     return Math.floor(Math.random() * (to + 1)) + from;
+  }
+
+  public calcAvailableVmResources(vms: Vm[], vmModel: VmModel): Vm {
+
+    const maxVm = new Vm();
+    maxVm.vcpu = vmModel.maxVCPU;
+    maxVm.ram = vmModel.maxRAM;
+    maxVm.disk = vmModel.maxDisk;
+
+    vms?.forEach(vm => {
+      maxVm.vcpu -= vm.vcpu;
+      maxVm.ram -= vm.ram;
+      maxVm.disk -= vm.disk;
+    });
+
+    return maxVm;
   }
 }

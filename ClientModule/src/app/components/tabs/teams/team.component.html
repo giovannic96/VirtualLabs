@@ -64,9 +64,12 @@
 </div>
 <ng-template #noTeams>
   <div class="no-teams-message-container" *ngIf="teamList">
-    <mat-card><mat-card-header><mat-card-title>
-      {{isInATeamProposal(utility.getMyId()) ? 'Waiting for the response, all the students must accept the proposal...' : 'Still no team has been formed'}}
-    </mat-card-title></mat-card-header></mat-card>
+    <mat-card class="no-teams-card">
+      <span>{{isInATeamProposal(utility.getMyId()) ?
+        'Waiting for the response, all the students must accept the proposal...' :
+        'Still no team has been formed'}}
+      </span>
+    </mat-card>
     <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddTeamProposal"></ng-container>
   </div>
 </ng-template>

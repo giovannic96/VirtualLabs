@@ -48,11 +48,17 @@
   cursor: url("src/assets/other/pen_cursor_filled_32.png"), auto;
 }
 
-.checkbox-container {
+.radiobutton-container {
   font-style: italic;
   font-weight: lighter;
   text-align: right;
   padding-top: .4em;
+}
+
+.radiobutton-container mat-radio-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 2em;
 }
 
 .buttons-container {

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {catchError, concatMap, filter, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {EMPTY, forkJoin, Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
@@ -91,15 +91,7 @@ export class TeamComponent implements OnInit {
         });
       })).subscribe();
 
-    this.currentCourse
-      .pipe(concatMap(course => {
-        return this.courseService.getTeamedUpStudents(course.name);
-      })).subscribe(studentList => this.teamedUpStudents = studentList);
-
-    this.currentCourse
-      .pipe(concatMap(course => {
-        return this.courseService.getNotTeamedUpStudents(course.name);
-      })).subscribe(studentList => this.notTeamedUpStudents = studentList);
+    this.retrieveStudentsInTeam();
 
     this.currentCourse
       .pipe(concatMap(course => {
@@ -230,6 +222,7 @@ export class TeamComponent implements OnInit {
             this.teamList.push(team);
           }
         });
+        this.retrieveStudentsInTeam();
         this.mySnackBar.openSnackBar('Team proposal accepted successfully', MessageType.SUCCESS, 3);
       } else {
         this.mySnackBar.openSnackBar('Team proposal accept failed', MessageType.ERROR, 3);
@@ -243,9 +236,8 @@ export class TeamComponent implements OnInit {
         // remove rejected team proposal from my pending proposals
         const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
         if (tpToReject) {
-          this.myPendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
-          const tpMembers = this.pendingProposals.find(tp => tp.id === tpId).members;
-          tpMembers.splice(tpMembers.map(m => m.id).indexOf(this.utility.getMyId()));
+          this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject), 1);
+          this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
         }
 
         this.mySnackBar.openSnackBar('Team proposal rejected successfully', MessageType.SUCCESS, 3);
@@ -272,12 +264,11 @@ export class TeamComponent implements OnInit {
   }
 
   deleteTeam(team: Team) {
-    this.teamList.splice(this.teamList.indexOf(team), 1);
-    this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
-    return;
     this.teamService.deleteTeam(team.id).subscribe(() => {
       this.teamList.splice(this.teamList.indexOf(team), 1);
       this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
+    }, () => {
+      this.mySnackBar.openSnackBar('Error in deleting team ' + team.name, MessageType.ERROR, 5);
     });
   }
 
@@ -291,5 +282,18 @@ export class TeamComponent implements OnInit {
 
   isAlreadyTeamedUp() {
     return this.teamedUpStudents?.length > 0 && this.teamedUpStudents?.find(s => s.id === this.utility.getMyId());
+  }
+
+  retrieveStudentsInTeam() {
+    this.currentCourse
+      .pipe(mergeMap(course => {
+        return forkJoin([
+          this.courseService.getTeamedUpStudents(course.name),
+          this.courseService.getNotTeamedUpStudents(course.name),
+        ]);
+      })).subscribe(students => {
+        this.teamedUpStudents = students[0];
+        this.notTeamedUpStudents = students[1];
+    });
   }
 }

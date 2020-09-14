@@ -90,6 +90,12 @@ public class StudentController {
         return teamService.hasAcceptedProposals(studentId, courseName);
     }
 
+    @GetMapping("/{studentId}/courses/{courseName}/team")
+    public TeamDTO teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
+        TeamDTO team = teamService.getTeamForStudentAndCourse(studentId, courseName);
+        return ModelHelper.enrich(team);
+    }
+
     @PostMapping("/{studentId}/courses/{courseName}/assignments/{assignmentId}/addReport")
     @ResponseStatus(HttpStatus.CREATED)
     public boolean addReports(@PathVariable String studentId, @PathVariable String courseName,
