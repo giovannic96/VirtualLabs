@@ -201,6 +201,29 @@
     <mat-icon>history</mat-icon>
     <h2>Proposals history</h2>
   </div>
+  <mat-accordion multi="false">
+    <mat-expansion-panel *ngFor="let proposal of allProposals">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{proposal.teamName}}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{proposal.status}}
+        </mat-panel-description>
+        <mat-panel-description>
+          {{proposal.statusDesc}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-card *ngFor="let member of proposal.members">
+        <mat-card-header>
+          <img [src]="member.photo" mat-card-avatar>
+          <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+          <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      <br>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
 
 <ng-template #fabAddTeamProposal>
