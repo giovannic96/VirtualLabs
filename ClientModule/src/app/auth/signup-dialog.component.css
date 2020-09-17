@@ -1,0 +1,31 @@
+.form-container {
+  text-align: center;
+  width: 80vw;
+  max-width: 400px;
+}
+
+form {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+}
+
+mat-form-field {
+  margin-bottom: 1em;
+}
+
+.buttons-div button {
+  margin: .7em;
+  min-width: 90px;
+}
+
+.error-advice {
+  color: red;
+  margin: .5em 0 1em 0;
+  text-align: center;
+}
+
+.buttons-div {
+  margin-top: .5em;
+}

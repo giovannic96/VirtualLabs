@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../services/auth.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LoginDialogComponent} from './login-dialog.component';
+import {MustMatch} from '../helpers/must-match.validator';
 
 @Component({
   selector: 'app-signup',
@@ -12,15 +13,25 @@ import {LoginDialogComponent} from './login-dialog.component';
 export class SignupDialogComponent implements OnInit {
   signupForm: FormGroup;
   hidePass = true;
+  hideRepeatPass = true;
   signupError = false;
+  politoMailRegex: RegExp;
+  goodPassRegex: RegExp;
 
   constructor(private authService: AuthService,
               private formBuilder: FormBuilder,
               public dialogRef: MatDialogRef<LoginDialogComponent>) {
+    this.politoMailRegex = RegExp('^(([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it$');
+    this.goodPassRegex = RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[.@$!%*?&])[A-Za-z\\d.@$!%*?&]{8,32}$');
+
     this.signupForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(32)]]
-      // TODO add custom validator for repeat password
+      email: ['', [Validators.required, Validators.email, Validators.pattern(this.politoMailRegex)]],
+      password: ['', [Validators.required,
+                      Validators.pattern(this.goodPassRegex)]],
+      repeatPassword: ['', [Validators.required,
+                            Validators.pattern(this.goodPassRegex)]]
+    }, {
+      validators: MustMatch('password', 'repeatPassword')
     });
   }
 
@@ -28,6 +39,7 @@ export class SignupDialogComponent implements OnInit {
   }
 
   onSubmit() {
+
     if (this.signupForm.valid) {
       this.authService.signup(this.signupForm.get('email').value, this.signupForm.get('password').value)
         .subscribe(resp => {

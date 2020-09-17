@@ -1,10 +1,18 @@
 .form-container {
   text-align: center;
+  width: 80vw;
+  max-width: 400px;
 }
 
 form {
+  margin: auto;
   display: flex;
   flex-direction: column;
+  width: 85%;
+}
+
+mat-form-field {
+  margin-bottom: 1em;
 }
 
 .buttons-div button {
@@ -18,7 +26,6 @@ form {
   text-align: center;
 }
 
-.email-div {
-  margin-top: 1em;
-  margin-bottom: 1em;
+.buttons-div {
+  margin-top: .5em;
 }

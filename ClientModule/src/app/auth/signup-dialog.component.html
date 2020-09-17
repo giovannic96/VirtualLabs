@@ -1,50 +1,57 @@
 <div class="form-container">
-  <h2>Login</h2>
+  <h2>Signup</h2>
   <form [formGroup]="signupForm">
 
     <!-- Email -->
     <mat-form-field appearance="legacy">
       <mat-label>Email</mat-label>
       <input matInput [type]="'email'" formControlName="email">
+      <mat-error *ngIf="signupForm.controls.email.hasError('required')">
+        The field email is <strong>required</strong>
+      </mat-error>
       <mat-error *ngIf="signupForm.controls.email.hasError('email')">
         Insert a valid email
       </mat-error>
-      <mat-error *ngIf="signupForm.controls.email.hasError('required')">
-        The field email is <strong>required</strong>
+      <mat-error *ngIf="!signupForm.controls.email.hasError('email') &&
+                        signupForm.controls.email.hasError('pattern')">
+        The field <b>must</b> contain a valid PoliTo mail
       </mat-error>
     </mat-form-field>
 
     <!-- Password -->
-    <mat-form-field class="email-div" appearance="legacy">
+    <mat-form-field appearance="legacy">
       <mat-label>Password</mat-label>
       <input matInput [type]="hidePass ? 'password' : 'text'" formControlName="password">
       <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hidePass = !hidePass">
         <mat-icon>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
-      <mat-error *ngIf="signupForm.controls.password.invalid">
+      <mat-error *ngIf="signupForm.controls.password.hasError('pattern')">
         Password <strong>not valid</strong>
       </mat-error>
     </mat-form-field>
 
     <!-- Repeat password -->
-    <mat-form-field class="email-div" appearance="legacy">
-      <mat-label>Password</mat-label>
-      <input matInput [type]="hidePass ? 'password' : 'text'" formControlName="password">
-      <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hidePass = !hidePass">
-        <mat-icon>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
+    <mat-form-field appearance="legacy">
+      <mat-label>Repeat password</mat-label>
+      <input matInput [type]="hideRepeatPass ? 'password' : 'text'" formControlName="repeatPassword">
+      <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hideRepeatPass = !hideRepeatPass">
+        <mat-icon>{{hideRepeatPass ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
-      <mat-error *ngIf="signupForm.controls.password.invalid"> <!-- TODO add custom validator -->
+      <mat-error *ngIf="signupForm.controls.repeatPassword.hasError('pattern')">
         Password <strong>not valid</strong>
+      </mat-error>
+      <mat-error *ngIf="signupForm.controls.repeatPassword.hasError('mustMatch')">
+        Passwords inserted <b>must</b> match
       </mat-error>
     </mat-form-field>
 
     <div *ngIf="signupError" class="error-advice">Wrong email or password</div>
     <div class="buttons-div">
-      <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">
-        SIGNUP
-      </button>
       <button mat-raised-button color="" (click)="dialogRef.close(false)">
         CANCEL
+      </button>
+      <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">
+        SIGNUP
       </button>
     </div>
   </form>

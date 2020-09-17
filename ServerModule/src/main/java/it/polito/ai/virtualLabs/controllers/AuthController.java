@@ -33,8 +33,8 @@ public class AuthController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping("/signin")
-    public ResponseEntity signin(@RequestBody UserDTO data) {
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody UserDTO data) {
         try {
             String username = data.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));

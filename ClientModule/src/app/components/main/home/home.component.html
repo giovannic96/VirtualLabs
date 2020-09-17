@@ -7,8 +7,8 @@
         <h1>Virtual Labs</h1>
         <p>Nothing can stop a team</p>
         <div class="buttons-container">
-          <button mat-stroked-button color="primary">Signup now</button>
-          <button mat-flat-button color="primary">Login</button>
+          <button mat-stroked-button color="primary" (click)="openSignupDialog()">Signup now</button>
+          <button mat-flat-button color="primary" (click)="openLoginDialog()">Login</button>
           <button mat-flat-button color="accent" routerLink="/courses">Go to courses... (temp)</button>
         </div>
       </div>

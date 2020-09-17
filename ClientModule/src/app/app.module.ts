@@ -64,7 +64,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ProposalResponseComponent } from './components/main/proposal_response/proposal-response.component';
 import {MatRadioModule} from '@angular/material/radio';
 import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dialog.component';
-import {MatMenuModule} from "@angular/material/menu";
+import {MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -156,6 +156,7 @@ import {MatMenuModule} from "@angular/material/menu";
   entryComponents: [
     MyDialogComponent,
     LoginDialogComponent,
+    SignupDialogComponent,
     EmailDialogComponent,
     VersionDialogComponent,
     GradeDialogComponent,

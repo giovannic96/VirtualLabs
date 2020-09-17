@@ -1,41 +1,56 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
 import {Token} from '../models/token.model';
+import {Course} from '../models/course.model';
+import {catchError, retry} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  // private API_PATH = 'https://virtuallabs.ns0.it/auth';
+  private API_PATH = 'http://localhost:8080/auth';
+
   private tokenLoggedObs: BehaviorSubject<Token>;
   redirectUrl: string;
 
   constructor(private httpClient: HttpClient) {
     let token: Token = null;
-    const localStorageItem = localStorage.getItem('tokenVirtualLabs');
+    const localStorageItem = localStorage.getItem('virtuallabs_token');
     if (localStorageItem) {
       token = JSON.parse(atob(localStorageItem.split('.')[1]));
     }
     this.tokenLoggedObs = new BehaviorSubject<Token>(token);
   }
 
-  login(email: string, password: string): Observable<any> {
-    const credentials = {
-      email, password
-    };
-    return this.httpClient.post<any>('https://localhost:4200/login', credentials);
+  signup(email: string, password: string): Observable<any> {
+    return this.httpClient
+      .post<any>(`${this.API_PATH}/signup`, {email, password})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`Signup error: ${err.message}`);
+        })
+      );
   }
 
-  signup(email: string, password: string): Observable<any> {
-    const credentials = {
-      email, password
-    };
-    return this.httpClient.post<any>('https://localhost:4200/signup', credentials);
+  login(email: string, password: string): Observable<any> {
+    return this.httpClient
+      .post<any>(`${this.API_PATH}/login`, {email, password})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`Login error: ${err.message}`);
+        })
+      );
   }
 
   logout() {
-    localStorage.removeItem('tokenVirtualLabs');
+    localStorage.removeItem('virtuallabs_token');
     this.setUserLogged(null);
   }
 
@@ -48,7 +63,7 @@ export class AuthService {
   }
 
   getAuthorizationToken() {
-    return localStorage.getItem('tokenVirtualLabs');
+    return localStorage.getItem('virtuallabs_token');
   }
 
   isUserLogged(): boolean {
