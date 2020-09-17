@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NotificationService} from '../../../services/notification.service';
+import {TeamProposalStatus} from '../../../models/team-proposal.model';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-proposal-response',
@@ -14,6 +16,7 @@ export class ProposalResponseComponent implements OnInit {
   action: string;
   tpId: number;
   token: string;
+  error: boolean;
 
   constructor(private router: Router,
               private activatedRoute: ActivatedRoute,
@@ -23,12 +26,10 @@ export class ProposalResponseComponent implements OnInit {
     this.action = this.activatedRoute.snapshot.paramMap.get('action');
     this.tpId = Number(this.activatedRoute.snapshot.queryParamMap.get('tpId'));
     this.token = this.activatedRoute.snapshot.queryParamMap.get('token');
-  }
 
-  sendRequest() {
-    this.notificationService.responseToProposalByToken(this.action, this.tpId, this.token).subscribe(() => {
-      this.requestSent = true;
-    });
+    this.notificationService.responseToProposalByToken(this.action, this.tpId, this.token).pipe(
+      finalize(() => this.requestSent = true)
+    ).subscribe(() => null, () => this.error = true);
   }
 
 }

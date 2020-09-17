@@ -1,4 +1,9 @@
 .main-container {
   font-weight: normal;
-  padding: 1em;
+  padding: 3em 1em;
+  text-align: center;
+}
+
+.team-card {
+  max-width: 400px;
 }
