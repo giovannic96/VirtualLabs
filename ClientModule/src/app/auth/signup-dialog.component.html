@@ -46,7 +46,9 @@
         </mat-error>
       </mat-form-field>
 
-      <div *ngIf="signupError" class="error-advice">Wrong email or password</div>
+      <div *ngIf="signupError" class="error-advice">
+        <span>An error occurred.</span><span>You cannot signup with these credentials</span>
+      </div>
       <div class="buttons-div">
         <button mat-raised-button color="" (click)="dialogRef.close(false)">
           CANCEL

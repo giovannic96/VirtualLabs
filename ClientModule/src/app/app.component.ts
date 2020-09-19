@@ -28,7 +28,7 @@ export class AppComponent {
     this.authService.getUserLogged().subscribe(userLogged => {
       if (!!userLogged) {
         if (this.authService.isTokenExpired()) {
-          localStorage.removeItem('tokenVirtualLabs');
+          localStorage.removeItem('virtuallabs_token');
           this.userLoggedIn = false;
         } else {
           this.userLoggedIn = true;

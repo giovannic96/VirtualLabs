@@ -28,12 +28,12 @@ export class LoginDialogComponent implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid) {
+      this.loginError = false;
       this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value)
         .subscribe(resp => {
-        localStorage.setItem('tokenVirtualLabs', resp.accessToken);
+        localStorage.setItem('virtuallabs_token', resp.accessToken);
         const userParsed = JSON.parse(atob(resp.accessToken.split('.')[1]));
         this.authService.setUserLogged(userParsed);
-        this.loginError = false;
         this.dialogRef.close(true);
       }, error => {
         this.loginError = true;

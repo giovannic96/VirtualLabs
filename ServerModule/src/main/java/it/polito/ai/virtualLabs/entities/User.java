@@ -33,7 +33,6 @@ public class User implements UserDetails {
     @NotNull
     private String username;
 
-    @NotEmpty
     private String password = null;
 
     private String photo;

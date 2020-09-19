@@ -26,9 +26,11 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("API/courses")
@@ -114,10 +116,11 @@ public class CourseController {
     @GetMapping("/{courseName}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String courseName) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForCourse(courseName);
-        for(TeamProposalDTO tp : teamProposals)
+        teamProposals = teamService.cleanTeamProposals(teamProposals);
+        for(TeamProposalDTO tp: teamProposals)
             ModelHelper.enrich(tp);
-        return teamProposals;
 
+        return teamProposals;
     }
 
     @GetMapping("/{courseName}/assignments")

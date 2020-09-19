@@ -19,6 +19,7 @@
 
 mat-sidenav {
   margin-top: 48px;
+  min-width: 325px;
 }
 
 .course-acronym-div {

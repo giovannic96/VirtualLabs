@@ -2,6 +2,7 @@ package it.polito.ai.virtualLabs.services;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import it.polito.ai.virtualLabs.controllers.ModelHelper;
 import it.polito.ai.virtualLabs.dtos.*;
 import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.*;
@@ -209,6 +210,17 @@ public class TeamServiceImpl implements TeamService {
                 .stream()
                 .map(s -> modelMapper.map(s, StudentDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public List<TeamProposalDTO> cleanTeamProposals(List<TeamProposalDTO> list) {
+        for(TeamProposalDTO tp : list) {
+            if(tp.getExpiryDate().isBefore(LocalDateTime.now().minusDays(30))) {
+                System.err.println("eccomi");
+                teamService.deleteTeamProposal(tp.getId());
+                tp.setId(null);
+            }
+        }
+        return list.stream().filter(tp -> tp.getId() != null).collect(Collectors.toList());
     }
 
     @Override
@@ -699,10 +711,10 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void deleteTeamProposal(Long teamProposalId) {
-        if(!teamRepository.existsById(teamProposalId))
-            throw new TeamNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
-        teamRepository.deleteById(teamProposalId);
-        teamRepository.flush();
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
+        teamProposalRepository.deleteById(teamProposalId);
+        teamProposalRepository.flush();
     }
 
     @Override

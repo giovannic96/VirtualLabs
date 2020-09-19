@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,8 +73,10 @@ public class StudentController {
     @GetMapping("/{studentId}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String studentId) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForStudent(studentId);
+        teamProposals = teamService.cleanTeamProposals(teamProposals);
         for(TeamProposalDTO tp: teamProposals)
             ModelHelper.enrich(tp);
+
         return teamProposals;
     }
 

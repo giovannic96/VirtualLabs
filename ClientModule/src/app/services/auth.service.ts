@@ -29,7 +29,7 @@ export class AuthService {
     return this.httpClient
       .post<any>(`${this.API_PATH}/login`, {username: email, password})
       .pipe(
-        retry(3),
+        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`Login error: ${err.message}`);
@@ -41,7 +41,7 @@ export class AuthService {
     return this.httpClient
       .post<any>(`${this.API_PATH}/signup`, {username: email, password})
       .pipe(
-        retry(3),
+        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`Signup error: ${err.message}`);
@@ -53,7 +53,7 @@ export class AuthService {
     return this.httpClient
       .post<any>(`${this.API_PATH}/confirmRegistration`, null, {params: {token}})
       .pipe(
-        retry(3),
+        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`Signup error: ${err.message}`);

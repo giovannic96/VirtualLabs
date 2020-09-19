@@ -94,10 +94,12 @@ export class TeamComponent implements OnInit {
 
     this.retrieveStudentsInTeam();
 
-    this.currentCourse
-      .pipe(concatMap(course => {
-        return this.studentService.checkAcceptedProposals(this.utility.getMyId(), course.name);
-      })).subscribe(accepted => this.hasAcceptedAProposal = accepted);
+    if (!this.utility.isProfessor()) {
+      this.currentCourse
+        .pipe(concatMap(course => {
+          return this.studentService.checkAcceptedProposals(this.utility.getMyId(), course.name);
+        })).subscribe(accepted => this.hasAcceptedAProposal = accepted);
+    }
   }
 
   ngOnInit(): void {
