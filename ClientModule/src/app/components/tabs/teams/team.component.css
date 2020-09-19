@@ -70,8 +70,8 @@ mat-card {
 }
 
 .team-section-title {
-  font-size: 17px;
-  font-weight: bold;
+  font-size: 1.2em;
+  font-weight: 500;
   margin-left: 2px;
 }
 
@@ -101,6 +101,8 @@ mat-card {
   justify-content: space-evenly;
   padding-top: 0;
   padding-bottom: 0;
+  border: 1px solid #e6e6e6;
+  box-shadow: none!important;
 }
 
 .my-team-section-content {

@@ -18,3 +18,48 @@ mat-sidenav {
   padding: 0 2em;
 }
 
+.add-course-container {
+  position: fixed;
+  left: 1em;
+  bottom: 1.6em;
+}
+
+.add-course-btn-inside {
+  font-size: 1rem;
+  padding: .1em 4.2em;
+  color: #8e3333;
+  background-color: rgba(255, 94, 9, 0.4);
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.btn {
+  text-decoration: none;
+  border: 1px solid rgb(255, 94, 9);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  box-shadow: 1px 1px 10px 5px rgba(255, 94, 9, 0.4);
+}
+
+.btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 94, 9, 0.8),
+    transparent
+  );
+  transition: all 650ms;
+}
+
+.btn:hover:before {
+  left: 100%;
+}

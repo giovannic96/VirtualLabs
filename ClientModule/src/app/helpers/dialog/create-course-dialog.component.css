@@ -1,5 +1,4 @@
 .dialog-container {
-  display: flex;
   flex-flow: column nowrap;
   height: 80vh;
   max-height: 550px;
@@ -41,16 +40,16 @@ textarea {
   gap: 2em;
 }
 
-.buttons-div {
+.buttons-container {
   display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1em;
+  place-content: flex-end;
+  margin: 0 0 0;
+  padding: 0 .5em .5em;
 }
 
-.buttons-div button {
-  width: 7em;
+.buttons-container button {
+  margin: 0 0 0 1.3em;
+  width: 100px;
 }
 
 .step-header-inside-label {
@@ -62,3 +61,21 @@ textarea {
   font-size: x-large;
 }
 
+mat-dialog-container {
+  overflow: hidden!important;
+}
+
+.close-button {
+  float: right;
+  top:-25px;
+  right:-24px;
+}
+
+::ng-deep .close-button .mat-button-ripple {
+  left: -14px!important;
+  border-radius: unset!important;
+}
+
+::ng-deep .mat-horizontal-content-container{
+  height: 22em!important;
+}

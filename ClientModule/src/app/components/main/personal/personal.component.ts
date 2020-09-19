@@ -3,8 +3,9 @@ import {Course} from '../../../models/course.model';
 import {Router, RouterLinkActive} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CreateCourseDialogComponent} from '../../../helpers/dialog/create-course-dialog.component';
+import Utility from '../../../helpers/utility';
 
 @Component({
   selector: 'app-personal',
@@ -20,9 +21,13 @@ export class PersonalComponent implements OnInit {
   navLinks: any[];
   activeLinkIndex = -1;
 
+  public utility: Utility;
+
   constructor(private courseService: CourseService,
               private router: Router,
               private dialog: MatDialog) {
+
+    this.utility = new Utility();
 
     this.navLinks = [
       {
@@ -99,7 +104,10 @@ export class PersonalComponent implements OnInit {
   }
 
   openCreateCourseDialog() {
-    const dialogRef = this.dialog.open(CreateCourseDialogComponent).afterClosed().subscribe(val => {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    const dialogRef = this.dialog.open(CreateCourseDialogComponent, dialogConfig).afterClosed().subscribe(val => {
       console.log('risposta dal dialog', val);
     });
   }

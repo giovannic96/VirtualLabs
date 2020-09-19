@@ -13,7 +13,9 @@
           {{course.name}}
         </a>
       </mat-nav-list>
-      <button mat-fab (click)="openCreateCourseDialog()">+</button>
+      <div class="add-course-container" *ngIf="utility.isProfessor()">
+        <button mat-raised-button color="accent" class="add-course-btn-inside btn" (click)="openCreateCourseDialog()">ADD COURSE</button>
+      </div>
     </div>
   </mat-sidenav>
   <div>

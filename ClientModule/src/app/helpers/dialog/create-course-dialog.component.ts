@@ -4,6 +4,7 @@ import {MatHorizontalStepper} from '@angular/material/stepper';
 import {Course} from '../../models/course.model';
 import {CourseService} from '../../services/course.service';
 import {MinLowerThanMax} from '../min-lower-than-max.validator';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-course-dialog',
@@ -21,7 +22,8 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
 
   @ViewChild('stepper') stepper: MatHorizontalStepper;
 
-  constructor(private formBuilder: FormBuilder,
+  constructor(private dialogRef: MatDialogRef<CreateCourseDialogComponent>,
+              private formBuilder: FormBuilder,
               private courseService: CourseService) {
     this.basicForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -85,4 +87,7 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
       this.topicsControl.valid;
   }
 
+  close() {
+    this.dialogRef.close();
+  }
 }

@@ -35,6 +35,39 @@
               </div>
             </mat-panel-description>
           </mat-expansion-panel-header>
+
+          <mat-card class="my-team-mat-card">
+            <div class="team-section-container">
+              <h3 class="team-section-title">Members</h3>
+              <mat-divider></mat-divider>
+              <div class="my-team-section-content">
+                <mat-card *ngFor="let member of team.members">
+                  <mat-card-header>
+                    <img [src]="member.photo" mat-card-avatar>
+                    <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+                    <mat-card-subtitle>{{member.id}}</mat-card-subtitle>
+                  </mat-card-header>
+                </mat-card>
+              </div>
+            </div>
+            <mat-divider class="team-sections-divider" [vertical]="true"></mat-divider>
+            <div class="team-section-container">
+              <h3 class="team-section-title">Vms</h3>
+              <ng-container *ngIf="myTeam?.vms?.length; else noVms">
+                <div class="my-team-section-content">
+                  <mat-card *ngFor="let vm of team.vms; let i = index">
+                    <mat-card-header>
+                      <img src="/assets/icons/vm_icon.png" mat-card-avatar>
+                      <mat-card-title>VM#{{i+1}}</mat-card-title>
+                      <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </ng-container>
+            </div>
+          </mat-card>
+
+          <!--
           <h4>Composed by:</h4>
           <mat-card *ngFor="let member of team.members">
             <mat-card-header>
@@ -53,6 +86,7 @@
               </mat-card-header>
             </mat-card>
           </ng-container>
+          -->
           <mat-action-row>
             <button mat-raised-button color="warn" (click)="openDialog(team)">DELETE TEAM</button>
             <button mat-raised-button color="primary" (click)="openEmailDialog(team.members)">SEND MESSAGE</button>
