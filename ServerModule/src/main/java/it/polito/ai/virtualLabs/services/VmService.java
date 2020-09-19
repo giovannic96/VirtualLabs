@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface VmService {
     Optional<VmDTO> getVm(Long vmId);
     Optional<VmModelDTO> getVmModel(Long vmModelId);
-    Optional<VmModelDTO> getVmModelForVm(Long vmId); //TESTED
-    Optional<StudentDTO> getOwner(Long vmId); //TESTED
-    Optional<TeamDTO> getTeam(Long vmId); //TESTED
-    List<VmModelDTO> getAllVmModels(); //TESTED
-    List<VmDTO> getAllVms(); //TESTED
+    Optional<VmModelDTO> getVmModelForVm(Long vmId);
+    Optional<StudentDTO> getOwner(Long vmId);
+    Optional<TeamDTO> getTeam(Long vmId);
+    List<VmModelDTO> getAllVmModels();
+    List<VmDTO> getAllVms();
     Optional<VmModelDTO> getCourseVmModel(String courseName);
     Optional<CourseDTO> getVmModelCourse(Long vmModelId);
     Optional<ProfessorDTO> getVmModelProfessor(Long vmModelId);
@@ -23,12 +23,12 @@ public interface VmService {
     List<VmModelDTO> getProfessorVmModels(String professorId);
     List<AssignmentDTO> getProfessorAssignments(String professorId);
 
-    boolean createVm(VmDTO vmDTO, String studentId, Long teamId); //TESTED
-    void removeVm(Long vmId); //TESTED
-    boolean editVmResources(Long vmId, int vCPU, int ram, int disk); //TESTED
-    boolean powerOnVm(Long vmId); //TESTED
-    boolean powerOffVm(Long vmId); //TESTED
-    boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId); // TESTED
+    boolean createVm(VmDTO vmDTO, String studentId, Long teamId);
+    void removeVm(Long vmId);
+    boolean editVmResources(Long vmId, int vCPU, int ram, int disk);
+    boolean powerOnVm(Long vmId);
+    boolean powerOffVm(Long vmId);
+    boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId);
     boolean editVmModelSettings(Long vmModelId, VmModelDTO vmModelDTO);
     void removeVmModel(Long vmModelId);
     void changeVmContentRandom(Long vmId);

@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Report} from '../models/report.model';
+import {Course} from "../models/course.model";
 
 @Injectable({
   providedIn: 'root'
@@ -64,9 +65,9 @@ export class StudentService {
       );
   }
 
-  getCourses(studentId: string): Observable<Student[]> {
+  getCourses(studentId: string): Observable<Course[]> {
     return this.httpClient
-      .get<Student[]>(`${this.API_PATH}/${studentId}/courses`)
+      .get<Course[]>(`${this.API_PATH}/${studentId}/courses`)
       .pipe(
         retry(3),
         catchError( err => {
