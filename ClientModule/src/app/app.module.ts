@@ -67,6 +67,7 @@ import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dia
 import {MatMenuModule} from '@angular/material/menu';
 import {CreateCourseDialogComponent} from './helpers/dialog/create-course-dialog.component';
 import {MatStepperModule} from '@angular/material/stepper';
+import { RegistrationConfirmComponent } from './components/main/registration_confirm/registration-confirm.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     ProposalResponseComponent,
     VmSettingsDialogComponent,
     CreateCourseDialogComponent,
+    RegistrationConfirmComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),

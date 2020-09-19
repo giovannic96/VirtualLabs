@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
     @Query("FROM Student")
     List<Student> findAllStudents();
 
@@ -58,4 +60,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT s FROM Student s WHERE s.id NOT IN (SELECT s.id FROM Course c INNER JOIN c.students s WHERE c.name=:courseName)")
     List<Student> getStudentsNotInCourse(String courseName);
+
+    Optional<User> getByToken(String token);
 }

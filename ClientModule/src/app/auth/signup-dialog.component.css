@@ -29,3 +29,8 @@ mat-form-field {
 .buttons-div {
   margin-top: .5em;
 }
+
+.request-sent-template {
+  padding: .5em 0;
+  text-align: center;
+}

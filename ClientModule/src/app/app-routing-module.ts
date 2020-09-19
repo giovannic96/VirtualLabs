@@ -9,12 +9,14 @@ import {PersonalComponent} from './components/main/personal/personal.component';
 import {LabComponent} from './components/tabs/labs/lab.component';
 import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.component';
 import {ProposalResponseComponent} from './components/main/proposal_response/proposal-response.component';
+import {RegistrationConfirmComponent} from './components/main/registration_confirm/registration-confirm.component';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent},
   {path: 'virtual_desktop/:vmId', component: VirtualDesktopComponent},
   {path: 'proposal_response/:action', component: ProposalResponseComponent},
+  {path: 'registration_confirm', component: RegistrationConfirmComponent},
   {path: 'courses', component: PersonalComponent},
   {path: 'courses/:courseName', component: PersonalComponent, children: [
       {path: '', redirectTo: 'info', pathMatch: 'full'},

@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String username;
 
     @NotEmpty
-    private String password;
+    private String password = null;
 
     private String photo;
 
@@ -53,7 +53,9 @@ public class User implements UserDetails {
         return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
     }
 
-    boolean registered;
+    private String token = null;
+
+    boolean registered = false;
 
     @Override
     public boolean isAccountNonExpired() {

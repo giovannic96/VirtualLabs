@@ -17,11 +17,14 @@ export class SignupDialogComponent implements OnInit {
   signupError = false;
   politoMailRegex: RegExp;
   goodPassRegex: RegExp;
+  requestComplete: boolean;
 
   constructor(private authService: AuthService,
               private formBuilder: FormBuilder,
               public dialogRef: MatDialogRef<LoginDialogComponent>) {
-    this.politoMailRegex = RegExp('^(([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it$');
+
+    // this.politoMailRegex = RegExp('^(([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it$');
+    this.politoMailRegex = RegExp('^[\\s\\S]*$');
     this.goodPassRegex = RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[.@$!%*?&])[A-Za-z\\d.@$!%*?&]{8,32}$');
 
     this.signupForm = this.formBuilder.group({
@@ -44,10 +47,14 @@ export class SignupDialogComponent implements OnInit {
       this.authService.signup(this.signupForm.get('email').value, this.signupForm.get('password').value)
         .subscribe(resp => {
           this.signupError = false;
-          this.dialogRef.close(true);
+          this.requestComplete = true;
         }, error => {
           this.signupError = true;
         });
     }
+  }
+
+  close(value?: boolean) {
+    this.dialogRef.close(value);
   }
 }

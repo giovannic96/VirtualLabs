@@ -14,6 +14,7 @@ import {SignupDialogComponent} from '../../../auth/signup-dialog.component';
 export class HomeComponent implements OnInit {
 
   desktopAppLink = 'https://virtuallabs.ns0.it/installers/VirtualLabs-x64-setup.exe';
+  requestComplete: boolean;
 
   constructor(private authService: AuthService,
               private courseService: CourseService,
@@ -43,9 +44,10 @@ export class HomeComponent implements OnInit {
 
   openSignupDialog() {
     const dialogRef = this.dialog.open(SignupDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
-
-      console.log('risultato in uscita', result);
+    dialogRef.afterClosed().subscribe(success => {
+      if (success) {
+        this.requestComplete = true;
+      }
     });
   }
 

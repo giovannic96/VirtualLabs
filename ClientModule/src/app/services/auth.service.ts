@@ -25,9 +25,21 @@ export class AuthService {
     this.tokenLoggedObs = new BehaviorSubject<Token>(token);
   }
 
+  login(email: string, password: string): Observable<any> {
+    return this.httpClient
+      .post<any>(`${this.API_PATH}/login`, {username: email, password})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`Login error: ${err.message}`);
+        })
+      );
+  }
+
   signup(email: string, password: string): Observable<any> {
     return this.httpClient
-      .post<any>(`${this.API_PATH}/signup`, {email, password})
+      .post<any>(`${this.API_PATH}/signup`, {username: email, password})
       .pipe(
         retry(3),
         catchError( err => {
@@ -37,14 +49,14 @@ export class AuthService {
       );
   }
 
-  login(email: string, password: string): Observable<any> {
+  confirmRegistration(token: string): Observable<any> {
     return this.httpClient
-      .post<any>(`${this.API_PATH}/login`, {email, password})
+      .post<any>(`${this.API_PATH}/confirmRegistration`, null, {params: {token}})
       .pipe(
         retry(3),
         catchError( err => {
           console.error(err);
-          return throwError(`Login error: ${err.message}`);
+          return throwError(`Signup error: ${err.message}`);
         })
       );
   }
