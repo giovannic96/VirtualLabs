@@ -65,6 +65,8 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
 import {MatRadioModule} from '@angular/material/radio';
 import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dialog.component';
 import {MatMenuModule} from '@angular/material/menu';
+import {CreateCourseDialogComponent} from './helpers/dialog/create-course-dialog.component';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -98,6 +100,7 @@ import {MatMenuModule} from '@angular/material/menu';
     CanvasComponent,
     ProposalResponseComponent,
     VmSettingsDialogComponent,
+    CreateCourseDialogComponent,
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -138,6 +141,7 @@ import {MatMenuModule} from '@angular/material/menu';
     MatProgressBarModule,
     MatRadioModule,
     MatMenuModule,
+    MatStepperModule,
   ],
   exports: [
     RouterModule,
@@ -166,7 +170,8 @@ import {MatMenuModule} from '@angular/material/menu';
     VmModelSettingsDialogComponent,
     VmInfoDialogComponent,
     AssignmentDialogComponent,
-    VmSettingsDialogComponent
+    VmSettingsDialogComponent,
+    CreateCourseDialogComponent
   ]
 })
 export class AppModule { }

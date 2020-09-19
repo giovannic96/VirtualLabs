@@ -1,0 +1,121 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>New Course</h2>
+  <div class="stepper-container">
+    <mat-horizontal-stepper #stepper>
+      <mat-step [stepControl]="basicForm">
+        <form [formGroup]="basicForm">
+          <ng-template matStepLabel>Basic info</ng-template>
+          <h2 class="step-header-inside-label">Insert basic info</h2>
+          <div class="name-and-acronym-container">
+            <mat-form-field>
+              <mat-label>Course name</mat-label>
+              <input matInput placeholder="Name" formControlName="name" required>
+              <mat-error *ngIf="basicForm.controls.name.invalid">Course name is <b>required</b></mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Acronym</mat-label>
+              <input matInput placeholder="Acronym" formControlName="acronym" required>
+              <mat-error *ngIf="basicForm.controls.acronym.hasError('required')">Course acronym is <b>required</b></mat-error>
+              <mat-error *ngIf="basicForm.controls.acronym.hasError('maxlength')">Acronym must be <b>3</b> chars max</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="team-size-settings-div">
+            <mat-form-field appearance="legacy">
+              <mat-label>Min team size</mat-label>
+              <input matInput type="number" placeholder="Min" formControlName="min" required>
+              <mat-error *ngIf="basicForm.controls.min.hasError('required')">Min team size is <b>required</b></mat-error>
+              <mat-error *ngIf="basicForm.controls.min.hasError('min')">Min value: 2</mat-error>
+              <mat-error *ngIf="basicForm.controls.min.hasError('max')">Max value: 10</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="legacy">
+              <mat-label>Max team size</mat-label>
+              <input matInput type="number" placeholder="Max" formControlName="max" required>
+              <mat-error *ngIf="basicForm.controls.max.hasError('required')">Max team size is <b>required</b></mat-error>
+              <mat-error *ngIf="basicForm.controls.max.hasError('min')">Min value: 2</mat-error>
+              <mat-error *ngIf="basicForm.controls.max.hasError('max')">Max value: 10</mat-error>
+              <mat-error *ngIf="basicForm.controls.max.hasError('minLowerThanMax')">Max size has be <b>higher</b> than min size</mat-error>
+            </mat-form-field>
+          </div>
+        </form>
+        <div class="buttons-div">
+          <button mat-raised-button matStepperNext color="primary">NEXT</button>
+        </div>
+      </mat-step>
+      <mat-step [stepControl]="descriptionControl" errorMessage="l'odore dell'onda">
+        <form>
+          <ng-template matStepLabel>Description</ng-template>
+          <h2 class="step-header-inside-label">Enter a description</h2>
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput
+                      rows="13"
+                      [maxLength]="MAX_CONTENT_LENGTH"
+                      [formControl]="descriptionControl"
+                      required></textarea>
+          </mat-form-field>
+        </form>
+        <div class="buttons-div">
+          <button mat-raised-button matStepperPrevious>PREVIOUS</button>
+          <button mat-raised-button matStepperNext color="primary">NEXT</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <form>
+          <ng-template matStepLabel>Prerequisites</ng-template>
+          <h2 class="step-header-inside-label">Enter prerequisites</h2>
+          <mat-form-field>
+            <mat-label>Prerequisites</mat-label>
+            <textarea matInput
+                      rows="13"
+                      [maxLength]="MAX_CONTENT_LENGTH"
+                      [formControl]="prerequisitesControl"
+                      required></textarea>
+          </mat-form-field>
+        </form>
+        <div class="buttons-div">
+          <button mat-raised-button matStepperPrevious>PREVIOUS</button>
+          <button mat-raised-button matStepperNext color="primary">NEXT</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <form>
+          <ng-template matStepLabel>Topics</ng-template>
+          <h2 class="step-header-inside-label">Enter some topics</h2>
+          <mat-form-field>
+            <mat-label>Topics</mat-label>
+            <textarea matInput
+                      rows="13"
+                      [maxLength]="MAX_CONTENT_LENGTH"
+                      [formControl]="topicsControl"
+                      required></textarea>
+          </mat-form-field>
+        </form>
+        <div class="buttons-div">
+          <button mat-raised-button matStepperPrevious>PREVIOUS</button>
+          <button mat-raised-button matStepperNext color="primary">NEXT</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <div>
+          <ng-template matStepLabel>Summary</ng-template>
+          <ng-template [ngIf]="allFormsAreValid()" [ngIfElse]="formError">
+            <p>The following course will be created:</p>
+            <p>Qui potremmo mettere nome del corso, acronimo, min e max</p>
+            <p>Dopodichè chiediamo se vuole aggiungere altri prof al corso</p>
+          </ng-template>
+          <ng-template #formError>
+            <mat-card-subtitle class="form-final-error-message">Impossible to create a new course:</mat-card-subtitle><br>
+            <p>One or more fields on previous steps have invalid or missing value</p>
+            <p>Check if you forgot to provide some info.</p>
+          </ng-template>
+        </div>
+        <div class="buttons-div">
+          <button mat-raised-button matStepperPrevious>PREVIOUS</button>
+          <button mat-raised-button matStepperNext color="primary"
+                  [disabled]="!allFormsAreValid()"
+                  (click)="onCreate()">CREATE</button>
+        </div>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+</div>

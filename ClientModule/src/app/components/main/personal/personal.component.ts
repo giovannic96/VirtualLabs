@@ -3,6 +3,8 @@ import {Course} from '../../../models/course.model';
 import {Router, RouterLinkActive} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
+import {MatDialog} from '@angular/material/dialog';
+import {CreateCourseDialogComponent} from '../../../helpers/dialog/create-course-dialog.component';
 
 @Component({
   selector: 'app-personal',
@@ -19,7 +21,8 @@ export class PersonalComponent implements OnInit {
   activeLinkIndex = -1;
 
   constructor(private courseService: CourseService,
-              private router: Router) {
+              private router: Router,
+              private dialog: MatDialog) {
 
     this.navLinks = [
       {
@@ -93,5 +96,11 @@ export class PersonalComponent implements OnInit {
 
   setCurrentCourse(course: Course) {
     this.courseService.setSelectedCourse(course);
+  }
+
+  openCreateCourseDialog() {
+    const dialogRef = this.dialog.open(CreateCourseDialogComponent).afterClosed().subscribe(val => {
+      console.log('risposta dal dialog', val);
+    });
   }
 }

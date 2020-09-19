@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
-import java.io.Reader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +32,7 @@ public class TeamServiceImpl implements TeamService {
 
     private static final int PROPOSAL_EXPIRATION_DAYS = 3;
     private static final int MIN_SIZE_FOR_GROUP = 2;
+    private static final int MAX_SIZE_FOR_GROUP = 10;
 
     // Queste sono da esempio per usarle dopo
     // @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -69,8 +70,19 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public boolean addCourse(CourseDTO course) {
         if(courseRepository.existsById(course.getName()) ||
-                course.getMaxTeamSize() - course.getMinTeamSize() <= MIN_SIZE_FOR_GROUP)
+                course.getMinTeamSize() < MIN_SIZE_FOR_GROUP ||
+                course.getMaxTeamSize() > MAX_SIZE_FOR_GROUP)
             return false;
+
+        try {
+            String resourcesPath = getClass().getClassLoader().getResource("static/").getPath();
+            File newCourseInfo = new File(resourcesPath + course.getName() + ".txt");
+            FileOutputStream stream = new FileOutputStream(newCourseInfo);
+            stream.write(course.getInfo().getBytes());
+            stream.close();
+        } catch (IOException ex) {
+            return false;
+        }
 
         Course c = modelMapper.map(course, Course.class);
         courseRepository.saveAndFlush(c);

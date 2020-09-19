@@ -1,0 +1,64 @@
+.dialog-container {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 80vh;
+  max-height: 550px;
+  width: 75vw;
+  max-width: 900px;
+}
+
+.stepper-container {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+
+form {
+  height: 85%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+}
+
+.name-and-acronym-container {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 2em;
+}
+
+.name-and-acronym-container > :last-child {
+  width: 20%;
+}
+
+.team-size-settings-div {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 2em;
+}
+
+.buttons-div {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1em;
+}
+
+.buttons-div button {
+  width: 7em;
+}
+
+.step-header-inside-label {
+  font-weight: 400;
+}
+
+.form-final-error-message {
+  margin-top: 2em;
+  font-size: x-large;
+}
+

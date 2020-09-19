@@ -63,4 +63,15 @@ export class Course {
   set info(value: string) {
     this._info = value;
   }
+
+  getDTO() {
+    return {
+      name: this._name,
+      acronym: this._acronym,
+      minTeamSize: this._minTeamSize,
+      maxTeamSize: this._maxTeamSize,
+      enabled: this._enabled,
+      info: this._info
+    };
+  }
 }

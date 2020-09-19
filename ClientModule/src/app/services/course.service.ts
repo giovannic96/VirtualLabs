@@ -234,6 +234,18 @@ export class CourseService {
       );
   }
 
+  createCourse(course: any) {
+    return this.httpClient
+      .post<Course>(`${this.API_PATH}`, course)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`createCourse error: ${err.message}`);
+        })
+      );
+  }
+
   getResource(link: string) {
     return this.httpClient
       .get<any>(link)
