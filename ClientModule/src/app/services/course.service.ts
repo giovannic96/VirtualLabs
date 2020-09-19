@@ -246,6 +246,18 @@ export class CourseService {
       );
   }
 
+  assignProfessor(courseName: string, professorId) {
+    return this.httpClient
+      .post<Professor>(`${this.API_PATH}/${courseName}/assignProfessor`, {id: professorId})
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`assignProfessor error: ${err.message}`);
+        })
+      );
+  }
+
   getResource(link: string) {
     return this.httpClient
       .get<any>(link)

@@ -146,10 +146,8 @@ public class CourseController {
     @PostMapping({"","/"})
     @ResponseStatus(HttpStatus.CREATED)
     public CourseDTO addCourse(@RequestBody CourseDTO courseDTO) {
-        // TODO: servirebbe lo userDetail per sapere quale prof ha fatto la richiesta
-        // oppure si potrebbe usare una lista di prof da associare al corso
         if(!teamService.addCourse(courseDTO))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in entering course: " + courseDTO.getName());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in creating course: " + courseDTO.getName());
         return ModelHelper.enrich(courseDTO);
     }
 

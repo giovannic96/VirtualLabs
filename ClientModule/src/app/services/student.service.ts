@@ -5,7 +5,6 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Report} from '../models/report.model';
-import {Vm} from "../models/vm.model";
 
 @Injectable({
   providedIn: 'root'

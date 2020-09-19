@@ -15,8 +15,9 @@
                 <mat-form-field>
                   <mat-label>Course name</mat-label>
                   <input matInput placeholder="Name" formControlName="name" required>
-                  <mat-error *ngIf="basicForm.controls.name.invalid">Course name is <b>required</b></mat-error>
-                </mat-form-field>
+                  <mat-error *ngIf="basicForm.controls.name.hasError('required')">Course name is <b>required</b></mat-error>
+              <mat-error *ngIf="basicForm.controls.name.hasError('maxlength')">Name has to be shorter than <b>50</b> chars</mat-error>
+            </mat-form-field>
                 <mat-form-field>
                   <mat-label>Acronym</mat-label>
                   <input matInput placeholder="Acronym" formControlName="acronym" required>
@@ -90,9 +91,74 @@
           <div>
             <ng-template matStepLabel>Summary</ng-template>
             <ng-template [ngIf]="allFormsAreValid()" [ngIfElse]="formError">
-              <p>The following course will be created:</p>
-              <p>Qui potremmo mettere nome del corso, acronimo, min e max</p>
-              <p>Dopodichè chiediamo se vuole aggiungere altri prof al corso</p>
+              <div class="summary-info-div">
+              <div class="summary-info-col">
+                <h4>Course name:</h4>
+                <mat-card-subtitle>{{basicForm.controls.name.value}}</mat-card-subtitle>
+              </div>
+              <div class="summary-info-col">
+                <h4>Acronym:</h4>
+                <mat-card-subtitle>{{basicForm.controls.acronym.value}}</mat-card-subtitle>
+              </div>
+              <div class="summary-info-col">
+                <h4>Min team size:</h4>
+                <mat-card-subtitle>{{basicForm.controls.min.value}}</mat-card-subtitle>
+              </div>
+              <div class="summary-info-col">
+                <h4>Max team size:</h4>
+                <mat-card-subtitle>{{basicForm.controls.max.value}}</mat-card-subtitle>
+              </div>
+            </div>
+            <div class="summary-professor-question">
+              <p>Do you want to assign other professors to this course?</p>
+              <mat-checkbox #otherProfCheck></mat-checkbox>
+            </div>
+            <div *ngIf="otherProfCheck.checked" class="summary-professor-div">
+              <div class="summary-professor-selection-div">
+                <mat-form-field>
+                  <mat-label>Add professor</mat-label>
+                  <input matInput type="text" placeholder="Professor name"
+                         #addProfessorInput [matAutocomplete]="ids">
+                </mat-form-field>
+                <mat-autocomplete #ids="matAutocomplete"
+                                  [displayWith]="displayProfessor"
+                                  (optionSelected)="setCurrentSelectedOption($event)">
+                  <mat-option *ngFor="let professor of filteredProfessors"
+                              [value]="professor">{{professor.surname}} {{professor.name}} ({{professor.id}})</mat-option>
+                </mat-autocomplete>
+                <button mat-raised-button color="accent" #addButton
+                        [disabled]="!currentSelectedOption ||
+                                    selectedProfessors.includes(currentSelectedOption) ||
+                                    selectedProfessors.length > 1"
+                        (click)="addProfessor(currentSelectedOption)">ADD
+                </button>
+              </div>
+              <div class="summary-professor-list-div">
+                <mat-card>
+                  <mat-card-header>
+                    <mat-card-title class="professor-list-title">Professors assigned</mat-card-title>
+                  </mat-card-header>
+                  <mat-divider></mat-divider>
+                  <mat-list>
+                    <mat-list-item *ngIf="mySelf" >
+                      <img matListAvatar [src]="mySelf.photo">
+                      <div class="professor-info">
+                        <h3 matLine class="professor-label">{{mySelf.name}} {{mySelf.surname}} (You)</h3>
+                        <mat-card-subtitle><em>{{mySelf.id}}</em></mat-card-subtitle>
+                      </div>
+                    </mat-list-item>
+                    <mat-list-item *ngFor="let professor of selectedProfessors; let i = index">
+                      <img matListAvatar [src]="professor.photo">
+                      <div class="professor-info">
+                        <h3 matLine class="professor-label">{{professor.name}} {{professor.surname}}</h3>
+                        <mat-card-subtitle><em>{{professor.id}}</em></mat-card-subtitle>
+                      </div>
+                      <mat-icon (click)="removeProfessor(i)">cancel</mat-icon>
+                    </mat-list-item>
+                  </mat-list>
+                </mat-card>
+              </div>
+            </div>
             </ng-template>
             <ng-template #formError>
               <mat-card-subtitle class="form-final-error-message">Impossible to create a new course:</mat-card-subtitle><br>

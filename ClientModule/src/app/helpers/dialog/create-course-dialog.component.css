@@ -1,7 +1,7 @@
 .dialog-container {
   flex-flow: column nowrap;
   height: 80vh;
-  max-height: 550px;
+  max-height: 600px;
   width: 75vw;
   max-width: 900px;
 }
@@ -61,8 +61,67 @@ textarea {
   font-size: x-large;
 }
 
+.summary-info-div {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin: 1em 0;
+}
+
+.summary-info-col h4{
+  margin-bottom: .5em;
+  font-size: large;
+}
+
+.summary-info-col mat-card-subtitle {
+  font-size: large;
+}
+
+.summary-professor-question {
+  margin-top: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.summary-professor-div {
+  display: flex;
+  gap: 3em;
+}
+
+.summary-professor-selection-div {
+  width: 100%;
+}
+
+.summary-professor-list-div {
+  width: 100%
+}
+
+.professor-list-title {
+  font-weight: lighter;
+}
+
+.professor-info {
+  margin-left: 1em;
+}
+
+.professor-info mat-card-subtitle {
+  margin-bottom: 0;
+}
+
+.professor-label {
+  font-size: medium;
+  font-weight: normal;
+  margin: 0 0 5px 0;
+}
+
+mat-list-item mat-icon {
+  position: absolute;
+  right: 0;
+  color: #df2416e0;
+}
 mat-dialog-container {
-  overflow: hidden!important;
+  overflow: hidden !important;
 }
 
 .close-button {
@@ -72,10 +131,10 @@ mat-dialog-container {
 }
 
 ::ng-deep .close-button .mat-button-ripple {
-  left: -14px!important;
-  border-radius: unset!important;
+  left: -14px !important;
+  border-radius: unset !important;
 }
 
 ::ng-deep .mat-horizontal-content-container{
-  height: 22em!important;
+  height: 25em;
 }

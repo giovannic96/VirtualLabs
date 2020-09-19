@@ -16,6 +16,13 @@ export class Course {
     this._info = info;
   }
 
+  static sortData(a: Course, b: Course) {
+    // sort data by name
+    if (a.name.toLowerCase() > b.name.toLowerCase()) { return 1; }
+    if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
+    return 0;
+  }
+
   get name(): string {
     return this._name;
   }
