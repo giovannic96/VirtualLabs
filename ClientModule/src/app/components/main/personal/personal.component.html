@@ -10,6 +10,10 @@
                         (click)="setCurrentCourse(course)"
                         routerLink="/courses/{{course.name}}"
                         routerLinkActive="sidenav-course-active">
+
+          <div class="course-acronym-div" mat-card-avatar>
+            <span>{{course.acronym}}</span>
+          </div>
           {{course.name}}
         </a>
       </mat-nav-list>

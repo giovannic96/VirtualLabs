@@ -6,6 +6,9 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CreateCourseDialogComponent} from '../../../helpers/dialog/create-course-dialog.component';
 import Utility from '../../../helpers/utility';
+import {filter} from 'rxjs/operators';
+import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {Student} from '../../../models/student.model';
 
 @Component({
   selector: 'app-personal',
@@ -25,7 +28,8 @@ export class PersonalComponent implements OnInit {
 
   constructor(private courseService: CourseService,
               private router: Router,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private mySnackBar: MySnackBarComponent) {
 
     this.utility = new Utility();
 
@@ -107,8 +111,15 @@ export class PersonalComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    const dialogRef = this.dialog.open(CreateCourseDialogComponent, dialogConfig).afterClosed().subscribe(val => {
-      console.log('risposta dal dialog', val);
+    const dialogRef = this.dialog.open(CreateCourseDialogComponent, dialogConfig)
+      .afterClosed().pipe(filter(result => result)).subscribe(course => {
+        if (course === -1) {
+          this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
+        } else {
+          this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
+          this.allCourses.push(course);
+          this.allCourses.sort((a, b) => Course.sortData(a, b));
+        }
     });
   }
 }

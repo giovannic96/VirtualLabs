@@ -1,3 +1,7 @@
+.sidenav-list-item {
+  padding: 6px 0 !important;
+}
+
 .sidenav-list-item:hover {
   background: #a1ace5 !important;
 }
@@ -6,8 +10,32 @@
   background: #c5cae9 !important;
 }
 
+.sidenav-course-active .course-acronym-div{
+  color: ghostwhite;
+  background: #4e54c8;
+  background: -webkit-linear-gradient(to bottom, #4e54c8, #8f94fb);
+  background: linear-gradient(to bottom, #4e54c8, #8f94fb);
+}
+
 mat-sidenav {
   margin-top: 48px;
+}
+
+.course-acronym-div {
+  color: #8f94fb;
+  border: 3px solid #8f94fb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: .7em;
+  font-weight: 500;
+}
+
+.sidenav-list-item:hover .course-acronym-div{
+  color: ghostwhite;
+  background: #4e54c8;
+  background: -webkit-linear-gradient(to bottom, #4e54c8, #8f94fb);
+  background: linear-gradient(to bottom, #4e54c8, #8f94fb);
 }
 
 ::ng-deep mat-sidenav-content {
