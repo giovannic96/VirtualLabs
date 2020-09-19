@@ -10,55 +10,55 @@ import java.util.Optional;
 
 public interface TeamService {
 
-    boolean addCourse(CourseDTO course); //TESTED
-    Optional<CourseDTO> getCourse(String name); //TESTED
-    List<CourseDTO> getAllCourses(); //TESTED
-    boolean addStudent(StudentDTO student); //TESTED
-    List<Boolean> addAllStudents(List<StudentDTO> students); //TESTED
-    Optional<StudentDTO> getStudent(String studentId); //TESTED
+    boolean addCourse(CourseDTO course);
+    Optional<CourseDTO> getCourse(String name);
+    List<CourseDTO> getAllCourses();
+    boolean addStudent(StudentDTO student);
+    List<Boolean> addAllStudents(List<StudentDTO> students);
+    Optional<StudentDTO> getStudent(String studentId);
     Optional<StudentDTO> getStudentByUsername(String username);
-    List<StudentDTO> getAllStudents(); //TESTED
-    boolean addProfessor(ProfessorDTO professor); //TESTED
-    List<Boolean> addAllProfessors(List<ProfessorDTO> professors); //TESTED
-    Optional<ProfessorDTO> getProfessor(String professorId); //TESTED
+    List<StudentDTO> getAllStudents();
+    boolean addProfessor(ProfessorDTO professor);
+    List<Boolean> addAllProfessors(List<ProfessorDTO> professors);
+    Optional<ProfessorDTO> getProfessor(String professorId);
     Optional<ProfessorDTO> getProfessorByUsername(String username);
-    List<ProfessorDTO> getAllProfessors(); //TESTED
+    List<ProfessorDTO> getAllProfessors();
 
-    Optional<TeamDTO> getTeamForCourse(String teamName, String courseName); //TESTED
+    Optional<TeamDTO> getTeamForCourse(String teamName, String courseName);
     Optional<TeamDTO> getTeam(Long teamId);
-    List<TeamDTO> getTeamsForCourse(String courseName); //TESTED
-    List<TeamDTO> getTeamsForStudent(String studentId); //TESTED
-    Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId); //TESTED
+    List<TeamDTO> getTeamsForCourse(String courseName);
+    List<TeamDTO> getTeamsForStudent(String studentId);
+    Optional<TeamProposalDTO> getTeamProposal(Long teamProposalId);
     Optional<CourseDTO> getTeamProposalCourse(Long teamProposalId);
     List<StudentDTO> getTeamProposalMembers(Long teamProposalId);
     List<TeamProposalDTO> getPendingTeamProposalForCourse(String courseName);
-    List<TeamProposalDTO> getTeamProposalsForCourse(String courseName); //TESTED
+    List<TeamProposalDTO> getTeamProposalsForCourse(String courseName);
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
     TeamDTO getTeamForStudentAndCourse(String studentId, String courseName);
     boolean hasAcceptedProposals(String studentId, String courseName);
     List<Long> getPendingTeamProposalIdsForStudent(String courseName, String studentId);
 
-    Long proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) throws MessagingException; //TESTED
-    void deleteTeam(Long teamId); //TESTED
+    Long proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) throws MessagingException;
+    void deleteTeam(Long teamId);
     void deleteTeamProposal(Long teamProposalId);
-    List<StudentDTO>getTeamMembers(Long TeamId); //TESTED
-    List<StudentDTO> getStudentsInTeams(String courseName); //TESTED
-    List<StudentDTO> getAvailableStudents(String courseName); //TESTED
+    List<StudentDTO>getTeamMembers(Long TeamId);
+    List<StudentDTO> getStudentsInTeams(String courseName);
+    List<StudentDTO> getAvailableStudents(String courseName);
 
     boolean editCourse(String courseName, CourseDTO courseDTO);
     void removeCourse(String courseName);
-    List<StudentDTO> getEnrolledStudents(String courseName); //TESTED
-    boolean addStudentToCourse(String studentId, String courseName); //TESTED
+    List<StudentDTO> getEnrolledStudents(String courseName);
+    boolean addStudentToCourse(String studentId, String courseName);
     void removeStudentFromCourse(String studentId, String courseName);
     void removeStudentFromTeamByCourse(String studentId, String courseName);
     boolean addProfessorToCourse(String professorId, String courseName);
     void removeProfessorFromCourse(String professorId, String courseName);
     List<ProfessorDTO> getProfessorsForCourse(String courseName);
-    void enableCourse(String courseName); //TESTED
-    void disableCourse(String courseName); //TESTED
-    List<Boolean> enrollAllStudents(List<String> studentIds, String courseName); //TESTED
+    void enableCourse(String courseName);
+    void disableCourse(String courseName);
+    List<Boolean> enrollAllStudents(List<String> studentIds, String courseName);
     List<Boolean> addAndEnroll(Reader r, String courseName);
-    List<CourseDTO> getCoursesForStudent(String studentId); //TESTED
+    List<CourseDTO> getCoursesForStudent(String studentId);
     List<CourseDTO> getCoursesForProfessor(String professorId);
     Optional<CourseDTO> getCourseForTeam(Long teamId);
     List<StudentDTO> getStudentsNotInCourse(String courseName);

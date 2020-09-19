@@ -398,7 +398,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<CourseDTO> getCoursesForProfessor(String professorId) {
         if (!userRepository.professorExistsById(professorId))
-            throw new StudentNotFoundException("The professor with id '" + professorId + "' was not found");
+            throw new ProfessorNotFoundException("The professor with id '" + professorId + "' was not found");
 
         Professor professor = userRepository.getProfessorById(professorId);
         return professor.getCourses()

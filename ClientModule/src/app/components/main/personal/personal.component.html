@@ -1,39 +1,102 @@
 <mat-toolbar>
   <span>{{selectedCourseName}}</span>
 </mat-toolbar>
-<mat-sidenav-container [autosize]="true">
-  <mat-sidenav mode="side" opened position="start">
+<ng-container *ngIf="myCourses?.length else noCourses">
+  <mat-sidenav-container [autosize]="true">
+    <mat-sidenav mode="side" opened position="start">
+      <div>
+        <mat-nav-list>
+          <a mat-list-item disableRipple class="sidenav-list-item"
+             *ngFor="let course of myCourses"
+             (click)="setCurrentCourse(course)"
+             routerLink="/courses/{{course.name}}"
+             routerLinkActive="sidenav-course-active">
+            <div class="course-acronym-div" mat-card-avatar>
+              <span>{{course.acronym}}</span>
+            </div>
+            {{course.name}}
+          </a>
+        </mat-nav-list>
+        <div class="add-course-container" *ngIf="utility.isProfessor()">
+          <button mat-raised-button color="accent" class="add-course-btn-inside btn" (click)="openCreateCourseDialog()">ADD COURSE</button>
+        </div>
+      </div>
+    </mat-sidenav>
     <div>
-      <mat-nav-list>
-        <a mat-list-item disableRipple class="sidenav-list-item"
-                        *ngFor="let course of allCourses"
-                        (click)="setCurrentCourse(course)"
-                        routerLink="/courses/{{course.name}}"
-                        routerLinkActive="sidenav-course-active">
-
-          <div class="course-acronym-div" mat-card-avatar>
-            <span>{{course.acronym}}</span>
-          </div>
-          {{course.name}}
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link
+           *ngFor="let link of navLinks"
+           [routerLink]="link.path"
+           [disabled]="this.myCourses?.length===0"
+           routerLinkActive #rla="routerLinkActive"
+           [active]="rla.isActive">
+          {{link.label}}
         </a>
-      </mat-nav-list>
-      <div class="add-course-container" *ngIf="utility.isProfessor()">
-        <button mat-raised-button color="accent" class="add-course-btn-inside btn" (click)="openCreateCourseDialog()">ADD COURSE</button>
+      </nav>
+      <div *ngIf="this.myCourses?.length" class="tab-container">
+        <router-outlet></router-outlet>
       </div>
     </div>
-  </mat-sidenav>
-  <div>
-    <nav mat-tab-nav-bar>
-      <a mat-tab-link
-         *ngFor="let link of navLinks"
-         [routerLink]="link.path"
-         routerLinkActive #rla="routerLinkActive"
-         [active]="rla.isActive">
-        {{link.label}}
-      </a>
-    </nav>
-    <div class="tab-container">
-      <router-outlet></router-outlet>
+  </mat-sidenav-container>
+</ng-container>
+
+<ng-template #noCourses>
+  <mat-sidenav-container [autosize]="true">
+    <mat-sidenav mode="side" opened position="start">
+      <div *ngIf="utility.isProfessor()">
+        <mat-nav-list>
+          <div class="no-courses-desc-container">
+          </div>
+        </mat-nav-list>
+        <div class="add-course-container">
+          <button mat-raised-button color="accent" class="add-course-btn-inside btn" (click)="openCreateCourseDialog()">ADD COURSE</button>
+        </div>
+      </div>
+    </mat-sidenav>
+    <div>
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link
+           *ngFor="let link of navLinks"
+           [routerLink]="link.path"
+           [disabled]="this.myCourses?.length===0"
+           routerLinkActive #rla="routerLinkActive"
+           [active]="rla.isActive">
+          {{link.label}}
+        </a>
+      </nav>
+      <div *ngIf="this.myCourses?.length else noCoursesDesc" class="tab-container">
+        <router-outlet></router-outlet>
+      </div>
     </div>
+  </mat-sidenav-container>
+</ng-template>
+
+<ng-template #noCoursesDesc>
+  <ng-container *ngIf="utility.isProfessor() else noCoursesDescForStudent">
+    <div class="text-container">
+      <h1>Warning</h1>
+      <h2>You are not assigned to any course yet!</h2>
+      <p></p>
+      <p>We are sorry, but you must be part to a course to start using VirtualLabs.<br>
+        Wait for the secretary office to add you to a course, or send them an email to speed up the procedure.
+        We remember you that you can also add a a course by yourself, by clicking on the button on the left.
+        We hope to see you soon in our platform.<br>
+        The VirtualLabs team.
+      </p>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #noCoursesDescForStudent>
+  <div class="text-container">
+    <h1>Warning</h1>
+    <h2>You are not assigned to any course yet!</h2>
+    <p></p>
+    <p>We are sorry, but you must be part to a course to start using VirtualLabs.<br>
+      Wait for a teacher to add you to a course, or send them an email to speed up the procedure.
+      We hope to see you soon in our platform.<br>
+      The VirtualLabs team.
+    </p>
   </div>
-</mat-sidenav-container>
+</ng-template>
+

@@ -1,7 +1,5 @@
 package it.polito.ai.virtualLabs.services;
 
-import it.polito.ai.virtualLabs.dtos.TeamDTO;
-import it.polito.ai.virtualLabs.dtos.TeamProposalDTO;
 import org.springframework.mail.MailException;
 
 import javax.mail.MessagingException;

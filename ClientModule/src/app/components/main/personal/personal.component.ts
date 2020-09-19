@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Course} from '../../../models/course.model';
-import {Router, RouterLinkActive} from '@angular/router';
+import {Router} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -8,7 +8,9 @@ import {CreateCourseDialogComponent} from '../../../helpers/dialog/create-course
 import Utility from '../../../helpers/utility';
 import {filter} from 'rxjs/operators';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {Student} from '../../../models/student.model';
+import {Observable} from 'rxjs';
+import {ProfessorService} from '../../../services/professor.service';
+import {StudentService} from '../../../services/student.service';
 
 @Component({
   selector: 'app-personal',
@@ -19,7 +21,8 @@ export class PersonalComponent implements OnInit {
 
   @ViewChild(MatSidenav) sideNav: MatSidenav;
 
-  allCourses: Course[];
+  myCourses: Course[];
+
   selectedCourseName: string;
   navLinks: any[];
   activeLinkIndex = -1;
@@ -27,6 +30,8 @@ export class PersonalComponent implements OnInit {
   public utility: Utility;
 
   constructor(private courseService: CourseService,
+              private professorService: ProfessorService,
+              private studentService: StudentService,
               private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
@@ -57,14 +62,20 @@ export class PersonalComponent implements OnInit {
       }
     ];
 
-    this.allCourses = new Array<Course>();
+    this.myCourses = new Array<Course>();
     this.selectedCourseName = '';
 
     this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(false);
 
-    this.courseService.getAll().subscribe(courseList => {
-      this.allCourses = courseList;
+    let coursesRequest: Observable<Course[]>;
+    if (this.utility.isProfessor())
+      coursesRequest = this.professorService.getCourses(this.utility.getMyId());
+    else
+      coursesRequest = this.studentService.getCourses(this.utility.getMyId());
+
+    coursesRequest.subscribe(courseList => {
+      this.myCourses = courseList;
 
       let courseToNavigate: string;
       let tabToVisit: string;
@@ -117,8 +128,8 @@ export class PersonalComponent implements OnInit {
           this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
         } else {
           this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
-          this.allCourses.push(course);
-          this.allCourses.sort((a, b) => Course.sortData(a, b));
+          this.myCourses.push(course);
+          this.myCourses.sort((a, b) => Course.sortData(a, b));
         }
     });
   }

@@ -4,6 +4,7 @@ import {Student} from '../models/student.model';
 import {Observable, throwError} from 'rxjs';
 import {catchError, retry} from 'rxjs/operators';
 import {Professor} from '../models/professor.model';
+import {Course} from "../models/course.model";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,18 @@ export class ProfessorService {
         catchError( err => {
           console.error(err);
           return throwError(`GetAllProfessors error: ${err.message}`);
+        })
+      );
+  }
+
+  getCourses(professorId: string): Observable<Course[]> {
+    return this.httpClient
+      .get<Course[]>(`${this.API_PATH}/${professorId}/courses`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetCourses error: ${err.message}`);
         })
       );
   }

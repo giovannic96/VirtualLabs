@@ -48,13 +48,13 @@ mat-sidenav {
 
 .add-course-container {
   position: fixed;
-  left: .9em;
+  left: 1.9em;
   bottom: 1.6em;
 }
 
 .add-course-btn-inside {
   font-size: 1rem;
-  padding: .1em 4.2em;
+  padding: .1em 5em;
   color: #8e3333;
   background-color: rgba(255, 94, 9, 0.4);
   width: 100%;
@@ -90,4 +90,19 @@ mat-sidenav {
 
 .btn:hover:before {
   left: 100%;
+}
+
+.no-courses-desc-container {
+  padding: .6em;
+  width: 303px;
+}
+
+.no-courses-desc-container span {
+  text-transform: uppercase;
+}
+
+.text-container {
+  font-weight: normal;
+  padding: 3em 1em;
+  text-align: center;
 }
