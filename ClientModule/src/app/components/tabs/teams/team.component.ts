@@ -38,6 +38,7 @@ export class TeamComponent implements OnInit {
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
 
+  public gridColumns = 2;
   public utility: Utility;
 
   constructor(private courseService: CourseService,

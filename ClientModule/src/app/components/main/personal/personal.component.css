@@ -48,7 +48,7 @@ mat-sidenav {
 
 .add-course-container {
   position: fixed;
-  left: 1em;
+  left: .9em;
   bottom: 1.6em;
 }
 

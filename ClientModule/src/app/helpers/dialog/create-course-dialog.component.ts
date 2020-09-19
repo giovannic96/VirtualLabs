@@ -12,6 +12,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {concatMap, mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
+import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-create-course-dialog',
