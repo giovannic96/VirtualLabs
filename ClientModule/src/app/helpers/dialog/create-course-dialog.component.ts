@@ -5,6 +5,7 @@ import {Course} from '../../models/course.model';
 import {CourseService} from '../../services/course.service';
 import {MinLowerThanMax} from '../min-lower-than-max.validator';
 import {MatDialogRef} from '@angular/material/dialog';
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-create-course-dialog',

@@ -210,3 +210,68 @@ mat-card {
 .no-vms-text {
   color: rgba(0, 0, 0, 0.54);
 }
+
+.proposal-history-header {
+  padding: .5em 1.2em;
+}
+
+.proposal-history-header mat-panel-title {
+  flex: unset;
+}
+
+.proposal-history-header span {
+  align-self: center;
+}
+
+::ng-deep .proposal-history-header .mat-content {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.proposal-history-status-container {
+  width: 10em;
+  text-align: center;
+  padding-left: 3.8em;
+}
+
+.proposal-history-status-container span {
+  font-size: large;
+  font-weight: 600;
+}
+
+.proposal-history-status-desc-container {
+  width: 28em;
+}
+
+.proposal-history-status-desc-container span {
+  float: right;
+  margin-right: 1em;
+  color: rgba(0, 0, 0, 0.64);
+  font-size: medium;
+}
+
+.proposal-history-member-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+  margin-bottom: 1.4em;
+}
+.proposal-history-member-container img {
+  height: 50px;
+  width: 50px;
+}
+
+.proposal-history-members-desc {
+  font-weight: 500;
+  font-size: large;
+  margin-bottom: 1.1em;
+}
+
+.proposal-history-members-container {
+  margin-top: 1.8em;
+  padding-left: 2em;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 7em;
+}

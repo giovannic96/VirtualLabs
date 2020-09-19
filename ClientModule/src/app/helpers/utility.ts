@@ -2,6 +2,7 @@ import {ReportStatus} from '../models/report.model';
 import * as CanvasJS from './canvasjs.min';
 import {VmModel} from '../models/vm-model.model';
 import {Vm} from '../models/vm.model';
+import {TeamProposalStatus} from "../models/team-proposal.model";
 
 export default class Utility {
 
@@ -37,7 +38,7 @@ export default class Utility {
     return '' + dateSplit[0] + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
   }
 
-  getColorForStatus(status: string) {
+  getColorForReportStatus(status: string) {
     switch (status) {
       case ReportStatus.NULL: {
         return '#818181';
@@ -53,6 +54,23 @@ export default class Utility {
       }
       case ReportStatus.GRADED: {
         return '#07ff15';
+      }
+      default: {
+        return '#000000';
+      }
+    }
+  }
+
+  getColorForProposalStatus(status: string) {
+    switch (status) {
+      case TeamProposalStatus.PENDING: {
+        return '#FFC107';
+      }
+      case TeamProposalStatus.CONFIRMED: {
+        return '#54ba54';
+      }
+      case TeamProposalStatus.REJECTED: {
+        return '#cb4747';
       }
       default: {
         return '#000000';
