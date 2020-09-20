@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
-import {concatMap, filter, mergeMap} from 'rxjs/operators';
+import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {EMPTY, forkJoin, Observable, of} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
@@ -54,9 +54,14 @@ export class VmComponent implements OnInit {
         this.teamList = teamList;
         return teamList;
       }),
-      mergeMap(team => {
-        this.teamService.getTeamVms(team.id).subscribe(vms => team.vms = vms);
-        return EMPTY;
+      tap(team => {
+        this.teamService.getTeamVms(team.id).subscribe(vms => {
+          team.vms = vms;
+          const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+          forkJoin(ownerRequests).subscribe(owners => {
+            team.vms.forEach((vm, index) => team.vms[index].owner = owners[index]);
+          });
+        });
       })).subscribe();
 
     this.currentCourse.pipe(
@@ -202,10 +207,8 @@ export class VmComponent implements OnInit {
   openVmSettingsDialog(vm?: Vm) {
 
     const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
-    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk) {
-      alert('ops');
+    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk)
       return;
-    }
 
     const data = {
       vmExists: false,

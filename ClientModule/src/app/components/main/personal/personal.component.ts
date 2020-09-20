@@ -4,13 +4,14 @@ import {Router} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {CreateCourseDialogComponent} from '../../../helpers/dialog/create-course-dialog.component';
+import {CourseDialogComponent} from '../../../helpers/dialog/course-dialog.component';
 import Utility from '../../../helpers/utility';
 import {filter} from 'rxjs/operators';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {Observable} from 'rxjs';
 import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
+import {MyDialogComponent} from "../../../helpers/dialog/my-dialog.component";
 
 @Component({
   selector: 'app-personal',
@@ -118,11 +119,24 @@ export class PersonalComponent implements OnInit {
     this.courseService.setSelectedCourse(course);
   }
 
-  openCreateCourseDialog() {
+  openCourseDialog(courseName?: string) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    const dialogRef = this.dialog.open(CreateCourseDialogComponent, dialogConfig)
+    dialogConfig.data = {
+      courseExists: false,
+      course: null
+    };
+
+    if (courseName) {
+      const course = this.myCourses.find(c => c.name === courseName);
+      if (course) {
+        dialogConfig.data.courseExists = true;
+        dialogConfig.data.course = course;
+      }
+    }
+
+    const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig)
       .afterClosed().pipe(filter(result => result)).subscribe(course => {
         if (course === -1) {
           this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
@@ -132,5 +146,30 @@ export class PersonalComponent implements OnInit {
           this.myCourses.sort((a, b) => Course.sortData(a, b));
         }
     });
+  }
+
+  async deleteCourse(courseName: string) {
+    // Prepare the message
+    const message = 'This will delete also all the teams, team proposals, assignments and vm model related to this course';
+
+    // Open a dialog and get the response as an 'await'
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    // Check the response when dialog closes
+    if (areYouSure) {
+      this.courseService.deleteCourse(courseName).subscribe(() => {
+        this.mySnackBar.openSnackBar('Course deleted successfully', MessageType.SUCCESS, 3);
+        const index = this.myCourses.findIndex(c => c.name === courseName);
+        this.myCourses.splice(index, 1);
+        this.router.navigate(['courses/']);
+      }, error => {
+        this.mySnackBar.openSnackBar('Impossible to delete this course', MessageType.ERROR, 5);
+      });
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatHorizontalStepper} from '@angular/material/stepper';
 import {Course} from '../../models/course.model';
@@ -8,7 +8,7 @@ import {Student} from '../../models/student.model';
 import {Professor} from '../../models/professor.model';
 import {ProfessorService} from '../../services/professor.service';
 import Utility from '../utility';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {concatMap, mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
@@ -16,10 +16,10 @@ import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-create-course-dialog',
-  templateUrl: 'create-course-dialog.component.html',
-  styleUrls: ['./create-course-dialog.component.css']
+  templateUrl: 'course-dialog.component.html',
+  styleUrls: ['./course-dialog.component.css']
 })
-export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
+export class CourseDialogComponent implements OnInit, AfterViewInit {
 
   MAX_CONTENT_LENGTH = 1024;
 
@@ -38,7 +38,8 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChild('addProfessorInput') addProfessorInput: ElementRef;
 
-  constructor(private dialogRef: MatDialogRef<CreateCourseDialogComponent>,
+  constructor(private dialogRef: MatDialogRef<CourseDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any,
               private formBuilder: FormBuilder,
               private courseService: CourseService,
               private professorService: ProfessorService,
@@ -65,6 +66,21 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
     this.descriptionControl = formBuilder.control('', [Validators.required, Validators.maxLength(this.MAX_CONTENT_LENGTH)]);
     this.prerequisitesControl = formBuilder.control('', [Validators.required, Validators.maxLength(this.MAX_CONTENT_LENGTH)]);
     this.topicsControl = formBuilder.control('', [Validators.required, Validators.maxLength(this.MAX_CONTENT_LENGTH)]);
+
+    if (data.courseExists) {
+      const course: Course = data.course;
+      this.basicForm.controls.name.setValue(course.name);
+      this.basicForm.controls.name.disable();
+      this.basicForm.controls.acronym.setValue(course.acronym);
+      this.basicForm.controls.acronym.disable();
+      this.basicForm.controls.min.setValue(course.minTeamSize);
+      this.basicForm.controls.max.setValue(course.minTeamSize);
+      console.log(course.info);
+      const info = JSON.parse(course.info);
+      this.descriptionControl.setValue(info.description);
+      this.prerequisitesControl.setValue(info.prerequisites);
+      this.topicsControl.setValue(info.topics);
+    }
   }
 
   ngOnInit() {
@@ -74,7 +90,7 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
     this.stepper._getIndicatorType = () => 'number';
   }
 
-  onCreate() {
+  onSubmit() {
     if (this.allFormsAreValid()) {
       const course = new Course(
         this.basicForm.controls.name.value,
@@ -89,19 +105,24 @@ export class CreateCourseDialogComponent implements OnInit, AfterViewInit {
         })
       );
 
-      this.courseService.createCourse(course.getDTO()).pipe(
-        concatMap(() => {
-          return this.courseService.assignProfessor(course.name, this.mySelf.id);
-        }),
-        mergeMap(() => {
-          return this.selectedProfessors;
-        }),
-        mergeMap(professor => {
-          return this.courseService.assignProfessor(course.name, professor.id);
-        })
-      ).subscribe(() => {
-        this.dialogRef.close(course);
-      }, error => this.dialogRef.close(-1));
+      if (this.data.courseExists) { // COURSE EDIT
+        this.courseService.editCourse();
+      }
+      else { // COURSE CREATION
+        this.courseService.createCourse(course.getDTO()).pipe(
+          concatMap(() => {
+            return this.courseService.assignProfessor(course.name, this.mySelf.id);
+          }),
+          mergeMap(() => {
+            return this.selectedProfessors;
+          }),
+          mergeMap(professor => {
+            return this.courseService.assignProfessor(course.name, professor.id);
+          })
+        ).subscribe(() => {
+          this.dialogRef.close(course);
+        }, error => this.dialogRef.close(-1));
+      }
     }
   }
 

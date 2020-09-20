@@ -109,12 +109,12 @@
                 <mat-card-subtitle>{{basicForm.controls.max.value}}</mat-card-subtitle>
               </div>
             </div>
-            <div class="summary-professor-question">
+            <div class="summary-professor-question" [ngClass]="data.courseExists ? 'hide-container' : ''">
               <p>Do you want to assign other professors to this course?</p>
               <mat-checkbox #otherProfCheck></mat-checkbox>
             </div>
-            <div *ngIf="otherProfCheck.checked" class="summary-professor-div">
-              <div class="summary-professor-selection-div">
+            <div *ngIf="otherProfCheck.checked || data.courseExists" class="summary-professor-div">
+              <div *ngIf="!data.courseExists" class="summary-professor-selection-div">
                 <mat-form-field>
                   <mat-label>Add professor</mat-label>
                   <input matInput type="text" placeholder="Professor name"
@@ -133,7 +133,7 @@
                         (click)="addProfessor(currentSelectedOption)">ADD
                 </button>
               </div>
-              <div class="summary-professor-list-div">
+              <div [class]="data.courseExists ? 'summary-professor-immutable-list-div' : 'summary-professor-list-div'">
                 <mat-card>
                   <mat-card-header>
                     <mat-card-title class="professor-list-title">Professors assigned</mat-card-title>
@@ -172,11 +172,11 @@
     <div class="buttons-container">
       <mat-dialog-actions>
         <button mat-raised-button *ngIf="stepper.selectedIndex > 0" (click)="stepper.previous()">PREVIOUS</button>
-        <button mat-raised-button *ngIf="stepper.selectedIndex < stepper.steps?.length-1" color="primary"
+        <button mat-raised-button *ngIf="stepper.selectedIndex < 4" color="primary"
                 (click)="stepper.next()">NEXT</button>
-        <button mat-raised-button *ngIf="stepper.selectedIndex === stepper.steps?.length-1" color="primary"
+        <button mat-raised-button *ngIf="stepper.selectedIndex === 4" color="primary"
                 [disabled]="!allFormsAreValid()"
-                (click)="onCreate()">CREATE</button>
+                (click)="onSubmit()">{{data.courseExists ? 'EDIT' : 'CREATE'}}</button>
       </mat-dialog-actions>
     </div>
   </div>

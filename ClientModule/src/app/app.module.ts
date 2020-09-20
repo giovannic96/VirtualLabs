@@ -65,7 +65,7 @@ import { ProposalResponseComponent } from './components/main/proposal_response/p
 import {MatRadioModule} from '@angular/material/radio';
 import { VmSettingsDialogComponent } from './components/tabs/vms/vm-settings-dialog.component';
 import {MatMenuModule} from '@angular/material/menu';
-import {CreateCourseDialogComponent} from './helpers/dialog/create-course-dialog.component';
+import {CourseDialogComponent} from './helpers/dialog/course-dialog.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import { RegistrationConfirmComponent } from './components/main/registration_confirm/registration-confirm.component';
 
@@ -101,7 +101,7 @@ import { RegistrationConfirmComponent } from './components/main/registration_con
     CanvasComponent,
     ProposalResponseComponent,
     VmSettingsDialogComponent,
-    CreateCourseDialogComponent,
+    CourseDialogComponent,
     RegistrationConfirmComponent,
   ],
   imports: [
@@ -173,7 +173,7 @@ import { RegistrationConfirmComponent } from './components/main/registration_con
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     VmSettingsDialogComponent,
-    CreateCourseDialogComponent
+    CourseDialogComponent
   ]
 })
 export class AppModule { }

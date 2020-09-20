@@ -73,6 +73,9 @@
               <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
             </mat-card-footer>
           </mat-card-content>
+          <div class="vm-owner-container">
+            <span>Created by: {{vm.owner?.name}} {{vm.owner?.surname}}</span>
+          </div>
         </mat-card>
       </div>
     </mat-expansion-panel>
@@ -114,6 +117,9 @@
               <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
             </mat-card-footer>
           </mat-card-content>
+          <div class="vm-owner-container">
+            <span>Created by: {{vm.owner?.name}} {{vm.owner?.surname}}</span>
+          </div>
         </mat-card>
       </div>
     </mat-card>

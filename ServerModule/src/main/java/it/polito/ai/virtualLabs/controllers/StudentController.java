@@ -49,9 +49,7 @@ public class StudentController {
     @GetMapping("/{studentId}/courses")
     public List<CourseDTO> courses(@PathVariable String studentId) {
         List<CourseDTO> courses = teamService.getCoursesForStudent(studentId);
-        for(CourseDTO c: courses)
-            ModelHelper.enrich(c);
-        return courses;
+        return teamService.enrichCourses(courses);
     }
 
     @GetMapping("/{studentId}/teams")

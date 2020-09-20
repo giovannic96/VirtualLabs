@@ -224,6 +224,21 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<CourseDTO> enrichCourses(List<CourseDTO> courses) {
+        for(CourseDTO c: courses) {
+            ModelHelper.enrich(c);
+            String courseInfo = "";
+            try {
+                courseInfo = new String(getClass().getClassLoader().getResourceAsStream("static/" + c.getName() + ".txt").readAllBytes());
+            } catch (Exception ex) {
+                courseInfo = "";
+            }
+            c.setInfo(courseInfo);
+        }
+        return courses;
+    }
+
+    @Override
     public boolean addStudentToCourse(String studentId, String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
@@ -697,6 +712,9 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
 
         //remove course
+        Course c = courseRepository.getOne(courseName);
+        teamService.getProfessorsForCourse(courseName).forEach(prof ->
+                userRepository.getProfessorById(prof.getId()).removeCourse(c));
         courseRepository.deleteById(courseName);
         courseRepository.flush();
     }

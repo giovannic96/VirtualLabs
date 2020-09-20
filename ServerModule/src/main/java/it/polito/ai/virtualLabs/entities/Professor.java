@@ -22,4 +22,14 @@ public class Professor extends User{
 
     @OneToMany(mappedBy = "professor", cascade = CascadeType.MERGE)
     private List<VmModel> vmModels = new ArrayList<>();
+
+    public void addCourse(Course c) {
+        courses.add(c);
+        c.getProfessors().add(this);
+    }
+
+    public void removeCourse(Course c) {
+        courses.remove(c);
+        c.getProfessors().remove(this);
+    }
 }
