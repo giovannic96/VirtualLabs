@@ -54,6 +54,24 @@ public class TeamProposal {
         tokens.remove(token);
     }
 
+    public void addStudent(Student s) {
+        students.add(s);
+        s.getTeamProposals().add(this);
+    }
+
+    public void removeStudent(Student s) {
+        students.remove(s);
+        s.getTeamProposals().remove(this);
+    }
+
+    public void setCourse(Course c) {
+        if(course != null)
+            course.getTeamProposals().remove(this);
+        if(c != null)
+            c.getTeamProposals().add(this);
+        course = c;
+    }
+
     public enum TeamProposalStatus {
         PENDING,
         CONFIRMED,
