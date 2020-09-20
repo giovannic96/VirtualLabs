@@ -698,13 +698,21 @@ public class TeamServiceImpl implements TeamService {
 
         if(courseDTO.getMinTeamSize() < MIN_SIZE_FOR_GROUP ||
                 courseDTO.getMaxTeamSize() > MAX_SIZE_FOR_GROUP ||
-                courseDTO.getMaxTeamSize() - courseDTO.getMinTeamSize() >= 0)
+                courseDTO.getMaxTeamSize() - courseDTO.getMinTeamSize() < 0)
             return false;
 
         Course course = courseRepository.getOne(courseName);
-
         course.setMaxTeamSize(courseDTO.getMaxTeamSize());
         course.setMinTeamSize(courseDTO.getMinTeamSize());
+
+        try {
+            File infoToEdit = new File(getResourcesPath() + courseDTO.getName() + ".txt");
+            FileOutputStream stream = new FileOutputStream(infoToEdit);
+            stream.write(courseDTO.getInfo().getBytes());
+            stream.close();
+        } catch(IOException ex) {
+            System.err.println(ex.getMessage());
+        }
 
         courseRepository.saveAndFlush(course);
         return true;
@@ -764,6 +772,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private String getResourcesPath() {
+        // return "src/main/resources/static/"; // FOR LOCALHOST
         return getClass().getClassLoader().getResource("static/").getPath();
     }
 }
