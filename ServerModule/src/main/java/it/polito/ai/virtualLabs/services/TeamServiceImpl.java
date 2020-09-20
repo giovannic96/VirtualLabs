@@ -703,7 +703,6 @@ public class TeamServiceImpl implements TeamService {
 
         Course course = courseRepository.getOne(courseName);
 
-        course.setAcronym(courseDTO.getAcronym());
         course.setMaxTeamSize(courseDTO.getMaxTeamSize());
         course.setMinTeamSize(courseDTO.getMinTeamSize());
 

@@ -13,6 +13,7 @@ import {concatMap, mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 import {MatButton} from '@angular/material/button';
+import {Assignment} from "../../models/assignment.model";
 
 @Component({
   selector: 'app-create-course-dialog',
@@ -90,6 +91,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
+
     if (this.allFormsAreValid()) {
       const course = new Course(
         this.basicForm.controls.name.value,
@@ -103,6 +105,12 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
           topics: this.topicsControl.value,
         })
       );
+
+      // check if data submitted are the same as before
+      if (this.data.course && this.equalToPrevious()) {
+        this.dialogRef.close(new Course('', '', false, 0, 0, ''));
+        return;
+      }
 
       if (this.data.courseExists) { // COURSE EDIT
         this.courseService.editCourse(this.data.course.name, course.getDTO()).subscribe(res => {
@@ -137,6 +145,18 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
       this.descriptionControl.valid &&
       this.prerequisitesControl.valid &&
       this.topicsControl.valid;
+  }
+
+  equalToPrevious(): boolean {
+    return this.data.course.name === this.basicForm.controls.name.value
+      && this.data.course.acronym === this.basicForm.controls.acronym.value
+      && this.data.course.minTeamSize === this.basicForm.controls.min.value
+      && this.data.course.maxTeamSize === this.basicForm.controls.max.value
+      && JSON.stringify(JSON.parse(this.data.course.info)) === JSON.stringify({
+        description: this.descriptionControl.value,
+        prerequisites: this.prerequisitesControl.value,
+        topics: this.topicsControl.value,
+      });
   }
 
   displayProfessor(professor: Professor) {

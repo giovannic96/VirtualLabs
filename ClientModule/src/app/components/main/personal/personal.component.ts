@@ -138,22 +138,26 @@ export class PersonalComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig)
-      .afterClosed().pipe().subscribe((course: Course) => {
-        if (dialogConfig.data.courseExists) {
+      .afterClosed().pipe(filter(res => res !== undefined)).subscribe((course: Course) => {
+        if (dialogConfig.data.courseExists) { // COURSE EDIT
           if (course == null) {
             this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
           } else {
-            const editedCourse = this.myCourses.find(c => c.name === course.name);
-            editedCourse.name = course.name;
-            editedCourse.acronym = course.acronym;
-            editedCourse.enabled = course.enabled;
-            editedCourse.minTeamSize = course.minTeamSize;
-            editedCourse.maxTeamSize = course.maxTeamSize;
-            editedCourse.info = course.info;
-            this.setCurrentCourse(editedCourse);
-            this.mySnackBar.openSnackBar('Course edited successfully', MessageType.SUCCESS, 3);
+            if (course.name === '') {
+              this.mySnackBar.openSnackBar('Course was not modified: data are the same', MessageType.WARNING, 3);
+            } else {
+              const editedCourse = this.myCourses.find(c => c.name === course.name);
+              editedCourse.name = course.name;
+              editedCourse.acronym = course.acronym;
+              editedCourse.enabled = course.enabled;
+              editedCourse.minTeamSize = course.minTeamSize;
+              editedCourse.maxTeamSize = course.maxTeamSize;
+              editedCourse.info = course.info;
+              this.setCurrentCourse(editedCourse);
+              this.mySnackBar.openSnackBar('Course edited successfully', MessageType.SUCCESS, 3);
+            }
           }
-        } else {
+        } else { // COURSE CREATION
           if (course == null) {
             this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
           } else {
