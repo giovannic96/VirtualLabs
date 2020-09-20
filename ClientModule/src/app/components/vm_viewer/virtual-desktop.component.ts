@@ -13,6 +13,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {VmInfoDialogComponent} from './vm-info-dialog.component';
 import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
 import Utility from '../../helpers/utility';
+import {TeamService} from '../../services/team.service';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-virtual-desktop',
@@ -21,7 +23,9 @@ import Utility from '../../helpers/utility';
 })
 export class VirtualDesktopComponent implements OnInit {
   public loadComplete: boolean;
+  public vmParams: any;
   public currentVm: Vm;
+  public vmNotValid: boolean;
   private vmOwner: Student;
   private vmTeam: Team;
   private vmModel: VmModel;
@@ -40,13 +44,14 @@ export class VirtualDesktopComponent implements OnInit {
 
   constructor(private courseService: CourseService,
               private vmService: VmService,
+              private teamService: TeamService,
               private route: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog) {
 
     this.utility = new Utility();
 
-    const loadingTimer = timer(5000);
+    const loadingTimer = timer(3500);
     loadingTimer.subscribe(() => this.loadComplete = true);
 
     this.chosenTip = this.chooseRandomTip();
@@ -54,23 +59,54 @@ export class VirtualDesktopComponent implements OnInit {
     this.courseService.hideMenu.next(true);
     this.courseService.hideMenuIcon.next(true);
 
-    this.currentVm = JSON.parse(atob(this.route.snapshot.url.pop().path));
+    try {
+      this.vmParams = JSON.parse(atob(this.route.snapshot.url.pop().path));
+    } catch (e) {
+      this.vmNotValid = true;
+      alert('An error occurred while loading the virtual machine.\nTry again opening it from your personal page.');
+      this.router.navigate(['courses']);
+    }
+    if (this.vmNotValid) return;
 
     const requests: Observable<any>[] = [];
+    const vmId = this.vmParams.vmId;
     requests.push(
-      this.vmService.getVmOwner(this.currentVm.id),
-      this.vmService.getVmTeam(this.currentVm.id),
-      this.vmService.getVmModelByVmId(this.currentVm.id));
+      this.vmService.getVmOwner(vmId),
+      this.vmService.getVmTeam(vmId),
+      this.vmService.getVmModelByVmId(vmId));
 
     forkJoin(requests).pipe(
       concatMap(responses => {
         this.vmOwner = responses[0];
         this.vmTeam = responses[1];
         this.vmModel = responses[2];
+        return this.vmService.getVmById(vmId);
+      }),
+      concatMap( vm => {
+        this.currentVm = vm;
         return this.vmService.getVmModelCourse(this.vmModel.id);
-      })).subscribe(course => this.vmCourse = course);
+      })).subscribe(course => {
+        this.vmCourse = course;
+        const authUsers = this.utility.isProfessor() ?
+          this.courseService.getProfessors(this.vmCourse.name) :
+          this.teamService.getTeamMembers(this.vmTeam.id);
 
-    this. stats = {cpu: 0, ram: 0, disk: 0};
+        authUsers.subscribe((users: User[]) => {
+          const userFound = users.find(user => user.id === this.utility.getMyId());
+          if (!userFound) {
+            alert('You are unauthorized to access this virtual machine!');
+            this.router.navigate(['courses']);
+          }
+          else if (!this.currentVm.active) {
+            alert('You cannot access this virtual machine now.\n' +
+              'Maybe it\'s turned off.\n' +
+              'Check on your personal page or ask the owner to power it on.');
+            this.router.navigate(['courses']);
+          }
+        });
+    });
+
+    this.stats = {cpu: 0, ram: 0, disk: 0};
     const statsTimer = timer(1000, 1000);
 
     statsTimer.subscribe(() => {

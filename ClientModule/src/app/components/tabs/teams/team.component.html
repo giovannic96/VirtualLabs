@@ -18,7 +18,7 @@
 <div class="tab-section formed-teams-section">
   <div class="tab-subtitle">
     <mat-icon>groups</mat-icon>
-    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team'}}</h2>
+    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team' + (myTeam ? '  -  ' + myTeam.name : '')}}</h2>
   </div>
   <ng-container *ngIf="teamList?.length; else noTeams">
     <ng-container *ngIf="utility.isProfessor(); else myTeamSection">
