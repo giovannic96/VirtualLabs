@@ -31,9 +31,9 @@ export class LoginDialogComponent implements OnInit {
       this.loginError = false;
       this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value)
         .subscribe(resp => {
-        localStorage.setItem('virtuallabs_token', resp.accessToken);
-        const userParsed = JSON.parse(atob(resp.accessToken.split('.')[1]));
-        this.authService.setUserLogged(userParsed);
+        localStorage.setItem('virtuallabs_token', resp.token);
+        const userParsed = JSON.parse(atob(resp.token.split('.')[1]));
+        this.authService.setUserTokenLogged(userParsed);
         this.dialogRef.close(true);
       }, error => {
         this.loginError = true;

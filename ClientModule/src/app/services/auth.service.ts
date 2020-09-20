@@ -29,7 +29,6 @@ export class AuthService {
     return this.httpClient
       .post<any>(`${this.API_PATH}/login`, {username: email, password})
       .pipe(
-        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`Login error: ${err.message}`);
@@ -41,7 +40,6 @@ export class AuthService {
     return this.httpClient
       .post<any>(`${this.API_PATH}/signup`, {username: email, password})
       .pipe(
-        retry(1),
         catchError( err => {
           console.error(err);
           return throwError(`Signup error: ${err.message}`);
@@ -56,17 +54,17 @@ export class AuthService {
         retry(1),
         catchError( err => {
           console.error(err);
-          return throwError(`Signup error: ${err.message}`);
+          return throwError(`Confirmation error: ${err.message}`);
         })
       );
   }
 
   logout() {
     localStorage.removeItem('virtuallabs_token');
-    this.setUserLogged(null);
+    this.setUserTokenLogged(null);
   }
 
-  setUserLogged(val: Token) {
+  setUserTokenLogged(val: Token) {
     this.tokenLoggedObs.next(val);
   }
 

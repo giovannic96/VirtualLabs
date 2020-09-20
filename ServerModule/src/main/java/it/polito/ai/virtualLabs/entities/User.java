@@ -21,8 +21,7 @@ import static java.util.stream.Collectors.toList;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="userType",
-        discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name="userType", discriminatorType = DiscriminatorType.STRING)
 public class User implements UserDetails {
 
     @Id
@@ -33,7 +32,7 @@ public class User implements UserDetails {
     @NotNull
     private String username;
 
-    private String password = null;
+    private String password;
 
     private String photo;
 
