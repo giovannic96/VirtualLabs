@@ -74,8 +74,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
       this.basicForm.controls.acronym.setValue(course.acronym);
       this.basicForm.controls.acronym.disable();
       this.basicForm.controls.min.setValue(course.minTeamSize);
-      this.basicForm.controls.max.setValue(course.minTeamSize);
-      console.log(course.info);
+      this.basicForm.controls.max.setValue(course.maxTeamSize);
       const info = JSON.parse(course.info);
       this.descriptionControl.setValue(info.description);
       this.prerequisitesControl.setValue(info.prerequisites);
@@ -106,7 +105,14 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
       );
 
       if (this.data.courseExists) { // COURSE EDIT
-        this.courseService.editCourse();
+        this.courseService.editCourse(this.data.course.name, course.getDTO()).subscribe(res => {
+            if (res)
+              this.dialogRef.close(course);
+            else
+              this.dialogRef.close(null);
+          }, () =>
+          this.dialogRef.close(null)
+        );
       }
       else { // COURSE CREATION
         this.courseService.createCourse(course.getDTO()).pipe(
@@ -121,7 +127,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
           })
         ).subscribe(() => {
           this.dialogRef.close(course);
-        }, error => this.dialogRef.close(-1));
+        }, error => this.dialogRef.close(null));
       }
     }
   }

@@ -71,7 +71,7 @@ export class Course {
     this._info = value;
   }
 
-  getDTO() {
+  getDTO(): any {
     return {
       name: this._name,
       acronym: this._acronym,

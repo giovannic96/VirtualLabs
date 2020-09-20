@@ -12,6 +12,7 @@ import {Observable} from 'rxjs';
 import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from "../../../helpers/dialog/my-dialog.component";
+import {Vm} from "../../../models/vm.model";
 
 @Component({
   selector: 'app-personal',
@@ -137,15 +138,31 @@ export class PersonalComponent implements OnInit {
     }
 
     const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig)
-      .afterClosed().pipe(filter(result => result)).subscribe(course => {
-        if (course === -1) {
-          this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
+      .afterClosed().pipe().subscribe((course: Course) => {
+        if (dialogConfig.data.courseExists) {
+          if (course == null) {
+            this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
+          } else {
+            const editedCourse = this.myCourses.find(c => c.name === course.name);
+            editedCourse.name = course.name;
+            editedCourse.acronym = course.acronym;
+            editedCourse.enabled = course.enabled;
+            editedCourse.minTeamSize = course.minTeamSize;
+            editedCourse.maxTeamSize = course.maxTeamSize;
+            editedCourse.info = course.info;
+            this.setCurrentCourse(editedCourse);
+            this.mySnackBar.openSnackBar('Course edited successfully', MessageType.SUCCESS, 3);
+          }
         } else {
-          this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
-          this.myCourses.push(course);
-          this.myCourses.sort((a, b) => Course.sortData(a, b));
+          if (course == null) {
+            this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
+          } else {
+            this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
+            this.myCourses.push(course);
+            this.myCourses.sort((a, b) => Course.sortData(a, b));
+          }
         }
-    });
+      });
   }
 
   async deleteCourse(courseName: string) {
