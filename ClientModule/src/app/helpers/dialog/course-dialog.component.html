@@ -2,7 +2,7 @@
   <mat-icon class="close-icon">close</mat-icon>
 </button>
 <div class="dialog-container">
-  <h2 mat-dialog-title>New Course</h2>
+  <h2 mat-dialog-title>{{data.courseExists ? 'Edit Course' : 'New Course'}}</h2>
   <div>
     <div class="stepper-container">
       <mat-horizontal-stepper #stepper>

@@ -246,7 +246,7 @@ export class CourseService {
       );
   }
 
-  editCourse(courseName: string, course: Course) {
+  editCourse(courseName: string, course: any) {
     return this.httpClient
       .put<boolean>(`${this.API_PATH}/${courseName}`, course)
       .pipe(

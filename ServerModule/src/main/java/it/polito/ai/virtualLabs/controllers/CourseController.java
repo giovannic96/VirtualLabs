@@ -235,7 +235,7 @@ public class CourseController {
     @PutMapping("/{courseName}")
     @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
-    public void editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
+    public boolean editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
         if(!courseName.equals(courseDTO.getName()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The course you want to edit has a name different from '" + courseDTO.getName() + "'");
 
@@ -243,8 +243,7 @@ public class CourseController {
         if(!currentCourse.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '" + courseName + "' was not found");
 
-        if(!teamService.editCourse(courseName, courseDTO))
-            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "The course named '" + courseName + "' was not modified");
+        return teamService.editCourse(courseName, courseDTO);
     }
 
     @PostMapping("/{courseName}/unrollMany")

@@ -72,7 +72,8 @@ public class TeamServiceImpl implements TeamService {
     public boolean addCourse(CourseDTO course) {
         if(courseRepository.existsById(course.getName()) ||
                 course.getMinTeamSize() < MIN_SIZE_FOR_GROUP ||
-                course.getMaxTeamSize() > MAX_SIZE_FOR_GROUP)
+                course.getMaxTeamSize() > MAX_SIZE_FOR_GROUP ||
+                course.getMaxTeamSize() - course.getMinTeamSize() >= 0)
             return false;
 
         try {
@@ -693,7 +694,9 @@ public class TeamServiceImpl implements TeamService {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("Il corso '" + courseName + "' non è stato trovato");
 
-        if(courseDTO.getMaxTeamSize() - courseDTO.getMinTeamSize() <= MIN_SIZE_FOR_GROUP)
+        if(courseDTO.getMinTeamSize() < MIN_SIZE_FOR_GROUP ||
+                courseDTO.getMaxTeamSize() > MAX_SIZE_FOR_GROUP ||
+                courseDTO.getMaxTeamSize() - courseDTO.getMinTeamSize() >= 0)
             return false;
 
         Course course = courseRepository.getOne(courseName);
