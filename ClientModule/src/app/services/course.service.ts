@@ -246,6 +246,18 @@ export class CourseService {
       );
   }
 
+  editCourse(courseName: string, course: Course) {
+    return this.httpClient
+      .put<boolean>(`${this.API_PATH}/${courseName}`, course)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`editCourse error: ${err.message}`);
+        })
+      );
+  }
+
   assignProfessor(courseName: string, professorId) {
     return this.httpClient
       .post<Professor>(`${this.API_PATH}/${courseName}/assignProfessor`, {id: professorId})
@@ -254,6 +266,18 @@ export class CourseService {
         catchError( err => {
           console.error(err);
           return throwError(`assignProfessor error: ${err.message}`);
+        })
+      );
+  }
+
+  deleteCourse(courseName: string) {
+    return this.httpClient
+      .delete(`${this.API_PATH}/${courseName}`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`deleteCourse error: ${err.message}`);
         })
       );
   }

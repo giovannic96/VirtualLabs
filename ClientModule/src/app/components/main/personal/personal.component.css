@@ -49,11 +49,59 @@ mat-sidenav {
 
 .add-course-container {
   position: fixed;
-  left: 1.9em;
+  left: 1em;
   bottom: 1.6em;
+  min-width: 289px;
 }
 
 .add-course-btn-inside {
+  font-size: 1rem;
+  padding: .1em 5em;
+  color: #598e33;
+  background-color: rgba(9, 255, 71, 0.4);
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.add-btn {
+  text-decoration: none;
+  border: 1px solid rgb(34, 210, 6);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-btn:hover {
+  box-shadow: 1px 1px 10px 5px rgba(9, 255, 71, 0.4);
+}
+
+.add-btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(9, 255, 71, 0.8),
+    transparent
+  );
+  transition: all 650ms;
+}
+
+.add-btn:hover:before {
+  left: 100%;
+}
+
+.remove-course-container {
+  position: fixed;
+  left: 1em;
+  bottom: 4.6em;
+  min-width: 289px;
+}
+
+.remove-course-btn-inside {
   font-size: 1rem;
   padding: .1em 5em;
   color: #8e3333;
@@ -62,18 +110,18 @@ mat-sidenav {
   text-transform: uppercase;
 }
 
-.btn {
+.remove-btn {
   text-decoration: none;
   border: 1px solid rgb(255, 94, 9);
   position: relative;
   overflow: hidden;
 }
 
-.btn:hover {
+.remove-btn:hover {
   box-shadow: 1px 1px 10px 5px rgba(255, 94, 9, 0.4);
 }
 
-.btn:before {
+.remove-btn:before {
   content: "";
   position: absolute;
   top: 0;
@@ -89,7 +137,54 @@ mat-sidenav {
   transition: all 650ms;
 }
 
-.btn:hover:before {
+.remove-btn:hover:before {
+  left: 100%;
+}
+
+.edit-course-container {
+  position: fixed;
+  left: 1em;
+  bottom: 7.6em;
+  min-width: 289px;
+}
+
+.edit-course-btn-inside {
+  font-size: 1rem;
+  padding: .1em 5em;
+  color: #8e7f33;
+  background-color: rgba(255, 202, 9, 0.4);
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.edit-btn {
+  text-decoration: none;
+  border: 1px solid rgb(255, 202, 9);
+  position: relative;
+  overflow: hidden;
+}
+
+.edit-btn:hover {
+  box-shadow: 1px 1px 10px 5px rgba(255, 202, 9, 0.4);
+}
+
+.edit-btn:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 202, 9, 0.8),
+    transparent
+  );
+  transition: all 650ms;
+}
+
+.edit-btn:hover:before {
   left: 100%;
 }
 

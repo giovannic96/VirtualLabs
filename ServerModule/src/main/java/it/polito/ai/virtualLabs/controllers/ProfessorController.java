@@ -47,9 +47,7 @@ public class ProfessorController {
     @GetMapping("/{professorId}/courses")
     public List<CourseDTO> courses(@PathVariable String professorId) {
         List<CourseDTO> courses = teamService.getCoursesForProfessor(professorId);
-        for(CourseDTO c: courses)
-            ModelHelper.enrich(c);
-        return courses;
+        return teamService.enrichCourses(courses);
     }
 
     @GetMapping("/{professorId}/vmModels")

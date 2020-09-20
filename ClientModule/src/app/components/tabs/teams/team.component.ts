@@ -38,7 +38,6 @@ export class TeamComponent implements OnInit {
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
 
-  public gridColumns = 2;
   public utility: Utility;
 
   constructor(private courseService: CourseService,
@@ -72,10 +71,6 @@ export class TeamComponent implements OnInit {
         return teamProposalList;
       }),
       tap(proposal => {
-        /*
-        this.teamService.getTeamProposalMembers(proposal.id).subscribe(members => proposal.members = members);
-        this.studentService.find(proposal.creatorId).subscribe(creator => proposal.creator = creator);
-        */
         const memberList = this.teamService.getTeamProposalMembers(proposal.id);
         const proposalCreator = this.studentService.find(proposal.creatorId);
 

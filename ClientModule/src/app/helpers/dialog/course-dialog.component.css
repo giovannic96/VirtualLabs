@@ -86,6 +86,7 @@ textarea {
 
 .summary-professor-div {
   display: flex;
+  justify-content: center;
   gap: 3em;
 }
 
@@ -95,6 +96,12 @@ textarea {
 
 .summary-professor-list-div {
   width: 100%
+}
+
+.summary-professor-immutable-list-div {
+  width: 50%;
+  max-width: 400px;
+  margin-top: 1.2em;
 }
 
 .professor-list-title {
@@ -136,5 +143,9 @@ mat-dialog-container {
 }
 
 ::ng-deep .mat-horizontal-content-container{
-  height: 25em;
+  height: 24em;
+}
+
+.hide-container {
+  display: none;
 }

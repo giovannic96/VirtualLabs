@@ -46,17 +46,7 @@ public class CourseController {
     @GetMapping({"","/"})
     public List<CourseDTO> all() {
         List<CourseDTO> courses = teamService.getAllCourses();
-        for(CourseDTO c: courses) {
-            ModelHelper.enrich(c);
-            String courseInfo = "";
-            try {
-                courseInfo = new String(getClass().getClassLoader().getResourceAsStream("static/" + c.getName() + ".txt").readAllBytes());
-            } catch (Exception ex) {
-                courseInfo = "";
-            }
-            c.setInfo(courseInfo);
-        }
-        return courses;
+        return teamService.enrichCourses(courses);
     }
 
     @GetMapping("/{courseName}")
@@ -243,6 +233,7 @@ public class CourseController {
     }
 
     @PutMapping("/{courseName}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
         if(!courseName.equals(courseDTO.getName()))
@@ -283,10 +274,10 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseName}")
+    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
-    public void removeStudentsFromCourse(@PathVariable String courseName) {
+    public void removeCourse(@PathVariable String courseName) {
         Optional<CourseDTO> course = teamService.getCourse(courseName);
-
         if(!course.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The course named '"+ courseName +"' was not found");
 

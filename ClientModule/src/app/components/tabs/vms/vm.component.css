@@ -128,3 +128,14 @@ mat-list {
   cursor: pointer;
   margin-right: 0 !important;
 }
+
+.vm-owner-container {
+  text-align: left;
+  margin-top: 1.2em;
+}
+
+.vm-owner-container span {
+  font-style: italic;
+  color: rgba(0, 0, 0, .47);
+  font-size: 15px;
+}

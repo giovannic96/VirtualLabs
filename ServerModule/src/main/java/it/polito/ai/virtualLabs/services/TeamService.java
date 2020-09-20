@@ -63,4 +63,5 @@ public interface TeamService {
     Optional<CourseDTO> getCourseForTeam(Long teamId);
     List<StudentDTO> getStudentsNotInCourse(String courseName);
     List<TeamProposalDTO> cleanTeamProposals(List<TeamProposalDTO> list);
+    List<CourseDTO> enrichCourses(List<CourseDTO> courses);
 }
