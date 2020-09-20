@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,8 +80,7 @@ public class TeamServiceImpl implements TeamService {
             return false;
 
         try {
-            String resourcesPath = getClass().getClassLoader().getResource("static/").getPath();
-            File newCourseInfo = new File(resourcesPath + course.getName() + ".txt");
+            File newCourseInfo = new File(getResourcesPath() + course.getName() + ".txt");
             FileOutputStream stream = new FileOutputStream(newCourseInfo);
             stream.write(course.getInfo().getBytes());
             stream.close();
@@ -407,7 +409,7 @@ public class TeamServiceImpl implements TeamService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
-                Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
                 if(user.isPresent()) {
                     String id = user.get().getId();
                     if(!studentId.equals(id)) {
@@ -453,7 +455,7 @@ public class TeamServiceImpl implements TeamService {
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
-                Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
                 if(user.isPresent()) {
                     String id = user.get().getId();
                     if(!studentId.equals(id)) {
@@ -648,7 +650,7 @@ public class TeamServiceImpl implements TeamService {
         UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userDetails.getAuthorities().forEach(role -> {
             if(role.getAuthority().equals("ROLE_STUDENT")) {
-                Optional<User> user = userRepository.findByUsername(userDetails.getUsername());
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
                 user.ifPresent(value -> {
                     Student student = (Student)value;
                     student.getCourses().forEach(course -> {
@@ -718,8 +720,17 @@ public class TeamServiceImpl implements TeamService {
         Course c = courseRepository.getOne(courseName);
         teamService.getProfessorsForCourse(courseName).forEach(prof ->
                 userRepository.getProfessorById(prof.getId()).removeCourse(c));
+        teamService.getEnrolledStudents(courseName).forEach(student ->
+                userRepository.getStudentById(student.getId()).removeCourse(c));
         courseRepository.deleteById(courseName);
         courseRepository.flush();
+
+        try {
+            File infoToDelete = new File(getResourcesPath() + c.getName() + ".txt");
+            Files.deleteIfExists(infoToDelete.toPath());
+        } catch(IOException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
     @Override
@@ -751,5 +762,9 @@ public class TeamServiceImpl implements TeamService {
                         prop.getStudents().stream().map(User::getId).collect(Collectors.toList()).contains(studentId))
                 .map(TeamProposal::getId)
                 .collect(Collectors.toList());
+    }
+
+    private String getResourcesPath() {
+        return getClass().getClassLoader().getResource("static/").getPath();
     }
 }

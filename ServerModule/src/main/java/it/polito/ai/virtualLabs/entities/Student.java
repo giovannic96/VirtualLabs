@@ -34,6 +34,11 @@ public class Student extends User{
         c.getStudents().add(this);
     }
 
+    public void removeCourse(Course c) {
+        courses.remove(c);
+        c.getStudents().remove(this);
+    }
+
     public void addReport(Report r) {
         reports.add(r);
         r.setOwner(this);
