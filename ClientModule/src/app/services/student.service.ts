@@ -5,7 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, retry} from 'rxjs/operators';
 import {Team} from '../models/team.model';
 import {Report} from '../models/report.model';
-import {Course} from "../models/course.model";
+import {Course} from '../models/course.model';
 
 @Injectable({
   providedIn: 'root'
@@ -109,6 +109,18 @@ export class StudentService {
         catchError(err => {
           console.error(err);
           return throwError(`CheckAcceptedProposal error: ${err.message}`);
+        })
+      );
+  }
+
+  checkProposalResponse(studentId: string, tpId: number) {
+    return this.httpClient
+      .get<boolean>(`${this.API_PATH}/${studentId}/teamProposals/${tpId}/checkResponse`)
+      .pipe(
+        retry(3),
+        catchError(err => {
+          console.error(err);
+          return throwError(`checkProposalResponse error: ${err.message}`);
         })
       );
   }

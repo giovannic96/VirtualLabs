@@ -193,6 +193,12 @@ mat-card {
    border-radius: 5px;
  }
 
+.individual-proposal-status {
+  align-self: center;
+  margin-left: 2em;
+  font-size: large;
+}
+
 .no-vms-card {
   padding-left: 16px!important;
 }

@@ -39,7 +39,7 @@ API
 * GET	https://ip_address:port/api/students/:studentId/courses/:courseName/team                     // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/students/:studentId/teams
 * GET	https://ip_address:port/api/students/:studentId/vms
-* GET	https://ip_address:port/api/students/:studentId/teamProposals
+* GET	https://ip_address:port/api/students/:studentId/teamProposals/:teamProposalId/checkToken  // TO ADD TO POSTMAN
 
 *Labs*
 * GET	https://ip_address:port/api/labs/assignments/:assignmentId

@@ -37,6 +37,10 @@ mat-icon {
   padding: 0 .6em;
 }
 
+.selection-message-popup mat-card-subtitle {
+  margin-bottom: 0;
+}
+
 .selection-message-popup button mat-card-subtitle {
   color: #3f51b5;
 }

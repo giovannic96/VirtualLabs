@@ -2,7 +2,7 @@ import {ReportStatus} from '../models/report.model';
 import * as CanvasJS from './canvasjs.min';
 import {VmModel} from '../models/vm-model.model';
 import {Vm} from '../models/vm.model';
-import {TeamProposalStatus} from "../models/team-proposal.model";
+import {TeamProposalStatus} from '../models/team-proposal.model';
 
 export default class Utility {
 

@@ -252,7 +252,7 @@ public class NotificationServiceImpl implements NotificationService {
         return headerBody + confirmBody + "<br><br>" + rejectBody;
     }
 
-    private Optional<Student> getStudentByToken(String token) {
+    public Optional<Student> getStudentByToken(String token) {
         String username = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
         Student s = userRepository.getStudentByUsername(username);
         return s != null ? Optional.of(s) : Optional.empty();
