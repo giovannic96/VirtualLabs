@@ -37,6 +37,7 @@ public class TeamServiceImpl implements TeamService {
     private static final int PROPOSAL_EXPIRATION_DAYS = 3;
     private static final int MIN_SIZE_FOR_GROUP = 2;
     private static final int MAX_SIZE_FOR_GROUP = 10;
+    private static final int TEAM_PROPOSAL_EXPIRY_DAYS = 30;
 
     // Queste sono da esempio per usarle dopo
     // @PreAuthorize("hasAnyRole('ROLE_PROFESSOR','ROLE_ADMIN')")
@@ -217,7 +218,7 @@ public class TeamServiceImpl implements TeamService {
 
     public List<TeamProposalDTO> cleanTeamProposals(List<TeamProposalDTO> list) {
         for(TeamProposalDTO tp : list) {
-            if(tp.getExpiryDate().isBefore(LocalDateTime.now().minusDays(30))) {
+            if(tp.getExpiryDate().isBefore(LocalDateTime.now().minusDays(TEAM_PROPOSAL_EXPIRY_DAYS))) {
                 System.err.println("eccomi");
                 teamService.deleteTeamProposal(tp.getId());
                 tp.setId(null);
@@ -768,6 +769,11 @@ public class TeamServiceImpl implements TeamService {
     public void deleteTeamProposal(Long teamProposalId) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
+        System.err.println(teamProposalId);
+        TeamProposal teamProposal = teamProposalRepository.getOne(teamProposalId);
+        teamService.getTeamProposalMembers(teamProposalId)
+                .forEach(s -> userRepository.getStudentById(s.getId()).removeTeamProposal(teamProposal));
+        teamProposal.setCourse(null);
         teamProposalRepository.deleteById(teamProposalId);
         teamProposalRepository.flush();
     }
