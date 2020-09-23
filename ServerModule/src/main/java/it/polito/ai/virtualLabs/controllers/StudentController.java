@@ -91,6 +91,11 @@ public class StudentController {
         return teamService.hasAcceptedProposals(studentId, courseName);
     }
 
+    @GetMapping("/{studentId}/teamProposals/{teamProposalId}/checkResponse")
+    public boolean checkProposalResponse(@PathVariable String studentId, @PathVariable Long teamProposalId) {
+        return teamService.checkProposalResponse(studentId, teamProposalId);
+    }
+
     @GetMapping("/{studentId}/courses/{courseName}/team")
     public TeamDTO teamForStudent(@PathVariable String studentId, @PathVariable String courseName) {
         TeamDTO team = teamService.getTeamForStudentAndCourse(studentId, courseName);

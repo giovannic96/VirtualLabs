@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {catchError, concatMap, filter, mergeMap, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, mergeMap, tap} from 'rxjs/operators';
 import {EMPTY, forkJoin, Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
@@ -34,6 +34,7 @@ export class TeamComponent implements OnInit {
   public pendingProposals: TeamProposal[];
   public myPendingProposals: TeamProposal[] = [];
   public hasAcceptedAProposal = false;
+  public proposalResponses: Map<string, Observable<string>>;
 
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
@@ -48,6 +49,8 @@ export class TeamComponent implements OnInit {
               private mySnackBar: MySnackBarComponent) {
 
     this.utility = new Utility();
+
+    this.proposalResponses = new Map<string, Observable<string>>();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
@@ -78,6 +81,14 @@ export class TeamComponent implements OnInit {
           // set team proposal members and vms
           proposal.members = results[0];
           proposal.creator = results[1];
+
+          if (proposal.status === TeamProposalStatus.PENDING) {
+            proposal.members.forEach(member => {
+              const resp = this.studentService.checkProposalResponse(member.id, proposal.id).pipe(
+                map(response => response ? 'ACCEPTED' : 'PENDING'));
+              this.proposalResponses.set([member.id, proposal.id].toString(), resp);
+            });
+          }
 
           // check if this is one of my team proposals and it is PENDING
           if (proposal.members.find(m => m.id === this.utility.getMyId())
@@ -243,6 +254,10 @@ export class TeamComponent implements OnInit {
         this.mySnackBar.openSnackBar('Team proposal reject failed', MessageType.ERROR, 3);
       }
     });
+  }
+
+  checkProposalResponse(studentId: string, tpId: number): Observable<string> {
+    return this.proposalResponses.get([studentId, tpId].toString());
   }
 
   setTeamMembersAndVms(team: Team) {

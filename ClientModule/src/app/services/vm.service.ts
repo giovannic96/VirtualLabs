@@ -109,6 +109,18 @@ export class VmService {
       );
   }
 
+  getVmContent(vmId: number): Observable<string> {
+    return this.httpClient
+      .get<string>(`${this.API_PATH}/${vmId}/vmContent`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getVmContent error: ${err.message}`);
+        })
+      );
+  }
+
   getVmModelByVmId(vmId: number) {
     return this.httpClient
       .get<VmModel>(`${this.API_PATH}/${vmId}/vmModel`)
@@ -153,9 +165,9 @@ export class VmService {
     return this.VM_MODEL_LOGO_URL + osName + this.VM_MODEL_LOGO_FORMAT;
   }
 
-  encodeAndNavigate(vm: Vm) {
-    const vmParam = btoa(JSON.stringify(vm));
-    this.router.navigate(['virtual_desktop', vmParam]);
+  encodeAndNavigate(params: any) {
+    const encodedParams = btoa(JSON.stringify(params));
+    this.router.navigate(['virtual_desktop', encodedParams]);
   }
 
   editVm(vmId: number, vm: any) {

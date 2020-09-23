@@ -1,9 +1,11 @@
 package it.polito.ai.virtualLabs.services;
 
+import it.polito.ai.virtualLabs.entities.Student;
 import org.springframework.mail.MailException;
 
 import javax.mail.MessagingException;
 import java.util.List;
+import java.util.Optional;
 
 public interface NotificationService {
     void sendMessage(String address, String subject, String body) throws MailException, MessagingException;
@@ -13,5 +15,6 @@ public interface NotificationService {
     boolean acceptById(Long teamProposalId, String studentId);
     boolean rejectById(Long teamProposalId, String studentId);
     String getTokenByStudentId(Long tpId, String studId);
+    Optional<Student> getStudentByToken(String token);
     void notifyTeam(Long teamProposalId, List<String> memberIds) throws MessagingException;
 }

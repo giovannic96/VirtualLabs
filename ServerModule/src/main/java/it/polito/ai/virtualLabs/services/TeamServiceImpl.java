@@ -654,6 +654,22 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public boolean checkProposalResponse(String studentId, Long teamProposalId) {
+        if(!userRepository.studentExistsById(studentId))
+            throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+
+        if(!teamProposalRepository.existsById(teamProposalId))
+            throw new TeamProposalNotFoundException("The team proposal with id '" + teamProposalId + "' was not found");
+
+        List<String> tokensLeft = teamProposalRepository.getOne(teamProposalId).getTokens();
+
+        return tokensLeft
+                .stream()
+                .map(token -> this.notificationService.getStudentByToken(token))
+                .noneMatch(studentOpt -> studentOpt.isPresent() && studentOpt.get().getId().equals(studentId));
+    }
+
+    @Override
     public List<TeamDTO> getTeamsForCourse(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");

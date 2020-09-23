@@ -18,7 +18,7 @@
 <div class="tab-section formed-teams-section">
   <div class="tab-subtitle">
     <mat-icon>groups</mat-icon>
-    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team'}}</h2>
+    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team' + (myTeam ? '  -  ' + myTeam.name : '')}}</h2>
   </div>
   <ng-container *ngIf="teamList?.length; else noTeams">
     <ng-container *ngIf="utility.isProfessor(); else myTeamSection">
@@ -178,8 +178,11 @@
       <mat-card *ngFor="let member of proposal.members">
         <mat-card-header>
           <img [src]="member.photo" mat-card-avatar>
-          <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
+          <mat-card-title>
+            {{member.name}} {{member.surname}}
+          </mat-card-title>
           <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
+          <span class="individual-proposal-status">{{checkProposalResponse(member.id, proposal.id) | async}}</span>
         </mat-card-header>
       </mat-card>
       <br>

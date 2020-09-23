@@ -37,6 +37,7 @@ public interface TeamService {
     List<TeamProposalDTO> getTeamProposalsForStudent(String studentId);
     TeamDTO getTeamForStudentAndCourse(String studentId, String courseName);
     boolean hasAcceptedProposals(String studentId, String courseName);
+    boolean checkProposalResponse(String studentId, Long teamProposalId);
     List<Long> getPendingTeamProposalIdsForStudent(String courseName, String studentId);
 
     Long proposeTeam(String courseName, String teamName, List<String> memberIds, String creatorUsername) throws MessagingException;
