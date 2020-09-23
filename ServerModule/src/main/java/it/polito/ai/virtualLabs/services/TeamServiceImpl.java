@@ -10,11 +10,9 @@ import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotEnabledExcep
 import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentAlreadyTeamedUpException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotEnrolledException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
-import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotInTeamException;
+import it.polito.ai.virtualLabs.services.exceptions.student.*;
 import it.polito.ai.virtualLabs.services.exceptions.team.*;
+import org.apache.tomcat.util.descriptor.web.SecurityRoleRef;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,15 +54,11 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    UserRepository studentRepository;
-    @Autowired
     VersionRepository versionRepository;
     @Autowired
     VmModelRepository vmModelRepository;
     @Autowired
     VmRepository vmRepository;
-
-
     @Autowired
     TeamService teamService;
     @Autowired
@@ -111,13 +105,11 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public boolean addStudent(StudentDTO student) {
-        if(userRepository.studentExistsById(student.getId()))
-            return false;
+    public StudentDTO addStudent(StudentDTO student) {
         student.setPhoto(Base64.getEncoder().withoutPadding().encodeToString(String.valueOf(System.currentTimeMillis()).getBytes()));
         Student s = modelMapper.map(student, Student.class);
         userRepository.saveAndFlush(s);
-        return true;
+        return student;
     }
 
     @Override
@@ -320,7 +312,6 @@ public class TeamServiceImpl implements TeamService {
             throw new ProfessorNotFoundException("The professor with id '" + professorId + "' was not found");
 
         Course course = courseRepository.getOne(courseName);
-
         course.removeProfessor(userRepository.getProfessorById(professorId));
     }
 
@@ -352,8 +343,8 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> addAllStudents(List<StudentDTO> students) {
-        List<Boolean> retList = new ArrayList<>();
+    public List<StudentDTO> addAllStudents(List<StudentDTO> students) {
+        List<StudentDTO> retList = new ArrayList<>();
         for(StudentDTO s : students) {
             retList.add(addStudent(s));
         }
@@ -379,27 +370,46 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> addAndEnroll(Reader r, String courseName) {
-        List<StudentDTO> students;
+    public List<StudentDTO> addAndEnroll(Reader r, String courseName) {
+        List<StudentDTO> studentsFromClient;
         try {
             // create csv bean reader
             CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder(r)
-                    .withType(UserDTO.class)
+                    .withType(StudentDTO.class)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
             // convert `CsvToBean` object to list of students
-            students = csvToBean.parse();
+            studentsFromClient = csvToBean.parse();
         } catch(Exception ex) {
            throw new ParsingFileException("Error in parsing file");
         }
 
-        List<Boolean> retList = new ArrayList<>();
-        for(StudentDTO s : students) {
-            boolean added = addStudent(s);
-            boolean enrolled = addStudentToCourse(s.getId(), courseName);
-            retList.add(added || enrolled);
+        List<StudentDTO> studentsAdded = new ArrayList<>();
+        boolean warning = false;
+
+        for(StudentDTO s : studentsFromClient) {
+            try {
+                // students must be registered to the system and not be enrolled to this course
+                Optional<User> studentOpt = userRepository.findByUsernameAndRegisteredTrue(s.getUsername());
+                if(studentOpt.isPresent()) {
+                    boolean enrolled = addStudentToCourse(s.getId(), courseName);
+                    if(enrolled) {
+                       studentsAdded.add(s);
+                    }
+                } else {
+                    warning = true;
+                }
+            } catch(StudentNotFoundException ex) {
+                warning = true;
+            }
         }
-        return retList;
+
+        if(warning)
+            studentsAdded.add(new StudentDTO()); // last element will be a students with null id
+
+        for(StudentDTO s : studentsAdded)
+            ModelHelper.enrich(s);
+        return studentsAdded;
     }
 
     @Override

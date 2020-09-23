@@ -1,6 +1,7 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.entities.Student;
 import it.polito.ai.virtualLabs.entities.TeamProposal;
 
 import javax.mail.MessagingException;
@@ -13,8 +14,8 @@ public interface TeamService {
     boolean addCourse(CourseDTO course);
     Optional<CourseDTO> getCourse(String name);
     List<CourseDTO> getAllCourses();
-    boolean addStudent(StudentDTO student);
-    List<Boolean> addAllStudents(List<StudentDTO> students);
+    StudentDTO addStudent(StudentDTO student);
+    List<StudentDTO> addAllStudents(List<StudentDTO> students);
     Optional<StudentDTO> getStudent(String studentId);
     Optional<StudentDTO> getStudentByUsername(String username);
     List<StudentDTO> getAllStudents();
@@ -57,7 +58,7 @@ public interface TeamService {
     void enableCourse(String courseName);
     void disableCourse(String courseName);
     List<Boolean> enrollAllStudents(List<String> studentIds, String courseName);
-    List<Boolean> addAndEnroll(Reader r, String courseName);
+    List<StudentDTO> addAndEnroll(Reader r, String courseName);
     List<CourseDTO> getCoursesForStudent(String studentId);
     List<CourseDTO> getCoursesForProfessor(String professorId);
     Optional<CourseDTO> getCourseForTeam(Long teamId);

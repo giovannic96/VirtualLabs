@@ -21,6 +21,12 @@
             [disabled]="!currentSelectedOption || tableStudents.data.includes(currentSelectedOption)"
             (click)="enrollStudent(currentSelectedOption)">ADD
     </button>
+    <button mat-stroked-button color="primary"
+            (click)="fileUpload.click()">
+      <mat-icon>vertical_align_bottom</mat-icon>
+      IMPORT STUDENTS VIA CSV
+    </button>
+    <input hidden type="file" accept=".csv" #fileUpload (change)="enrollStudents($event)">
   </div>
   <button class="delete-btn" mat-raised-button color="warn"
           [disabled]="!getCurrentPageSelected().length"

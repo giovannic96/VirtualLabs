@@ -9,9 +9,10 @@ import {Course} from '../../../models/course.model';
 import {CourseService} from '../../../services/course.service';
 import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {filter, map} from 'rxjs/operators';
+import {filter} from 'rxjs/operators';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import Utility from '../../../helpers/utility';
 
 @Component({
   selector: 'app-students',
@@ -46,6 +47,10 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   // Columns
   columnsToDisplay: string[];
 
+  studentsFile: File;
+
+  public utility: Utility;
+
   updateTableStudents(tableData: Student[]) {
     this.tableStudents = new MatTableDataSource<Student>(tableData);
     this.tableStudents.data.sort((a, b) => Student.sortData(a, b));
@@ -57,6 +62,8 @@ export class StudentsComponent implements OnInit, AfterViewInit {
               private studentService: StudentService,
               private mySnackBar: MySnackBarComponent,
               private dialog: MatDialog) {
+
+    this.utility = new Utility();
 
     this.tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
@@ -105,6 +112,36 @@ export class StudentsComponent implements OnInit, AfterViewInit {
         this.mySnackBar.openSnackBar('Student already enrolled', MessageType.ERROR, 5);
       }
     });
+  }
+
+  enrollStudents(event) {
+    this.studentsFile = event.target.files[0];
+
+    if (!this.studentsFile.name.endsWith('.csv')) {
+      this.mySnackBar.openSnackBar('File format not valid. Please upload a .csv file', MessageType.ERROR, 5);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', this.studentsFile);
+    this.courseService.enrollMany(this.selectedCourse.name, formData).subscribe(students => {
+      if (students && students.length > 0 && students[students.length - 1].id === null) {
+        students.pop(); // remove student with null id
+        students.forEach(s => { // add students to tableStudents
+          this.tableStudents.data.push(s);
+          this.notEnrolledStudents.splice(this.notEnrolledStudents.indexOf(s), 1);
+        });
+        this.updateTableStudents(this.tableStudents.data);
+        this.mySnackBar.openSnackBar('Some students may not have been enrolled correctly', MessageType.WARNING, 5);
+      }
+      else if (students.length !== 0) {
+        students.forEach(s => this.tableStudents.data.push(s)); // add students to tableStudents
+        this.updateTableStudents(this.tableStudents.data);
+        this.mySnackBar.openSnackBar('Students enrolled successfully', MessageType.SUCCESS, 3);
+      } else {
+        this.mySnackBar.openSnackBar('All students were already enrolled in the course', MessageType.WARNING, 5);
+      }
+    }, error => this.mySnackBar.openSnackBar('Impossible to enroll the students', MessageType.ERROR, 5));
   }
 
   async openDialog() {

@@ -85,7 +85,19 @@ export class CourseService {
         retry(3),
         catchError( err => {
           console.error(err);
-          return throwError(`EnrollOne error: ${err.message}`);
+          return throwError(`enroll error: ${err.message}`);
+        })
+      );
+  }
+
+  enrollMany(courseName: string, formData: FormData) {
+    return this.httpClient
+      .post<Student[]>(`${this.API_PATH}/${courseName}/enrollMany`, formData)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`enrollMany error: ${err.message}`);
         })
       );
   }

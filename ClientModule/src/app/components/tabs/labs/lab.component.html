@@ -103,7 +103,7 @@
                               (click)="openLastVersion(report, assignment)"
                               [disabled]="!report.versions?.length">VIEW LAST VERSION</button>
                       <button mat-raised-button color="primary"
-                              (click)="openGradeDialog(report, assignment)"
+                              (click)="openGradeDialog(report)"
                               *ngIf="isReportGradable(report, assignment)">GRADE REPORT</button>
                     </mat-action-row>
                   </mat-expansion-panel>

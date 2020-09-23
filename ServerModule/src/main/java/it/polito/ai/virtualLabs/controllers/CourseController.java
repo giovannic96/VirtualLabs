@@ -1,20 +1,13 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
-import it.polito.ai.virtualLabs.entities.Assignment;
-import it.polito.ai.virtualLabs.entities.Professor;
 import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,15 +15,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("API/courses")
@@ -167,12 +154,15 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in enrolling student with id: " + id);
     }
 
-    @PostMapping("/{name}/enrollMany")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Boolean> enrollStudents(@PathVariable String name, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/{courseName}/enrollMany")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StudentDTO> enrollStudents(@PathVariable String courseName, @RequestParam("file") MultipartFile file) {
         try {
             Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-            return teamService.addAndEnroll(reader, name);
+            List<StudentDTO> students = teamService.addAndEnroll(reader, courseName);
+            if(students != null && students.size() == 1 && students.get(0).getId() == null)
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
+            return students;
         } catch (ParsingFileException e) {
             throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         } catch(IOException ex) {

@@ -144,7 +144,7 @@ export class LabComponent implements OnInit, AfterViewInit {
             this.labService.getReportVersions(report.id).subscribe(versions => {
                 this.allReports.get(assignment.id).find(r => r.id === report.id).versions = versions;
                 if (data.gradeAfter)
-                  this.openGradeDialog(report, assignment);
+                  this.openGradeDialog(report);
             });
           }, err => {
             if (err.status === 503)
@@ -157,7 +157,7 @@ export class LabComponent implements OnInit, AfterViewInit {
     );
   }
 
-  openGradeDialog(report: Report, assignment) {
+  openGradeDialog(report: Report) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;

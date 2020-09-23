@@ -12,10 +12,11 @@ mat-icon {
 
 .input-student-div mat-form-field {
   width: 400px;
+  margin-right: 1em;
 }
 
 .input-student-div button {
-  margin-left: 1em;
+  margin: 1em 1em 1em 0;
 }
 
 .delete-btn {
