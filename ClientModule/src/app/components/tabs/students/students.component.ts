@@ -179,7 +179,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   unrollStudents() {
     const studentIds: string[] = [];
     this.selectedStudents.selected.forEach(s => studentIds.push(s.id));
-    return;
+
     this.courseService.unroll(this.selectedCourse.name, studentIds).subscribe(() => {
       const tmpStudentList = [];
 
