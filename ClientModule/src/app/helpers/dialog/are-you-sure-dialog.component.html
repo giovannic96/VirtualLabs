@@ -3,9 +3,7 @@
       <div class="mat-dialog-title">
         Are you sure to proceed?
       </div>
-      <div mat-dialog-content>
-        {{data.message}}
-      </div>
+      <div mat-dialog-content [innerHTML]="data.message"></div>
   </div>
   <div class="buttons-container">
     <button mat-raised-button [mat-dialog-close]="false" color="warn">{{data.buttonCancelLabel ? data.buttonCancelLabel : 'CANCEL'}}</button>
