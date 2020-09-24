@@ -32,12 +32,13 @@ export class HomeComponent implements OnInit {
   openLoginDialog() {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
-
-      if (result && this.authService.redirectUrl) {
-        this.router.navigate([this.authService.redirectUrl]);
-        this.authService.redirectUrl = '';
-      } else {
-        this.router.navigate(['home']);
+      if (result) {
+        if (this.authService.redirectUrl) {
+          this.router.navigate([this.authService.redirectUrl]);
+          this.authService.redirectUrl = '';
+        } else {
+          this.router.navigate(['courses']);
+        }
       }
     });
   }

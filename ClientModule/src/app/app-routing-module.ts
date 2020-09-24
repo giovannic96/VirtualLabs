@@ -10,20 +10,21 @@ import {LabComponent} from './components/tabs/labs/lab.component';
 import {VirtualDesktopComponent} from './components/vm_viewer/virtual-desktop.component';
 import {ProposalResponseComponent} from './components/main/proposal_response/proposal-response.component';
 import {RegistrationConfirmComponent} from './components/main/registration_confirm/registration-confirm.component';
+import {AuthGuard} from './auth/auth.guard';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: 'home', component: HomeComponent},
-  {path: 'virtual_desktop/:vmId', component: VirtualDesktopComponent},
+  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {path: 'virtual_desktop/:vmId', component: VirtualDesktopComponent, canActivate: [AuthGuard]},
   {path: 'proposal_response/:action', component: ProposalResponseComponent},
   {path: 'registration_confirm', component: RegistrationConfirmComponent},
-  {path: 'courses', component: PersonalComponent},
-  {path: 'courses/:courseName', component: PersonalComponent, children: [
+  {path: 'courses', component: PersonalComponent, canActivate: [AuthGuard]},
+  {path: 'courses/:courseName', component: PersonalComponent, canActivateChild: [AuthGuard], children: [
       {path: '', redirectTo: 'info', pathMatch: 'full'},
       {path: 'students', component: StudentsComponent},
       {path: 'vms', component: VmComponent},
       {path: 'labs', component: LabComponent},
       {path: 'teams', component: TeamComponent},
       {path: 'info', component: CourseInfoComponent}]},
-  {path: '**', component: PageNotFoundComponent}
+  {path: '**', component: PageNotFoundComponent, canActivate: [AuthGuard]}
 ];

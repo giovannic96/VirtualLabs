@@ -32,4 +32,8 @@ export class ProposalResponseComponent implements OnInit {
     ).subscribe(() => null, () => this.error = true);
   }
 
+  redirectToVirtualLabs() {
+    this.router.navigate(['/courses']);
+  }
+
 }

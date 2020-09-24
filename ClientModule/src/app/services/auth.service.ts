@@ -80,6 +80,11 @@ export class AuthService {
     return !!this.tokenLoggedObs.value;
   }
 
+  isProfessor(): boolean {
+    //return !!this.tokenLoggedObs.value;
+    return false;
+  }
+
   isTokenExpired(): boolean {
     const now = new Date();
     const token = this.tokenLoggedObs.value;

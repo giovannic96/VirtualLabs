@@ -41,12 +41,12 @@ export class AppComponent {
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.doLogin) {
-        this.openDialog();
+        this.openLoginDialog();
       }
     });
   }
 
-  openDialog() {
+  openLoginDialog() {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
 
@@ -62,10 +62,6 @@ export class AppComponent {
   userLogout() {
     this.authService.logout();
     this.router.navigate(['home']);
-  }
-
-  redirectToLogin() {
-    this.router.navigate(['/home'], { queryParams: {doLogin: true}});
   }
 
   toggleSidenav(event: Event) {
