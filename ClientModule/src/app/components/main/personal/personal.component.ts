@@ -6,13 +6,16 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CourseDialogComponent} from '../../../helpers/dialog/course-dialog.component';
 import Utility from '../../../helpers/utility';
-import {filter} from 'rxjs/operators';
+import {catchError, filter, retry} from 'rxjs/operators';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from "../../../helpers/dialog/my-dialog.component";
 import {Vm} from "../../../models/vm.model";
+import {User} from '../../../models/user.model';
+import {HttpClient} from '@angular/common/http';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-personal',
@@ -25,18 +28,26 @@ export class PersonalComponent implements OnInit {
 
   myCourses: Course[];
 
+  currentUser: User;
   selectedCourseName: string;
   navLinks: any[];
   activeLinkIndex = -1;
 
   public utility: Utility;
 
-  constructor(private courseService: CourseService,
+  constructor(private httpClient: HttpClient,
+              private courseService: CourseService,
               private professorService: ProfessorService,
               private studentService: StudentService,
+              private authService: AuthService,
               private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
+
+    this.getUserInfo().subscribe(me => {
+      this.currentUser = me.user;
+      this.authService.setUserLogged(me.user);
+    });
 
     this.utility = new Utility();
 
@@ -192,5 +203,17 @@ export class PersonalComponent implements OnInit {
         this.mySnackBar.openSnackBar('Impossible to delete this course', MessageType.ERROR, 5);
       });
     }
+  }
+
+  getUserInfo(): Observable<any> {
+    return this.httpClient
+      .get<any>(`http://localhost:8080/me`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetUserInfo: ${err.message}`);
+        })
+      );
   }
 }

@@ -92,7 +92,7 @@
             <mat-card-title>Vm#{{i+1}}</mat-card-title>
             <div class="vm-settings-led-container">
               <div class="vm-settings-container" *ngIf="isOwner(vm.owner?.id)">
-                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu">
                   <mat-icon class="vm-settings-icon">settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
