@@ -40,29 +40,7 @@ export class PersonalComponent implements OnInit {
 
     this.utility = new Utility();
 
-    this.navLinks = [
-      {
-        label: 'Info',
-        path: 'info',
-        index: 0
-      }, {
-        label: 'Students',
-        path: 'students',
-        index: 1
-      }, {
-        label: 'Teams',
-        path: 'teams',
-        index: 2
-      }, {
-        label: 'VMs',
-        path: 'vms',
-        index: 3
-      }, {
-        label: 'Labs',
-        path: 'labs',
-        index: 4
-      }
-    ];
+    this.navLinks = this.getNavLinks();
 
     this.myCourses = new Array<Course>();
     this.selectedCourseName = '';
@@ -191,6 +169,55 @@ export class PersonalComponent implements OnInit {
       }, error => {
         this.mySnackBar.openSnackBar('Impossible to delete this course', MessageType.ERROR, 5);
       });
+    }
+  }
+
+  getNavLinks() {
+    if (this.utility.isProfessor()) {
+      return [
+        {
+          label: 'Info',
+          path: 'info',
+          index: 0
+        }, {
+          label: 'Students',
+          path: 'students',
+          index: 1
+        }, {
+          label: 'Teams',
+          path: 'teams',
+          index: 2
+        }, {
+          label: 'VMs',
+          path: 'vms',
+          index: 3
+        }, {
+          label: 'Labs',
+          path: 'labs',
+          index: 4
+        }
+      ];
+    } else {
+      return [
+        {
+          label: 'Info',
+          path: 'info',
+          index: 0
+        },
+        {
+          label: 'Teams',
+          path: 'teams',
+          index: 2
+        }, {
+          label: 'VMs',
+          path: 'vms',
+          index: 3
+        }, {
+          label: 'Labs',
+          path: 'labs',
+          index: 4
+        }
+      ];
     }
   }
 }
