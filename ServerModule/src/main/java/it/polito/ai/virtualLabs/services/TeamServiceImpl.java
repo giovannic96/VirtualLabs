@@ -529,6 +529,8 @@ public class TeamServiceImpl implements TeamService {
             students.add(student); //this will be part of the team (if all the controls are verified)
         }
 
+        Student creator = userRepository.getStudentByUsername(creatorUsername);
+
         // Create new team proposal
         TeamProposal proposal = new TeamProposal();
         proposal.setStatus(TeamProposal.TeamProposalStatus.PENDING);
@@ -536,7 +538,7 @@ public class TeamServiceImpl implements TeamService {
         proposal.setCourse(course);
         proposal.setTeamName(teamName);
         proposal.setExpiryDate(LocalDateTime.now().plusDays(PROPOSAL_EXPIRATION_DAYS));
-        proposal.setCreatorId(userRepository.getStudentByUsername(creatorUsername).getId());
+        proposal.setCreatorId(creator.getId());
 
         teamProposalRepository.save(proposal);
         for(Student s : students) {

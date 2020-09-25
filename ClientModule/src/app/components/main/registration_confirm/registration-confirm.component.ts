@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {finalize} from 'rxjs/operators';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class RegistrationConfirmComponent implements OnInit {
   error: boolean;
 
   constructor(private activatedRoute: ActivatedRoute,
+              private router: Router,
               private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -25,6 +26,10 @@ export class RegistrationConfirmComponent implements OnInit {
     ).subscribe(response => {
       console.log(response);
     }, () => this.error = true);
+  }
+
+  redirectToHome() {
+    this.router.navigate(['home'], {queryParams: {doLogin: true}});
   }
 
 }

@@ -23,13 +23,15 @@
     </button>
     <button mat-stroked-button color="primary"
             (click)="fileUpload.click()">
-      <mat-icon>vertical_align_bottom</mat-icon>
+      <mat-icon>publish</mat-icon>
       IMPORT STUDENTS VIA CSV
     </button>
-    <input hidden type="file" accept=".csv" #fileUpload (change)="enrollStudents($event)">
+    <input hidden type="file" accept=".csv" #fileUpload
+           (click)="fileUpload.value = null"
+           (change)="enrollStudents($event)">
   </div>
   <button class="delete-btn" mat-raised-button color="warn"
-          [disabled]="!getCurrentPageSelected().length"
+          [disabled]="!selectedStudents.selected.length"
           (click)="openDialog()">DELETE SELECTED STUDENTS
   </button>
   <div class="selection-message-popup" *ngIf="isSelectionPopupToShow && isCurrentPageAllSelected()">

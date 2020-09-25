@@ -22,3 +22,20 @@
   font-size: x-large;
   margin-top: 60px;
 }
+
+.user-info-div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: #ffffff20;
+  border-radius: 2em;
+  padding: 4px 6px 4px 1em;
+  cursor: pointer;
+}
+
+.user-info-label {
+  margin-bottom: 0;
+  margin-right: 1em;
+  font: 500 .9em Roboto, "Helvetica Neue", sans-serif;
+  color: white;
+}

@@ -147,10 +147,20 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   async openDialog() {
 
     // Prepare a message for the dialog based on selection
-    const message = this.isAllSelected ?
-      'You are unrolling all the students of this course' :
-      'You are unrolling ' + this.getCurrentPageSelected().length +
+    let message;
+    if (this.isAllSelected) {
+      message = 'You are unrolling all the students of this course';
+    } else {
+      message = 'You are unrolling ' + this.selectedStudents.selected.length +
         (this.selectedStudents.selected.length > 1 ? ' students' : ' student') + ' from this course';
+      const otherPage = this.selectedStudents.selected.length - this.getCurrentPageSelected().length;
+      if (!!otherPage) {
+        this.selectedStudents.selected.length > 1 ?
+          message += '<br>(' + otherPage + ' of them ' + (otherPage === 1 ? 'is' : 'are') + ' on a different page)' :
+          message += '<br>(He/She is on a different page)';
+      }
+
+    }
 
     // Open a dialog and get the response as an 'await'
     const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
@@ -169,6 +179,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   unrollStudents() {
     const studentIds: string[] = [];
     this.selectedStudents.selected.forEach(s => studentIds.push(s.id));
+
     this.courseService.unroll(this.selectedCourse.name, studentIds).subscribe(() => {
       const tmpStudentList = [];
 

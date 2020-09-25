@@ -172,6 +172,7 @@ public class ModelHelper {
         Link reports = linkTo(methodOn(StudentController.class).reports(studentDTO.getId())).withRel("reports");
 
         studentDTO.setPhoto(USER_PHOTO_SERVER_URL + studentDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
+        studentDTO.setPassword("[HIDDEN]");
 
         studentDTO.add(
                 selfLink,
@@ -192,6 +193,7 @@ public class ModelHelper {
         Link assignments = linkTo(methodOn(ProfessorController.class).assignments(professorDTO.getId())).withRel("assignments");
 
         professorDTO.setPhoto(USER_PHOTO_SERVER_URL + professorDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
+        professorDTO.setPassword("[HIDDEN]");
 
         professorDTO.add(
                 selfLink,
@@ -201,6 +203,13 @@ public class ModelHelper {
         );
 
         return professorDTO;
+    }
+
+    public static UserDTO enrich(UserDTO userDTO) {
+        userDTO.setPhoto(USER_PHOTO_SERVER_URL + userDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
+        userDTO.setPassword("[HIDDEN]");
+
+        return userDTO;
     }
 
 }

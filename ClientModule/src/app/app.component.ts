@@ -4,6 +4,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {LoginDialogComponent} from './auth/login-dialog.component';
 import {AuthService} from './services/auth.service';
 import {CourseService} from './services/course.service';
+import {Observable, throwError} from 'rxjs';
+import {catchError, retry} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
+import {User} from './models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +19,7 @@ export class AppComponent {
   userLoggedIn: boolean;
   menuIconHidden: boolean;
   menuHidden: boolean;
+  currentUser: User;
 
   constructor(private authService: AuthService,
               private courseService: CourseService,
@@ -25,8 +30,10 @@ export class AppComponent {
     this.courseService.hideMenuIcon.subscribe(hideMenuIcon => this.menuIconHidden = hideMenuIcon);
     this.courseService.hideMenu.subscribe(hideMenu => this.menuHidden = hideMenu);
 
-    this.authService.getUserLogged().subscribe(userLogged => {
-      if (!!userLogged) {
+    this.authService.getUserLogged().subscribe(user => this.currentUser = user);
+
+    this.authService.getUserTokenLogged().subscribe(userTokenLogged => {
+      if (!!userTokenLogged) {
         if (this.authService.isTokenExpired()) {
           localStorage.removeItem('virtuallabs_token');
           this.userLoggedIn = false;
@@ -36,17 +43,17 @@ export class AppComponent {
       } else {
         this.userLoggedIn = false;
       }
-      console.log('User', userLogged);
+      console.log('UserToken', userTokenLogged);
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.doLogin) {
-        this.openDialog();
+        this.openLoginDialog();
       }
     });
   }
 
-  openDialog() {
+  openLoginDialog() {
     const dialogRef = this.dialog.open(LoginDialogComponent);
     dialogRef.afterClosed().subscribe(result => {
 
@@ -54,7 +61,7 @@ export class AppComponent {
         this.router.navigate([this.authService.redirectUrl]);
         this.authService.redirectUrl = '';
       } else {
-        this.router.navigate(['home']);
+        this.router.navigate(['courses']);
       }
     });
   }
@@ -62,10 +69,6 @@ export class AppComponent {
   userLogout() {
     this.authService.logout();
     this.router.navigate(['home']);
-  }
-
-  redirectToLogin() {
-    this.router.navigate(['/home'], { queryParams: {doLogin: true}});
   }
 
   toggleSidenav(event: Event) {

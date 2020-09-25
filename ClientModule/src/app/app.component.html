@@ -2,11 +2,25 @@
   <mat-icon *ngIf="!menuIconHidden" (click)="toggleSidenav($event)" aria-hidden="false" aria-label="Menu">menu</mat-icon>
   <a id="title" routerLink="/home" routerLinkActive="active"><img class="logo" src="/assets/logo_app.png"></a>
   <span class="fill-remaining-space"></span>
-  <div class="log-button-div">
-    <button *ngIf="!userLoggedIn" mat-flat-button color="primary" (click)="redirectToLogin()">
+  <div class="log-button-div" *ngIf="!userLoggedIn">
+    <button mat-flat-button color="primary" (click)="openLoginDialog()">
       Login
       <mat-icon>login</mat-icon>
     </button>
+  </div>
+  <div class="user-info-div" (click)="$event" [matMenuTriggerFor]="menu" *ngIf="userLoggedIn && currentUser">
+    <mat-card-subtitle class="user-info-label">{{currentUser.name}} {{currentUser.surname}} - {{currentUser.id}}</mat-card-subtitle>
+    <img [src]="currentUser.photo" mat-card-avatar>
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button mat-menu-item>
+        <mat-icon>account_circle</mat-icon>
+        <span>Account Info</span>
+      </button>
+      <button mat-menu-item (click)="userLogout()">
+        <mat-icon color="warn">logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </div>
 </mat-toolbar>
 <router-outlet></router-outlet>
