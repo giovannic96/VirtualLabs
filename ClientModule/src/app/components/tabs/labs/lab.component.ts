@@ -244,6 +244,7 @@ export class LabComponent implements OnInit, AfterViewInit {
 
             // update UI
             this.filterReports();
+            this.setAssignmentStatusLabel(dialogResponse);
 
             this.mySnackBar.openSnackBar('Assignment created successfully', MessageType.SUCCESS, 3);
           }, () => this.mySnackBar.openSnackBar('Assignment creation failed', MessageType.ERROR, 3));
@@ -276,14 +277,23 @@ export class LabComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async openAddVersionDialog(report: Report) {
+  async openAddVersionDialog(report: Report, assignment: Assignment) {
 
     const data = report;
     const dialogRef = this.dialog.open(AddVersionDialogComponent, {disableClose: true, data});
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
-    if (dialogResponse) {
-      this.labService.getReportVersions(report.id).subscribe(versions => report.versions = versions);
+    if (dialogResponse !== undefined) {
+      if (!!dialogResponse) {
+        this.labService.getReportVersions(report.id).subscribe(versions => {
+          report.versions = versions;
+          report.status = this.ReportStatus.SUBMITTED;
+          this.setAssignmentStatusLabel(assignment);
+        });
+        this.mySnackBar.openSnackBar('Version submitted successfully', MessageType.SUCCESS, 3);
+      } else {
+        this.mySnackBar.openSnackBar('Error while submitting new version', MessageType.ERROR, 3);
+      }
     }
   }
 

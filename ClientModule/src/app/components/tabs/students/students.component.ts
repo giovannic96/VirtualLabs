@@ -135,7 +135,12 @@ export class StudentsComponent implements OnInit, AfterViewInit {
         this.mySnackBar.openSnackBar('Some students may not have been enrolled correctly', MessageType.WARNING, 5);
       }
       else if (students.length !== 0) {
-        students.forEach(s => this.tableStudents.data.push(s)); // add students to tableStudents
+        console.log(this.notEnrolledStudents);
+        students.forEach(s => { // add students to tableStudents
+          this.tableStudents.data.push(s);
+          this.notEnrolledStudents.splice(this.notEnrolledStudents.indexOf(s), 1);
+        });
+        console.log(this.notEnrolledStudents);
         this.updateTableStudents(this.tableStudents.data);
         this.mySnackBar.openSnackBar('Students enrolled successfully', MessageType.SUCCESS, 3);
       } else {

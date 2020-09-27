@@ -211,7 +211,6 @@ public class TeamServiceImpl implements TeamService {
     public List<TeamProposalDTO> cleanTeamProposals(List<TeamProposalDTO> list) {
         for(TeamProposalDTO tp : list) {
             if(tp.getExpiryDate().isBefore(LocalDateTime.now().minusDays(TEAM_PROPOSAL_EXPIRY_DAYS))) {
-                System.err.println("eccomi");
                 teamService.deleteTeamProposal(tp.getId());
                 tp.setId(null);
             }
@@ -633,6 +632,7 @@ public class TeamServiceImpl implements TeamService {
         Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(s, courseName);
 
         return team.map(value -> modelMapper.map(value, TeamDTO.class)).orElse(null);
+
     }
 
     @Override
@@ -781,7 +781,7 @@ public class TeamServiceImpl implements TeamService {
     public void deleteTeamProposal(Long teamProposalId) {
         if(!teamProposalRepository.existsById(teamProposalId))
             throw new TeamProposalNotFoundException("The team proposal with id " + teamProposalId + " does not exist");
-        System.err.println(teamProposalId);
+
         TeamProposal teamProposal = teamProposalRepository.getOne(teamProposalId);
         teamService.getTeamProposalMembers(teamProposalId)
                 .forEach(s -> userRepository.getStudentById(s.getId()).removeTeamProposal(teamProposal));

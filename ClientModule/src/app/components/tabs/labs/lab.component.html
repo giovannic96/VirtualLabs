@@ -172,7 +172,7 @@
                     (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
             <button mat-raised-button color="primary"
                     *ngIf="!utility.isProfessor() && isReportSubmittable(assignment)"
-                    (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()))">ADD VERSION</button>
+                    (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()), assignment)">ADD VERSION</button>
           </div>
         </mat-action-row>
       </mat-expansion-panel>

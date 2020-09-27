@@ -83,28 +83,10 @@ public class TeamController {
         return members;
     }
 
-    /*
     @PostMapping("/addTeamProposal")
     @ResponseStatus(HttpStatus.OK)
-    public TeamProposalDTO addTeamProposal(@RequestBody Map<String, Object> input,
-                                           @AuthenticationPrincipal UserDetails userDetails) {
-        if(!input.containsKey("teamName")
-                || !input.containsKey("courseName")
-                || !input.containsKey("studentIds"))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        String teamName = (String)input.get("teamName");
-        String courseName = (String)input.get("courseName");
-
-        List<String> studentIds = (List<String>)input.get("studentIds");
-        return ModelHelper.enrich(teamService.proposeTeam(courseName, teamName, studentIds, userDetails.getUsername()));
-    }
-    */
-
-    // TODO delete this method and decomment method above when we will implement the login functionality
-    @PostMapping("/addTeamProposal")
-    @ResponseStatus(HttpStatus.OK)
-    public Long addTeamProposal(@RequestBody Map<String, Object> input) {
+    public Long addTeamProposal(@RequestBody Map<String, Object> input,
+                                @AuthenticationPrincipal UserDetails userDetails) {
         if(!input.containsKey("teamName")
                 || !input.containsKey("courseName")
                 || !input.containsKey("studentIds"))
@@ -115,7 +97,7 @@ public class TeamController {
         List<String> studentIds = (List<String>)input.get("studentIds");
 
         try {
-            return teamService.proposeTeam(courseName, teamName, studentIds, "virtuallabapp@gmail.com");
+            return teamService.proposeTeam(courseName, teamName, studentIds, userDetails.getUsername());
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, e.getMessage());
         } catch (Exception e) {

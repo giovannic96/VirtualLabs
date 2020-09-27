@@ -48,15 +48,13 @@ export class AddVersionDialogComponent implements OnInit {
     formData.append('file', this.currentFile);
     this.labService.submitVersionOnReport(this.report.id, formData).subscribe(event => {
       if (event.type === HttpEventType.Response) {
-        this.mySnackBar.openSnackBar('Version submitted successfully', MessageType.SUCCESS, 3);
-        setTimeout(() => this.dialogRef.close(true), 3000);
+        this.dialogRef.close(true);
       }
       if (event.type === HttpEventType.UploadProgress) {
         this.loadingProgress.loaded = event.loaded;
         this.loadingProgress.total = event.total;
       }
     }, error => {
-      this.mySnackBar.openSnackBar('Error while submitting new version', MessageType.ERROR, 3);
       this.dialogRef.close(false);
     });
   }

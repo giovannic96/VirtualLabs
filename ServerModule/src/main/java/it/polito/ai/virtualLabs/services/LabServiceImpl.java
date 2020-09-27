@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class LabServiceImpl implements LabService {
 
-    private static final String VERSION_CONTENT_PATH = "home/pi/Desktop/VirtualLabs/images/lab/versions/";
-    //private static final String VERSION_CONTENT_PATH = "C:/Users/Dario/Desktop/";
+    //private static final String VERSION_CONTENT_PATH = "home/pi/Desktop/VirtualLabs/images/lab/versions/";
+    private static final String VERSION_CONTENT_PATH = "C:/Users/giova/Desktop/Versions/";
     private static final String VERSION_CONTENT_FORMAT = "png";
-    private static final String REVIEW_IMAGE_PATH = "home/pi/Desktop/VirtualLabs/images/lab/reviews/";
-    //private static final String REVIEW_IMAGE_PATH = "C:/Users/Dario/Desktop/";
+    //private static final String REVIEW_IMAGE_PATH = "home/pi/Desktop/VirtualLabs/images/lab/reviews/";
+    private static final String REVIEW_IMAGE_PATH = "C:/Users/giova/Desktop/Reviews/";
     private static final String REVIEW_IMAGE_FORMAT = "png";
 
     @Autowired
