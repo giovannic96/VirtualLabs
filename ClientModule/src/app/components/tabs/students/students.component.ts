@@ -129,13 +129,18 @@ export class StudentsComponent implements OnInit, AfterViewInit {
         students.pop(); // remove student with null id
         students.forEach(s => { // add students to tableStudents
           this.tableStudents.data.push(s);
-          this.notEnrolledStudents.splice(this.notEnrolledStudents.indexOf(s), 1);
+          const stud = this.notEnrolledStudents.find(st => st.id === s.id);
+          this.notEnrolledStudents.splice(this.notEnrolledStudents.indexOf(stud), 1);
         });
         this.updateTableStudents(this.tableStudents.data);
         this.mySnackBar.openSnackBar('Some students may not have been enrolled correctly', MessageType.WARNING, 5);
       }
       else if (students.length !== 0) {
-        students.forEach(s => this.tableStudents.data.push(s)); // add students to tableStudents
+        students.forEach(s => {
+          this.tableStudents.data.push(s);
+          const stud = this.notEnrolledStudents.find(st => st.id === s.id);
+          this.notEnrolledStudents.splice(this.notEnrolledStudents.indexOf(stud), 1);
+        }); // add students to tableStudents
         this.updateTableStudents(this.tableStudents.data);
         this.mySnackBar.openSnackBar('Students enrolled successfully', MessageType.SUCCESS, 3);
       } else {
