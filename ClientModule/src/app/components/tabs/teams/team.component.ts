@@ -17,6 +17,7 @@ import {NotificationService} from '../../../services/notification.service';
 import {TeamProposalDialogComponent} from '../../../helpers/dialog/team-proposal-dialog.component';
 import Utility from '../../../helpers/utility';
 import {ViewTeamProposalDialogComponent} from '../../../helpers/dialog/view-team-proposal-dialog.component';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-team',
@@ -41,7 +42,8 @@ export class TeamComponent implements OnInit {
 
   public utility: Utility;
 
-  constructor(private courseService: CourseService,
+  constructor(public authService: AuthService,
+              private courseService: CourseService,
               private studentService: StudentService,
               private teamService: TeamService,
               private notificationService: NotificationService,
@@ -91,7 +93,7 @@ export class TeamComponent implements OnInit {
           }
 
           // check if this is one of my team proposals and it is PENDING
-          if (proposal.members.find(m => m.id === this.utility.getMyId())
+          if (proposal.members.find(m => m.id === this.authService.getMyId())
               && proposal.status === TeamProposalStatus.PENDING) {
             this.myPendingProposals.push(proposal);
           }
@@ -100,10 +102,10 @@ export class TeamComponent implements OnInit {
 
     this.retrieveStudentsInTeam();
 
-    if (!this.utility.isProfessor()) {
+    if (!this.authService.isProfessor()) {
       this.currentCourse
         .pipe(concatMap(course => {
-          return this.studentService.checkAcceptedProposals(this.utility.getMyId(), course.name);
+          return this.studentService.checkAcceptedProposals(this.authService.getMyId(), course.name);
         })).subscribe(accepted => this.hasAcceptedAProposal = accepted);
     }
   }
@@ -219,7 +221,7 @@ export class TeamComponent implements OnInit {
   acceptTeamProposal(tp: TeamProposal) {
     const course: Course = this.courseService.getSelectedCourseValue();
 
-    this.notificationService.responseToProposalById('accept', tp.id, this.utility.getMyId()).subscribe(resp => {
+    this.notificationService.responseToProposalById('accept', tp.id, this.authService.getMyId()).subscribe(resp => {
       if (resp) {
         // empty all the other mine pending proposals
         this.myPendingProposals = [];
@@ -240,7 +242,7 @@ export class TeamComponent implements OnInit {
   }
 
   rejectTeamProposal(tpId: number) {
-    this.notificationService.responseToProposalById('reject', tpId, this.utility.getMyId()).subscribe(resp => {
+    this.notificationService.responseToProposalById('reject', tpId, this.authService.getMyId()).subscribe(resp => {
       if (resp) {
         // remove rejected team proposal from my pending proposals
         const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
@@ -270,7 +272,7 @@ export class TeamComponent implements OnInit {
       team.vms = results[1];
 
       // check if this is my team
-      if (team.members.find(m => m.id === this.utility.getMyId())) {
+      if (team.members.find(m => m.id === this.authService.getMyId())) {
         this.myTeam = team;
       }
     });
@@ -294,7 +296,7 @@ export class TeamComponent implements OnInit {
   }
 
   isAlreadyTeamedUp() {
-    return this.teamedUpStudents?.length > 0 && this.teamedUpStudents?.find(s => s.id === this.utility.getMyId());
+    return this.teamedUpStudents?.length > 0 && this.teamedUpStudents?.find(s => s.id === this.authService.getMyId());
   }
 
   retrieveStudentsInTeam() {

@@ -13,6 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -44,6 +48,21 @@ public class AuthController {
 
     @Autowired
     NotificationService notificationService;
+
+    @GetMapping("/me")
+    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        Map<Object, Object> model = new HashMap<>();
+        model.put("roles", userDetails.getAuthorities()
+                .stream()
+                .map(a -> ((GrantedAuthority) a).getAuthority())
+                .collect(toList())
+        );
+
+        Optional<UserDTO> user = authService.getUserByUsername(userDetails.getUsername());
+        user.ifPresent(userDTO -> model.put("user", ModelHelper.enrich(userDTO)));
+
+        return ok(model);
+    }
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody UserDTO data) {

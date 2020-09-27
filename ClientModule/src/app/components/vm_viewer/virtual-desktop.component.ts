@@ -15,6 +15,7 @@ import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
 import Utility from '../../helpers/utility';
 import {TeamService} from '../../services/team.service';
 import {User} from '../../models/user.model';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-virtual-desktop',
@@ -42,12 +43,17 @@ export class VirtualDesktopComponent implements OnInit {
 
   public utility: Utility;
 
-  constructor(private courseService: CourseService,
+  constructor(public authService: AuthService,
+              private courseService: CourseService,
               private vmService: VmService,
               private teamService: TeamService,
               private route: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog) {
+
+    this.authService.getUserInfo().subscribe(me => {
+      this.authService.setUserLogged(me.user);
+    });
 
     this.utility = new Utility();
 
@@ -87,12 +93,12 @@ export class VirtualDesktopComponent implements OnInit {
         return this.vmService.getVmModelCourse(this.vmModel.id);
       })).subscribe(course => {
         this.vmCourse = course;
-        const authUsers = this.utility.isProfessor() ?
+        const authUsers = this.authService.isProfessor() ?
           this.courseService.getProfessors(this.vmCourse.name) :
           this.teamService.getTeamMembers(this.vmTeam.id);
 
         authUsers.subscribe((users: User[]) => {
-          const userFound = users.find(user => user.id === this.utility.getMyId());
+          const userFound = users.find(user => user.id === this.authService.getMyId());
           if (!userFound) {
             alert('You are unauthorized to access this virtual machine!');
             this.router.navigate(['courses']);

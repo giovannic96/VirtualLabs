@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
 import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
@@ -20,6 +20,7 @@ import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {AddVersionDialogComponent} from '../../../helpers/dialog/add-version-dialog.component';
 import Utility from '../../../helpers/utility';
 import {HttpErrorResponse} from '@angular/common/http';
+import {AuthService} from '../../../services/auth.service';
 
 export interface ReportStatusFilter {
   name: string;
@@ -46,7 +47,8 @@ export class LabComponent implements OnInit, AfterViewInit {
 
   public utility: Utility;
 
-  constructor(private courseService: CourseService,
+  constructor(public authService: AuthService,
+              private courseService: CourseService,
               private labService: LabService,
               private notificationService: NotificationService,
               private studentService: StudentService,
@@ -125,7 +127,7 @@ export class LabComponent implements OnInit, AfterViewInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
 
-    const isRevisable = isLast && this.utility.isProfessor()
+    const isRevisable = isLast && this.authService.isProfessor
                         && this.isAssignmentExpired(assignment)
                         && report.status === ReportStatus.SUBMITTED;
 
@@ -337,7 +339,7 @@ export class LabComponent implements OnInit, AfterViewInit {
   }
 
   isReportSubmittable(assignment: Assignment): boolean {
-    const status = this.getReportForStudent(assignment, this.utility.getMyId())?.status;
+    const status = this.getReportForStudent(assignment, this.authService.getMyId())?.status;
     return status === ReportStatus.READ || status === ReportStatus.REVISED;
   }
 
@@ -348,7 +350,7 @@ export class LabComponent implements OnInit, AfterViewInit {
   setAssignmentStatusLabel(assignment: Assignment) {
     let label: string;
     let className: string;
-    if (this.utility.isProfessor()) {
+    if (this.authService.isProfessor()) {
       if (this.isAssignmentExpired(assignment)) {
         const isSomeoneToGrade = this.allReports.get(assignment.id)?.find(report => report.status !== ReportStatus.GRADED);
         if (isSomeoneToGrade) {
@@ -364,7 +366,7 @@ export class LabComponent implements OnInit, AfterViewInit {
         label = 'IN PROGRESS';
       }
     } else {
-      const status = this.getReportForStudent(assignment, this.utility.getMyId())?.status;
+      const status = this.getReportForStudent(assignment, this.authService.getMyId())?.status;
       switch (status) {
         case ReportStatus.NULL:
           className = 'status-span-new';
@@ -391,7 +393,7 @@ export class LabComponent implements OnInit, AfterViewInit {
   }
 
   markAsRead(report: Report) {
-    if (this.utility.isProfessor())
+    if (this.authService.isProfessor())
       return;
 
     if (report?.status === ReportStatus.NULL) {

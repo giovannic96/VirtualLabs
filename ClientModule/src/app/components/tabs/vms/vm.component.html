@@ -3,7 +3,7 @@
     <mat-icon>tune</mat-icon>
     <h2>Vm model</h2>
   </div>
-  <mat-accordion *ngIf="utility.isProfessor() || (!utility.isProfessor() && vmModel) else noVmModel">
+  <mat-accordion *ngIf="authService.isProfessor() || (!authService.isProfessor() && vmModel) else noVmModel">
     <mat-expansion-panel hideToggle [expanded]="!vmModel">
       <mat-expansion-panel-header class="vm-model-panel-header">
         <mat-panel-description>
@@ -32,7 +32,7 @@
           <mat-card-subtitle>Max vms per team: {{vmModel.maxTotVm}} <br> Max active vms at the same time: {{vmModel.maxActiveVm}}</mat-card-subtitle>
         </div>
       </div>
-      <mat-action-row *ngIf="utility.isProfessor()">
+      <mat-action-row *ngIf="authService.isProfessor()">
         <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog()">CREATE MODEL</button>
         <ng-template #vmModelExists>
           <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
@@ -46,9 +46,9 @@
 <div class="tab-section vms-section" *ngIf="teamList">
   <div class="tab-subtitle">
     <mat-icon>desktop_windows</mat-icon>
-    <h2>{{utility.isProfessor() ? 'Virtual machines' : 'My virtual machines'}}</h2>
+    <h2>{{authService.isProfessor() ? 'Virtual machines' : 'My virtual machines'}}</h2>
   </div>
-  <ng-container *ngIf="utility.isProfessor(); else myVmsSection">
+  <ng-container *ngIf="authService.isProfessor(); else myVmsSection">
     <mat-accordion multi="false">
     <mat-card *ngIf="!teamList?.length" class="no-vms-card">
       <span>There are no virtual machines yet</span>
@@ -132,17 +132,17 @@
     <mat-card class="no-vms-card">
       <span>Still no virtual machine has been created</span>
     </mat-card>
-    <ng-container *ngIf="!utility.isProfessor() && isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
+    <ng-container *ngIf="!authService.isProfessor() && isVmCreatable" [ngTemplateOutlet]="fabAddVm"></ng-container>
   </div>
 </ng-template>
 
 <ng-template #noVmModel>
   <div class="no-vm-model-message-container">
-    <mat-card class="no-vm-model-card" *ngIf="!utility.isProfessor()">
+    <mat-card class="no-vm-model-card" *ngIf="!authService.isProfessor()">
       <span>There is no vm model for this course yet</span>
     </mat-card>
   </div>
-  <span *ngIf="utility.isProfessor()" class="no-vm-model-message-professor-side">
+  <span *ngIf="authService.isProfessor()" class="no-vm-model-message-professor-side">
     There is no vm model for this course yet
   </span>
 </ng-template>

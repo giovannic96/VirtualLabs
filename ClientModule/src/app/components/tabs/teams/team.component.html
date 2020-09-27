@@ -18,10 +18,10 @@
 <div class="tab-section formed-teams-section">
   <div class="tab-subtitle">
     <mat-icon>groups</mat-icon>
-    <h2>{{utility.isProfessor() ? 'Teams' : 'My Team' + (myTeam ? '  -  ' + myTeam.name : '')}}</h2>
+    <h2>{{authService.isProfessor() ? 'Teams' : 'My Team' + (myTeam ? '  -  ' + myTeam.name : '')}}</h2>
   </div>
   <ng-container *ngIf="teamList?.length; else noTeams">
-    <ng-container *ngIf="utility.isProfessor(); else myTeamSection">
+    <ng-container *ngIf="authService.isProfessor(); else myTeamSection">
       <mat-accordion multi="false">
         <mat-expansion-panel *ngFor="let team of this.teamList">
           <mat-expansion-panel-header>
@@ -99,12 +99,12 @@
 <ng-template #noTeams>
   <div class="no-teams-message-container" *ngIf="teamList">
     <mat-card class="no-teams-card">
-      <span>{{isInATeamProposal(utility.getMyId()) ?
+      <span>{{isInATeamProposal(authService.getMyId()) ?
         'Waiting for the response, all the students must accept the proposal...' :
         'Still no team has been formed'}}
       </span>
     </mat-card>
-    <ng-container *ngIf="!utility.isProfessor()" [ngTemplateOutlet]="fabAddTeamProposal"></ng-container>
+    <ng-container *ngIf="!authService.isProfessor()" [ngTemplateOutlet]="fabAddTeamProposal"></ng-container>
   </div>
 </ng-template>
 <ng-template #myTeamSection>
@@ -117,7 +117,7 @@
           <mat-card *ngFor="let member of myTeam?.members">
             <mat-card-header>
               <img [src]="member.photo" mat-card-avatar>
-              <mat-card-title>{{member.name}} {{member.surname}} {{member.id === utility.getMyId() ? ' (you)' : ''}}</mat-card-title>
+              <mat-card-title>{{member.name}} {{member.surname}} {{member.id === authService.getMyId() ? ' (you)' : ''}}</mat-card-title>
               <mat-card-subtitle>{{member.id}}</mat-card-subtitle>
             </mat-card-header>
           </mat-card>
@@ -151,7 +151,7 @@
   </div>
 </ng-template>
 
-<div class="tab-section pending-proposal-section" *ngIf="utility.isProfessor() && pendingProposals">
+<div class="tab-section pending-proposal-section" *ngIf="authService.isProfessor() && pendingProposals">
   <div class="tab-subtitle">
     <mat-icon>pending_actions</mat-icon>
     <h2>Pending team proposals</h2>
@@ -236,7 +236,7 @@
   </div>
 </div>
 
-<div class="tab-section proposal-history-section" *ngIf="utility.isProfessor() && allProposals && allProposals?.length">
+<div class="tab-section proposal-history-section" *ngIf="authService.isProfessor() && allProposals && allProposals?.length">
   <div class="tab-subtitle">
     <mat-icon>history</mat-icon>
     <h2>Proposals history</h2>
@@ -266,10 +266,10 @@
 </div>
 
 <ng-template #fabAddTeamProposal>
-  <div *ngIf="!isAlreadyTeamedUp() && !isInATeamProposal(utility.getMyId()) && notTeamedUpStudents?.length"
+  <div *ngIf="!isAlreadyTeamedUp() && !isInATeamProposal(authService.getMyId()) && notTeamedUpStudents?.length"
        class="add-btn-container">
     <button class="icon-btn add-btn"
-            (click)="openTeamProposalDialog(notTeamedUpStudents, utility.getMyId())">
+            (click)="openTeamProposalDialog(notTeamedUpStudents, authService.getMyId())">
       <div class="add-icon"></div>
       <div class="btn-txt"><strong>PROPOSE</strong></div>
     </button>

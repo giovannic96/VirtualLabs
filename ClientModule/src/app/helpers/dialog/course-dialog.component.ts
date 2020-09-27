@@ -14,6 +14,7 @@ import {of} from 'rxjs';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 import {MatButton} from '@angular/material/button';
 import {Assignment} from "../../models/assignment.model";
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-create-course-dialog',
@@ -39,7 +40,8 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChild('addProfessorInput') addProfessorInput: ElementRef;
 
-  constructor(private dialogRef: MatDialogRef<CourseDialogComponent>,
+  constructor(public authService: AuthService,
+              private dialogRef: MatDialogRef<CourseDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private formBuilder: FormBuilder,
               private courseService: CourseService,
@@ -49,11 +51,11 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
     this.utility = new Utility();
 
     this.professorService.allProfessors().subscribe(all => {
-      const id = this.utility.getMyId();
+      const id = this.authService.getMyId();
       this.filteredProfessors = all.filter(prof => prof.id !== id);
     });
 
-    this.professorService.professor(this.utility.getMyId()).subscribe(myself => this.mySelf = myself);
+    this.professorService.professor(this.authService.getMyId()).subscribe(myself => this.mySelf = myself);
 
     this.basicForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(50)]],

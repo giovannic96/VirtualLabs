@@ -202,3 +202,25 @@ mat-sidenav {
   padding: 3em 1em;
   text-align: center;
 }
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20vh auto;
+  font-family: "Courier New", Courier, monospace;
+  max-width: 50%;
+}
+
+.loader-images-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.loader-images-container img {
+  max-width: 50%;
+  margin-bottom: 1em;
+  position: absolute;
+}

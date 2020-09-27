@@ -6,7 +6,7 @@
   <ng-container *ngIf="assignmentList?.length; else noAssignments">
     <mat-accordion multi="false">
       <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
-                           (opened)="markAsRead(getReportForStudent(assignment, utility.getMyId()))">
+                           (opened)="markAsRead(getReportForStudent(assignment, authService.getMyId()))">
         <mat-expansion-panel-header class="assignment-header">
           <mat-panel-title>
             {{assignment.name}}
@@ -33,7 +33,7 @@
         </ng-container>
         <div class="info-divider"></div>
 
-        <ng-container [ngSwitch]="utility.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
+        <ng-container [ngSwitch]="authService.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
 
           <ng-container *ngSwitchCase="'professor'">
             <mat-card class="report-card-container">
@@ -115,7 +115,7 @@
 
           <!-- start VERSIONS section (student only) -->
           <ng-container *ngSwitchCase="'student'">
-            <mat-card *ngVar="getReportForStudent(assignment, utility.getMyId()) as studentReport" class="version-card-container">
+            <mat-card *ngVar="getReportForStudent(assignment, authService.getMyId()) as studentReport" class="version-card-container">
               <div class="report-history-container">
                 <div class="report-history-right"></div>
                 <div class="report-history-desc">
@@ -161,23 +161,23 @@
           <div class="icons-div">
             <i>Assigned on: {{utility.formatDate(assignment.releaseDate) | date:'mediumDate'}}</i>
           </div>
-          <div style="display: flex" *ngVar="getReportForStudent(assignment, utility.getMyId())?.grade as grade">
-            <ng-container *ngIf="grade !== null && !utility.isProfessor()">
+          <div style="display: flex" *ngVar="getReportForStudent(assignment, authService.getMyId())?.grade as grade">
+            <ng-container *ngIf="grade !== null && !authService.isProfessor()">
               <span>Grade obtained: </span>
               <span class="grade-label">{{grade}}</span>
             </ng-container>
-            <button mat-raised-button color="warn" *ngIf="utility.isProfessor()"
+            <button mat-raised-button color="warn" *ngIf="authService.isProfessor()"
                     (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
-            <button mat-raised-button color="primary" *ngIf="utility.isProfessor()"
+            <button mat-raised-button color="primary" *ngIf="authService.isProfessor()"
                     (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
             <button mat-raised-button color="primary"
-                    *ngIf="!utility.isProfessor() && isReportSubmittable(assignment)"
-                    (click)="openAddVersionDialog(getReportForStudent(assignment, utility.getMyId()), assignment)">ADD VERSION</button>
+                    *ngIf="!authService.isProfessor() && isReportSubmittable(assignment)"
+                    (click)="openAddVersionDialog(getReportForStudent(assignment, authService.getMyId()), assignment)">ADD VERSION</button>
           </div>
         </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
-    <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+    <ng-container *ngIf="authService.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
   </ng-container>
 </div>
 
@@ -194,7 +194,7 @@
     <mat-card class="no-assignments-card">
       <span>Still no assignment has been published</span>
     </mat-card>
-    <ng-container *ngIf="utility.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+    <ng-container *ngIf="authService.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
   </div>
 </ng-template>
 

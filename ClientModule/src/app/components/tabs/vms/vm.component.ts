@@ -17,6 +17,7 @@ import Utility from '../../../helpers/utility';
 import {VmSettingsDialogComponent} from './vm-settings-dialog.component';
 import {StudentService} from '../../../services/student.service';
 import {Student} from '../../../models/student.model';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-vm',
@@ -36,7 +37,8 @@ export class VmComponent implements OnInit {
 
   public utility: Utility;
 
-  constructor(private vmService: VmService,
+  constructor(public authService: AuthService,
+              private vmService: VmService,
               private teamService: TeamService,
               private courseService: CourseService,
               private studentService: StudentService,
@@ -77,7 +79,7 @@ export class VmComponent implements OnInit {
       });
 
     this.currentCourse.pipe(
-      concatMap(course => this.studentService.getTeamForStudent(this.utility.getMyId(), course.name)),
+      concatMap(course => this.studentService.getTeamForStudent(this.authService.getMyId(), course.name)),
       filter(team => team != null),
       concatMap(team => {
         this.myTeam = team;
@@ -248,6 +250,6 @@ export class VmComponent implements OnInit {
   }
 
   isOwner(ownerId: string) {
-    return ownerId === this.utility.getMyId();
+    return ownerId === this.authService.getMyId();
   }
 }

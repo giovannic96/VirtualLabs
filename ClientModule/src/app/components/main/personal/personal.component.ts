@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, Output, ViewChild} from '@angular/core';
 import {Course} from '../../../models/course.model';
 import {Router} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
@@ -6,7 +6,7 @@ import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CourseDialogComponent} from '../../../helpers/dialog/course-dialog.component';
 import Utility from '../../../helpers/utility';
-import {catchError, filter, retry} from 'rxjs/operators';
+import {catchError, concatMap, filter, retry} from 'rxjs/operators';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {Observable, throwError} from 'rxjs';
 import {ProfessorService} from '../../../services/professor.service';
@@ -26,7 +26,7 @@ export class PersonalComponent implements OnInit {
   @ViewChild(MatSidenav) sideNav: MatSidenav;
 
   myCourses: Course[];
-
+  loading: boolean;
   currentUser: User;
   selectedCourseName: string;
   navLinks: any[];
@@ -34,37 +34,40 @@ export class PersonalComponent implements OnInit {
 
   public utility: Utility;
 
-  constructor(private httpClient: HttpClient,
+  constructor(public authService: AuthService,
+              private httpClient: HttpClient,
               private courseService: CourseService,
               private professorService: ProfessorService,
               private studentService: StudentService,
-              private authService: AuthService,
               private router: Router,
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
-    this.getUserInfo().subscribe(me => {
-      this.currentUser = me.user;
-      this.authService.setUserLogged(me.user);
-    });
-
+    this.loading = true;
     this.utility = new Utility();
-
-    this.navLinks = this.getNavLinks();
-
-    this.myCourses = new Array<Course>();
-    this.selectedCourseName = '';
 
     this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(false);
 
-    let coursesRequest: Observable<Course[]>;
-    if (this.utility.isProfessor())
-      coursesRequest = this.professorService.getCourses(this.utility.getMyId());
-    else
-      coursesRequest = this.studentService.getCourses(this.utility.getMyId());
+    this.myCourses = new Array<Course>();
+    this.selectedCourseName = '';
 
-    coursesRequest.subscribe(courseList => {
+    this.authService.getUserInfo().pipe(
+      concatMap(me => {
+        this.currentUser = me.user;
+        this.authService.setUserLogged(me.user);
+
+        this.navLinks = this.getNavLinks();
+
+        let coursesRequest: Observable<Course[]>;
+        if (this.authService.isProfessor())
+          coursesRequest = this.professorService.getCourses(this.authService.getMyId());
+        else
+          coursesRequest = this.studentService.getCourses(this.authService.getMyId());
+
+        return coursesRequest;
+      })
+    ).subscribe(courseList => {
       this.myCourses = courseList;
 
       let courseToNavigate: string;
@@ -88,16 +91,18 @@ export class PersonalComponent implements OnInit {
         }
         this.router.navigate(['courses/' + courseToNavigate + '/' + tabToVisit]);
       }
-    });
 
-    this.courseService.getSelectedCourse().subscribe(course => {
-      this.selectedCourseName = course ? course.name : '';
-    });
+      this.courseService.getSelectedCourse().subscribe(course => {
+        this.selectedCourseName = course ? course.name : '';
+      });
 
-    this.courseService.clicksOnMenu.subscribe(event => this.sideNav.toggle());
+      this.courseService.clicksOnMenu.subscribe(event => this.sideNav.toggle());
 
-    this.router.events.subscribe((res) => {
-      this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+      this.router.events.subscribe((res) => {
+        this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+      });
+
+      this.loading = false;
     });
   }
 
@@ -183,7 +188,7 @@ export class PersonalComponent implements OnInit {
   }
 
   getNavLinks() {
-    if (this.utility.isProfessor()) {
+    if (this.authService.isProfessor()) {
       return [
         {
           label: 'Info',
@@ -217,29 +222,18 @@ export class PersonalComponent implements OnInit {
         {
           label: 'Teams',
           path: 'teams',
-          index: 2
+          index: 1
         }, {
           label: 'VMs',
           path: 'vms',
-          index: 3
+          index: 2
         }, {
           label: 'Labs',
           path: 'labs',
-          index: 4
+          index: 3
         }
       ];
     }
   }
 
-  getUserInfo(): Observable<any> {
-    return this.httpClient
-      .get<any>(`http://localhost:8080/me`)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`GetUserInfo: ${err.message}`);
-        })
-      );
-  }
 }

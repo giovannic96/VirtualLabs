@@ -6,14 +6,6 @@ import {TeamProposalStatus} from '../models/team-proposal.model';
 
 export default class Utility {
 
-  getMyId() {
-    return localStorage.getItem('virtuallabs_studentId');
-  }
-
-  isProfessor() {
-    return JSON.parse(localStorage.getItem('virtuallabs_isProfessor'));
-  }
-
   localDateTimeToString(localDateTime: string): string {
     // ex. FROM '2022-12-21T14:10:46' TO '2022,12,21,14,10,46'
     const dateTime = localDateTime.toString().split('T');

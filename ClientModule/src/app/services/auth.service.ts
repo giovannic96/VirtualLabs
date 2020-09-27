@@ -63,6 +63,18 @@ export class AuthService {
       );
   }
 
+  getUserInfo(): Observable<any> {
+    return this.httpClient
+      .get<any>(`${this.API_PATH}/me`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetUserInfo: ${err.message}`);
+        })
+      );
+  }
+
   logout() {
     localStorage.removeItem('virtuallabs_token');
     this.setUserTokenLogged(null);
@@ -93,11 +105,11 @@ export class AuthService {
   }
 
   isProfessor(): boolean {
-    return this.userLoggedObs?.value.roles.includes('ROLE_PROFESSOR');
+    return this.userLoggedObs.value?.roles?.includes('ROLE_PROFESSOR');
   }
 
-  getUserId(): string {
-    return this.userLoggedObs?.value.id;
+  getMyId(): string {
+    return this.userLoggedObs.value?.id;
   }
 
   isTokenExpired(): boolean {
