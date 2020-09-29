@@ -2,8 +2,7 @@
   <ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
     <ng-template [ngIf]="!requestComplete" [ngIfElse]="completeBlock">
       <h2>Signup</h2>
-      <form [formGroup]="signupForm">
-
+      <form [formGroup]="signupForm" (keydown.enter)="onSubmit()">
         <!-- Email -->
         <mat-form-field appearance="legacy">
           <mat-label>Email</mat-label>

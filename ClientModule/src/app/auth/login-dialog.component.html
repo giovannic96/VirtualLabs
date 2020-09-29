@@ -1,7 +1,7 @@
 <div class="form-container">
   <ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
     <h2>Login</h2>
-    <form [formGroup]="loginForm">
+    <form [formGroup]="loginForm" (keydown.enter)="onSubmit()">
       <mat-form-field appearance="legacy">
         <mat-label>Email</mat-label>
         <input matInput [type]="'email'" formControlName="email">
