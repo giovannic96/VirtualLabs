@@ -39,5 +39,5 @@
       </button>
     </div>
   </div>
-  <img class="fake-desktop-image" [src]="currentVm?.content">
+  <img class="fake-desktop-image" *ngIf="currentVm" [src]="currentVm.content">
 </div>
