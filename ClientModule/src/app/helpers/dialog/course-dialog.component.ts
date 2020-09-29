@@ -136,6 +136,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
             return this.courseService.assignProfessor(course.name, professor.id);
           })
         ).subscribe(() => {
+          console.log('Entrato');
           this.dialogRef.close(course);
         }, error => this.dialogRef.close(null));
       }

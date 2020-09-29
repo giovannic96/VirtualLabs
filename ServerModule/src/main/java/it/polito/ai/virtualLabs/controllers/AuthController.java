@@ -94,7 +94,6 @@ public class AuthController {
         if(authService.checkIfRegistered(user.getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with username '" + user.getUsername() + "' cannot be registered");
 
-
         String token = authService.assignToken(user.getId());
         authService.setNewPassword(user.getId(), data.getPassword());
 

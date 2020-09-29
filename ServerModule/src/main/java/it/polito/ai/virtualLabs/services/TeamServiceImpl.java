@@ -71,7 +71,7 @@ public class TeamServiceImpl implements TeamService {
         if(courseRepository.existsById(course.getName()) ||
                 course.getMinTeamSize() < MIN_SIZE_FOR_GROUP ||
                 course.getMaxTeamSize() > MAX_SIZE_FOR_GROUP ||
-                course.getMaxTeamSize() - course.getMinTeamSize() >= 0)
+                course.getMaxTeamSize() - course.getMinTeamSize() < 0)
             return false;
 
         try {
@@ -806,7 +806,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private String getResourcesPath() {
-        // return "src/main/resources/static/"; // FOR LOCALHOST
-        return getClass().getClassLoader().getResource("static/").getPath();
+        return "src/main/resources/static/"; // FOR LOCALHOST
+        //return getClass().getClassLoader().getResource("static/").getPath();
     }
 }
