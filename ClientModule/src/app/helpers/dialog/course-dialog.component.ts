@@ -9,11 +9,11 @@ import {Professor} from '../../models/professor.model';
 import {ProfessorService} from '../../services/professor.service';
 import Utility from '../utility';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {concatMap, mergeMap} from 'rxjs/operators';
+import {concatMap, finalize, mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 import {MatButton} from '@angular/material/button';
-import {Assignment} from "../../models/assignment.model";
+import {Assignment} from '../../models/assignment.model';
 import {AuthService} from '../../services/auth.service';
 
 @Component({
@@ -30,6 +30,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
   public prerequisitesControl: FormControl;
   public topicsControl: FormControl;
 
+  loading: boolean;
   currentSelectedOption: Professor;
   mySelf: Professor;
   filteredProfessors: Professor[] = [];
@@ -114,6 +115,8 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
         return;
       }
 
+      this.loading = true;
+
       if (this.data.courseExists) { // COURSE EDIT
         this.courseService.editCourse(this.data.course.name, course.getDTO()).subscribe(res => {
             if (res)
@@ -135,10 +138,9 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
           mergeMap(professor => {
             return this.courseService.assignProfessor(course.name, professor.id);
           })
-        ).subscribe(() => {
-          console.log('Entrato');
-          this.dialogRef.close(course);
-        }, error => this.dialogRef.close(null));
+        ).subscribe(() => null,
+            error => this.dialogRef.close(null),
+          () => this.dialogRef.close(course));
       }
     }
   }

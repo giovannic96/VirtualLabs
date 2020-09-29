@@ -43,13 +43,16 @@ export class PersonalComponent implements OnInit {
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
-    this.loading = true;
     this.utility = new Utility();
 
     this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(false);
 
     this.myCourses = new Array<Course>();
+  }
+
+  ngOnInit(): void {
+    this.loading = true;
     this.selectedCourseName = '';
 
     this.authService.getUserInfo().pipe(
@@ -106,9 +109,6 @@ export class PersonalComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   setCurrentCourse(course: Course) {
     this.courseService.setSelectedCourse(course);
   }
@@ -157,6 +157,7 @@ export class PersonalComponent implements OnInit {
             this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
             this.myCourses.push(course);
             this.myCourses.sort((a, b) => Course.sortData(a, b));
+            this.router.navigate(['courses/' + course.name + '/info']);
           }
         }
       });

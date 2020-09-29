@@ -1,6 +1,6 @@
 <ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
   <mat-toolbar>
-    <span>{{selectedCourseName}}</span>
+    <span *ngIf="myCourses?.length">{{selectedCourseName}}</span>
   </mat-toolbar>
   <ng-container *ngIf="myCourses?.length else noCourses">
     <mat-sidenav-container [autosize]="true">
