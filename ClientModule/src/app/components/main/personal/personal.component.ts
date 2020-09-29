@@ -55,7 +55,7 @@ export class PersonalComponent implements OnInit {
     this.authService.getUserInfo().pipe(
       concatMap(me => {
         this.currentUser = me.user;
-        this.authService.setUserLogged(me.user);
+        this.authService.setUserLogged(me);
 
         this.navLinks = this.getNavLinks();
 
