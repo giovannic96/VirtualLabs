@@ -38,10 +38,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean checkIfRegistered(String id) {
-        if(id.contains("studenti.polito"))
-            return userRepository.getStudentById(id).isRegistered();
-        else
-            return userRepository.getProfessorById(id).isRegistered();
+        return userRepository.getOne(id).isRegistered();
     }
 
     @Override
