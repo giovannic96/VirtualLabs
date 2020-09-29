@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
 import {AuthService} from '../services/auth.service';
 import {User} from '../models/user.model';
+import {catchError, timeout} from 'rxjs/operators';
+import {EMPTY} from 'rxjs';
 
 @Component({
   selector: 'app-login-dialog',
@@ -13,6 +15,8 @@ export class LoginDialogComponent implements OnInit {
   loginForm: FormGroup;
   hidePass = true;
   loginError = false;
+  loading: boolean;
+  errorMessage: string;
 
   constructor(private authService: AuthService,
               private formBuilder: FormBuilder,
@@ -29,14 +33,23 @@ export class LoginDialogComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.valid) {
       this.loginError = false;
-      this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value)
-        .subscribe(resp => {
-        localStorage.setItem('virtuallabs_token', resp.token);
-        const userParsed = JSON.parse(atob(resp.token.split('.')[1]));
-        this.authService.setUserTokenLogged(userParsed);
-        this.dialogRef.close(true);
+      this.loading = true;
+      this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value).pipe(
+        timeout(5000)
+      ).subscribe(resp => {
+        try {
+          const userParsed = JSON.parse(atob(resp.token.split('.')[1]));
+          this.authService.setUserTokenLogged(userParsed);
+          localStorage.setItem('virtuallabs_token', resp.token);
+          this.dialogRef.close(true);
+        } catch (ex) {
+          this.errorMessage = 'Server error. Please contact the administrator.';
+        }
       }, error => {
+        this.errorMessage = 'Wrong email or password';
+      }).add(() => {
         this.loginError = true;
+        this.loading = false;
       });
     }
   }

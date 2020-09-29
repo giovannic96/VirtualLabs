@@ -29,3 +29,14 @@ mat-form-field {
 .buttons-div {
   margin-top: .5em;
 }
+
+.loader-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.loader-image-container img {
+  max-height: 60%;
+}

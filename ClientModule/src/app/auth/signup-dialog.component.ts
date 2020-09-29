@@ -4,6 +4,7 @@ import {AuthService} from '../services/auth.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LoginDialogComponent} from './login-dialog.component';
 import {MustMatch} from '../helpers/must-match.validator';
+import {timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-signup',
@@ -15,6 +16,7 @@ export class SignupDialogComponent implements OnInit {
   hidePass = true;
   hideRepeatPass = true;
   signupError = false;
+  loading: boolean;
   politoMailRegex: RegExp;
   goodPassRegex: RegExp;
   requestComplete: boolean;
@@ -45,13 +47,16 @@ export class SignupDialogComponent implements OnInit {
   onSubmit() {
 
     if (this.signupForm.valid) {
-      this.authService.signup(this.signupForm.get('email').value, this.signupForm.get('password').value)
-        .subscribe(resp => {
-          this.signupError = false;
+      this.signupError = false;
+      this.requestComplete = false;
+      this.loading = true;
+      this.authService.signup(this.signupForm.get('email').value, this.signupForm.get('password').value).pipe(
+        timeout(5000)
+      ).subscribe(resp => {
           this.requestComplete = true;
         }, error => {
           this.signupError = true;
-        });
+        }).add(() => this.loading = false);
     }
   }
 
