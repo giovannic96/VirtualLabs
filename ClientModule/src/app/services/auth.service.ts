@@ -7,6 +7,12 @@ import {catchError, retry} from 'rxjs/operators';
 import {Student} from '../models/student.model';
 import {User} from '../models/user.model';
 
+enum UserRole {
+  UNDEFINED,
+  STUDENT,
+  PROFESSOR
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +23,7 @@ export class AuthService {
 
   private tokenLoggedObs: BehaviorSubject<Token>;
   private userLoggedObs: BehaviorSubject<User>;
+  userRole: UserRole;
   redirectUrl: string;
 
   constructor(private httpClient: HttpClient) {
@@ -27,6 +34,7 @@ export class AuthService {
     }
     this.tokenLoggedObs = new BehaviorSubject<Token>(token);
     this.userLoggedObs = new BehaviorSubject<User>(null);
+    this.userRole = UserRole.UNDEFINED;
   }
 
   login(email: string, password: string): Observable<any> {
@@ -88,10 +96,18 @@ export class AuthService {
     return this.tokenLoggedObs.asObservable();
   }
 
-  setUserLogged(val: User) {
-    this.userLoggedObs.next(val);
-  }
+  setUserLogged(userInfo: any) {
+    const roles: string[] = userInfo.roles;
+    if (roles.includes('ROLE_STUDENT'))
+      this.userRole = UserRole.STUDENT;
+    else if (roles.includes('ROLE_PROFESSOR'))
+      this.userRole = UserRole.PROFESSOR;
+    else
+      this.userRole = UserRole.UNDEFINED;
 
+    this.userLoggedObs.next(userInfo.user);
+  }
+  
   getUserLogged(): Observable<User> {
     return this.userLoggedObs.asObservable();
   }
@@ -105,7 +121,7 @@ export class AuthService {
   }
 
   isProfessor(): boolean {
-    return this.userLoggedObs.value?.roles?.includes('ROLE_PROFESSOR');
+    return this.userRole === UserRole.PROFESSOR;
   }
 
   getMyId(): string {
