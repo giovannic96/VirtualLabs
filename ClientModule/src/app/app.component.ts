@@ -8,6 +8,7 @@ import {Observable, throwError} from 'rxjs';
 import {catchError, retry} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from './models/user.model';
+import {MyDialogComponent} from './helpers/dialog/my-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -66,9 +67,20 @@ export class AppComponent {
     });
   }
 
-  userLogout() {
-    this.authService.logout();
-    this.router.navigate(['home']);
+  async userLogout() {
+    const message = 'You will be redirected to Virtual Labs homepage';
+
+    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+        message,
+        buttonConfirmLabel: 'CONFIRM',
+        buttonCancelLabel: 'CANCEL'
+      }
+    }).afterClosed().toPromise();
+
+    if (areYouSure) {
+      this.authService.logout();
+      this.router.navigate(['home']);
+    }
   }
 
   toggleSidenav(event: Event) {

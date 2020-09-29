@@ -12,10 +12,6 @@
     <mat-card-subtitle class="user-info-label">{{currentUser.name}} {{currentUser.surname}} - {{currentUser.id}}</mat-card-subtitle>
     <img [src]="currentUser.photo" mat-card-avatar>
     <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item>
-        <mat-icon>account_circle</mat-icon>
-        <span>Account Info</span>
-      </button>
       <button mat-menu-item (click)="userLogout()">
         <mat-icon color="warn">logout</mat-icon>
         <span>Logout</span>
