@@ -79,13 +79,6 @@ export class StudentsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
   }
 
-  getAllStudents() {
-    this.studentService.getAll().subscribe(students => {
-      this.notEnrolledStudents = students;
-      this.notEnrolledStudents.sort((a, b) => Student.sortData(a, b));
-    });
-  }
-
   getEnrolledStudents(courseName: string) {
     this.courseService.getEnrolled(courseName).subscribe(enrolled => {
       this.updateTableStudents(enrolled);

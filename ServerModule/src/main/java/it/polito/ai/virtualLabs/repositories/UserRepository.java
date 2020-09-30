@@ -18,10 +18,10 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     boolean existsByUsername(String username);
 
-    @Query("FROM Student")
+    @Query("SELECT s FROM Student s WHERE s.registered = true")
     List<Student> findAllStudents();
 
-    @Query("FROM Professor")
+    @Query("SELECT p FROM Professor p WHERE p.registered = true")
     List<Professor> findAllProfessors();
 
     @Query("SELECT s FROM Student s WHERE s.id = :studentId")
@@ -60,7 +60,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT CASE WHEN COUNT(p)>0 THEN TRUE ELSE FALSE END FROM Professor p WHERE p.username = :email")
     boolean professorExistsByUsername(String email);
 
-    @Query("SELECT s FROM Student s WHERE s.id NOT IN (SELECT s.id FROM Course c INNER JOIN c.students s WHERE c.name=:courseName)")
+    @Query("SELECT s FROM Student s WHERE s.registered = true AND s.id NOT IN (SELECT s.id FROM Course c INNER JOIN c.students s WHERE c.name=:courseName)")
     List<Student> getStudentsNotInCourse(String courseName);
 
     Optional<User> getByToken(String token);

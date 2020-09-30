@@ -4,7 +4,7 @@ import {Student} from '../models/student.model';
 import {Observable, throwError} from 'rxjs';
 import {catchError, retry} from 'rxjs/operators';
 import {Professor} from '../models/professor.model';
-import {Course} from "../models/course.model";
+import {Course} from '../models/course.model';
 
 @Injectable({
   providedIn: 'root'
