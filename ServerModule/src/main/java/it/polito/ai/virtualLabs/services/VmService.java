@@ -23,7 +23,7 @@ public interface VmService {
     List<VmModelDTO> getProfessorVmModels(String professorId);
     List<AssignmentDTO> getProfessorAssignments(String professorId);
 
-    boolean createVm(VmDTO vmDTO, String studentId, Long teamId);
+    Long createVm(VmDTO vmDTO, String studentId, Long teamId);
     void removeVm(Long vmId);
     boolean editVmResources(Long vmId, int vCPU, int ram, int disk);
     boolean powerOnVm(Long vmId);

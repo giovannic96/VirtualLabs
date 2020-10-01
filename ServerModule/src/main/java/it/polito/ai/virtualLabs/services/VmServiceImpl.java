@@ -195,7 +195,7 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public boolean createVm(VmDTO vmDTO, String studentId, Long teamId) {
+    public Long createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
         if(!userRepository.studentExistsById(studentId))
@@ -212,7 +212,7 @@ public class VmServiceImpl implements VmService {
         //check number of vms and resources constraints
         if(teamVms.size() >= vmModel.getMaxTotVm() ||
             resourcesExceeded(teamVms, vmModel, vmDTO.getVCPU(), vmDTO.getRAM(), vmDTO.getDisk()))
-            return false;
+            return 0L;
 
         //create VM
         Vm vm = modelMapper.map(vmDTO, Vm.class);
@@ -223,7 +223,7 @@ public class VmServiceImpl implements VmService {
         vm.setContent(vmModel.getOs() + "_v0");
 
         vmRepository.saveAndFlush(vm);
-        return true;
+        return vm.getId();
     }
 
     @Override

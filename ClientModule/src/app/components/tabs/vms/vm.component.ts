@@ -241,11 +241,19 @@ export class VmComponent implements OnInit {
 
     const dialogRef = this.dialog.open(VmSettingsDialogComponent, {disableClose: false, data});
 
-    dialogRef.afterClosed().pipe(filter(res => res)).subscribe((vmResponse: Vm) => {
+    let vmReceived: Vm;
+    dialogRef.afterClosed().pipe(
+      filter(res => res),
+      concatMap((vmResponse: Vm) => {
+        vmReceived = vmResponse;
+        return this.vmService.getVmOwner(vmReceived.id);
+      })
+    ).subscribe( owner => {
+      vmReceived.owner = owner;
       if (data.vmExists) {
-        vm = vmResponse;
+        vm = vmReceived;
       } else {
-        this.myTeam.vms.push(vmResponse);
+        this.myTeam.vms.push(vmReceived);
       }
       this.setVmCreatable();
     });
