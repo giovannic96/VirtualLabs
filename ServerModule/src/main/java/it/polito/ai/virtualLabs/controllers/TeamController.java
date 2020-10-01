@@ -119,10 +119,11 @@ public class TeamController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The student with email: '" + userDetails.getUsername() + "' was not found");
 
         String studentId = student.get().getId();
-        if(!vmService.createVm(vmDTO, studentId, teamId))
+        Long generatedId = vmService.createVm(vmDTO, studentId, teamId);
+        if(generatedId == 0)
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot create vm: current resources are not enough");
 
-        return ModelHelper.enrich(vmDTO);
+        return ModelHelper.enrich(vmService.getVm(generatedId).get());
     }
 
     @DeleteMapping("/{teamId}")
