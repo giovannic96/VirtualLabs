@@ -68,12 +68,4 @@ public class Course {
         t.setCourse(null);
     }
 
-    public void setVmModel(VmModel v) {
-        if(vmModel != null)
-            vmModel.setCourse(null);
-        if(v != null)
-            v.setCourse(this);
-        vmModel = v;
-    }
-
 }

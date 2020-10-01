@@ -191,7 +191,6 @@ public class CourseController {
     public void setVmModelToCourse(@PathVariable String courseName,
                                    @RequestBody VmModelDTO vmModelDTO) {
 
-
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
     }

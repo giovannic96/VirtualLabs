@@ -32,4 +32,9 @@ public class Professor extends User{
         courses.remove(c);
         c.getProfessors().remove(this);
     }
+
+    public void addVmModel(VmModel vmModel) {
+        vmModels.add(vmModel);
+        vmModel.setProfessor(this);
+    }
 }

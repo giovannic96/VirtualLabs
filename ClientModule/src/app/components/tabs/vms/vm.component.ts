@@ -78,22 +78,24 @@ export class VmComponent implements OnInit {
           this.vmModel.professor = null;
       });
 
-    this.currentCourse.pipe(
-      concatMap(course => this.studentService.getTeamForStudent(this.authService.getMyId(), course.name)),
-      filter(team => team != null),
-      concatMap(team => {
-        this.myTeam = team;
-        return this.teamService.getTeamVms(team.id);
-      }),
-      mergeMap(vms => {
-        this.myTeam.vms = vms;
-        if (this.vmModel)
-          this.setVmCreatable();
-        const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
-        return forkJoin(ownerRequests);
-      })).subscribe(owners => {
+    if (!this.authService.isProfessor()) {
+      this.currentCourse.pipe(
+        concatMap(course => this.studentService.getTeamForStudent(this.authService.getMyId(), course.name)),
+        filter(team => team != null),
+        concatMap(team => {
+          this.myTeam = team;
+          return this.teamService.getTeamVms(team.id);
+        }),
+        mergeMap(vms => {
+          this.myTeam.vms = vms;
+          if (this.vmModel)
+            this.setVmCreatable();
+          const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+          return forkJoin(ownerRequests);
+        })).subscribe(owners => {
         this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
       });
+    }
 
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
