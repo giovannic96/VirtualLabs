@@ -29,6 +29,8 @@ mat-card-header {
 .info-row {
   margin: 1em;
   display: flex;
+  flex-flow: row wrap;
+  gap: 1em;
   justify-content: space-between;
   padding: 10px;
   line-height: 1.5;
@@ -38,14 +40,12 @@ mat-card-header {
 }
 
 .info-row-title {
-  padding-left: 10px;
-  width: 16%;
-  margin-right: 10px;
+  flex: 1 1 100px;
   font-style: italic;
 }
 
 .info-row-content {
-  width: 84%;
+  flex: 1 1 75%;
 }
 
 .info-row-content-professor {
