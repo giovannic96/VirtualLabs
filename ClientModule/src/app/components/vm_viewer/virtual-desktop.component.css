@@ -55,11 +55,10 @@
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   background: linear-gradient(ghostwhite 89%, #33296c);
-  /*background: ghostwhite;*/
   width: 50%;
   text-align: center;
   font-family: monospace;
-  margin: -2.8em auto 0;
+  margin: -2.4em auto 0;
   transition: .5s;
   transition-delay: 1s;
 }
@@ -67,6 +66,12 @@
 .dynamic-menu:hover {
   margin-top: 0;
   transition-delay: 0s;
+}
+
+.dynamic-menu:focus {
+  margin-top: 0;
+  transition-delay: 0s;
+  outline: unset;
 }
 
 .vm-stats, .stat-element {
@@ -97,4 +102,11 @@
   width: 100%;
   height: 100%;
   z-index: -1;
+}
+
+.action-buttons button {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  margin-left: .5em;
 }

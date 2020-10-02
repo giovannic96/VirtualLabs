@@ -107,7 +107,7 @@ export class AuthService {
 
     this.userLoggedObs.next(userInfo.user);
   }
-  
+
   getUserLogged(): Observable<User> {
     return this.userLoggedObs.asObservable();
   }

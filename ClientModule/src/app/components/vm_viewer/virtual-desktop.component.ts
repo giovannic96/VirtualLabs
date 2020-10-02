@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {CourseService} from '../../services/course.service';
 import {VmService} from '../../services/vm.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -33,6 +33,8 @@ export class VirtualDesktopComponent implements OnInit {
   private vmCourse: Course;
   public stats: any;
 
+  @ViewChild('menu') menu: ElementRef<HTMLDivElement>;
+
   private tips: string[] = [
     'Hover on the thin bar on top to open menu',
     'Press F11 on your keyboard to go fullscreen. Press it again to exit fullscreen mode',
@@ -58,7 +60,10 @@ export class VirtualDesktopComponent implements OnInit {
     this.utility = new Utility();
 
     const loadingTimer = timer(3500);
-    loadingTimer.subscribe(() => this.loadComplete = true);
+    loadingTimer.subscribe(() => {
+      this.menu.nativeElement.focus();
+      this.loadComplete = true;
+    });
 
     this.chosenTip = this.chooseRandomTip();
 
