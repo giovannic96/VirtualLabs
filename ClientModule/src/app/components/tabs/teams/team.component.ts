@@ -281,6 +281,10 @@ export class TeamComponent implements OnInit {
   deleteTeam(team: Team) {
     this.teamService.deleteTeam(team.id).subscribe(() => {
       this.teamList.splice(this.teamList.indexOf(team), 1);
+      team.members.forEach(member => {
+        this.teamedUpStudents.splice(this.teamedUpStudents.indexOf(member), 1);
+        this.notTeamedUpStudents.push(member);
+      });
       this.mySnackBar.openSnackBar('Team removed successfully', MessageType.SUCCESS, 3);
     }, () => {
       this.mySnackBar.openSnackBar('Error in deleting team ' + team.name, MessageType.ERROR, 5);
