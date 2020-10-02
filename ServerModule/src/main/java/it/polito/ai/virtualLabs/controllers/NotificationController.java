@@ -1,14 +1,20 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.MessageDTO;
+import it.polito.ai.virtualLabs.dtos.ProfessorDTO;
 import it.polito.ai.virtualLabs.services.NotificationService;
+import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("notification")
@@ -17,12 +23,19 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    TeamService teamService;
+
+    //TODO: think if it's better to put this method in another controller
     @PostMapping("/private/sendMessage")
     @ResponseStatus(HttpStatus.OK)
-    public void sendMessage(@RequestBody MessageDTO data) {
-        // TODO get name and surname of the professor who is sending the message via getAuthorities()
+    public void sendMessage(@RequestBody MessageDTO data, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<ProfessorDTO> prof = teamService.getProfessorByUsername(userDetails.getUsername());
+        if(!prof.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
+
         try {
-            notificationService.sendMessageToTeam("Name Surname", data.getTo(), data.getSubject(), data.getBody());
+            notificationService.sendMessageToTeam(prof.get().getName() + " " +prof.get().getSurname(), data.getTo(), data.getSubject(), data.getBody());
         } catch(MailException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email to a student");
         } catch(StudentNotFoundException ex) {
