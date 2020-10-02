@@ -58,7 +58,7 @@ export class CourseInfoComponent implements OnInit {
     setTimeout(() => {
       this.utility.renderChartPasses();
       this.utility.renderChartGrades();
-    }, 600);
+    }, 100);
   }
 
   clearInfo() {
