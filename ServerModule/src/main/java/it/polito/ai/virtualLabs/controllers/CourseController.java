@@ -7,6 +7,8 @@ import it.polito.ai.virtualLabs.services.VmService;
 import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -170,7 +172,6 @@ public class CourseController {
         }
     }
 
-    /*
     @PostMapping("/{courseName}/setVmModel")
     @ResponseStatus(HttpStatus.CREATED)
     public void setVmModelToCourse(@PathVariable String courseName,
@@ -183,39 +184,20 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
-    }*/
-
-    // TODO: just for tests, remove it and decomment method above when we will implement the login functionality
-    @PostMapping("/{courseName}/setVmModel")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void setVmModelToCourse(@PathVariable String courseName,
-                                   @RequestBody VmModelDTO vmModelDTO) {
-
-        if(!vmService.setVmModelToCourse(vmModelDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId()))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
     }
-
-    /*
+    
     @PostMapping("/{courseName}/addAssignment")
     @ResponseStatus(HttpStatus.CREATED)
     public Long addAssignmentToCourse(@PathVariable String courseName,
-                                         @RequestBody AssignmentDTO assignmentDTO,
-                                         @AuthenticationPrincipal UserDetails userDetails) {
+                                      @RequestBody AssignmentDTO assignmentDTO,
+                                      @AuthenticationPrincipal UserDetails userDetails) {
 
         Optional<ProfessorDTO> professor = teamService.getProfessorByUsername(userDetails.getUsername());
 
         if(!professor.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
-        if(!labService.addAssignmentToCourse(assignmentDTO, courseName, professor.get().getId()))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on adding assignment to course: " + courseName);
-    }*/
 
-    // TODO: just for tests, remove it and decomment method above when we will implement the login functionality
-    @PostMapping("/{courseName}/addAssignment")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Long addAssignmentToCourse(@PathVariable String courseName,
-                                   @RequestBody AssignmentDTO assignmentDTO) {
-        Long generatedId = labService.addAssignmentToCourse(assignmentDTO, courseName, this.teamService.getProfessorsForCourse(courseName).get(0).getId());
+        Long generatedId = labService.addAssignmentToCourse(assignmentDTO, courseName, professor.get().getId());
         if( generatedId == 0)
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on adding assignment to course: " + courseName);
         return generatedId;

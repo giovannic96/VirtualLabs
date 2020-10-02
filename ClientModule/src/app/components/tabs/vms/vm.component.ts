@@ -127,12 +127,16 @@ export class VmComponent implements OnInit {
         vmModelRequest = this.courseService.setVmModel(course.name, dialogResponse.getDTO());
       }
 
-      vmModelRequest.pipe(concatMap(() => this.courseService.getVmModel(course.name)))
-      .subscribe(vmModel => {
-        // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
-        this.vmModel = vmModel;
+      vmModelRequest.pipe(
+        concatMap(() => this.courseService.getVmModel(course.name)),
+        concatMap(vmModel => {
+          this.vmModel = vmModel;
+          return this.vmService.getVmModelProfessor(vmModel.id);
+        })
+      ).subscribe(professor => {
+        this.vmModel.professor = professor;
         this.mySnackBar.openSnackBar(successMessage, MessageType.SUCCESS, 3);
-      }, error => this.mySnackBar.openSnackBar(errorMessage, MessageType.ERROR, 3));
+      }, () => this.mySnackBar.openSnackBar(errorMessage, MessageType.ERROR, 3));
     }
   }
 
