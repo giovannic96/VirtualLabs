@@ -204,8 +204,8 @@ export class VmComponent implements OnInit {
     const params = {
       vmId: vm.id,
       vmModelId: this.vmModel.id,
-      teamId: this.myTeam.id,
-      ownerId: this.myTeam.vms.find(v => v.id === vm.id).owner.id
+      teamId: this.myTeam?.id,
+      ownerId: this.myTeam?.vms.find(v => v.id === vm.id).owner.id
     };
     this.vmService.encodeAndNavigate(params);
   }
