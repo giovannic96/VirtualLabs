@@ -52,7 +52,7 @@ export class VirtualDesktopComponent implements OnInit {
               private dialog: MatDialog) {
 
     this.authService.getUserInfo().subscribe(me => {
-      this.authService.setUserLogged(me.user);
+      this.authService.setUserLogged(me);
     });
 
     this.utility = new Utility();
