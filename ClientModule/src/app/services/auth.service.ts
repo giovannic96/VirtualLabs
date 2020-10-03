@@ -28,7 +28,7 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) {
     let token: Token = null;
-    const localStorageItem = localStorage.getItem('virtuallabs_token');
+    const localStorageItem = localStorage.getItem('auth_token');
     if (localStorageItem) {
       token = JSON.parse(atob(localStorageItem.split('.')[1]));
     }
@@ -84,7 +84,7 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('virtuallabs_token');
+    localStorage.removeItem('auth_token');
     this.setUserTokenLogged(null);
   }
 
@@ -113,7 +113,7 @@ export class AuthService {
   }
 
   getAuthorizationToken() {
-    return localStorage.getItem('virtuallabs_token');
+    return localStorage.getItem('auth_token');
   }
 
   isUserLogged(): boolean {

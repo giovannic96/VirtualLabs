@@ -40,7 +40,7 @@ export class LoginDialogComponent implements OnInit {
         try {
           const userParsed = JSON.parse(atob(resp.token.split('.')[1]));
           this.authService.setUserTokenLogged(userParsed);
-          localStorage.setItem('virtuallabs_token', resp.token);
+          localStorage.setItem('auth_token', resp.token);
           this.dialogRef.close(true);
         } catch (ex) {
           this.errorMessage = 'Server error. Please contact the administrator.';
