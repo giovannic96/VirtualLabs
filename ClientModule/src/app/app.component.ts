@@ -36,8 +36,10 @@ export class AppComponent {
     this.authService.getUserTokenLogged().subscribe(userTokenLogged => {
       if (!!userTokenLogged) {
         if (this.authService.isTokenExpired()) {
-          localStorage.removeItem('virtuallabs_token');
           this.userLoggedIn = false;
+          this.authService.logout();
+          alert('Your session is expired.\nPlease login again.');
+          this.router.navigate(['/'], {queryParams: {doLogin: true}});
         } else {
           this.userLoggedIn = true;
         }

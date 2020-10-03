@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {Course} from '../../../models/course.model';
 import {CourseService} from '../../../services/course.service';
 import {Observable} from 'rxjs';
@@ -58,7 +58,7 @@ export class CourseInfoComponent implements OnInit {
     setTimeout(() => {
       this.utility.renderChartPasses();
       this.utility.renderChartGrades();
-    }, 100);
+    }, 300);
   }
 
   clearInfo() {
