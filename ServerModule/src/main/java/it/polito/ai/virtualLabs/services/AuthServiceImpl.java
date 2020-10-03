@@ -2,7 +2,10 @@ package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.ReportDTO;
 import it.polito.ai.virtualLabs.dtos.UserDTO;
+import it.polito.ai.virtualLabs.entities.RegistrationToken;
+import it.polito.ai.virtualLabs.entities.Token;
 import it.polito.ai.virtualLabs.entities.User;
+import it.polito.ai.virtualLabs.repositories.TokenRepository;
 import it.polito.ai.virtualLabs.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +30,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     @Override
     public Optional<UserDTO> getUserByUsername(String username) {
@@ -44,7 +51,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String assignToken(String id) {
         String token = hashToken(id);
-        userRepository.getOne(id).setToken(token);
+        User user = userRepository.getOne(id);
+
+        Optional<RegistrationToken> tokenOpt = tokenRepository.findByUserId(id);
+
+        // remove token if it is already present
+        tokenOpt.ifPresent(registrationToken -> tokenRepository.deleteById(registrationToken.getToken()));
+
+        // create registration token
+        RegistrationToken registrationToken = new RegistrationToken(token, user, LocalDateTime.now().plusDays(3));
+        tokenRepository.saveAndFlush(registrationToken);
+        registrationToken.setUser(user);
+
         return token;
     }
 
@@ -55,14 +73,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean completeRegistration(String token) {
-        Optional<User> userOpt= this.userRepository.getByToken(token);
-        if(!userOpt.isPresent())
+        Optional<RegistrationToken> tokenOpt = this.tokenRepository.findRegistrationToken(token);
+        if(!tokenOpt.isPresent())
             return false;
 
-        User user = userOpt.get();
-        user.setRegistered(true);
-        user.setToken(null);
+        RegistrationToken registrationToken = tokenOpt.get();
 
+        // check if token is expired
+        if(registrationToken.getExpiration().isBefore(LocalDateTime.now())) {
+            tokenRepository.deleteById(token);
+            tokenRepository.flush();
+            return false;
+        }
+
+        // set user as registered
+        User user = userRepository.getOne(registrationToken.getUser().getId());
+        user.setRegistered(true);
+
+        // delete registration token
+        tokenRepository.deleteById(token);
+        tokenRepository.flush();
         return true;
     }
 

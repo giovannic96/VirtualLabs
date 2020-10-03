@@ -62,6 +62,4 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT s FROM Student s WHERE s.registered = true AND s.id NOT IN (SELECT s.id FROM Course c INNER JOIN c.students s WHERE c.name=:courseName)")
     List<Student> getStudentsNotInCourse(String courseName);
-
-    Optional<User> getByToken(String token);
 }
