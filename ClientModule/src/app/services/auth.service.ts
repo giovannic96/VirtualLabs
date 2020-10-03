@@ -85,6 +85,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
     this.setUserTokenLogged(null);
     this.setUserLogged(null);
   }
@@ -138,4 +139,16 @@ export class AuthService {
     const token = this.tokenLoggedObs.value;
     return token && (this.tokenLoggedObs.value.exp < now.getTime() / 1000);
   }
+
+  refreshToken(token: string): Observable<any> {
+      return this.httpClient
+        .post<any>(`${this.API_PATH}/refreshToken`, token)
+        .pipe(
+          retry(1),
+          catchError( err => {
+            console.error(err);
+            return throwError(`refreshToken error: ${err.message}`);
+          })
+        );
+    }
 }

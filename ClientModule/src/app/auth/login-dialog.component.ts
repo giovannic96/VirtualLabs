@@ -38,9 +38,10 @@ export class LoginDialogComponent implements OnInit {
         timeout(5000)
       ).subscribe(resp => {
         try {
-          const userParsed = JSON.parse(atob(resp.token.split('.')[1]));
+          const userParsed = JSON.parse(atob(resp.auth_token.split('.')[1]));
           this.authService.setUserTokenLogged(userParsed);
-          localStorage.setItem('auth_token', resp.token);
+          localStorage.setItem('auth_token', resp.auth_token);
+          localStorage.setItem('refresh_token', resp.refresh_token);
           this.dialogRef.close(true);
         } catch (ex) {
           this.errorMessage = 'Server error. Please contact the administrator.';

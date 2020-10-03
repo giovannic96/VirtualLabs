@@ -2,13 +2,12 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.UserDTO;
 import it.polito.ai.virtualLabs.repositories.UserRepository;
-import it.polito.ai.virtualLabs.security.JwtTokenProvider;
 import it.polito.ai.virtualLabs.services.AuthService;
 import it.polito.ai.virtualLabs.services.NotificationService;
+import it.polito.ai.virtualLabs.services.exceptions.team.TokenNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +36,6 @@ public class AuthController {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     UserRepository userRepository;
@@ -69,13 +66,7 @@ public class AuthController {
         try {
             String username = data.getUsername();
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
-            String token = jwtTokenProvider.createToken(
-                    username, this.userRepository.findByUsernameAndRegisteredTrue(username).orElseThrow(() ->
-                            new UsernameNotFoundException("Username " + username + "not found")).getRoles());
-            Map<Object, Object> model = new HashMap<>();
-            model.put("username", username);
-            model.put("token", token);
-            return ok(model);
+            return ok(authService.assignToken(username, true));
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
@@ -94,7 +85,7 @@ public class AuthController {
         if(authService.checkIfRegistered(user.getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User with username '" + user.getUsername() + "' cannot be registered");
 
-        String token = authService.assignToken(user.getId());
+        String token = authService.assignRegistrationToken(user.getId());
         authService.setNewPassword(user.getId(), data.getPassword());
 
         String subject = "Virtual Labs registration confirm";
@@ -114,5 +105,19 @@ public class AuthController {
     public void confirmRegistration(@RequestParam String token) {
         if(!this.authService.completeRegistration(token))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Token provided was not valid");
+    }
+
+    @PostMapping("/refreshToken")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, String> refreshToken(@RequestBody String token) {
+        try {
+            if(!authService.isRefreshTokenExpired(token))
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is expired");
+
+            String decodedUsername = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
+            return authService.assignToken(decodedUsername, false);
+        } catch(UsernameNotFoundException | TokenNotFoundException | IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 }

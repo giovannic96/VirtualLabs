@@ -26,5 +26,8 @@ public interface TokenRepository extends JpaRepository<Token, String> {
     RefreshToken getRefreshToken(String token);
 
     @Query("SELECT rt FROM RegistrationToken rt WHERE rt.user.id = :id")
-    Optional<RegistrationToken> findByUserId(String id);
+    Optional<RegistrationToken> findRegistrationTokenByUserId(String id);
+
+    @Query("SELECT rt FROM RefreshToken rt WHERE rt.user.id = :id")
+    Optional<RefreshToken> findRefreshTokenByUserId(String id);
 }

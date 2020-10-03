@@ -81,6 +81,7 @@ API
 *Authentication*
 * POST https://ip_address:port/auth/login                                //TO ADD TO POSTMAN
 * POST https://ip_address:port/auth/signup                               //TO ADD TO POSTMAN
+* POST https://ip_address:port/auth/refreshToken                         //TO ADD TO POSTMAN
 
 *Courses*
 * POST https://ip_address:port/api/courses

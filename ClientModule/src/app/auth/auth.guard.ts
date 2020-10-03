@@ -3,9 +3,6 @@ import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Route
 import { Observable } from 'rxjs';
 import {AuthService} from '../services/auth.service';
 import {HomeComponent} from '../components/main/home/home.component';
-import {PersonalComponent} from '../components/main/personal/personal.component';
-import {CourseInfoComponent} from '../components/tabs/info/course-info.component';
-import {Course} from '../models/course.model';
 
 @Injectable({
   providedIn: 'root'
