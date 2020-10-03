@@ -22,6 +22,8 @@ import java.util.UUID;
 @Transactional
 public class AuthServiceImpl implements AuthService {
 
+    private static final int REGISTRATION_EXPIRATION_DAYS = 3;
+
     @Autowired
     ModelMapper modelMapper;
 
@@ -59,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         tokenOpt.ifPresent(registrationToken -> tokenRepository.deleteById(registrationToken.getToken()));
 
         // create registration token
-        RegistrationToken registrationToken = new RegistrationToken(token, user, LocalDateTime.now().plusDays(3));
+        RegistrationToken registrationToken = new RegistrationToken(token, user, LocalDateTime.now().plusDays(REGISTRATION_EXPIRATION_DAYS));
         tokenRepository.saveAndFlush(registrationToken);
         registrationToken.setUser(user);
 

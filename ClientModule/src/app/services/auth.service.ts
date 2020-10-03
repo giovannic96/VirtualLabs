@@ -86,6 +86,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('auth_token');
     this.setUserTokenLogged(null);
+    this.setUserLogged(null);
   }
 
   setUserTokenLogged(val: Token) {
@@ -97,15 +98,19 @@ export class AuthService {
   }
 
   setUserLogged(userInfo: any) {
-    const roles: string[] = userInfo.roles;
-    if (roles.includes('ROLE_STUDENT'))
-      this.userRole = UserRole.STUDENT;
-    else if (roles.includes('ROLE_PROFESSOR'))
-      this.userRole = UserRole.PROFESSOR;
-    else
-      this.userRole = UserRole.UNDEFINED;
+    if (userInfo === null)
+      this.userLoggedObs.next(null);
+    else {
+      const roles: string[] = userInfo.roles;
+      if (roles.includes('ROLE_STUDENT'))
+        this.userRole = UserRole.STUDENT;
+      else if (roles.includes('ROLE_PROFESSOR'))
+        this.userRole = UserRole.PROFESSOR;
+      else
+        this.userRole = UserRole.UNDEFINED;
 
-    this.userLoggedObs.next(userInfo.user);
+      this.userLoggedObs.next(userInfo.user);
+    }
   }
 
   getUserLogged(): Observable<User> {
