@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class AuthServiceImpl implements AuthService {
 
     private static final int REGISTRATION_EXPIRATION_DAYS = 3;
-    private static final int REFRESH_EXPIRATION_DAYS = 1;
+    private static final int REFRESH_EXPIRATION_DAYS = 30;
 
     @Autowired
     ModelMapper modelMapper;
@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
             RefreshToken refreshToken = new RefreshToken();
             returnToken = hashToken(username);
             refreshToken.setToken(returnToken);
-            refreshToken.setExpiration(LocalDateTime.now().plusMinutes(REFRESH_EXPIRATION_DAYS));
+            refreshToken.setExpiration(LocalDateTime.now().plusDays(REFRESH_EXPIRATION_DAYS));
             refreshToken.setUser(user);
             tokenRepository.saveAndFlush(refreshToken);
         } else {
@@ -180,7 +180,9 @@ public class AuthServiceImpl implements AuthService {
         Map<String, String> map = new HashMap<>();
         map.put("username", username);
         map.put("auth_token", authToken);
-        map.put("refresh_token", refreshToken);
+
+        if(logging)
+            map.put("refresh_token", refreshToken);
 
         return map;
     }

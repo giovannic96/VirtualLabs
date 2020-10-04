@@ -13,7 +13,7 @@ import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
 import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
 import {User} from '../../../models/user.model';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {AuthService} from '../../../services/auth.service';
 
 @Component({
@@ -99,13 +99,16 @@ export class PersonalComponent implements OnInit {
         this.selectedCourseName = course ? course.name : '';
       });
 
-      this.courseService.clicksOnMenu.subscribe(event => this.sideNav.toggle());
+      this.courseService.clicksOnMenu.subscribe(event => this.sideNav?.toggle());
 
       this.router.events.subscribe((res) => {
         this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
       });
 
       this.loading = false;
+    }, () => {
+      alert('Invalid token provided.\nPlease login again.');
+      this.router.navigate(['/'], {queryParams: {doLogin: true}});
     });
   }
 

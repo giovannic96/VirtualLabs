@@ -48,6 +48,9 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if(userDetails == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+
         Map<Object, Object> model = new HashMap<>();
         model.put("roles", userDetails.getAuthorities()
                 .stream()
@@ -111,7 +114,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> refreshToken(@RequestBody String token) {
         try {
-            if(!authService.isRefreshTokenExpired(token))
+            if(authService.isRefreshTokenExpired(token))
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is expired");
 
             String decodedUsername = new String(Base64.getDecoder().decode(token)).split("\\|")[1];

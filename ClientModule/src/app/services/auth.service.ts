@@ -134,10 +134,20 @@ export class AuthService {
     return this.userLoggedObs.value?.id;
   }
 
-  isTokenExpired(): boolean {
+  isAuthTokenExpired(): boolean {
     const now = new Date();
     const token = this.tokenLoggedObs.value;
     return token && (this.tokenLoggedObs.value.exp < now.getTime() / 1000);
+  }
+
+  isRefreshTokenExpired(): boolean {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (refreshToken) {
+      const now = new Date();
+      return refreshToken && (this.tokenLoggedObs.value.exp < now.getTime() / 1000);
+    }
+
+    return true;
   }
 
   refreshToken(token: string): Observable<any> {

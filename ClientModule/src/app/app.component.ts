@@ -34,18 +34,7 @@ export class AppComponent {
     this.authService.getUserLogged().subscribe(user => this.currentUser = user);
 
     this.authService.getUserTokenLogged().subscribe(userTokenLogged => {
-      if (!!userTokenLogged) {
-        if (this.authService.isTokenExpired()) {
-          this.userLoggedIn = false;
-          this.authService.logout();
-          alert('Your session is expired.\nPlease login again.');
-          this.router.navigate(['/'], {queryParams: {doLogin: true}});
-        } else {
-          this.userLoggedIn = true;
-        }
-      } else {
-        this.userLoggedIn = false;
-      }
+      this.userLoggedIn = !!userTokenLogged;
       console.log('UserToken', userTokenLogged);
     });
 
