@@ -3,6 +3,7 @@ import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Route
 import { Observable } from 'rxjs';
 import {AuthService} from '../services/auth.service';
 import {HomeComponent} from '../components/main/home/home.component';
+import {StudentsComponent} from '../components/tabs/students/students.component';
 
 @Injectable({
   providedIn: 'root'
@@ -27,14 +28,23 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   }
 
   private checkLogin(url: string, route: ActivatedRouteSnapshot): boolean {
-    const isHome: boolean = route.component === HomeComponent;
     const isLogged: boolean = this.authService.isUserLogged();
 
-    if (isHome && isLogged) {
-      this.authService.redirectUrl = '';
-      this.router.navigate(['courses']);
-      return false;
-    } else if (!isHome && !isLogged){
+    if (isLogged) {
+      if (route.component === HomeComponent) {
+        this.authService.redirectUrl = '';
+        this.router.navigate(['courses']);
+        return false;
+      }
+
+      if (route.component === StudentsComponent && !this.authService.isProfessor()) {
+        alert('You are unauthorized to access this page!');
+        this.router.navigate(['courses']);
+        return false;
+      }
+    }
+
+    if (!isLogged && route.component !== HomeComponent){
       this.authService.redirectUrl = url;
       this.router.navigate(['home'], {queryParams: {doLogin: true}});
       return false;
