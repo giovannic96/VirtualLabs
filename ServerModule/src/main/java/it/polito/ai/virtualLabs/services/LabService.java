@@ -13,7 +13,7 @@ public interface LabService {
     Optional<VersionDTO> getVersion(Long versionId);
     List<AssignmentDTO> getAllAssignments();
     List<ReportDTO> getStudentReports(String studentId);
-    List<ReportDTO> getStudentReportsForAssignment(String studentId, Long assignmentId);
+    List<ReportDTO> getStudentReportsForAssignment(String studentUsername, Long assignmentId);
     List<ReportDTO> getAssignmentReports(Long assignmentId);
     Optional<ProfessorDTO> getAssignmentProfessor(Long assignmentId);
     List<VersionDTO> getReportVersions(Long reportId);

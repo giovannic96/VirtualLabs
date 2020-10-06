@@ -7,6 +7,8 @@ import it.polito.ai.virtualLabs.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -82,10 +84,18 @@ public class LabController {
         return versions;
     }
 
-    //get list of reports of an assignment of the course for a specific student
     @GetMapping("/assignments/{assignmentId}/reports")
     public List<ReportDTO> reportsForAssignment(@PathVariable Long assignmentId) {
         List<ReportDTO> reports = labService.getAssignmentReports(assignmentId);
+        for(ReportDTO r : reports)
+            ModelHelper.enrich(r);
+        return reports;
+    }
+
+    @GetMapping("/assignments/{assignmentId}/reports")
+    public List<ReportDTO> studentReportsForAssignment(@PathVariable Long assignmentId,
+                                                       @AuthenticationPrincipal UserDetails userDetails) {
+        List<ReportDTO> reports = labService.getStudentReportsForAssignment(userDetails.getUsername(), assignmentId);
         for(ReportDTO r : reports)
             ModelHelper.enrich(r);
         return reports;

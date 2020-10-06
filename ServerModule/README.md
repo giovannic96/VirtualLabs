@@ -46,6 +46,7 @@ API
 * GET	https://ip_address:port/api/labs/assignments/:assignmentId/course
 * GET	https://ip_address:port/api/labs/assignments/:assignmentId/professor
 * GET	https://ip_address:port/api/labs/assignments/:assignmentId/reports
+* GET	https://ip_address:port/api/labs/assignments/:assignmentId/studentReports                  // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/labs/reports/:reportId
 * GET	https://ip_address:port/api/labs/reports/:reportId/assignment
 * GET	https://ip_address:port/api/labs/reports/:reportId/owner
