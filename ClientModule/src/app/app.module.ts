@@ -29,7 +29,6 @@ import { LabComponent } from './components/tabs/labs/lab.component';
 import { TeamComponent } from './components/tabs/teams/team.component';
 import { CourseInfoComponent } from './components/tabs/info/course-info.component';
 import { SignupDialogComponent } from './auth/signup-dialog.component';
-import { ProfileComponent } from './auth/profile.component';
 import { PageNotFoundComponent } from './components/main/pagenotfound.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -81,7 +80,6 @@ import { RegistrationConfirmComponent } from './components/main/registration_con
     TeamComponent,
     CourseInfoComponent,
     SignupDialogComponent,
-    ProfileComponent,
     PageNotFoundComponent,
     MySnackBarComponent,
     VmModelSettingsDialogComponent,
