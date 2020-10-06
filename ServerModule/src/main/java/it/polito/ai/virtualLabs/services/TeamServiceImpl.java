@@ -224,7 +224,7 @@ public class TeamServiceImpl implements TeamService {
             ModelHelper.enrich(c);
             String courseInfo = "";
             try {
-                courseInfo = new String(getClass().getClassLoader().getResourceAsStream("static/" + c.getName() + ".txt").readAllBytes());
+                courseInfo = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("static/" + c.getName() + ".txt").toURI())));
             } catch (Exception ex) {
                 courseInfo = "";
             }
