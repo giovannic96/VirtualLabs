@@ -33,11 +33,12 @@
         </ng-container>
         <div class="info-divider"></div>
 
-        <ng-container [ngSwitch]="authService.isProfessor() && filteredReports?.size ? 'professor' : 'student'">
+        <ng-container [ngSwitch]="(authService.isProfessor() && filteredReports?.size) ? 'professor' :
+                                  (!authService.isProfessor() && studentReports?.size) ? 'student' : ''">
 
           <ng-container *ngSwitchCase="'professor'">
             <mat-card class="report-card-container">
-              <mat-card-title class="report-desc">Reports</mat-card-title>
+              <mat-card-title class="report-desc">{{authService.isProfessor()}}</mat-card-title>
               <div class="report-status-filter">
                 <section *ngFor="let rep of reportStatusFilter; let i = index" class="example-section">
                   <mat-checkbox
@@ -115,7 +116,7 @@
 
           <!-- start VERSIONS section (student only) -->
           <ng-container *ngSwitchCase="'student'">
-            <mat-card *ngVar="getReportForStudent(assignment, authService.getMyId()) as studentReport" class="version-card-container">
+            <mat-card *ngVar="getStudentReportForAssignment(assignment) as studentReport" class="version-card-container">
               <div class="report-history-container">
                 <div class="report-history-right"></div>
                 <div class="report-history-desc">

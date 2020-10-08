@@ -1,4 +1,4 @@
-<div class="tab-section vm-model-section" *ngIf="teamList">
+<div class="tab-section vm-model-section">
   <div class="tab-subtitle">
     <mat-icon>tune</mat-icon>
     <h2>Vm model</h2>
@@ -43,7 +43,7 @@
   </mat-accordion>
 </div>
 
-<div class="tab-section vms-section" *ngIf="teamList">
+<div class="tab-section vms-section" *ngIf="teamList || !authService.isProfessor()">
   <div class="tab-subtitle">
     <mat-icon>desktop_windows</mat-icon>
     <h2>{{authService.isProfessor() ? 'Virtual machines' : 'My virtual machines'}}</h2>

@@ -95,7 +95,7 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public List<ReportDTO> getStudentReportsForAssignment(String studentUsername, Long assignmentId) {
+    public Optional<ReportDTO> getStudentReportForAssignment(String studentUsername, Long assignmentId) {
         if(!userRepository.studentExistsByUsername(studentUsername))
             throw new StudentNotFoundException("The student with username '" + studentUsername + "' does not exist");
 
@@ -106,8 +106,8 @@ public class LabServiceImpl implements LabService {
         return s.getReports()
                 .stream()
                 .filter(r -> r.getAssignment().getId().equals(assignmentId))
-                .map(r -> modelMapper.map(r, ReportDTO.class))
-                .collect(Collectors.toList());
+                .findFirst()
+                .map(r -> modelMapper.map(r, ReportDTO.class));
     }
 
     @Override

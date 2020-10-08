@@ -42,6 +42,7 @@ export class LabComponent implements OnInit, AfterViewInit {
 
   allReports: Map<number, Report[]>;
   filteredReports: Map<number, Report[]>;
+  studentReports: Map<number, Report>;
   reportStatusFilter: ReportStatusFilter[];
   assignmentStatusMap: Map<number, {label: string, className: string}>;
 
@@ -60,6 +61,7 @@ export class LabComponent implements OnInit, AfterViewInit {
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
     this.allReports = new Map<number, Report[]>();
     this.filteredReports = new Map<number, Report[]>();
+    this.studentReports = new Map<number, Report>();
     this.reportStatusFilter = [
       {name : ReportStatus.NULL, checked : true, color: undefined},
       {name : ReportStatus.READ, checked : true, color: 'primary'},
@@ -79,8 +81,8 @@ export class LabComponent implements OnInit, AfterViewInit {
         return assignmentList;
       }),
       tap(assignment => {
-        this.labService.getAssignmentReports(assignment.id)
-          .pipe(
+        if (this.authService.isProfessor()) {
+          this.labService.getAssignmentReports(assignment.id).pipe(
             mergeMap(reports => {
 
               // assign reports to the current assignment
@@ -112,6 +114,22 @@ export class LabComponent implements OnInit, AfterViewInit {
 
               return reports;
             })).subscribe();
+        } else {
+          this.labService.getAssignmentReportForStudent(assignment.id).pipe(
+            mergeMap(report => {
+              this.setReportsToAssignment(assignment, [report]);
+
+              const versionRequests: Observable<Version[]>[] = [];
+              versionRequests.push(this.labService.getReportVersions(report.id));
+
+              forkJoin(versionRequests).subscribe(versions => {
+                this.setVersionToReports([report], versions);
+                this.assignmentList.forEach(a => this.setAssignmentStatusLabel(a));
+              });
+
+              return [report];
+            })).subscribe();
+        }
       })).subscribe();
   }
 
@@ -208,7 +226,6 @@ export class LabComponent implements OnInit, AfterViewInit {
             )
             .subscribe(asmnt => {
               // find selected assignment
-              // TODO: appena funziona il login usare il current user per settare il professore che ha fatto la modifica o l'inserimento
               const a = this.assignmentList.find(el => el.id === asmnt.id);
 
               // edit selected assignment
@@ -301,8 +318,12 @@ export class LabComponent implements OnInit, AfterViewInit {
 
   setReportsToAssignment(assignment: Assignment, reportList: Report[]) {
     assignment.reports = reportList;
-    this.allReports.set(assignment.id, assignment.reports);
-    this.filteredReports.set(assignment.id, assignment.reports);
+    if (this.authService.isProfessor()) {
+      this.allReports.set(assignment.id, assignment.reports);
+      this.filteredReports.set(assignment.id, assignment.reports);
+    } else {
+      this.studentReports.set(assignment.id, assignment.reports[0]);
+    }
   }
 
   setOwnerToReports(reports, owners) {
@@ -314,7 +335,14 @@ export class LabComponent implements OnInit, AfterViewInit {
   }
 
   getReportForStudent(assignment: Assignment, studentId: string) {
-    return assignment.reports?.find(r => r.owner?.id === studentId);
+    if (this.authService.isProfessor())
+      return assignment.reports?.find(r => r.owner?.id === studentId);
+    else
+      return assignment.reports?.[0];
+  }
+
+  getStudentReportForAssignment(assignment: Assignment): Report {
+    return this.studentReports.get(assignment.id);
   }
 
   toggleGridColumns() {

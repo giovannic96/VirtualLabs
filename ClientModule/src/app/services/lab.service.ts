@@ -41,6 +41,18 @@ export class LabService {
       );
   }
 
+  getAssignmentReportForStudent(assignmentId: number) {
+    return this.httpClient
+      .get<Report>(`${this.API_PATH}/assignments/${assignmentId}/studentReport`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`GetAssignmentReportForStudent error: ${err.message}`);
+        })
+      );
+  }
+
   getReportVersions(reportId: number) {
     return this.httpClient
       .get<Version[]>(`${this.API_PATH}/reports/${reportId}/versions`)

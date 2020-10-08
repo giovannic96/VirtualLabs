@@ -1,19 +1,16 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
-import it.polito.ai.virtualLabs.entities.Report;
 import it.polito.ai.virtualLabs.services.LabService;
 import it.polito.ai.virtualLabs.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.mail.MessagingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -92,13 +89,13 @@ public class LabController {
         return reports;
     }
 
-    @GetMapping("/assignments/{assignmentId}/reports")
-    public List<ReportDTO> studentReportsForAssignment(@PathVariable Long assignmentId,
+    @GetMapping("/assignments/{assignmentId}/studentReport")
+    public ReportDTO studentReportForAssignment(@PathVariable Long assignmentId,
                                                        @AuthenticationPrincipal UserDetails userDetails) {
-        List<ReportDTO> reports = labService.getStudentReportsForAssignment(userDetails.getUsername(), assignmentId);
-        for(ReportDTO r : reports)
-            ModelHelper.enrich(r);
-        return reports;
+        Optional<ReportDTO> report = labService.getStudentReportForAssignment(userDetails.getUsername(), assignmentId);
+        if(!report.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report of the assignment with id " + assignmentId + " was not found");
+        return ModelHelper.enrich(report.get());
     }
 
     @GetMapping("/assignments/{assignmentId}/course")

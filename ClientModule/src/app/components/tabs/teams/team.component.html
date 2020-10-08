@@ -66,27 +66,6 @@
               </ng-container>
             </div>
           </mat-card>
-
-          <!--
-          <h4>Composed by:</h4>
-          <mat-card *ngFor="let member of team.members">
-            <mat-card-header>
-              <img [src]="member.photo" mat-card-avatar>
-              <mat-card-title>{{member.name}} {{member.surname}}</mat-card-title>
-              <mat-card-subtitle>Matricola: {{member.id}}</mat-card-subtitle>
-            </mat-card-header>
-          </mat-card>
-          <ng-container *ngIf="team.vms?.length">
-            <h4>VMs:</h4>
-            <mat-card *ngFor="let vm of team.vms; let i = index">
-              <mat-card-header>
-                <img src="/assets/icons/vm_icon.png" mat-card-avatar>
-                <mat-card-title>VM#{{i+1}}</mat-card-title>
-                <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{vm.disk}}GB</mat-card-subtitle>
-              </mat-card-header>
-            </mat-card>
-          </ng-container>
-          -->
           <mat-action-row>
             <button mat-raised-button color="warn" (click)="openDialog(team)">DELETE TEAM</button>
             <button mat-raised-button color="primary" (click)="openEmailDialog(team.members)">SEND MESSAGE</button>
