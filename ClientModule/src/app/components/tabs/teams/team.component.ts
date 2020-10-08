@@ -155,7 +155,7 @@ export class TeamComponent implements OnInit {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data !== undefined) { // i.e. close button was pressed
-          this.notificationService.sendMessage(emails, data.subject, data.body).subscribe( () => {
+          this.teamService.sendMessageToTeam(emails, data.subject, data.body).subscribe( () => {
             this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
           }, () => {
             this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);

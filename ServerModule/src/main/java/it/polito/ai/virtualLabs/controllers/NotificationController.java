@@ -26,23 +26,6 @@ public class NotificationController {
     @Autowired
     TeamService teamService;
 
-    //TODO: think if it's better to put this method in another controller
-    @PostMapping("/private/sendMessage")
-    @ResponseStatus(HttpStatus.OK)
-    public void sendMessage(@RequestBody MessageDTO data, @AuthenticationPrincipal UserDetails userDetails) {
-        Optional<ProfessorDTO> prof = teamService.getProfessorByUsername(userDetails.getUsername());
-        if(!prof.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
-
-        try {
-            notificationService.sendMessageToTeam(prof.get().getName() + " " +prof.get().getSurname(), data.getTo(), data.getSubject(), data.getBody());
-        } catch(MailException ex) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email to a student");
-        } catch(StudentNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "A student was not found in our system");
-        }
-    }
-
     @PostMapping("/acceptByToken")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

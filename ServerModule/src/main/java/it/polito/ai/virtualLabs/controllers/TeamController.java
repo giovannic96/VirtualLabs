@@ -1,10 +1,13 @@
 package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.*;
+import it.polito.ai.virtualLabs.services.NotificationService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.VmService;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,8 @@ public class TeamController {
     TeamService teamService;
     @Autowired
     VmService vmService;
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping("/{teamId}")
     public TeamDTO getOne(@PathVariable Long teamId) {
@@ -124,6 +129,22 @@ public class TeamController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot create vm: current resources are not enough");
 
         return ModelHelper.enrich(vmService.getVm(generatedId).get());
+    }
+
+    @PostMapping("/sendMessageToTeam")
+    @ResponseStatus(HttpStatus.OK)
+    public void sendMessage(@RequestBody MessageDTO data, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<ProfessorDTO> prof = teamService.getProfessorByUsername(userDetails.getUsername());
+        if(!prof.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
+
+        try {
+            notificationService.sendMessageToTeam(prof.get().getName() + " " +prof.get().getSurname(), data.getTo(), data.getSubject(), data.getBody());
+        } catch(MailException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email to a student");
+        } catch(StudentNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A student was not found in our system");
+        }
     }
 
     @DeleteMapping("/{teamId}")

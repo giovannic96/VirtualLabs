@@ -96,6 +96,7 @@ API
 *Teams*
 * POST https://ip_address:port/api/teams/addTeamProposal
 * POST https://ip_address:port/api/teams/:teamId/createVm
+* POST https://ip_address:port/api/teams/sendMessageToTeam
 
 *Labs*
 * POST https://ip_address:port/api/labs/reports/:reportId/submitVersion
@@ -105,7 +106,6 @@ API
 * POST https://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/addReport // TO ADD TO POSTMAN
 
 *Notification*
-* POST	https://ip_address:port/notification/private/sendMessage
 * POST	https://ip_address:port/notification/acceptByToken?tpId=:tpId&token=:token
 * POST	https://ip_address:port/notification/rejectByToken?tpId=:tpId&token=:token
 * POST	https://ip_address:port/notification/acceptById?tpId=:tpId&studentId=:studentId

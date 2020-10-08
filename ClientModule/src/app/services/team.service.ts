@@ -100,6 +100,18 @@ export class TeamService {
       );
   }
 
+  sendMessageToTeam(to: string[], subject: string, body: string) {
+    return this.httpClient
+      .post<any>(`${this.API_PATH}/sendMessageToTeam`, {to, subject, body})
+      .pipe(
+        retry(1),
+        catchError( err => {
+          console.error(err);
+          return throwError(`SendMessage error: ${err.message}`);
+        })
+      );
+  }
+
   deleteTeam(teamId: number) {
     return this.httpClient
       .delete<any>(`${this.API_PATH}/${teamId}`)
