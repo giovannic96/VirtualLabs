@@ -10,6 +10,7 @@
   </div>
   <div class="user-info-div" (click)="$event" [matMenuTriggerFor]="menu" *ngIf="userLoggedIn && currentUser">
     <mat-card-subtitle class="user-info-label">{{currentUser.name}} {{currentUser.surname}} - {{currentUser.id}}</mat-card-subtitle>
+    <mat-card style="display: none"></mat-card>
     <img [src]="currentUser.photo" mat-card-avatar>
     <mat-menu #menu="matMenu" xPosition="before">
       <button mat-menu-item (click)="userLogout()">
