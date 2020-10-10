@@ -185,7 +185,7 @@ public class CourseController {
         if(!vmService.setVmModelToCourse(vmModelDTO, courseName, professor.get().getId()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on setting vm model to course: " + courseName);
     }
-    
+
     @PostMapping("/{courseName}/addAssignment")
     @ResponseStatus(HttpStatus.CREATED)
     public Long addAssignmentToCourse(@PathVariable String courseName,
@@ -204,7 +204,6 @@ public class CourseController {
     }
 
     @PutMapping("/{courseName}")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public boolean editCourse(@PathVariable String courseName, @RequestBody CourseDTO courseDTO) {
         if(!courseName.equals(courseDTO.getName()))
@@ -232,7 +231,6 @@ public class CourseController {
     }
 
     @PutMapping("/{courseName}/editVmModel")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void editVmModel(@PathVariable String courseName, @RequestBody VmModelDTO vmModelDTO) {
         Optional<VmModelDTO> currentVmModel = vmService.getCourseVmModel(courseName);
@@ -244,7 +242,6 @@ public class CourseController {
     }
 
     @DeleteMapping("/{courseName}")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void removeCourse(@PathVariable String courseName) {
         Optional<CourseDTO> course = teamService.getCourse(courseName);

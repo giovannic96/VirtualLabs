@@ -13,7 +13,7 @@ import {Assignment} from '../models/assignment.model';
 export class LabService {
 
   // private API_PATH = 'https://virtuallabs.ns0.it/API/labs';
-  private API_PATH = 'http://localhost:8080/API/labs';
+  private API_PATH = 'http://localhost:9090/API/labs';
 
   constructor(private httpClient: HttpClient) { }
 

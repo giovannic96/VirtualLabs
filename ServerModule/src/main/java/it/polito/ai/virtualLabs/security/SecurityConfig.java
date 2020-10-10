@@ -36,12 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //@formatter:off
         http
+                .cors()
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                //.antMatchers("/auth/me").authenticated()
+                .antMatchers("/auth/me").authenticated()
                 .antMatchers("/auth/**").permitAll()
                 //.antMatchers( "/API/**").authenticated()
                 //.antMatchers("/notification/private/**").authenticated()

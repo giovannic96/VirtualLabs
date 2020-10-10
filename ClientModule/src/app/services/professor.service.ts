@@ -12,7 +12,7 @@ import {Course} from '../models/course.model';
 export class ProfessorService {
 
   // private API_PATH = 'https://virtuallabs.ns0.it/API/professors';
-  private API_PATH = 'http://localhost:8080/API/professors';
+  private API_PATH = 'http://localhost:9090/API/professors';
 
   constructor(private httpClient: HttpClient) { }
 

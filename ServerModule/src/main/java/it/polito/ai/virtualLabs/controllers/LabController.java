@@ -147,7 +147,6 @@ public class LabController {
     }
 
     @PutMapping("/reports/{reportId}/gradeReport")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void gradeReport(@PathVariable Long reportId, @RequestBody Map<String, Object> input) {
         if(!input.containsKey("grade") || !input.containsKey("comment"))
@@ -177,7 +176,6 @@ public class LabController {
     }
 
     @PutMapping("/reports/{reportId}/markAsRead")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void markReportAsRead(@PathVariable Long reportId) {
         if(!labService.markReportAsRead(reportId))
@@ -185,7 +183,6 @@ public class LabController {
     }
 
     @PutMapping("/assignments/{assignmentId}")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void editAssignment(@PathVariable Long assignmentId, @RequestBody AssignmentDTO assignmentDTO) {
         Optional<AssignmentDTO> currentAssignment = labService.getAssignment(assignmentId);
@@ -197,7 +194,6 @@ public class LabController {
     }
 
     @DeleteMapping("/assignments/{assignmentId}")
-    @CrossOrigin // TODO: just for test in localhost, remove when finished
     @ResponseStatus(HttpStatus.OK)
     public void deleteAssignment(@PathVariable Long assignmentId) {
         Optional<AssignmentDTO> currentAssignment = labService.getAssignment(assignmentId);

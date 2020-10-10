@@ -4,12 +4,11 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
-  HttpHeaders,
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
 import {BehaviorSubject, EMPTY, Observable, throwError} from 'rxjs';
-import {catchError, filter, mergeMap, switchMap, take} from 'rxjs/operators';
+import {catchError, filter, switchMap, take} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Injectable({
@@ -80,7 +79,7 @@ export class AuthInterceptorService implements HttpInterceptor{
         /* Refresh token expired */
         else if (error.status === 401) {
           this.authService.logout();
-          alert('refresh token expired');
+          alert('Session expired.\nPlease login again...');
           this.isRefreshing = false;
           this.router.navigate(['/'], {queryParams: {doLogin: true}});
           return EMPTY;

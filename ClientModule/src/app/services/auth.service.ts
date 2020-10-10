@@ -19,7 +19,7 @@ enum UserRole {
 export class AuthService {
 
   // private API_PATH = 'https://virtuallabs.ns0.it/auth';
-  private API_PATH = 'http://localhost:8080/auth';
+  private API_PATH = 'http://localhost:9090/auth';
 
   private tokenLoggedObs: BehaviorSubject<Token>;
   private userLoggedObs: BehaviorSubject<User>;
