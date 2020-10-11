@@ -95,7 +95,7 @@ public class TeamController {
         if(!input.containsKey("teamName")
                 || !input.containsKey("courseName")
                 || !input.containsKey("studentIds"))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 
         String teamName = (String)input.get("teamName");
         String courseName = (String)input.get("courseName");
@@ -139,7 +139,7 @@ public class TeamController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error on getting information about user: " + userDetails.getUsername());
 
         try {
-            notificationService.sendMessageToTeam(prof.get().getName() + " " +prof.get().getSurname(), data.getTo(), data.getSubject(), data.getBody());
+            notificationService.sendMessageToTeam(prof.get(), data.getTo(), data.getSubject(), data.getBody());
         } catch(MailException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email to a student");
         } catch(StudentNotFoundException ex) {
