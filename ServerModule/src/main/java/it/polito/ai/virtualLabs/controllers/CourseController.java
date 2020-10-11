@@ -127,8 +127,8 @@ public class CourseController {
 
     @PostMapping({"","/"})
     @ResponseStatus(HttpStatus.CREATED)
-    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO) {
-        if(!teamService.addCourse(courseDTO))
+    public CourseDTO addCourse(@RequestBody CourseDTO courseDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        if(!teamService.addCourse(courseDTO, userDetails.getUsername()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in creating course: " + courseDTO.getName());
         return ModelHelper.enrich(courseDTO);
     }

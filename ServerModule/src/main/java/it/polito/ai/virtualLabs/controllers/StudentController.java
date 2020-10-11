@@ -110,21 +110,4 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in inserting the report to the assignment with id: " + assignmentId);
         return true;
     }
-
-    /*
-    @PostMapping({"","/"})
-    public StudentDTO addStudent(@RequestBody StudentDTO studentDTO) {
-        if(!teamService.addStudent(studentDTO))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, studentDTO.getId());
-        return ModelHelper.enrich(studentDTO);
-    }*/
-
-    /*
-    @PostMapping({"","/"})
-    public ProfessorDTO addProfessor(@RequestBody ProfessorDTO professorDTO) {
-        if(!teamService.addProfessor(professorDTO))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, professorDTO.getId());
-        return ModelHelper.enrich(professorDTO);
-    }*/
-
 }

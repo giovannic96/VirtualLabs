@@ -2,6 +2,7 @@ package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.UserDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,4 +18,12 @@ public interface AuthService {
     String assignAuthToken(String username);
     boolean isRefreshTokenExpired(String token);
     Map<String, String> assignToken(String username, boolean logging);
+    void checkAuthorizationForCourse(String courseName);
+    void checkAuthorizationForReport(Long reportId);
+    void checkAuthorizationForVmModel(Long vmModelId);
+    void checkAuthorizationForVm(Long vmId);
+    void checkAuthorizationForVm(Long vmId, boolean mustBeOwner);
+    void checkAuthorizationForTeamProposalMembers(String studentId);
+    void checkAuthorizationForMessage(List<String> to);
+    void checkIdentity(String userId);
 }

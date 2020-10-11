@@ -115,7 +115,7 @@ public class AuthController {
     public Map<String, String> refreshToken(@RequestBody String token) {
         try {
             if(authService.isRefreshTokenExpired(token))
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is expired");
+                throw new ResponseStatusException(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED, "Refresh token is expired");
 
             String decodedUsername = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
             return authService.assignToken(decodedUsername, false);

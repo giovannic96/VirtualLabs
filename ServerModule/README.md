@@ -106,10 +106,10 @@ API
 * POST https://ip_address:port/api/students/:studentId/courses/:courseName/assignments/:assignmentId/addReport // TO ADD TO POSTMAN
 
 *Notification*
-* POST	https://ip_address:port/notification/acceptByToken?tpId=:tpId&token=:token
-* POST	https://ip_address:port/notification/rejectByToken?tpId=:tpId&token=:token
-* POST	https://ip_address:port/notification/acceptById?tpId=:tpId&studentId=:studentId
-* POST	https://ip_address:port/notification/rejectById?tpId=:tpId&studentId=:studentId
+* POST	https://ip_address:port/notification/accept?tpId=:tpId&token=:token
+* POST	https://ip_address:port/notification/reject?tpId=:tpId&token=:token
+* POST	https://ip_address:port/notification/protected/accept?tpId=:tpId&studentId=:studentId
+* POST	https://ip_address:port/notification/protected/reject?tpId=:tpId&studentId=:studentId
 
 ---
 **PUT**

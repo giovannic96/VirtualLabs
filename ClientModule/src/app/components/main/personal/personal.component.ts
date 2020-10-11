@@ -108,6 +108,7 @@ export class PersonalComponent implements OnInit {
       this.loading = false;
     }, () => {
       alert('Invalid token provided.\nPlease login again.');
+      this.authService.logout();
       this.router.navigate(['/'], {queryParams: {doLogin: true}});
     });
   }
@@ -137,7 +138,7 @@ export class PersonalComponent implements OnInit {
       .afterClosed().pipe(filter(res => res !== undefined)).subscribe((course: Course) => {
         if (dialogConfig.data.courseExists) { // COURSE EDIT
           if (course == null) {
-            this.mySnackBar.openSnackBar('Impossible to create new course. Try again later.', MessageType.ERROR, 5);
+            this.mySnackBar.openSnackBar('Impossible to edit the course. Try again later.', MessageType.ERROR, 5);
           } else {
             if (course.name === '') {
               this.mySnackBar.openSnackBar('Course was not modified: data are the same', MessageType.WARNING, 3);

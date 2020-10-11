@@ -129,9 +129,6 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
       }
       else { // COURSE CREATION
         this.courseService.createCourse(course.getDTO()).pipe(
-          concatMap(() => {
-            return this.courseService.assignProfessor(course.name, this.mySelf.id);
-          }),
           mergeMap(() => {
             return this.selectedProfessors;
           }),

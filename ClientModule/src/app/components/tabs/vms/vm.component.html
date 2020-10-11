@@ -35,8 +35,10 @@
       <mat-action-row *ngIf="authService.isProfessor()">
         <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog()">CREATE MODEL</button>
         <ng-template #vmModelExists>
-          <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
-          <button mat-raised-button color="primary" (click)="openDialog()">EDIT</button>
+          <ng-container *ngIf="vmModel.professor?.id === authService.getMyId()">
+            <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
+            <button mat-raised-button color="primary" (click)="openDialog()">EDIT</button>
+          </ng-container>
         </ng-template>
       </mat-action-row>
     </mat-expansion-panel>

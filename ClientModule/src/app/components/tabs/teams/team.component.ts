@@ -221,7 +221,7 @@ export class TeamComponent implements OnInit {
   acceptTeamProposal(tp: TeamProposal) {
     const course: Course = this.courseService.getSelectedCourseValue();
 
-    this.notificationService.responseToProposalById('accept', tp.id, this.authService.getMyId()).subscribe(resp => {
+    this.notificationService.responseToProposal('accept', tp.id).subscribe(resp => {
       if (resp) {
         // empty all the other mine pending proposals
         this.myPendingProposals = [];
@@ -242,7 +242,7 @@ export class TeamComponent implements OnInit {
   }
 
   rejectTeamProposal(tpId: number) {
-    this.notificationService.responseToProposalById('reject', tpId, this.authService.getMyId()).subscribe(resp => {
+    this.notificationService.responseToProposal('reject', tpId).subscribe(resp => {
       if (resp) {
         // remove rejected team proposal from my pending proposals
         const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);

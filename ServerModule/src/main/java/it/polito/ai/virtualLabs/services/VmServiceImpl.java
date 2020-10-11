@@ -11,6 +11,7 @@ import it.polito.ai.virtualLabs.services.exceptions.vm.VmNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.vmmodel.VmModelNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +34,8 @@ public class VmServiceImpl implements VmService {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    AuthService authService;
+    @Autowired
     CourseRepository courseRepository;
     @Autowired
     ModelMapper modelMapper;
@@ -41,6 +44,9 @@ public class VmServiceImpl implements VmService {
     public Optional<VmDTO> getVm(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
+
+        authService.checkAuthorizationForVm(vmId);
+
         return Optional.of(vmRepository.getOne(vmId))
                 .map(vm -> modelMapper.map(vm, VmDTO.class));
     }
@@ -57,6 +63,9 @@ public class VmServiceImpl implements VmService {
     public Optional<VmModelDTO> getVmModelForVm(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
+
+        authService.checkAuthorizationForVm(vmId);
+
         return Optional.of(vmRepository.getOne(vmId).getVmModel())
                 .map(vmModel -> modelMapper.map(vmModel, VmModelDTO.class));
     }
@@ -65,6 +74,9 @@ public class VmServiceImpl implements VmService {
     public Optional<StudentDTO> getOwner(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
+
+        authService.checkAuthorizationForVm(vmId);
+
         return Optional.of(vmRepository.getOne(vmId).getOwner())
                 .map(owner -> modelMapper.map(owner, StudentDTO.class));
     }
@@ -73,6 +85,9 @@ public class VmServiceImpl implements VmService {
     public Optional<TeamDTO> getTeam(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
+
+        authService.checkAuthorizationForVm(vmId);
+
         return Optional.of(vmRepository.getOne(vmId).getTeam())
                 .map(team -> modelMapper.map(team, TeamDTO.class));
     }
@@ -94,9 +109,12 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<VmModelDTO> getCourseVmModel(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
+
+        authService.checkAuthorizationForCourse(courseName);
 
         Optional<VmModel> vmModel = vmModelRepository.findByCourseName(courseName);
         if(!vmModel.isPresent())
@@ -110,6 +128,8 @@ public class VmServiceImpl implements VmService {
         if(!vmModelRepository.existsById(vmModelId))
             throw new CourseNotFoundException("The vm model with id '" + vmModelId + "' does not exist");
 
+        authService.checkAuthorizationForCourse(vmModelRepository.getOne(vmModelId).getCourse().getName());
+
         Optional<Course> course = courseRepository.findById(vmModelRepository.getOne(vmModelId).getCourse().getName());
         if(!course.isPresent())
             return Optional.empty();
@@ -121,6 +141,8 @@ public class VmServiceImpl implements VmService {
     public Optional<ProfessorDTO> getVmModelProfessor(Long vmModelId) {
         if(!vmModelRepository.existsById(vmModelId))
             throw new CourseNotFoundException("The vm model with id '" + vmModelId + "' does not exist");
+
+        authService.checkAuthorizationForCourse(vmModelRepository.getOne(vmModelId).getCourse().getName());
 
         Optional<Professor> professor = userRepository.findProfessorById(vmModelRepository.getOne(vmModelId).getProfessor().getId());
         if(!professor.isPresent())
@@ -163,10 +185,15 @@ public class VmServiceImpl implements VmService {
 
     @Override
     public List<VmDTO> getTeamVms(Long teamId) {
-        if(!teamRepository.existsById(teamId))
+        Optional<Team> teamOpt = teamRepository.findById(teamId);
+        if(!teamOpt.isPresent())
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
 
-        return teamRepository.getOne(teamId).getVms()
+        Team team = teamOpt.get();
+        authService.checkAuthorizationForCourse(team.getCourse().getName());
+
+        return team
+                .getVms()
                 .stream()
                 .map(v -> modelMapper.map(v, VmDTO.class))
                 .collect(Collectors.toList());
@@ -195,6 +222,7 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public Long createVm(VmDTO vmDTO, String studentId, Long teamId) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
@@ -202,6 +230,8 @@ public class VmServiceImpl implements VmService {
             throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
 
         Team team = teamRepository.getOne(teamId);
+        authService.checkAuthorizationForCourse(team.getCourse().getName());
+
         List<Vm> teamVms = team.getVms();
         VmModel vmModel = team.getCourse().getVmModel();
 
@@ -227,9 +257,12 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public void removeVm(Long vmId) {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
+
+        authService.checkAuthorizationForVm(vmId, true);
 
         //remove vm
         vmRepository.deleteById(vmId);
@@ -237,9 +270,12 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean editVmResources(Long vmId, int vCPU, int ram, int disk) {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
+
+        authService.checkAuthorizationForVm(vmId, true);
 
         //check resources constraints
         Vm curVm = vmRepository.getOne(vmId);
@@ -259,6 +295,7 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean editVmModelSettings(Long vmModelId, VmModelDTO vmModelDTO) {
         if(!vmModelRepository.existsById(vmModelId))
             throw new VmNotFoundException("The vm model with id " + vmModelId + " does not exist");
@@ -280,9 +317,12 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public void removeVmModel(Long vmModelId) {
         if(!vmModelRepository.existsById(vmModelId))
             throw new VmModelNotFoundException("The vm model with id " + vmModelId + " does not exist");
+
+        authService.checkAuthorizationForVmModel(vmModelId);
 
         //remove vmModel
         VmModel vmModel = vmModelRepository.getOne(vmModelId);
@@ -323,6 +363,8 @@ public class VmServiceImpl implements VmService {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
+        authService.checkAuthorizationForVm(vmId, true);
+
         //check if vm is already active
         Vm vm = vmRepository.getOne(vmId);
         if(vm.isActive())
@@ -351,6 +393,8 @@ public class VmServiceImpl implements VmService {
         if(!vmRepository.existsById(vmId))
             throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
 
+        authService.checkAuthorizationForVm(vmId, true);
+
         //check if vm is already off
         Vm vm = vmRepository.getOne(vmId);
         if(!vm.isActive())
@@ -364,11 +408,14 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean setVmModelToCourse(VmModelDTO vmModelDTO, String courseName, String professorId) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
         if(!userRepository.professorExistsById(professorId))
             throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
+
+        authService.checkAuthorizationForCourse(courseName);
 
         //check if there is already a vmModel for that course
         if(vmModelRepository.existsByCourseName(courseName))

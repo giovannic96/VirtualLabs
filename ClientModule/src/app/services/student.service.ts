@@ -17,30 +17,6 @@ export class StudentService {
 
   constructor(private httpClient: HttpClient) { }
 
-  create(newStudent: Student): Observable<Student> {
-    return this.httpClient
-      .post<Student>(`${this.API_PATH}`, newStudent)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`Create error: ${err.message}`);
-        })
-      );
-  }
-
-  update(newStudent: Student): Observable<Student> {
-    return this.httpClient
-      .put<Student>(`${this.API_PATH}/${newStudent.id}`, newStudent)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`Update error: ${err.message}`);
-        })
-      );
-  }
-
   find(studentId: string): Observable<Student> {
     return this.httpClient
       .get<Student>(`${this.API_PATH}/${studentId}`)
@@ -77,18 +53,6 @@ export class StudentService {
       );
   }
 
-  getTeams(studentId: string): Observable<Team[]> {
-    return this.httpClient
-      .get<Team[]>(`${this.API_PATH}/${studentId}/teams`)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`GetTeams error: ${err.message}`);
-        })
-      );
-  }
-
   getTeamForStudent(studentId: string, courseName: string) {
     return this.httpClient
       .get<Team>(`${this.API_PATH}/${studentId}/courses/${courseName}/team`)
@@ -121,30 +85,6 @@ export class StudentService {
         catchError(err => {
           console.error(err);
           return throwError(`checkProposalResponse error: ${err.message}`);
-        })
-      );
-  }
-
-  addReport(studentId: string, courseName: string, assignmentId: number, report: Report) {
-    return this.httpClient
-      .post<boolean>(`${this.API_PATH}/${studentId}/courses/${courseName}/assignments/${assignmentId}/addReport`, report)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`addReport error: ${err.message}`);
-        })
-      );
-  }
-
-  delete(studentId: string): Observable<Student> {
-    return this.httpClient
-      .delete<Student>(`${this.API_PATH}/${studentId}`)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`Delete error: ${err.message}`);
         })
       );
   }

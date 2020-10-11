@@ -15,7 +15,7 @@ export class NotificationService {
 
   responseToProposalByToken(action: string, tpId: number, token: string) {
     return this.httpClient
-      .post<boolean>(`${this.API_PATH}/` + action + 'ByToken',  null, {params: {tpId: tpId.toString(), token}})
+      .post<boolean>(`${this.API_PATH}/` + action,  null, {params: {tpId: tpId.toString(), token}})
       .pipe(
         retry(1),
         catchError( err => {
@@ -25,14 +25,14 @@ export class NotificationService {
       );
   }
 
-  responseToProposalById(action: string, tpId: number, studentId: string) {
+  responseToProposal(action: string, tpId: number) {
     return this.httpClient
-      .post<boolean>(`${this.API_PATH}/` + action + 'ById', null, {params: {tpId: tpId.toString(), studentId}})
+      .post<boolean>(`${this.API_PATH}/protected/` + action, null, {params: {tpId: tpId.toString()}})
       .pipe(
         retry(1),
         catchError( err => {
           console.error(err);
-          return throwError(`ResponseToProposalById error: ${err.message}`);
+          return throwError(`ResponseToProposal error: ${err.message}`);
         })
       );
   }

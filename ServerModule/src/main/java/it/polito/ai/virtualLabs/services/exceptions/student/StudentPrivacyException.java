@@ -1,9 +1,10 @@
 package it.polito.ai.virtualLabs.services.exceptions.student;
 
-import it.polito.ai.virtualLabs.services.exceptions.team.TeamServiceException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-public class StudentPrivacyException extends TeamServiceException {
+public class StudentPrivacyException extends ResponseStatusException {
     public StudentPrivacyException(String message) {
-        super(message + " Error type: STUDENT HAS NOT RIGHTS");
+        super(HttpStatus.UNAUTHORIZED, message);
     }
 }

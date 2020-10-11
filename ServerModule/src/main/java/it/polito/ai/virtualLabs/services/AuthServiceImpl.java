@@ -1,15 +1,16 @@
 package it.polito.ai.virtualLabs.services;
 
 import it.polito.ai.virtualLabs.dtos.UserDTO;
-import it.polito.ai.virtualLabs.entities.RefreshToken;
-import it.polito.ai.virtualLabs.entities.RegistrationToken;
-import it.polito.ai.virtualLabs.entities.User;
-import it.polito.ai.virtualLabs.repositories.TokenRepository;
-import it.polito.ai.virtualLabs.repositories.UserRepository;
+import it.polito.ai.virtualLabs.entities.*;
+import it.polito.ai.virtualLabs.repositories.*;
 import it.polito.ai.virtualLabs.security.JwtTokenProvider;
+import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorPrivacyException;
+import it.polito.ai.virtualLabs.services.exceptions.student.StudentPrivacyException;
 import it.polito.ai.virtualLabs.services.exceptions.team.TokenNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,16 +31,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     ModelMapper modelMapper;
-
     @Autowired
     JwtTokenProvider jwtTokenProvider;
-
     @Autowired
     PasswordEncoder passwordEncoder;
-
     @Autowired
     UserRepository userRepository;
-
+    @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    ReportRepository reportRepository;
+    @Autowired
+    VmModelRepository vmModelRepository;
+    @Autowired
+    VmRepository vmRepository;
     @Autowired
     TokenRepository tokenRepository;
 
@@ -185,6 +191,177 @@ public class AuthServiceImpl implements AuthService {
             map.put("refresh_token", refreshToken);
 
         return map;
+    }
+
+    @Override
+    public void checkAuthorizationForCourse(String courseName) {
+        Course course = courseRepository.getOne(courseName);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(s -> {
+                    Student student = (Student)s;
+                    if(!student.getCourses().contains(course))
+                        throw new StudentPrivacyException("This student does not have permission to view the information relating to the course named " + courseName);
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor professor = (Professor)p;
+                    if(!professor.getCourses().contains(course))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the course named " + courseName);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkAuthorizationForReport(Long reportId) {
+        Report report = reportRepository.getOne(reportId);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(s -> {
+                    Student student = (Student)s;
+                    if(!student.getReports().contains(report))
+                        throw new StudentPrivacyException("This student does not have permission to view the information relating to the report with id " + reportId);
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor professor = (Professor)p;
+                    if(!professor.getAssignments().contains(report.getAssignment()))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the report with id " + reportId);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkAuthorizationForVmModel(Long vmModelId) {
+        VmModel vmModel = vmModelRepository.getOne(vmModelId);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                throw new StudentPrivacyException("This student does not have permission to view the information relating to vmModels");
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor professor = (Professor)p;
+                    if(!professor.getId().equals(vmModel.getProfessor().getId()))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the vmModel with id " + vmModelId);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkAuthorizationForVm(Long vmId, boolean mustBeOwner) {
+        Vm vm = vmRepository.getOne(vmId);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(s -> {
+                    Student student = (Student)s;
+                    if((mustBeOwner && !student.getId().equals(vm.getOwner().getId())) || (!mustBeOwner && !student.getTeams().contains(vm.getTeam())))
+                        throw new StudentPrivacyException("This student does not have permission to view the information relating to the vm with id " + vmId);
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor professor = (Professor)p;
+                    List<Team> teams = professor.getCourses().stream().flatMap(course -> course.getTeams().stream()).collect(Collectors.toList());
+                    if(!teams.contains(vm.getTeam()))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the vm with id " + vmId);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkAuthorizationForVm(Long vmId) {
+        checkAuthorizationForVm(vmId, false);
+    }
+
+    @Override
+    public void checkAuthorizationForTeamProposalMembers(String studentId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(s -> {
+                    Student student = (Student)s;
+                    List<String> memberIds = student.getTeamProposals()
+                            .stream()
+                            .flatMap(tp -> tp.getStudents()
+                                    .stream()
+                                    .map(Student::getId))
+                            .collect(Collectors.toList());
+                    if(!memberIds.contains(studentId))
+                        throw new StudentPrivacyException("This student does not have permission to view the information relating to the student with id " + studentId);
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor professor = (Professor)p;
+                    List<String> studentIds = professor.getCourses()
+                            .stream()
+                            .flatMap(course -> course.getStudents()
+                                    .stream()
+                                    .map(Student::getId))
+                            .collect(Collectors.toList());
+                    if(!studentIds.contains(studentId))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the student with id " + studentId);
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkIdentity(String userId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(u -> {
+                    if(!u.getId().equals(userId))
+                        throw new StudentPrivacyException("The student with id '" + userId + "' does not have permission to view this info");
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(u -> {
+                    if(!u.getId().equals(userId))
+                        throw new ProfessorPrivacyException("The professor with id '" + userId + "' does not have permission to view this info");
+                });
+            }
+        });
+    }
+
+    @Override
+    public void checkAuthorizationForMessage(List<String> to) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                throw new StudentPrivacyException("The student does not have permission to send message");
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(u -> {
+                    Professor professor = (Professor)u;
+                    boolean found = false;
+                    for(Course course : professor.getCourses()) {
+                        if(course.getStudents().containsAll(to)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found)
+                        throw new ProfessorPrivacyException("The professor with id '" + u.getId() + "' does not have permission to send message to these recipients");
+                });
+            }
+        });
     }
 
     private String hashToken(String username) {

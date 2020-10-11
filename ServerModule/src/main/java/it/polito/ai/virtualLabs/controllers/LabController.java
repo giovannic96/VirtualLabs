@@ -127,8 +127,8 @@ public class LabController {
     @PostMapping("/versions/{versionId}/review")
     @ResponseStatus(HttpStatus.CREATED)
     public void reviewVersion(@PathVariable Long versionId, @RequestBody String review) {
-        //if(!labService.reviewVersion(versionId, review))
-            //throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
+        if(!labService.reviewVersion(versionId, review))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "An error occurred");
 
         ReportDTO reportDTO = this.labService.getReportForVersion(versionId).get();
         StudentDTO studentDTO = this.labService.getReportOwner(reportDTO.getId()).get();

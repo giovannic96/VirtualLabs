@@ -2,6 +2,8 @@ package it.polito.ai.virtualLabs.controllers;
 
 import it.polito.ai.virtualLabs.dtos.MessageDTO;
 import it.polito.ai.virtualLabs.dtos.ProfessorDTO;
+import it.polito.ai.virtualLabs.dtos.StudentDTO;
+import it.polito.ai.virtualLabs.services.AuthService;
 import it.polito.ai.virtualLabs.services.NotificationService;
 import it.polito.ai.virtualLabs.services.TeamService;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
@@ -22,11 +24,12 @@ public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
-
+    @Autowired
+    AuthService authService;
     @Autowired
     TeamService teamService;
 
-    @PostMapping("/acceptByToken")
+    @PostMapping("/accept")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public boolean acceptByToken(@RequestParam Long tpId, @RequestParam String token) {
@@ -35,7 +38,7 @@ public class NotificationController {
         return true;
     }
 
-    @PostMapping("/rejectByToken")
+    @PostMapping("/reject")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public boolean rejectByToken(@RequestParam Long tpId, @RequestParam String token) {
@@ -44,19 +47,27 @@ public class NotificationController {
         return true;
     }
 
-    @PostMapping("/acceptById")
+    @PostMapping("/protected/accept")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public boolean acceptById(@RequestParam Long tpId, @RequestParam String studentId) {
+    public boolean acceptByUsername(@RequestParam Long tpId, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<StudentDTO> studentOpt = teamService.getStudentByUsername(userDetails.getUsername());
+        if(!studentOpt.isPresent())
+            throw new StudentNotFoundException("The student with username '" + userDetails.getUsername() + "' does not exist");
+        String studentId = studentOpt.get().getId();
         if(!notificationService.acceptById(tpId, studentId))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in accepting the team proposal with id: " + tpId);
         return true;
     }
 
-    @PostMapping("/rejectById")
+    @PostMapping("/protected/reject")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public boolean rejectById(@RequestParam Long tpId, @RequestParam String studentId) {
+    public boolean rejectByUsername(@RequestParam Long tpId, @AuthenticationPrincipal UserDetails userDetails) {
+        Optional<StudentDTO> studentOpt = teamService.getStudentByUsername(userDetails.getUsername());
+        if(!studentOpt.isPresent())
+            throw new StudentNotFoundException("The student with username '" + userDetails.getUsername() + "' does not exist");
+        String studentId = studentOpt.get().getId();
         if(!notificationService.rejectById(tpId, studentId))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in rejecting the team proposal with id: " + tpId);
         return true;

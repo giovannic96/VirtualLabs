@@ -178,7 +178,7 @@
         </mat-action-row>
       </mat-expansion-panel>
     </mat-accordion>
-    <ng-container *ngIf="authService.isProfessor()" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
+    <ng-container *ngIf="authService.isProfessor() && !!allReports.size" [ngTemplateOutlet]="fabAddAssignment"></ng-container>
   </ng-container>
 </div>
 

@@ -77,7 +77,7 @@ export class AuthInterceptorService implements HttpInterceptor{
           }
         }
         /* Refresh token expired */
-        else if (error.status === 401) {
+        else if (error.status === 511) {
           this.authService.logout();
           alert('Session expired.\nPlease login again...');
           this.isRefreshing = false;

@@ -11,6 +11,7 @@ import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundExcep
 import it.polito.ai.virtualLabs.services.exceptions.version.VersionNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,22 +49,32 @@ public class LabServiceImpl implements LabService {
     @Autowired
     VersionRepository versionRepository;
     @Autowired
+    AuthService authService;
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<ReportDTO> getReport(Long reportId) {
         if (!reportRepository.existsById(reportId))
             return Optional.empty();
+
+        authService.checkAuthorizationForReport(reportId);
+
         return reportRepository.findById(reportId)
                 .map(r -> modelMapper.map(r, ReportDTO.class));
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<AssignmentDTO> getAssignment(Long assignmentId) {
-        if (!assignmentRepository.existsById(assignmentId))
+        Optional<Assignment> assignmentOpt = assignmentRepository.findById(assignmentId);
+        if (!assignmentOpt.isPresent())
             return Optional.empty();
-        return assignmentRepository.findById(assignmentId)
-                .map(a -> modelMapper.map(a, AssignmentDTO.class));
+
+        authService.checkAuthorizationForCourse(assignmentOpt.get().getCourse().getName());
+
+        return assignmentOpt.map(a -> modelMapper.map(a, AssignmentDTO.class));
     }
 
     @Override
@@ -95,12 +106,16 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public Optional<ReportDTO> getStudentReportForAssignment(String studentUsername, Long assignmentId) {
         if(!userRepository.studentExistsByUsername(studentUsername))
             throw new StudentNotFoundException("The student with username '" + studentUsername + "' does not exist");
 
-        if(!assignmentRepository.existsById(assignmentId))
+        Optional<Assignment> assignmentOpt = assignmentRepository.findById(assignmentId);
+        if(!assignmentOpt.isPresent())
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        authService.checkAuthorizationForCourse(assignmentOpt.get().getCourse().getName());
 
         Student s = userRepository.getStudentByUsername(studentUsername);
         return s.getReports()
@@ -111,11 +126,15 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public List<ReportDTO> getAssignmentReports(Long assignmentId) {
-        if(!assignmentRepository.existsById(assignmentId))
+        Optional<Assignment> assignmentOpt = assignmentRepository.findById(assignmentId);
+        if(!assignmentOpt.isPresent())
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
-        Assignment a = assignmentRepository.getOne(assignmentId);
+        Assignment a = assignmentOpt.get();
+        authService.checkAuthorizationForCourse(a.getCourse().getName());
+
         return a.getReports()
                 .stream()
                 .map(r -> modelMapper.map(r, ReportDTO.class))
@@ -136,6 +155,8 @@ public class LabServiceImpl implements LabService {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
 
+        authService.checkAuthorizationForReport(reportId);
+
         Report r = reportRepository.getOne(reportId);
         return r.getVersions()
                 .stream()
@@ -144,9 +165,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<StudentDTO> getReportOwner(Long reportId) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        authService.checkAuthorizationForReport(reportId);
 
         Report r = reportRepository.getOne(reportId);
         return Optional.of(modelMapper.map(r.getOwner(), StudentDTO.class));
@@ -184,17 +208,24 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<ReportDTO> getReportForVersion(Long versionId) {
-        if(!versionRepository.existsById(versionId))
+        Optional<Version> versionOpt = versionRepository.findById(versionId);
+        if(!versionOpt.isPresent())
             throw new VersionNotFoundException("The version with id " + versionId + " does not exist");
+
+        authService.checkAuthorizationForReport(versionOpt.get().getReport().getId());
 
         return Optional.of(modelMapper.map(versionRepository.getOne(versionId).getReport(), ReportDTO.class));
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<AssignmentDTO> getAssignmentForReport(Long reportId) {
         if(!reportRepository.existsById(reportId))
             throw new AssignmentNotFoundException("The report with id " + reportId + " does not exist");
+
+        authService.checkAuthorizationForReport(reportId);
 
         return Optional.of(modelMapper.map(reportRepository.getOne(reportId).getAssignment(), AssignmentDTO.class));
     }
@@ -208,11 +239,14 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Long addAssignmentToCourse(AssignmentDTO assignmentDTO, String courseName, String professorId) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");
         if(!userRepository.professorExistsById(professorId))
             throw new ProfessorNotFoundException("The professor with id " + professorId + " does not exist");
+
+        authService.checkAuthorizationForCourse(courseName);
 
         Course course = courseRepository.getOne(courseName);
         Professor professor = userRepository.getProfessorById(professorId);
@@ -221,7 +255,8 @@ public class LabServiceImpl implements LabService {
         Assignment assignment = modelMapper.map(assignmentDTO, Assignment.class);
 
         //check if there is already an assignment with that name in that course
-        if(course.getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName())))
+        if(course.getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName())) ||
+                course.getStudents().isEmpty())
             return 0L;
 
         assignmentRepository.saveAndFlush(assignment);
@@ -263,9 +298,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean addVersionToReport(Long reportId, String title, MultipartFile inputFile) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        authService.checkAuthorizationForReport(reportId);
 
         Report report = reportRepository.getOne(reportId);
 
@@ -298,9 +336,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean removeAssignment(Long assignmentId) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
+
+        authService.checkAuthorizationForReport(assignmentRepository.getOne(assignmentId).getReports().get(0).getId());
 
         //remove assignment
         assignmentRepository.deleteById(assignmentId);
@@ -309,12 +350,16 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean editAssignment(Long assignmentId, AssignmentDTO assignmentDTO) {
         if(!assignmentRepository.existsById(assignmentId))
             throw new AssignmentNotFoundException("The assignment with id " + assignmentId + " does not exist");
 
         //check date and name constraints
         Assignment assignment = assignmentRepository.getOne(assignmentId);
+
+        authService.checkAuthorizationForReport(assignment.getReports().get(0).getId());
+
         if(assignmentDTO.getExpiryDate().isBefore(LocalDateTime.now()) ||
                 (!assignment.getName().equals(assignmentDTO.getName()) &&
                 assignment.getCourse().getAssignments().stream().anyMatch(a -> a.getName().equals(assignmentDTO.getName()))))
@@ -331,9 +376,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean gradeReport(Long reportId, Float grade) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        authService.checkAuthorizationForReport(reportId);
 
         //check if grade is >= 0 and <= 30
         if(grade < 0 || grade > 30)
@@ -356,12 +404,15 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean reviewVersion(Long versionId, String review) {
         if(!reportRepository.existsById(versionId))
             throw new ReportNotFoundException("The version with id " + versionId + " does not exist");
 
         Version version = versionRepository.getOne(versionId);
         Report report = version.getReport();
+
+        authService.checkAuthorizationForReport(report.getId());
 
         //check that the assignment is expired
         if(report.getAssignment().getExpiryDate().isAfter(LocalDateTime.now()))
@@ -404,9 +455,12 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean markReportAsRead(Long reportId) {
         if(!reportRepository.existsById(reportId))
             throw new ReportNotFoundException("The report with id " + reportId + " does not exist");
+
+        authService.checkAuthorizationForReport(reportId);
 
         Report report = this.reportRepository.getOne(reportId);
         if(report.getStatus() != Report.ReportStatus.NULL)

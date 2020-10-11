@@ -52,18 +52,6 @@ export class TeamService {
       );
   }
 
-  getTeamProposalCreator(teamProposalId: number) {
-    return this.httpClient
-      .get<Student>(`${this.API_PATH}/teamProposals/${teamProposalId}/creator`)
-      .pipe(
-        retry(3),
-        catchError( err => {
-          console.error(err);
-          return throwError(`GetTeamProposalCreator error: ${err.message}`);
-        })
-      );
-  }
-
   getTeamVms(teamId: number) {
     return this.httpClient
       .get<Vm[]>(`${this.API_PATH}/${teamId}/vms`)

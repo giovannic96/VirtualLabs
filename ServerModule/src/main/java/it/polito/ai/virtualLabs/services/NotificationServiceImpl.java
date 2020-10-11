@@ -1,5 +1,6 @@
 package it.polito.ai.virtualLabs.services;
 
+import it.polito.ai.virtualLabs.dtos.ProfessorDTO;
 import it.polito.ai.virtualLabs.entities.*;
 import it.polito.ai.virtualLabs.repositories.CourseRepository;
 import it.polito.ai.virtualLabs.repositories.TeamProposalRepository;
@@ -16,6 +17,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -41,8 +43,11 @@ public class NotificationServiceImpl implements NotificationService {
     UserRepository userRepository;
     @Autowired
     TeamService teamService;
+    @Autowired
+    AuthService authService;
 
     @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public void sendMessage(String address, String subject, String body) throws MailException, MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
@@ -54,9 +59,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendMessageToTeam(String from, List<String> to, String subject, String body) throws MailException {
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
+    public void sendMessageToTeam(ProfessorDTO from, List<String> to, String subject, String body) throws MailException {
+        authService.checkAuthorizationForMessage(to);
+
         SimpleMailMessage message = new SimpleMailMessage();
-        final String headerBody = "Communication from the Prof. " + from + ":\n\n";
+        final String headerBody = "Communication from the Prof. " + from.getName() + " " + from.getSurname() + ":\n\n";
         message.setSubject(subject);
         message.setText(headerBody + body);
 
@@ -145,12 +153,14 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean acceptById(Long teamProposalId, String studentId) {
         String token = getTokenByStudentId(teamProposalId, studentId);
         return token != null && acceptByToken(teamProposalId, token);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean rejectById(Long teamProposalId, String studentId) {
         String token = getTokenByStudentId(teamProposalId, studentId);
         return token != null && rejectByToken(teamProposalId, token);
@@ -238,11 +248,11 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private String calcBody(Long tpId, String token) {
-        final String confirmURL = "https://localhost:4200/proposal_response/acceptByToken?tpId="+tpId+"&token="+token;
-        final String rejectURL = "https://localhost:4200/proposal_response/rejectByToken?tpId="+tpId+"&token="+token;
+        final String confirmURL = "https://localhost:4200/proposal_response/accept?tpId="+tpId+"&token="+token;
+        final String rejectURL = "https://localhost:4200/proposal_response/reject?tpId="+tpId+"&token="+token;
         /*
-        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/acceptByToken?tpId=" + tpId + "&token=" + token;
-        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/rejectByToken?tpId=" + tpId + "&token=" + token;
+        final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId=" + tpId + "&token=" + token;
+        final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId=" + tpId + "&token=" + token;
         */
 
         final String confirmBody = "Click here to confirm the proposal: " + confirmURL;
