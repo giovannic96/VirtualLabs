@@ -19,6 +19,7 @@ public interface AuthService {
     boolean isRefreshTokenExpired(String token);
     Map<String, String> assignToken(String username, boolean logging);
     void checkAuthorizationForCourse(String courseName);
+    void checkAuthorizationForStudentInfo(String studentId);
     void checkAuthorizationForReport(Long reportId);
     void checkAuthorizationForVmModel(Long vmModelId);
     void checkAuthorizationForVm(Long vmId);

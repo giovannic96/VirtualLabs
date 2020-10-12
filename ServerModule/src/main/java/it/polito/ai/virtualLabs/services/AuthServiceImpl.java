@@ -217,6 +217,40 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public void checkAuthorizationForStudentInfo(String studentId) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userDetails.getAuthorities().forEach(role -> {
+            if(role.getAuthority().equals("ROLE_STUDENT")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(s -> {
+                    Student me = (Student)s;
+                    if(!me.getCourses()
+                            .stream()
+                            .flatMap(course -> course.getStudents()
+                                    .stream()
+                                    .map(Student::getId))
+                            .collect(Collectors.toList())
+                            .contains(studentId))
+                        throw new StudentPrivacyException("This student does not have permission to view the information relating to the student with id " + studentId);
+                });
+            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
+                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
+                user.ifPresent(p -> {
+                    Professor me = (Professor)p;
+                    if(!me.getCourses()
+                            .stream()
+                            .flatMap(course -> course.getStudents()
+                                    .stream()
+                                    .map(Student::getId))
+                            .collect(Collectors.toList())
+                            .contains(studentId))
+                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the student with id " + studentId);
+                });
+            }
+        });
+    }
+
+    @Override
     public void checkAuthorizationForReport(Long reportId) {
         Report report = reportRepository.getOne(reportId);
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

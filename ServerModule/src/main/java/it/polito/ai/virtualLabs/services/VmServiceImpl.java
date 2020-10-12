@@ -109,7 +109,6 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public Optional<VmModelDTO> getCourseVmModel(String courseName) {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named " + courseName + " does not exist");

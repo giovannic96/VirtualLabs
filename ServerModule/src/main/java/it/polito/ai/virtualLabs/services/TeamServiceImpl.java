@@ -123,7 +123,7 @@ public class TeamServiceImpl implements TeamService {
         if (!userRepository.studentExistsById(studentId))
             return Optional.empty();
 
-        authService.checkAuthorizationForTeamProposalMembers(studentId);
+        authService.checkAuthorizationForStudentInfo(studentId);
 
         return userRepository.findStudentById(studentId)
                 .map(s -> modelMapper.map(s, StudentDTO.class));
