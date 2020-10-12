@@ -11,7 +11,6 @@ import {TeamProposal} from '../models/team-proposal.model';
 })
 export class TeamService {
 
-  // private API_PATH = 'https://virtuallabs.ns0.it/API/teams';
   private API_PATH = 'http://localhost:9090/API/teams';
 
   constructor(private httpClient: HttpClient) { }

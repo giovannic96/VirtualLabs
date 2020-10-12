@@ -16,14 +16,19 @@ import {ActivatedRoute, Router} from '@angular/router';
 })
 export class AuthInterceptorService implements HttpInterceptor{
 
+  private readonly REMOTE_SERVER = 'virtuallabs.ns0.it';
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
   constructor(private authService: AuthService,
               private route: ActivatedRoute,
               private router: Router) {}
 
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const req = this.switchRequestForRemoteServer(request, false, false);
+    // This method above just switch the request to the remote server
+    // Set last parameter to false to disable it and to left the requests go to localhost
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authToken = this.authService.getAuthorizationToken();
     if (authToken) {
       const cloned = req.clone({
@@ -89,5 +94,20 @@ export class AuthInterceptorService implements HttpInterceptor{
     } else {
       return next.handle(req);
     }
+  }
+
+  private switchRequestForRemoteServer(request: HttpRequest<any>, ssl?: boolean, wannaSwitch?: boolean) {
+    if (!wannaSwitch)
+      return request;
+
+    const protocol: string = ssl ? 'https' : 'http';
+
+    // Eg. http://server_name/api/something/else
+    const uri = request.url.split('//')[1];  // = server_name/api/something/else
+    const location = uri.substring(uri.indexOf('/')); // = /api/something/else
+
+    return request.clone({
+      url: protocol + '://' + this.REMOTE_SERVER + location
+    });
   }
 }
