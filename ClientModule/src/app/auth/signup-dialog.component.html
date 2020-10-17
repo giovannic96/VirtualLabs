@@ -2,7 +2,7 @@
   <ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
     <ng-template [ngIf]="!requestComplete" [ngIfElse]="completeBlock">
       <h2>Signup</h2>
-      <form [formGroup]="signupForm" (keydown.enter)="onSubmit()">
+      <form [formGroup]="signupForm">
         <!-- Email -->
         <mat-form-field appearance="legacy">
           <mat-label>Email</mat-label>
@@ -50,7 +50,7 @@
           <span>An error occurred.<br>You cannot signup with these credentials</span>
         </div>
         <div class="buttons-div">
-          <button mat-raised-button color="" (click)="dialogRef.close(false)">
+          <button mat-raised-button type="button" (click)="dialogRef.close(false)">
             CANCEL
           </button>
           <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">

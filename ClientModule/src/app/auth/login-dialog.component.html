@@ -1,7 +1,7 @@
 <div class="form-container">
   <ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
     <h2>Login</h2>
-    <form [formGroup]="loginForm" (keydown.enter)="onSubmit()">
+    <form [formGroup]="loginForm">
       <mat-form-field appearance="legacy">
         <mat-label>Email</mat-label>
         <input matInput [type]="'email'" formControlName="email">
@@ -24,7 +24,7 @@
       </mat-form-field>
       <div *ngIf="loginError" class="error-advice">{{errorMessage}}</div>
       <div class="buttons-div">
-        <button mat-raised-button (click)="dialogRef.close()">
+        <button mat-raised-button type="button" (click)="dialogRef.close()">
           CANCEL
         </button>
         <button mat-raised-button type="submit" color="primary" (click)="onSubmit()">
