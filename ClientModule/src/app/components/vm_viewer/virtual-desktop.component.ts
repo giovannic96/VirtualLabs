@@ -7,8 +7,8 @@ import {Student} from '../../models/student.model';
 import {VmModel} from '../../models/vm-model.model';
 import {Team} from '../../models/team.model';
 import {Course} from '../../models/course.model';
-import {forkJoin, Observable, timer} from 'rxjs';
-import {concatMap} from 'rxjs/operators';
+import {EMPTY, forkJoin, Observable, timer} from 'rxjs';
+import {catchError, concatMap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {VmInfoDialogComponent} from './vm-info-dialog.component';
 import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
@@ -87,6 +87,11 @@ export class VirtualDesktopComponent implements OnInit {
       this.vmService.getVmModelByVmId(vmId));
 
     forkJoin(requests).pipe(
+      catchError(err => {
+        alert('Access denied!\nYou cannot use this virtual machine');
+        this.router.navigate(['home']);
+        return EMPTY;
+      }),
       concatMap(responses => {
         this.vmOwner = responses[0];
         this.vmTeam = responses[1];
