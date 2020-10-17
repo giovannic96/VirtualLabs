@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CourseService} from '../../services/course.service';
 import {VmService} from '../../services/vm.service';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -7,11 +7,11 @@ import {Student} from '../../models/student.model';
 import {VmModel} from '../../models/vm-model.model';
 import {Team} from '../../models/team.model';
 import {Course} from '../../models/course.model';
-import {EMPTY, forkJoin, Observable, timer} from 'rxjs';
+import {EMPTY, forkJoin, Observable, Subscription, timer} from 'rxjs';
 import {catchError, concatMap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
-import {VmInfoDialogComponent} from './vm-info-dialog.component';
-import {MyDialogComponent} from '../../helpers/dialog/my-dialog.component';
+import {VmInfoDialogComponent} from '../../helpers/dialog/vm-info-dialog.component';
+import {AreYouSureDialogComponent} from '../../helpers/dialog/are-you-sure-dialog.component';
 import Utility from '../../helpers/utility';
 import {TeamService} from '../../services/team.service';
 import {User} from '../../models/user.model';
@@ -22,7 +22,7 @@ import {AuthService} from '../../services/auth.service';
   templateUrl: './virtual-desktop.component.html',
   styleUrls: ['./virtual-desktop.component.css']
 })
-export class VirtualDesktopComponent implements OnInit {
+export class VirtualDesktopComponent implements OnInit, OnDestroy {
   public loadComplete: boolean;
   public vmParams: any;
   public currentVm: Vm;
@@ -43,6 +43,7 @@ export class VirtualDesktopComponent implements OnInit {
   ];
   public chosenTip: string;
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(public authService: AuthService,
@@ -57,13 +58,15 @@ export class VirtualDesktopComponent implements OnInit {
       this.authService.setUserLogged(me);
     });
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
 
     const loadingTimer = timer(3500);
-    loadingTimer.subscribe(() => {
-      this.menu.nativeElement.focus();
-      this.loadComplete = true;
-    });
+    this.subscriptions.add(
+      loadingTimer.subscribe(() => {
+        this.menu.nativeElement.focus();
+        this.loadComplete = true;
+      }));
 
     this.chosenTip = this.chooseRandomTip();
 
@@ -125,14 +128,19 @@ export class VirtualDesktopComponent implements OnInit {
     this.stats = {cpu: 0, ram: 0, disk: 0};
     const statsTimer = timer(1000, 1000);
 
-    statsTimer.subscribe(() => {
-      this.stats.cpu = this.utility.getRandom(10, 50);
-      this.stats.ram = this.utility.getRandom(10, 50);
-      this.stats.disk = this.utility.getRandom(10, 50);
-    });
+    this.subscriptions.add(
+      statsTimer.subscribe(() => {
+        this.stats.cpu = this.utility.getRandom(10, 50);
+        this.stats.ram = this.utility.getRandom(10, 50);
+        this.stats.disk = this.utility.getRandom(10, 50);
+      }));
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
   chooseRandomTip(): string {
     return this.tips[this.utility.getRandom(0, this.tips.length - 1)];
@@ -141,7 +149,7 @@ export class VirtualDesktopComponent implements OnInit {
   async backToCourses() {
     const message = 'You will be redirect to the course page';
 
-    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+    const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
         message,
         buttonConfirmLabel: 'CONFIRM',
         buttonCancelLabel: 'CANCEL'
@@ -162,8 +170,7 @@ export class VirtualDesktopComponent implements OnInit {
       vmTeam: this.vmTeam,
       vmCourse: this.vmCourse};
 
-    const dialogRef = this.dialog.open(VmInfoDialogComponent, {data});
-
+    this.dialog.open(VmInfoDialogComponent, {data});
   }
 
 }

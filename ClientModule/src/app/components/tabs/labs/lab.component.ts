@@ -1,8 +1,8 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Assignment} from '../../../models/assignment.model';
 import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {CourseService} from '../../../services/course.service';
-import {forkJoin, Observable, of} from 'rxjs';
+import {forkJoin, Observable, of, Subscription} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {LabService} from '../../../services/lab.service';
 import {Report, ReportStatus} from '../../../models/report.model';
@@ -16,10 +16,9 @@ import {NotificationService} from '../../../services/notification.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {AssignmentDialogComponent} from '../../../helpers/dialog/assignment-dialog.component';
 import {StudentService} from '../../../services/student.service';
-import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
+import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {AddVersionDialogComponent} from '../../../helpers/dialog/add-version-dialog.component';
 import Utility from '../../../helpers/utility';
-import {HttpErrorResponse} from '@angular/common/http';
 import {AuthService} from '../../../services/auth.service';
 
 export interface ReportStatusFilter {
@@ -33,7 +32,7 @@ export interface ReportStatusFilter {
   templateUrl: './lab.component.html',
   styleUrls: ['./lab.component.css', '../../../helpers/add-btn-round.css']
 })
-export class LabComponent implements OnInit, AfterViewInit {
+export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private currentCourse: Observable<Course>;
   public assignmentList: Assignment[];
@@ -46,6 +45,7 @@ export class LabComponent implements OnInit, AfterViewInit {
   reportStatusFilter: ReportStatusFilter[];
   assignmentStatusMap: Map<number, {label: string, className: string}>;
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(public authService: AuthService,
@@ -56,6 +56,7 @@ export class LabComponent implements OnInit, AfterViewInit {
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
@@ -73,70 +74,75 @@ export class LabComponent implements OnInit, AfterViewInit {
 
     let assignmentCounter: number;
 
-    this.currentCourse.pipe(
-      concatMap(course => this.courseService.getAllAssignments(course.name)),
-      mergeMap(assignmentList => {
-        this.assignmentList = assignmentList;
-        assignmentCounter = assignmentList.length;
-        return assignmentList;
-      }),
-      tap(assignment => {
-        if (this.authService.isProfessor()) {
-          this.labService.getAssignmentReports(assignment.id).pipe(
-            mergeMap(reports => {
+    this.subscriptions.add(
+      this.currentCourse.pipe(
+        concatMap(course => this.courseService.getAllAssignments(course.name)),
+        mergeMap(assignmentList => {
+          this.assignmentList = assignmentList;
+          assignmentCounter = assignmentList.length;
+          return assignmentList;
+        }),
+        tap(assignment => {
+          if (this.authService.isProfessor()) {
+            this.labService.getAssignmentReports(assignment.id).pipe(
+              mergeMap(reports => {
 
-              // assign reports to the current assignment
-              this.setReportsToAssignment(assignment, reports);
+                // assign reports to the current assignment
+                this.setReportsToAssignment(assignment, reports);
 
-              const ownerRequests: Observable<Student>[] = [];
-              const versionRequests: Observable<Version[]>[] = [];
-              reports.forEach(report => {
-                ownerRequests.push(this.labService.getReportOwner(report.id));
+                const ownerRequests: Observable<Student>[] = [];
+                const versionRequests: Observable<Version[]>[] = [];
+                reports.forEach(report => {
+                  ownerRequests.push(this.labService.getReportOwner(report.id));
+                  versionRequests.push(this.labService.getReportVersions(report.id));
+                });
+
+                forkJoin(ownerRequests).subscribe(owners => {
+                  // assign owner to each report
+                  this.setOwnerToReports(reports, owners);
+
+                  // update UI (only when all assignments have been processed)
+                  assignmentCounter--;
+                  if (!assignmentCounter) {
+                    this.filterReports();
+                    this.assignmentList.forEach(a => this.setAssignmentStatusLabel(a));
+                  }
+                });
+
+                forkJoin(versionRequests).subscribe(versions => {
+                  // assign version to each report
+                  this.setVersionToReports(reports, versions);
+                });
+
+                return reports;
+              })).subscribe();
+          } else {
+            this.labService.getAssignmentReportForStudent(assignment.id).pipe(
+              mergeMap(report => {
+                this.setReportsToAssignment(assignment, [report]);
+
+                const versionRequests: Observable<Version[]>[] = [];
                 versionRequests.push(this.labService.getReportVersions(report.id));
-              });
 
-              forkJoin(ownerRequests).subscribe(owners => {
-                // assign owner to each report
-                this.setOwnerToReports(reports, owners);
-
-                // update UI (only when all assignments have been processed)
-                assignmentCounter--;
-                if (!assignmentCounter) {
-                  this.filterReports();
+                forkJoin(versionRequests).subscribe(versions => {
+                  this.setVersionToReports([report], versions);
                   this.assignmentList.forEach(a => this.setAssignmentStatusLabel(a));
-                }
-              });
+                });
 
-              forkJoin(versionRequests).subscribe(versions => {
-                // assign version to each report
-                this.setVersionToReports(reports, versions);
-              });
-
-              return reports;
-            })).subscribe();
-        } else {
-          this.labService.getAssignmentReportForStudent(assignment.id).pipe(
-            mergeMap(report => {
-              this.setReportsToAssignment(assignment, [report]);
-
-              const versionRequests: Observable<Version[]>[] = [];
-              versionRequests.push(this.labService.getReportVersions(report.id));
-
-              forkJoin(versionRequests).subscribe(versions => {
-                this.setVersionToReports([report], versions);
-                this.assignmentList.forEach(a => this.setAssignmentStatusLabel(a));
-              });
-
-              return [report];
-            })).subscribe();
-        }
-      })).subscribe();
+                return [report];
+              })).subscribe();
+          }
+        })).subscribe());
   }
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   openVersionDialog(version: Version, report: Report, assignment: Assignment, isLast: boolean) {
@@ -277,7 +283,7 @@ export class LabComponent implements OnInit, AfterViewInit {
     const message = 'This will delete also all the reports and the versions related to this assignment';
 
     // Open a dialog and get the response as an 'await'
-    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+    const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
         message,
         buttonConfirmLabel: 'CONFIRM',
         buttonCancelLabel: 'CANCEL'

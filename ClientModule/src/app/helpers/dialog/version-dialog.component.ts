@@ -1,14 +1,10 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit, ViewChild, ViewChildren} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {LabService} from '../../services/lab.service';
 import {CanvasComponent} from '../canvas.component';
 import {Version} from '../../models/version.model';
-import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
-import {MatCheckbox} from '@angular/material/checkbox';
+import {MySnackBarComponent} from '../my-snack-bar.component';
 import Utility from '../utility';
-import {MatRadioGroup} from '@angular/material/radio';
 
 @Component({
   selector: 'app-version-dialog',
@@ -33,13 +29,8 @@ export class VersionDialogComponent implements OnInit {
                             '#8bc34a', '#ffeb3b', '#ff9800', '#795548', '#f44336', '#fff'];
   public currentColor;
 
-  public utility: Utility;
-
   constructor(private dialogRef: MatDialogRef<VersionDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) data,
-              private mySnackBar: MySnackBarComponent,
-              private labService: LabService) {
-    this.utility = new Utility();
+              @Inject(MAT_DIALOG_DATA) data) {
 
     this.version = data.version;
     this.isLastVersion = data.isLast;

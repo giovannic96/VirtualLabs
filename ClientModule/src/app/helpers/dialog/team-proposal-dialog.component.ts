@@ -1,17 +1,10 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  OnInit
-} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Student} from '../../models/student.model';
 import {state, style, transition, trigger, useAnimation} from '@angular/animations';
-import { shake } from 'ngx-animate';
+import {shake} from 'ngx-animate';
 import {TeamService} from '../../services/team.service';
 
 @Component({

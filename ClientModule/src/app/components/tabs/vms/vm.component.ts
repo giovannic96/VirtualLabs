@@ -1,20 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {VmService} from '../../../services/vm.service';
 import {TeamService} from '../../../services/team.service';
 import {CourseService} from '../../../services/course.service';
 import {concatMap, filter, mergeMap, tap} from 'rxjs/operators';
-import {EMPTY, forkJoin, Observable, of} from 'rxjs';
+import {EMPTY, forkJoin, Observable, of, Subscription} from 'rxjs';
 import {Course} from '../../../models/course.model';
 import {Team} from '../../../models/team.model';
 import {MatDialog} from '@angular/material/dialog';
-import {VmModelSettingsDialogComponent} from './vm-model-settings-dialog.component';
+import {VmModelSettingsDialogComponent} from '../../../helpers/dialog/vm-model-settings-dialog.component';
 import {VmModel} from '../../../models/vm-model.model';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
+import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {Vm} from '../../../models/vm.model';
 import {Router} from '@angular/router';
 import Utility from '../../../helpers/utility';
-import {VmSettingsDialogComponent} from './vm-settings-dialog.component';
+import {VmSettingsDialogComponent} from '../../../helpers/dialog/vm-settings-dialog.component';
 import {StudentService} from '../../../services/student.service';
 import {Student} from '../../../models/student.model';
 import {AuthService} from '../../../services/auth.service';
@@ -24,7 +24,7 @@ import {AuthService} from '../../../services/auth.service';
   templateUrl: './vm.component.html',
   styleUrls: ['./vm.component.css', '../../../helpers/add-btn-round.css']
 })
-export class VmComponent implements OnInit {
+export class VmComponent implements OnInit, OnDestroy {
 
   private currentCourse: Observable<Course>;
 
@@ -35,6 +35,7 @@ export class VmComponent implements OnInit {
   public osMap: Map<string, string>;
   public isVmCreatable: boolean;
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(public authService: AuthService,
@@ -46,63 +47,70 @@ export class VmComponent implements OnInit {
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
+  }
 
+  ngOnInit(): void {
     if (this.authService.isProfessor()) {
-      this.currentCourse.pipe(
-        concatMap(course => this.courseService.getAllTeams(course.name)),
-        concatMap(teamList => {
-          this.teamList = teamList;
-          return teamList;
-        }),
-        tap(team => {
-          this.teamService.getTeamVms(team.id).subscribe(vms => {
-            team.vms = vms;
-            const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
-            forkJoin(ownerRequests).subscribe(owners => {
-              team.vms.forEach((vm, index) => team.vms[index].owner = owners[index]);
+      this.subscriptions.add(
+        this.currentCourse.pipe(
+          concatMap(course => this.courseService.getAllTeams(course.name)),
+          concatMap(teamList => {
+            this.teamList = teamList;
+            return teamList;
+          }),
+          tap(team => {
+            this.teamService.getTeamVms(team.id).subscribe(vms => {
+              team.vms = vms;
+              const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+              forkJoin(ownerRequests).subscribe(owners => {
+                team.vms.forEach((vm, index) => team.vms[index].owner = owners[index]);
+              });
             });
-          });
-        })).subscribe();
+          })).subscribe());
     }
 
-    this.currentCourse.pipe(
-      concatMap(course => this.courseService.getVmModel(course.name)),
-      filter(vmModel => vmModel != null),
-      concatMap(vmModel => {
-        this.vmModel = vmModel;
-        return this.vmService.getVmModelProfessor(vmModel.id);
-      })).subscribe(professor => this.vmModel.professor = professor,
-      error => {
-        if (this.vmModel)
-          this.vmModel.professor = null;
-      });
+    this.subscriptions.add(
+      this.currentCourse.pipe(
+        concatMap(course => this.courseService.getVmModel(course.name)),
+        filter(vmModel => vmModel != null),
+        concatMap(vmModel => {
+          this.vmModel = vmModel;
+          return this.vmService.getVmModelProfessor(vmModel.id);
+        })).subscribe(professor => this.vmModel.professor = professor,
+        error => {
+          if (this.vmModel)
+            this.vmModel.professor = null;
+        }));
 
     if (!this.authService.isProfessor()) {
-      this.currentCourse.pipe(
-        concatMap(course => this.studentService.getTeamForStudent(this.authService.getMyId(), course.name)),
-        filter(team => team != null),
-        concatMap(team => {
-          this.myTeam = team;
-          return this.teamService.getTeamVms(team.id);
-        }),
-        mergeMap(vms => {
-          this.myTeam.vms = vms;
-          if (this.vmModel)
-            this.setVmCreatable();
-          const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
-          return forkJoin(ownerRequests);
-        })).subscribe(owners => {
-        this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
-      });
+      this.subscriptions.add(
+        this.currentCourse.pipe(
+          concatMap(course => this.studentService.getTeamForStudent(this.authService.getMyId(), course.name)),
+          filter(team => team != null),
+          concatMap(team => {
+            this.myTeam = team;
+            return this.teamService.getTeamVms(team.id);
+          }),
+          mergeMap(vms => {
+            this.myTeam.vms = vms;
+            if (this.vmModel)
+              this.setVmCreatable();
+            const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+            return forkJoin(ownerRequests);
+          })).subscribe(owners => {
+          this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
+        }));
     }
 
     this.vmService.getOsMap().subscribe( map => this.osMap = new Map(Object.entries(map)));
   }
 
-  ngOnInit(): void {
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   async openDialog() {
@@ -148,7 +156,7 @@ export class VmComponent implements OnInit {
 
   async deleteVmModel() {
     if (this.vmModel) {
-      const areYouSure: Promise<boolean> = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+      const areYouSure: Promise<boolean> = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
           message: 'Warning! Deleting a vm model you will delete also ALL vms related to it'
         }}).afterClosed().toPromise();
 
@@ -167,7 +175,7 @@ export class VmComponent implements OnInit {
 
   async deleteVm(vmId: number) {
       const message = 'You are removing the virtual machine from the team \'' + this.myTeam?.name + '\'';
-      const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+      const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
           message,
           buttonConfirmLabel: 'CONFIRM',
           buttonCancelLabel: 'CANCEL'

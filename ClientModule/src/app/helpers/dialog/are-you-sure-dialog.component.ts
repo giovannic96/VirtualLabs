@@ -8,9 +8,9 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
   templateUrl: 'are-you-sure-dialog.component.html',
   styleUrls: ['./are-you-sure-dialog.component.css']
 })
-export class MyDialogComponent implements OnInit {
+export class AreYouSureDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<MyDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<AreYouSureDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
 
   }

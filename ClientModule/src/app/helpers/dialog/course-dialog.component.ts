@@ -4,16 +4,10 @@ import {MatHorizontalStepper} from '@angular/material/stepper';
 import {Course} from '../../models/course.model';
 import {CourseService} from '../../services/course.service';
 import {MinLowerThanMax} from '../min-lower-than-max.validator';
-import {Student} from '../../models/student.model';
 import {Professor} from '../../models/professor.model';
 import {ProfessorService} from '../../services/professor.service';
-import Utility from '../utility';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {concatMap, finalize, mergeMap} from 'rxjs/operators';
-import {of} from 'rxjs';
-import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
-import {MatButton} from '@angular/material/button';
-import {Assignment} from '../../models/assignment.model';
+import {mergeMap} from 'rxjs/operators';
 import {AuthService} from '../../services/auth.service';
 
 @Component({
@@ -36,8 +30,6 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
   filteredProfessors: Professor[] = [];
   selectedProfessors: Professor[] = [];
 
-  public utility: Utility;
-
   @ViewChild('stepper') stepper: MatHorizontalStepper;
   @ViewChild('addProfessorInput') addProfessorInput: ElementRef;
 
@@ -46,10 +38,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
               @Inject(MAT_DIALOG_DATA) public data: any,
               private formBuilder: FormBuilder,
               private courseService: CourseService,
-              private professorService: ProfessorService,
-              private mySnackBar: MySnackBarComponent) {
-
-    this.utility = new Utility();
+              private professorService: ProfessorService) {
 
     this.professorService.allProfessors().subscribe(all => {
       const id = this.authService.getMyId();
@@ -136,7 +125,7 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
             return this.courseService.assignProfessor(course.name, professor.id);
           })
         ).subscribe(() => null,
-            error => this.dialogRef.close(null),
+            () => this.dialogRef.close(null),
           () => this.dialogRef.close(course));
       }
     }

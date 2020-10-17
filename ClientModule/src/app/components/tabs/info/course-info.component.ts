@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {Course} from '../../../models/course.model';
 import {CourseService} from '../../../services/course.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {concatMap, filter} from 'rxjs/operators';
 import {CourseInfo} from '../../../models/course-info.model';
 import {Professor} from '../../../models/professor.model';
@@ -12,21 +12,24 @@ import Utility from '../../../helpers/utility';
   templateUrl: './course-info.component.html',
   styleUrls: ['./course-info.component.css']
 })
-export class CourseInfoComponent implements OnInit {
+export class CourseInfoComponent implements OnInit, OnDestroy {
   private currentCourse: Observable<Course>;
   courseInfo: CourseInfo;
   courseProfessors: Professor[];
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(private courseService: CourseService) {
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
 
     this.courseInfo = new CourseInfo('', '', '', '', '', '', '');
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
 
-    this.currentCourse.subscribe(
+    this.subscriptions.add(
+      this.currentCourse.subscribe(
       data => {
         if (data && data.info && data.info.length !== 0) {
           try {
@@ -43,15 +46,15 @@ export class CourseInfoComponent implements OnInit {
         } else {
           this.clearInfo();
         }
-      }
-    );
+      }));
 
-    this.currentCourse
-      .pipe(concatMap(course => {
-        return this.courseService.getProfessors(course.name);
-      })).subscribe(professorList => {
-        this.courseProfessors = professorList;
-      });
+    this.subscriptions.add(
+      this.currentCourse
+        .pipe(concatMap(course => {
+          return this.courseService.getProfessors(course.name);
+        })).subscribe(professorList => {
+          this.courseProfessors = professorList;
+        }));
   }
 
   ngOnInit(): void {
@@ -59,6 +62,10 @@ export class CourseInfoComponent implements OnInit {
       this.utility.renderChartPasses();
       this.utility.renderChartGrades();
     }, 300);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   clearInfo() {

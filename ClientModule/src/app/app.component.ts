@@ -1,14 +1,14 @@
 import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
-import {LoginDialogComponent} from './auth/login-dialog.component';
+import {LoginDialogComponent} from './helpers/dialog/login-dialog.component';
 import {AuthService} from './services/auth.service';
 import {CourseService} from './services/course.service';
 import {Observable, throwError} from 'rxjs';
 import {catchError, retry} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from './models/user.model';
-import {MyDialogComponent} from './helpers/dialog/my-dialog.component';
+import {AreYouSureDialogComponent} from './helpers/dialog/are-you-sure-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -61,7 +61,7 @@ export class AppComponent {
   async userLogout() {
     const message = 'You will be redirected to Virtual Labs homepage';
 
-    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+    const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
         message,
         buttonConfirmLabel: 'CONFIRM',
         buttonCancelLabel: 'CANCEL'

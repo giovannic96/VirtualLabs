@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatDialogRef} from '@angular/material/dialog';
-import {AuthService} from '../services/auth.service';
-import {User} from '../models/user.model';
-import {catchError, timeout} from 'rxjs/operators';
-import {EMPTY} from 'rxjs';
+import {AuthService} from '../../services/auth.service';
+import {timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-login-dialog',

@@ -1,14 +1,14 @@
 import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {VmModel} from '../../../models/vm-model.model';
-import {VmService} from '../../../services/vm.service';
-import Utility from '../../../helpers/utility';
+import {VmModel} from '../../models/vm-model.model';
+import {VmService} from '../../services/vm.service';
+import Utility from '../utility';
 
 @Component({
   selector: 'app-vm-model-settings-dialog',
   templateUrl: './vm-model-settings-dialog.component.html',
-  styleUrls: ['./vm-model-settings-dialog.component.css', './vm.component.css']
+  styleUrls: ['./vm-model-settings-dialog.component.css', '../../components/tabs/vms/vm.component.css']
 })
 export class VmModelSettingsDialogComponent implements OnInit {
 

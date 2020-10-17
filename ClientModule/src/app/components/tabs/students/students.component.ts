@@ -1,6 +1,6 @@
 import {MatButton} from '@angular/material/button';
 import {Student} from '../../../models/student.model';
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -10,16 +10,17 @@ import {CourseService} from '../../../services/course.service';
 import {StudentService} from '../../../services/student.service';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
 import {filter} from 'rxjs/operators';
-import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
+import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import Utility from '../../../helpers/utility';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.css']
 })
-export class StudentsComponent implements OnInit, AfterViewInit {
+export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Title
   title = 'VirtualLabs';
@@ -49,7 +50,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
 
   studentsFile: File;
 
-  public utility: Utility;
+  private subscriptions: Subscription;
 
   updateTableStudents(tableData: Student[]) {
     this.tableStudents = new MatTableDataSource<Student>(tableData);
@@ -63,20 +64,25 @@ export class StudentsComponent implements OnInit, AfterViewInit {
               private mySnackBar: MySnackBarComponent,
               private dialog: MatDialog) {
 
-    this.utility = new Utility();
+    this.subscriptions = new Subscription();
 
     this.tableStudents = new MatTableDataSource<Student>();
     this.columnsToDisplay = ['select', 'id', 'surname', 'name'];
 
-    this.courseService.getSelectedCourse().pipe(
-      filter(course => !!course)).subscribe(course => {
-      this.selectedCourse = course;
-      this.getEnrolledStudents(course.name);
-      this.getNotEnrolledStudents(course.name);
-    });
+    this.subscriptions.add(
+      this.courseService.getSelectedCourse().pipe(
+        filter(course => !!course)).subscribe(course => {
+        this.selectedCourse = course;
+        this.getEnrolledStudents(course.name);
+        this.getNotEnrolledStudents(course.name);
+      }));
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   getEnrolledStudents(courseName: string) {
@@ -161,7 +167,7 @@ export class StudentsComponent implements OnInit, AfterViewInit {
     }
 
     // Open a dialog and get the response as an 'await'
-    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+    const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
         message,
         buttonConfirmLabel: 'CONFIRM',
         buttonCancelLabel: 'CANCEL'

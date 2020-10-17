@@ -1,19 +1,18 @@
-import {Component, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Course} from '../../../models/course.model';
 import {Router} from '@angular/router';
 import {CourseService} from '../../../services/course.service';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CourseDialogComponent} from '../../../helpers/dialog/course-dialog.component';
-import Utility from '../../../helpers/utility';
-import {catchError, concatMap, filter, retry} from 'rxjs/operators';
+import {concatMap, filter} from 'rxjs/operators';
 import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
-import {Observable, throwError} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
-import {MyDialogComponent} from '../../../helpers/dialog/my-dialog.component';
+import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {User} from '../../../models/user.model';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {AuthService} from '../../../services/auth.service';
 
 @Component({
@@ -21,7 +20,7 @@ import {AuthService} from '../../../services/auth.service';
   templateUrl: './personal.component.html',
   styleUrls: ['./personal.component.css']
 })
-export class PersonalComponent implements OnInit {
+export class PersonalComponent implements OnInit, OnDestroy {
 
   @ViewChild(MatSidenav) sideNav: MatSidenav;
 
@@ -32,7 +31,7 @@ export class PersonalComponent implements OnInit {
   navLinks: any[];
   activeLinkIndex = -1;
 
-  public utility: Utility;
+  private subscriptions: Subscription;
 
   constructor(public authService: AuthService,
               private httpClient: HttpClient,
@@ -43,7 +42,7 @@ export class PersonalComponent implements OnInit {
               private dialog: MatDialog,
               private mySnackBar: MySnackBarComponent) {
 
-    this.utility = new Utility();
+    this.subscriptions = new Subscription();
 
     this.courseService.hideMenu.next(false);
     this.courseService.hideMenuIcon.next(false);
@@ -54,6 +53,10 @@ export class PersonalComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     this.selectedCourseName = '';
+
+    this.courseService.getEnrolled('Applicazioni Internet').pipe().subscribe(() =>
+      console.log('course')
+    );
 
     this.authService.getUserInfo().pipe(
       concatMap(me => {
@@ -95,15 +98,19 @@ export class PersonalComponent implements OnInit {
         this.router.navigate(['courses/' + courseToNavigate + '/' + tabToVisit]);
       }
 
-      this.courseService.getSelectedCourse().subscribe(course => {
-        this.selectedCourseName = course ? course.name : '';
-      });
+      this.subscriptions.add(
+        this.courseService.getSelectedCourse()
+          .subscribe(course => this.selectedCourseName = course ? course.name : ''));
 
-      this.courseService.clicksOnMenu.subscribe(event => this.sideNav?.toggle());
+      this.subscriptions.add(
+        this.courseService.clicksOnMenu
+          .subscribe(event => this.sideNav?.toggle()));
 
-      this.router.events.subscribe((res) => {
-        this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
-      });
+      this.subscriptions.add(
+        this.router.events
+          .subscribe((res) => {
+            this.activeLinkIndex = this.navLinks.indexOf(this.navLinks.find(tab => tab.link === '.' + this.router.url));
+          }));
 
       this.loading = false;
     }, () => {
@@ -111,6 +118,10 @@ export class PersonalComponent implements OnInit {
       this.authService.logout();
       this.router.navigate(['/'], {queryParams: {doLogin: true}});
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   setCurrentCourse(course: Course) {
@@ -171,7 +182,7 @@ export class PersonalComponent implements OnInit {
     const message = 'This will delete also all the teams, team proposals, assignments and vm model related to this course';
 
     // Open a dialog and get the response as an 'await'
-    const areYouSure = await this.dialog.open(MyDialogComponent, {disableClose: true, data: {
+    const areYouSure = await this.dialog.open(AreYouSureDialogComponent, {disableClose: true, data: {
         message,
         buttonConfirmLabel: 'CONFIRM',
         buttonCancelLabel: 'CANCEL'

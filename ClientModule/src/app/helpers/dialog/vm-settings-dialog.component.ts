@@ -1,12 +1,12 @@
 import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import Utility from '../../../helpers/utility';
+import Utility from '../utility';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {VmService} from '../../../services/vm.service';
-import {VmModel} from '../../../models/vm-model.model';
-import {Vm} from '../../../models/vm.model';
-import {TeamService} from '../../../services/team.service';
-import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.component';
+import {VmService} from '../../services/vm.service';
+import {VmModel} from '../../models/vm-model.model';
+import {Vm} from '../../models/vm.model';
+import {TeamService} from '../../services/team.service';
+import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
 
 @Component({
   selector: 'app-vm-settings-dialog',
