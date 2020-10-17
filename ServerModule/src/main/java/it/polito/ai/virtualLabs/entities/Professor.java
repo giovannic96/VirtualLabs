@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 public class Professor extends User{
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "professor_course",
             joinColumns = @JoinColumn(name="professor_id"),
             inverseJoinColumns = @JoinColumn(name="course_name")

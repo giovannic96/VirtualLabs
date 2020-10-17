@@ -19,15 +19,19 @@
               {{course.name}}
             </a>
           </mat-nav-list>
-          <div class="edit-course-container" *ngIf="authService.isProfessor()">
-            <button mat-raised-button color="accent" class="edit-course-btn-inside edit-btn" (click)="openCourseDialog(this.selectedCourseName)">EDIT COURSE</button>
-          </div>
-          <div class="remove-course-container" *ngIf="authService.isProfessor()">
-            <button mat-raised-button color="accent" class="remove-course-btn-inside remove-btn" (click)="deleteCourse(this.selectedCourseName)">REMOVE COURSE</button>
-          </div>
-          <div class="add-course-container" *ngIf="authService.isProfessor()">
-            <button mat-raised-button color="accent" class="add-course-btn-inside add-btn" (click)="openCourseDialog()">ADD COURSE</button>
-          </div>
+          <ng-container *ngIf="authService.isProfessor()">
+            <ng-container *ngIf="selectedCourseName !== ''">
+              <div class="edit-course-container">
+                <button mat-raised-button color="accent" class="edit-course-btn-inside edit-btn" (click)="openCourseDialog(this.selectedCourseName)">EDIT COURSE</button>
+              </div>
+              <div class="remove-course-container">
+                <button mat-raised-button color="accent" class="remove-course-btn-inside remove-btn" (click)="deleteCourse(this.selectedCourseName)">REMOVE COURSE</button>
+              </div>
+            </ng-container>
+            <div class="add-course-container">
+              <button mat-raised-button color="accent" class="add-course-btn-inside add-btn" (click)="openCourseDialog()">ADD COURSE</button>
+            </div>
+          </ng-container>
         </div>
       </mat-sidenav>
       <div>

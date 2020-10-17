@@ -134,7 +134,7 @@ export class PersonalComponent implements OnInit {
       }
     }
 
-    const dialogRef = this.dialog.open(CourseDialogComponent, dialogConfig)
+    this.dialog.open(CourseDialogComponent, dialogConfig)
       .afterClosed().pipe(filter(res => res !== undefined)).subscribe((course: Course) => {
         if (dialogConfig.data.courseExists) { // COURSE EDIT
           if (course == null) {
@@ -161,7 +161,6 @@ export class PersonalComponent implements OnInit {
             this.mySnackBar.openSnackBar('New course created successfully', MessageType.SUCCESS, 3);
             this.myCourses.push(course);
             this.myCourses.sort((a, b) => Course.sortData(a, b));
-            this.router.navigate(['courses/' + course.name + '/info']);
           }
         }
       });
