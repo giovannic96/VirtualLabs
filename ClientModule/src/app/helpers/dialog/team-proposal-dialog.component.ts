@@ -12,7 +12,7 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import {Student} from '../../models/student.model';
 import {state, style, transition, trigger, useAnimation} from '@angular/animations';
 import { shake } from 'ngx-animate';
-import {map} from "rxjs/operators";
+import {TeamService} from '../../services/team.service';
 
 @Component({
   selector: 'app-team-proposal-dialog',
@@ -26,27 +26,30 @@ import {map} from "rxjs/operators";
   ],
 })
 export class TeamProposalDialogComponent implements OnInit {
-
   form: FormGroup;
   onAddErrAnim = false;
+  loading: boolean;
 
   teamName: string;
   students: Student[];
   myId: string;
   minTeamSize: number;
   maxTeamSize: number;
+  courseName: string;
 
   initial: Student[] = [];
   proposed: Student[] = [];
 
-  constructor(private fb: FormBuilder,
+  constructor(private teamService: TeamService,
+              private fb: FormBuilder,
               private dialogRef: MatDialogRef<TeamProposalDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data) {
     this.teamName = data.teamName;
     this.students = data.students;
     this.myId = data.myId;
-    this.minTeamSize = data.minTeamSize;
-    this.maxTeamSize = data.maxTeamSize;
+    this.minTeamSize = data.course.minTeamSize;
+    this.maxTeamSize = data.course.maxTeamSize;
+    this.courseName = data.course.name;
   }
 
   ngOnInit() {
@@ -93,11 +96,27 @@ export class TeamProposalDialogComponent implements OnInit {
     if (!this.checkForm())
       return;
 
-    const data = {
-      teamName: this.form.value.teamName,
-      students: proposedStudents
-    };
-    this.dialogRef.close(data);
+    this.loading = true;
+    this.teamService.proposeTeam(this.form.value.teamName, this.courseName, proposedStudents.map(s => s.id))
+      .subscribe(tpId => {
+        const data = {
+          response: 'success',
+          tpId,
+          students: proposedStudents
+        };
+        this.dialogRef.close(data);
+      }, err => {
+        let message;
+        if (err.status === 503)
+          message = 'Error while sending the email. Student may not have received the email correctly';
+        else
+          message = 'Team proposal failed';
+        const data = {
+          response: 'error',
+          message
+        };
+        this.dialogRef.close(data);
+      });
   }
 
   close() {

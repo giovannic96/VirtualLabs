@@ -1,71 +1,81 @@
-<div class="dialog-container">
-  <h2 mat-dialog-title>New Proposal</h2>
-  <div>
-    <form [formGroup]="form">
-      <mat-form-field>
-        <mat-label>Team name</mat-label>
-        <input matInput name="teamName" formControlName="teamName" [maxLength]="255">
-        <mat-error>The name of the team is <b>required</b></mat-error>
-      </mat-form-field>
-    </form>
-    <div class="drag-drop-container">
-      <h4>Available</h4>
-      <div
-        cdkDropList
-        #initialList="cdkDropList"
-        [cdkDropListData]="initial"
-        [cdkDropListConnectedTo]="[proposedList]"
-        class="student-list"
-        (cdkDropListDropped)="drop($event)">
-        <div class="drag-drop-box" *ngFor="let student of initial" cdkDrag [cdkDragDisabled]="student.id === myId">
-          <div class="custom-placeholder" *cdkDragPlaceholder></div>
-          <mat-card class="student-card">
-            <mat-card-header>
-              <img [src]="student.photo" mat-card-avatar>
-              <mat-card-title>{{student.name}} {{student.surname}}</mat-card-title>
-              <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
-            </mat-card-header>
-          </mat-card>
-        </div>
-      </div>
-    </div>
-    <div class="drag-drop-container proposed-container">
-      <h4>Proposed</h4>
-      <div
-        cdkDropList
-        #proposedList="cdkDropList"
-        [cdkDropListData]="proposed"
-        [cdkDropListConnectedTo]="[initialList]"
-        class="student-list"
-        cdkDropListSortingDisabled
-        (cdkDropListDropped)="drop($event)">
-        <div class="drag-drop-box" *ngFor="let student of proposed" cdkDrag [cdkDragDisabled]="student.id === myId">
-          <div class="custom-placeholder" *cdkDragPlaceholder></div>
-          <mat-card class="student-card">
+<ng-template [ngIf]="!loading" [ngIfElse]="loadingBlock">
+  <div class="dialog-container">
+    <h2 mat-dialog-title>New Proposal</h2>
+    <div>
+      <form [formGroup]="form">
+        <mat-form-field>
+          <mat-label>Team name</mat-label>
+          <input matInput name="teamName" formControlName="teamName" [maxLength]="255">
+          <mat-error>The name of the team is <b>required</b></mat-error>
+        </mat-form-field>
+      </form>
+      <div class="drag-drop-container">
+        <h4>Available</h4>
+        <div
+          cdkDropList
+          #initialList="cdkDropList"
+          [cdkDropListData]="initial"
+          [cdkDropListConnectedTo]="[proposedList]"
+          class="student-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="drag-drop-box" *ngFor="let student of initial" cdkDrag [cdkDragDisabled]="student.id === myId">
+            <div class="custom-placeholder" *cdkDragPlaceholder></div>
+            <mat-card class="student-card">
               <mat-card-header>
-              <img [src]="student.photo" mat-card-avatar>
-              <mat-card-title>{{student.name}} {{student.surname}} {{student.id === myId ? ' (you)' : ''}}</mat-card-title>
-              <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
-            </mat-card-header>
-          </mat-card>
-        </div>
-        <div class="drag-drop-box empty-proposed-box" *ngIf="isOnlyMe()">
-          <mat-card style="text-align: center" class="student-card">
-            <mat-card-header>
-              <mat-card-subtitle>Drag student here</mat-card-subtitle>
-            </mat-card-header>
-          </mat-card>
+                <img [src]="student.photo" mat-card-avatar>
+                <mat-card-title>{{student.name}} {{student.surname}}</mat-card-title>
+                <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </div>
         </div>
       </div>
-    </div>
-    <div [@error]="onAddErrAnim" class="warning-message">
-      <span>Warning: The team must consist of {{minTeamSize}} to {{maxTeamSize}} people</span>
-    </div>
-    <div class="buttons-container">
-      <mat-dialog-actions>
-        <button class="mat-raised-button" (click)="close()">CLOSE</button>
-        <button class="mat-raised-button mat-primary" (click)="confirm(proposed)">CONFIRM</button>
-      </mat-dialog-actions>
+      <div class="drag-drop-container proposed-container">
+        <h4>Proposed</h4>
+        <div
+          cdkDropList
+          #proposedList="cdkDropList"
+          [cdkDropListData]="proposed"
+          [cdkDropListConnectedTo]="[initialList]"
+          class="student-list"
+          cdkDropListSortingDisabled
+          (cdkDropListDropped)="drop($event)">
+          <div class="drag-drop-box" *ngFor="let student of proposed" cdkDrag [cdkDragDisabled]="student.id === myId">
+            <div class="custom-placeholder" *cdkDragPlaceholder></div>
+            <mat-card class="student-card">
+              <mat-card-header>
+                <img [src]="student.photo" mat-card-avatar>
+                <mat-card-title>{{student.name}} {{student.surname}} {{student.id === myId ? ' (you)' : ''}}</mat-card-title>
+                <mat-card-subtitle>Matricola: {{student.id}}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </div>
+          <div class="drag-drop-box empty-proposed-box" *ngIf="isOnlyMe()">
+            <mat-card style="text-align: center" class="student-card">
+              <mat-card-header>
+                <mat-card-subtitle>Drag student here</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+      <div [@error]="onAddErrAnim" class="warning-message">
+        <span>Warning: The team must consist of {{minTeamSize}} to {{maxTeamSize}} people</span>
+      </div>
+      <div class="buttons-container">
+        <mat-dialog-actions>
+          <button class="mat-raised-button" (click)="close()">CLOSE</button>
+          <button class="mat-raised-button mat-primary" (click)="confirm(proposed)">CONFIRM</button>
+        </mat-dialog-actions>
+      </div>
     </div>
   </div>
-</div>
+</ng-template>
+
+<ng-template #loadingBlock>
+  <div class="loader-image-container">
+    <ng-container>
+      <img src="/assets/icons/vm_loader.gif">
+    </ng-container>
+  </div>
+</ng-template>

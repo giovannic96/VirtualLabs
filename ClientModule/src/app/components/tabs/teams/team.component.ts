@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CourseService} from '../../../services/course.service';
 import {Course} from '../../../models/course.model';
-import {catchError, concatMap, filter, map, mergeMap, tap} from 'rxjs/operators';
-import {EMPTY, forkJoin, Observable} from 'rxjs';
+import {concatMap, filter, map, mergeMap, tap} from 'rxjs/operators';
+import {forkJoin, Observable} from 'rxjs';
 import {Team} from '../../../models/team.model';
 import {Vm} from '../../../models/vm.model';
 import {Student} from '../../../models/student.model';
@@ -87,7 +87,7 @@ export class TeamComponent implements OnInit {
           if (proposal.status === TeamProposalStatus.PENDING) {
             proposal.members.forEach(member => {
               const resp = this.studentService.checkProposalResponse(member.id, proposal.id).pipe(
-                map(response => response ? 'ACCEPTED' : 'PENDING'));
+                map(response => response ? 'has accepted!' : 'is still thinking...'));
               this.proposalResponses.set([member.id, proposal.id].toString(), resp);
             });
           }
@@ -170,36 +170,30 @@ export class TeamComponent implements OnInit {
 
     const data = {
       teamName: '',
+      course,
       students: notTeamedUpStudents,
-      myId,
-      minTeamSize: course.minTeamSize,
-      maxTeamSize: course.maxTeamSize,
+      myId
     };
     const dialogRef = this.dialog.open(TeamProposalDialogComponent, {disableClose: true, data});
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
     if (!!dialogResponse) {
-      const studentIds = dialogResponse.students.map(s => s.id);
-      this.teamService.proposeTeam(dialogResponse.teamName, course.name, studentIds)
-        .pipe(
-        catchError(err => {
-          if (err.status === 503)
-            this.mySnackBar.openSnackBar('Error while sending the email. Student may not have received the email correctly', MessageType.ERROR, 3);
-          else
-            this.mySnackBar.openSnackBar('Team proposal failed', MessageType.ERROR, 3);
-          return EMPTY;
-        }),
-        concatMap(tpId => this.teamService.getTeamProposal(tpId))
-        )
-        .subscribe(teamProposal => {
-          teamProposal.creator = dialogResponse.students.find(s => s.id === teamProposal.creatorId);
-          teamProposal.members = dialogResponse.students;
-          teamProposal.expiryDate = this.utility.localDateTimeToString(teamProposal.expiryDate);
-          this.pendingProposals.push(teamProposal);
-          this.myPendingProposals.push(teamProposal);
-          this.hasAcceptedAProposal = false;
-          this.mySnackBar.openSnackBar('Team proposed successfully', MessageType.SUCCESS, 3);
-        });
+      if (dialogResponse.response === 'success') {
+        this.teamService.getTeamProposal(dialogResponse.tpId)
+          .subscribe(teamProposal => {
+            console.log('sono nella subscribe');
+            teamProposal.creator = dialogResponse.students.find(s => s.id === teamProposal.creatorId);
+            teamProposal.members = dialogResponse.students;
+            teamProposal.expiryDate = this.utility.localDateTimeToString(teamProposal.expiryDate);
+            this.pendingProposals.push(teamProposal);
+            this.myPendingProposals.push(teamProposal);
+            this.hasAcceptedAProposal = false;
+            this.mySnackBar.openSnackBar('Team proposed successfully', MessageType.SUCCESS, 3);
+          }
+        );
+      } else {
+        this.mySnackBar.openSnackBar(dialogResponse.message, MessageType.ERROR, 5);
+      }
     }
   }
 

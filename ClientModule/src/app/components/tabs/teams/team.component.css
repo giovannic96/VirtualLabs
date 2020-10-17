@@ -194,9 +194,10 @@ mat-card {
  }
 
 .individual-proposal-status {
-  align-self: center;
-  margin-left: 2em;
-  font-size: large;
+  font-size: larger;
+  font-style: italic;
+  color: palevioletred;
+  font-weight: 400;
 }
 
 .no-vms-card {

@@ -47,7 +47,6 @@ public class NotificationServiceImpl implements NotificationService {
     AuthService authService;
 
     @Override
-    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public void sendMessage(String address, String subject, String body) throws MailException, MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "utf-8");
