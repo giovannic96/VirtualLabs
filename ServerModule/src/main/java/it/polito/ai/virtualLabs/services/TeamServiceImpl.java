@@ -35,6 +35,7 @@ public class TeamServiceImpl implements TeamService {
     private static final int MIN_SIZE_FOR_GROUP = 2;
     private static final int MAX_SIZE_FOR_GROUP = 10;
     private static final int TEAM_PROPOSAL_EXPIRY_DAYS = 30;
+    private static final String RESOURCES_PATH = "/home/files/course_info/";
 
     @Autowired
     AssignmentRepository assignmentRepository;
@@ -76,7 +77,7 @@ public class TeamServiceImpl implements TeamService {
             return false;
 
         try {
-            File newCourseInfo = new File(getResourcesPath() + course.getName() + ".txt");
+            File newCourseInfo = new File(RESOURCES_PATH + course.getName() + ".txt");
             FileOutputStream stream = new FileOutputStream(newCourseInfo);
             stream.write(course.getInfo().getBytes());
             stream.close();
@@ -244,7 +245,7 @@ public class TeamServiceImpl implements TeamService {
             ModelHelper.enrich(c);
             String courseInfo = "";
             try {
-                courseInfo = new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource("static/" + c.getName() + ".txt").toURI())));
+                courseInfo = new String(Files.readAllBytes(Paths.get(RESOURCES_PATH + c.getName() + ".txt")));
             } catch (Exception ex) {
                 courseInfo = "";
             }
@@ -767,7 +768,7 @@ public class TeamServiceImpl implements TeamService {
         course.setMinTeamSize(courseDTO.getMinTeamSize());
 
         try {
-            File infoToEdit = new File(getResourcesPath() + courseDTO.getName() + ".txt");
+            File infoToEdit = new File(RESOURCES_PATH + courseDTO.getName() + ".txt");
             FileOutputStream stream = new FileOutputStream(infoToEdit);
             stream.write(courseDTO.getInfo().getBytes());
             stream.close();
@@ -797,7 +798,7 @@ public class TeamServiceImpl implements TeamService {
         courseRepository.flush();
 
         try {
-            File infoToDelete = new File(getResourcesPath() + c.getName() + ".txt");
+            File infoToDelete = new File(RESOURCES_PATH + c.getName() + ".txt");
             Files.deleteIfExists(infoToDelete.toPath());
         } catch(IOException ex) {
             System.err.println(ex.getMessage());
@@ -843,10 +844,5 @@ public class TeamServiceImpl implements TeamService {
                         prop.getStudents().stream().map(User::getId).collect(Collectors.toList()).contains(studentId))
                 .map(TeamProposal::getId)
                 .collect(Collectors.toList());
-    }
-
-    private String getResourcesPath() {
-        return "src/main/resources/static/"; // FOR LOCALHOST
-        //return getClass().getClassLoader().getResource("static/").getPath();
     }
 }

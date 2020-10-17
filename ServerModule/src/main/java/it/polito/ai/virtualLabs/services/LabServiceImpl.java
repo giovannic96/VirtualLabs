@@ -30,12 +30,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class LabServiceImpl implements LabService {
 
-    //TODO: remember to set the correct path based on where the server is (Docker, Raspi, ...)
-    //private static final String VERSION_CONTENT_PATH = "home/pi/Desktop/VirtualLabs/images/lab/versions/";
-    private static final String VERSION_CONTENT_PATH = "C:/Users/dario/Desktop/";
+    private static final String VERSION_CONTENT_PATH = "home/files/images/lab/versions/";
     private static final String VERSION_CONTENT_FORMAT = "png";
-    //private static final String REVIEW_IMAGE_PATH = "home/pi/Desktop/VirtualLabs/images/lab/reviews/";
-    private static final String REVIEW_IMAGE_PATH = "C:/Users/dario/Desktop/";
+    private static final String REVIEW_IMAGE_PATH = "home/files/images/lab/reviews/";
     private static final String REVIEW_IMAGE_FORMAT = "png";
 
     @Autowired

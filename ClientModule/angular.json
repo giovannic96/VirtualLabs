@@ -68,7 +68,7 @@
             "proxyConfig": "src/proxy.conf.json",
             "sslKey": "certificates/localhost.key",
             "sslCert": "certificates/localhost.crt",
-            "ssl": false // TODO: change to true when nginx works again
+            "ssl": true
           },
           "configurations": {
             "production": {
