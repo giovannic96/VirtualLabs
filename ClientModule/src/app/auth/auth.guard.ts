@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {AuthService} from '../services/auth.service';
 import {HomeComponent} from '../components/main/home/home.component';
 import {StudentsComponent} from '../components/tabs/students/students.component';
+import {PageNotFoundComponent} from '../components/main/page_not_found/page-not-found.component';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       }
     }
 
-    if (!isLogged && route.component !== HomeComponent){
+    if (!isLogged && route.component !== HomeComponent && route.component !== PageNotFoundComponent){
       this.authService.redirectUrl = url;
       this.router.navigate(['home'], {queryParams: {doLogin: true}});
       return false;
