@@ -1,0 +1,29 @@
+.main-container {
+  display: flex;
+}
+
+.text-container {
+  width: 55vw;
+  padding: 5em 2em 0 3em;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 4em;
+  font-weight: 600;
+}
+
+h2 {
+  font-weight: 600;
+}
+
+.image-container {
+  width: 45vw;
+  padding: 1em 5em 0 2em;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  max-width: 600px;
+}

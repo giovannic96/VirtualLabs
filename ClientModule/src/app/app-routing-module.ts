@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import {HomeComponent} from './components/main/home/home.component';
-import {PageNotFoundComponent} from './components/main/pagenotfound.component';
+import {PageNotFoundComponent} from './components/main/page_not_found/page-not-found.component';
 import {VmComponent} from './components/tabs/vms/vm.component';
 import {StudentsComponent} from './components/tabs/students/students.component';
 import {TeamComponent} from './components/tabs/teams/team.component';
