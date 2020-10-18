@@ -9,7 +9,8 @@ public interface VmService {
     Optional<VmDTO> getVm(Long vmId);
     Optional<VmModelDTO> getVmModel(Long vmModelId);
     Optional<VmModelDTO> getVmModelForVm(Long vmId);
-    Optional<StudentDTO> getOwner(Long vmId);
+    Optional<StudentDTO> getCreator(Long vmId);
+    List<StudentDTO> getOwners(Long vmId);
     Optional<TeamDTO> getTeam(Long vmId);
     List<VmModelDTO> getAllVmModels();
     List<VmDTO> getAllVms();
@@ -23,7 +24,7 @@ public interface VmService {
     List<VmModelDTO> getProfessorVmModels(String professorId);
     List<AssignmentDTO> getProfessorAssignments(String professorId);
 
-    Long createVm(VmDTO vmDTO, String studentId, Long teamId);
+    Long createVm(VmDTO vmDTO, String studentId, Long teamId, boolean allOwners);
     void removeVm(Long vmId);
     boolean editVmResources(Long vmId, int vCPU, int ram, int disk);
     boolean powerOnVm(Long vmId);

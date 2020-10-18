@@ -75,9 +75,9 @@ export class TeamService {
       );
   }
 
-  createVm(teamId: number, vm: any) {
+  createVm(teamId: number, vm: any, allOwners: string) {
     return this.httpClient
-      .post<Vm>(`${this.API_PATH}/${teamId}/createVm`, vm)
+      .post<Vm>(`${this.API_PATH}/${teamId}/createVm`, vm, {params: {allOwners}})
       .pipe(
         retry(3),
         catchError( err => {

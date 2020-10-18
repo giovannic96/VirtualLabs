@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface VmRepository extends JpaRepository<Vm, Long> {
 
-    Optional<Vm> findVmByTeamIdAndOwnerIdAndVmModelId(Long teamId, String studentId, Long vmModelId);
+    Optional<Vm> findVmByTeamIdAndCreatorIdAndVmModelId(Long teamId, String studentId, Long vmModelId);
     List<Vm> findAllByVmModelId(Long vmModelId);
 }

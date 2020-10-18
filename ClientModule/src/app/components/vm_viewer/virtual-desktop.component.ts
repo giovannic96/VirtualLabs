@@ -27,7 +27,7 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
   public vmParams: any;
   public currentVm: Vm;
   public vmNotValid: boolean;
-  private vmOwner: Student;
+  private vmCreator: Student;
   private vmTeam: Team;
   private vmModel: VmModel;
   private vmCourse: Course;
@@ -85,7 +85,7 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
     const requests: Observable<any>[] = [];
     const vmId = this.vmParams.vmId;
     requests.push(
-      this.vmService.getVmOwner(vmId),
+      this.vmService.getVmCreator(vmId),
       this.vmService.getVmTeam(vmId),
       this.vmService.getVmModelByVmId(vmId));
 
@@ -96,7 +96,7 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
         return EMPTY;
       }),
       concatMap(responses => {
-        this.vmOwner = responses[0];
+        this.vmCreator = responses[0];
         this.vmTeam = responses[1];
         this.vmModel = responses[2];
         return this.vmService.getVmById(vmId);
@@ -119,7 +119,7 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
           else if (!this.currentVm.active) {
             alert('You cannot access this virtual machine now.\n' +
               'Maybe it\'s turned off.\n' +
-              'Check on your personal page or ask the owner to power it on.');
+              'Check on your personal page or ask an owner to power it on.');
             this.router.navigate(['courses']);
           }
         });
@@ -166,7 +166,7 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
     const data: any = {
       vm: this.currentVm,
       vmModel: this.vmModel,
-      vmOwner: this.vmOwner,
+      vmCreator: this.vmCreator,
       vmTeam: this.vmTeam,
       vmCourse: this.vmCourse};
 

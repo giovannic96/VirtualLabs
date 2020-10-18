@@ -7,7 +7,24 @@ export class Vm {
   private _ram: number;
   private _disk: number;
   private _content: string;
-  private _owner: Student;
+  private _creator: Student;
+  private _owners: Student[];
+
+  get creator(): Student {
+    return this._creator;
+  }
+
+  set creator(value: Student) {
+    this._creator = value;
+  }
+
+  get owners(): Student[] {
+    return this._owners;
+  }
+
+  set owners(value: Student[]) {
+    this._owners = value;
+  }
 
   get id(): number {
     return this._id;
@@ -55,14 +72,6 @@ export class Vm {
 
   set content(value: string) {
     this._content = value;
-  }
-
-  get owner(): Student {
-    return this._owner;
-  }
-
-  set owner(value: Student) {
-    this._owner = value;
   }
 
   getDTO() {

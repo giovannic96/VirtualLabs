@@ -84,14 +84,26 @@ export class VmService {
       );
   }
 
-  getVmOwner(vmId: number) {
+  getVmCreator(vmId: number) {
     return this.httpClient
-      .get<Student>(`${this.API_PATH}/${vmId}/owner`)
+      .get<Student>(`${this.API_PATH}/${vmId}/creator`)
       .pipe(
         retry(3),
         catchError( err => {
           console.error(err);
-          return throwError(`getVmOwner error: ${err.message}`);
+          return throwError(`getVmCreator error: ${err.message}`);
+        })
+      );
+  }
+
+  getVmOwners(vmId: number) {
+    return this.httpClient
+      .get<Student[]>(`${this.API_PATH}/${vmId}/owners`)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`getVmOwners error: ${err.message}`);
         })
       );
   }

@@ -65,7 +65,8 @@ public class ModelHelper {
     public static VmDTO enrich(VmDTO vmDTO) {
 
         Link selfLink = linkTo(methodOn(VmController.class).getOne(vmDTO.getId())).withSelfRel();
-        Link student = linkTo(methodOn(VmController.class).owner(vmDTO.getId())).withRel("owner");
+        Link creator = linkTo(methodOn(VmController.class).creator(vmDTO.getId())).withRel("creator");
+        Link owners = linkTo(methodOn(VmController.class).owners(vmDTO.getId())).withRel("owners");
         Link team = linkTo(methodOn(VmController.class).team(vmDTO.getId())).withRel("team");
         Link vmModel = linkTo(methodOn(VmController.class).vmModelByVmId(vmDTO.getId())).withRel("vmModel");
 
@@ -73,7 +74,8 @@ public class ModelHelper {
 
         vmDTO.add(
                 selfLink,
-                student,
+                creator,
+                owners,
                 team,
                 vmModel
         );

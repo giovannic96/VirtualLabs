@@ -75,8 +75,8 @@
               <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
             </mat-card-footer>
           </mat-card-content>
-          <div class="vm-owner-container">
-            <span>Created by: {{vm.owner?.name}} {{vm.owner?.surname}}</span>
+          <div class="vm-creator-container">
+            <span>Created by: {{vm.creator?.name}} {{vm.creator?.surname}}</span>
           </div>
         </mat-card>
       </div>
@@ -93,8 +93,8 @@
           <mat-card-header>
             <mat-card-title>Vm#{{i+1}}</mat-card-title>
             <div class="vm-settings-led-container">
-              <div class="vm-settings-container" *ngIf="isOwner(vm.owner?.id)">
-                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu">
+              <div class="vm-settings-container" *ngIf="isOwner(vm.owners)">
+                <button class="vm-settings-btn" mat-icon-button [matMenuTriggerFor]="menu" [disabled]="vm.active">
                   <mat-icon class="vm-settings-icon">settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -115,12 +115,12 @@
           <mat-card-content>
             <mat-card-subtitle>CPU cores: {{vm.vcpu}} | RAM: {{vm.ram}}GB | Disk: {{utility.calcDiskLabel(vm.disk)}}</mat-card-subtitle>
             <mat-card-footer>
-              <button mat-flat-button color="accent" [disabled]="!isOwner(vm.owner?.id)" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
+              <button mat-flat-button color="accent" [disabled]="!isOwner(vm.owners)" (click)="toggleVmPower(vm)">{{vm.active ? 'POWER OFF' : 'POWER ON'}}</button>
               <button mat-flat-button color="primary" [disabled]="!vm.active" (click)="openVm(vm)">ENTER</button>
             </mat-card-footer>
           </mat-card-content>
-          <div class="vm-owner-container">
-            <span>Created by: {{vm.owner?.name}} {{vm.owner?.surname}}</span>
+          <div class="vm-creator-container">
+            <span>Created by: {{vm.creator?.name}} {{vm.creator?.surname}}</span>
           </div>
         </mat-card>
       </div>

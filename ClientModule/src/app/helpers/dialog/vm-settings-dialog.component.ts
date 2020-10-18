@@ -36,7 +36,8 @@ export class VmSettingsDialogComponent implements OnInit {
     this.vmFormGroup = this.formBuilder.group({
       vcpu: [0, Validators.min(1)],
       ram: [0, Validators.min(1)],
-      disk: [0, Validators.min(1)]
+      disk: [0, Validators.min(1)],
+      allOwners: false
     });
 
     this.vmModel = this.data.vmModel;
@@ -70,6 +71,7 @@ export class VmSettingsDialogComponent implements OnInit {
     vm.vcpu = this.vmFormGroup.get('vcpu').value;
     vm.ram = this.vmFormGroup.get('ram').value;
     vm.disk = this.vmFormGroup.get('disk').value;
+    const allOwners = this.vmFormGroup.get('allOwners').value;
 
     if (this.data.vmExists) {
       this.vmService.editVm(this.data.vm.id, vm.getDTO()).subscribe(() => {
@@ -84,7 +86,7 @@ export class VmSettingsDialogComponent implements OnInit {
         this.mySnackBar.openSnackBar('Vm edit failed', MessageType.ERROR, 5)
       );
     } else {
-      this.teamService.createVm(this.data.teamId, vm.getDTO()).subscribe(newVm => {
+      this.teamService.createVm(this.data.teamId, vm.getDTO(), allOwners.toString()).subscribe(newVm => {
           this.mySnackBar.openSnackBar('Vm created successfully', MessageType.SUCCESS, 3);
           this.dialogRef.close(newVm);
         }, () =>

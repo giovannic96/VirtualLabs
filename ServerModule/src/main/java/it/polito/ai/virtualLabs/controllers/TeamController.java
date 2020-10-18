@@ -114,6 +114,7 @@ public class TeamController {
     @ResponseStatus(HttpStatus.CREATED)
     public VmDTO createVm(@PathVariable Long teamId,
                           @RequestBody VmDTO vmDTO,
+                          @RequestParam boolean allOwners,
                           @AuthenticationPrincipal UserDetails userDetails) {
         Optional<TeamDTO> teamDTO = teamService.getTeam(teamId);
         if(!teamDTO.isPresent())
@@ -124,7 +125,7 @@ public class TeamController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The student with email: '" + userDetails.getUsername() + "' was not found");
 
         String studentId = student.get().getId();
-        Long generatedId = vmService.createVm(vmDTO, studentId, teamId);
+        Long generatedId = vmService.createVm(vmDTO, studentId, teamId, allOwners);
         if(generatedId == 0)
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot create vm: current resources are not enough");
 

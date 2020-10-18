@@ -67,7 +67,8 @@ API
 *Vms*
 * GET	https://ip_address:port/api/vms/:vmId
 * GET	https://ip_address:port/api/vms/:vmId/team
-* GET	https://ip_address:port/api/vms/:vmId/owner
+* GET	https://ip_address:port/api/vms/:vmId/creator
+* GET	https://ip_address:port/api/vms/:vmId/owners
 * GET	https://ip_address:port/api/vms/vmModels
 * GET	https://ip_address:port/api/vms/vmModels/osMap                   //TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId

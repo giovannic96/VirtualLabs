@@ -65,9 +65,13 @@ export class VmComponent implements OnInit, OnDestroy {
           tap(team => {
             this.teamService.getTeamVms(team.id).subscribe(vms => {
               team.vms = vms;
-              const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+              const creatorRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmCreator(vm.id));
+              const ownerRequests: Observable<Student[]>[] = vms.map(vm => this.vmService.getVmOwners(vm.id));
               forkJoin(ownerRequests).subscribe(owners => {
-                team.vms.forEach((vm, index) => team.vms[index].owner = owners[index]);
+                team.vms.forEach((vm, index) => team.vms[index].owners = owners[index]);
+              });
+              forkJoin(creatorRequests).subscribe(creators => {
+                team.vms.forEach((vm, index) => team.vms[index].creator = creators[index]);
               });
             });
           })).subscribe());
@@ -99,10 +103,14 @@ export class VmComponent implements OnInit, OnDestroy {
             this.myTeam.vms = vms;
             if (this.vmModel)
               this.setVmCreatable();
-            const ownerRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmOwner(vm.id));
+            const creatorRequests: Observable<Student>[] = vms.map(vm => this.vmService.getVmCreator(vm.id));
+            const ownerRequests: Observable<Student[]>[] = vms.map(vm => this.vmService.getVmOwners(vm.id));
+            forkJoin(creatorRequests).subscribe(creators => {
+              this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].creator = creators[index]);
+            });
             return forkJoin(ownerRequests);
           })).subscribe(owners => {
-          this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owner = owners[index]);
+          this.myTeam.vms.forEach((vm, index) => this.myTeam.vms[index].owners = owners[index]);
         }));
     }
 
@@ -215,7 +223,7 @@ export class VmComponent implements OnInit, OnDestroy {
       vmId: vm.id,
       vmModelId: this.vmModel.id,
       teamId: this.myTeam?.id,
-      ownerId: this.myTeam?.vms.find(v => v.id === vm.id).owner.id
+      creatorId: this.myTeam?.vms.find(v => v.id === vm.id).creator.id
     };
     this.vmService.encodeAndNavigate(params);
   }
@@ -260,10 +268,10 @@ export class VmComponent implements OnInit, OnDestroy {
       filter(res => res),
       concatMap((vmResponse: Vm) => {
         vmReceived = vmResponse;
-        return this.vmService.getVmOwner(vmReceived.id);
+        return this.vmService.getVmCreator(vmReceived.id);
       })
-    ).subscribe( owner => {
-      vmReceived.owner = owner;
+    ).subscribe( creator => {
+      vmReceived.creator = creator;
       if (data.vmExists) {
         vm = vmReceived;
       } else {
@@ -273,7 +281,7 @@ export class VmComponent implements OnInit, OnDestroy {
     });
   }
 
-  isOwner(ownerId: string) {
-    return ownerId === this.authService.getMyId();
+  isOwner(owners: Student[]) {
+    return owners?.map(o => o.id).includes(this.authService.getMyId());
   }
 }

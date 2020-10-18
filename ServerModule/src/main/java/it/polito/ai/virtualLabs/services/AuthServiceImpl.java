@@ -300,7 +300,8 @@ public class AuthServiceImpl implements AuthService {
                 Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
                 user.ifPresent(s -> {
                     Student student = (Student)s;
-                    if((mustBeOwner && !student.getId().equals(vm.getOwner().getId())) || (!mustBeOwner && !student.getTeams().contains(vm.getTeam())))
+                    if((mustBeOwner && !vm.getOwners().stream().map(Student::getId).collect(Collectors.toList()).contains(student.getId())) ||
+                            (!mustBeOwner && !student.getTeams().contains(vm.getTeam())))
                         throw new StudentPrivacyException("This student does not have permission to view the information relating to the vm with id " + vmId);
                 });
             } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {

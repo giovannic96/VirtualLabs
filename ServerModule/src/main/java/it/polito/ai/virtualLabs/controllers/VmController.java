@@ -5,14 +5,12 @@ import it.polito.ai.virtualLabs.entities.VmModel;
 import it.polito.ai.virtualLabs.services.VmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,13 +37,25 @@ public class VmController {
         return ModelHelper.enrich(team.get());
     }
 
-    @GetMapping("/{vmId}/owner")
-    public StudentDTO owner(@PathVariable Long vmId) {
+    @GetMapping("/{vmId}/creator")
+    public StudentDTO creator(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
-        Optional<StudentDTO> owner = vmService.getOwner(vmId);
-        if(!vm.isPresent() || !owner.isPresent())
+        Optional<StudentDTO> creator = vmService.getCreator(vmId);
+        if(!vm.isPresent() || !creator.isPresent())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
-        return ModelHelper.enrich(owner.get());
+        return ModelHelper.enrich(creator.get());
+    }
+
+    @GetMapping("/{vmId}/owners")
+    public List<StudentDTO> owners(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+        List<StudentDTO> owners = vmService.getOwners(vmId);
+        if(!vm.isPresent() || owners.size() == 0)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+        return owners
+                .stream()
+                .map(ModelHelper::enrich)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{vmId}/vmModel")

@@ -3,6 +3,8 @@ package it.polito.ai.virtualLabs.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,8 +20,12 @@ public class Vm {
     private int disk;
 
     @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private Student creator;
+
+    @ManyToMany
     @JoinColumn(name = "student_id")
-    private Student owner;
+    private List<Student> owners = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "team_id")
@@ -47,11 +53,16 @@ public class Vm {
         vmModel = v;
     }
 
-    public void setOwner(Student s) {
-        if(owner != null)
-            owner.getVms().remove(this);
+    public void setCreator(Student s) {
+        if(creator != null)
+            creator.getVms().remove(this);
         if(s != null)
             s.getVms().add(this);
-        owner = s;
+        creator = s;
+    }
+
+    public void addOwner(Student s) {
+        owners.add(s);
+        s.getVms().add(this);
     }
 }

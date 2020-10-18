@@ -71,14 +71,25 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public Optional<StudentDTO> getOwner(Long vmId) {
+    public Optional<StudentDTO> getCreator(Long vmId) {
         if (!vmRepository.existsById(vmId))
             return Optional.empty();
 
+        return Optional.of(vmRepository.getOne(vmId).getCreator())
+                .map(student -> modelMapper.map(student, StudentDTO.class));
+    }
+
+    @Override
+    public List<StudentDTO> getOwners(Long vmId) {
+        if (!vmRepository.existsById(vmId))
+            throw new VmNotFoundException("The vm with id " + vmId + " does not exist");
+
         authService.checkAuthorizationForVm(vmId);
 
-        return Optional.of(vmRepository.getOne(vmId).getOwner())
-                .map(owner -> modelMapper.map(owner, StudentDTO.class));
+        return vmRepository.getOne(vmId).getOwners()
+                .stream()
+                .map(owner -> modelMapper.map(owner, StudentDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -222,7 +233,7 @@ public class VmServiceImpl implements VmService {
 
     @Override
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public Long createVm(VmDTO vmDTO, String studentId, Long teamId) {
+    public Long createVm(VmDTO vmDTO, String studentId, Long teamId, boolean allOwners) {
         if(!teamRepository.existsById(teamId))
             throw new TeamNotFoundException("The team with id " + teamId + " does not exist");
         if(!userRepository.studentExistsById(studentId))
@@ -245,7 +256,12 @@ public class VmServiceImpl implements VmService {
 
         //create VM
         Vm vm = modelMapper.map(vmDTO, Vm.class);
-        vm.setOwner(userRepository.getStudentById(studentId));
+        Student creator = userRepository.getStudentById(studentId);
+        vm.setCreator(creator);
+        if (allOwners)
+            team.getStudents().forEach(vm::addOwner);
+        else
+            vm.addOwner(creator);
         vm.setTeam(team);
         vm.setVmModel(vmModel);
 
