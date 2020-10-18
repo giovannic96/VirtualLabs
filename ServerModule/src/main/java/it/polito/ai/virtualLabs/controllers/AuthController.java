@@ -32,7 +32,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private static final String CONFIRMATION_PATH = "https://localhost:4200/registration_confirm";
+    private static final String CONFIRMATION_PATH = "https://virtuallabs.ns0.it/registration_confirm";
 
     @Autowired
     AuthenticationManager authenticationManager;
