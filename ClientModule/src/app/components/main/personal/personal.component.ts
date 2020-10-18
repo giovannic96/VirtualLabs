@@ -54,10 +54,6 @@ export class PersonalComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.selectedCourseName = '';
 
-    this.courseService.getEnrolled('Applicazioni Internet').pipe().subscribe(() =>
-      console.log('course')
-    );
-
     this.authService.getUserInfo().pipe(
       concatMap(me => {
         this.currentUser = me.user;
