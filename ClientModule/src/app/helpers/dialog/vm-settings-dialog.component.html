@@ -11,6 +11,11 @@
         </mat-card-content>
         <mat-card-subtitle>{{data.osMap.get(vmModel.os)}}</mat-card-subtitle>
       </mat-card>
+      <mat-checkbox *ngIf="!data.vmExists"
+                    formControlName="allOwners"
+                    labelPosition="after">
+        Share ownership to all team members
+      </mat-checkbox>
     </div>
     <div class="vm-form-column">
       <h4>Vm resources</h4>

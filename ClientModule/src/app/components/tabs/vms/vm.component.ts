@@ -196,6 +196,8 @@ export class VmComponent implements OnInit, OnDestroy {
             const vmToDelete = this.myTeam?.vms.find(vm => vm.id === vmId);
             if (vmToDelete)
               this.myTeam?.vms.splice(this.myTeam.vms.indexOf(vmToDelete), 1);
+
+            this.setVmCreatable();
             this.mySnackBar.openSnackBar('Virtual machine deleted successfully', MessageType.SUCCESS, 3);
           },
           error => this.mySnackBar.openSnackBar('Virtual machine deletion failed', MessageType.ERROR, 3)
@@ -269,9 +271,13 @@ export class VmComponent implements OnInit, OnDestroy {
       concatMap((vmResponse: Vm) => {
         vmReceived = vmResponse;
         return this.vmService.getVmCreator(vmReceived.id);
+      }),
+      concatMap(creator => {
+        vmReceived.creator = creator;
+        return this.vmService.getVmOwners(vmReceived.id);
       })
-    ).subscribe( creator => {
-      vmReceived.creator = creator;
+    ).subscribe( owners => {
+      vmReceived.owners = owners;
       if (data.vmExists) {
         vm = vmReceived;
       } else {
