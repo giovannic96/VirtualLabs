@@ -19,7 +19,7 @@ export class AuthInterceptorService implements HttpInterceptor{
               private router: Router) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const req = this.switchRequestForRemoteServer(request, true, false);
+    const req = this.switchRequestForRemoteServer(request, true, true);
     // This method above just switch the request to the remote server
     // Set last parameter to false to disable it and to left the requests go to localhost
 

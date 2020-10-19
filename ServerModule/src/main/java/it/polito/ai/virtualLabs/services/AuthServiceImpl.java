@@ -266,7 +266,7 @@ public class AuthServiceImpl implements AuthService {
                 Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
                 user.ifPresent(p -> {
                     Professor professor = (Professor)p;
-                    if(!professor.getAssignments().contains(report.getAssignment()))
+                    if(!report.getAssignment().getCourse().getProfessors().contains(professor))
                         throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the report with id " + reportId);
                 });
             }
