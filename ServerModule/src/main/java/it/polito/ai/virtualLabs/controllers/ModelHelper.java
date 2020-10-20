@@ -170,8 +170,6 @@ public class ModelHelper {
         Link courses = linkTo(methodOn(StudentController.class).courses(studentDTO.getId())).withRel("courses");
         Link teamProposals = linkTo(methodOn(StudentController.class).teamProposals(studentDTO.getId())).withRel("teamProposals");
         Link teams = linkTo(methodOn(StudentController.class).teams(studentDTO.getId())).withRel("teams");
-        Link vms = linkTo(methodOn(StudentController.class).vms(studentDTO.getId())).withRel("vms");
-        Link reports = linkTo(methodOn(StudentController.class).reports(studentDTO.getId())).withRel("reports");
 
         studentDTO.setPhoto(USER_PHOTO_SERVER_URL + studentDTO.getPhoto() + "." + USER_PHOTO_FORMAT);
         studentDTO.setPassword("[HIDDEN]");
@@ -180,9 +178,7 @@ public class ModelHelper {
                 selfLink,
                 courses,
                 teamProposals,
-                teams,
-                vms,
-                reports
+                teams
         );
 
         return studentDTO;
