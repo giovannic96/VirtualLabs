@@ -91,18 +91,6 @@ public class LabServiceImpl implements LabService {
     }
 
     @Override
-    public List<ReportDTO> getStudentReports(String studentId) {
-        if(!userRepository.studentExistsById(studentId))
-            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
-
-        Student s = userRepository.getStudentById(studentId);
-        return s.getReports()
-                .stream()
-                .map(r -> modelMapper.map(r, ReportDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public Optional<ReportDTO> getStudentReportForAssignment(String studentUsername, Long assignmentId) {
         if(!userRepository.studentExistsByUsername(studentUsername))
