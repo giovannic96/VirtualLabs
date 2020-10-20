@@ -33,12 +33,10 @@ API
 *Students*
 * GET	https://ip_address:port/api/students
 * GET	https://ip_address:port/api/students/:studentId
-* GET	https://ip_address:port/api/students/:studentId/reports
 * GET	https://ip_address:port/api/students/:studentId/courses
 * GET	https://ip_address:port/api/students/:studentId/courses/:courseName/checkAcceptedProposals   // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/students/:studentId/courses/:courseName/team                     // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/students/:studentId/teams
-* GET	https://ip_address:port/api/students/:studentId/vms
 * GET	https://ip_address:port/api/students/:studentId/teamProposals/:teamProposalId/checkToken  // TO ADD TO POSTMAN
 
 *Labs*

@@ -19,7 +19,6 @@ public interface VmService {
     Optional<ProfessorDTO> getVmModelProfessor(Long vmModelId);
     List<VmDTO> getVmModelVms(Long vmId);
     List<VmDTO> getCourseVms(String courseName);
-    List<VmDTO> getStudentVms(String studentId);
     List<VmDTO> getTeamVms(Long teamId);
     List<VmModelDTO> getProfessorVmModels(String professorId);
     List<AssignmentDTO> getProfessorAssignments(String professorId);

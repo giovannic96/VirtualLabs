@@ -7,6 +7,7 @@ import it.polito.ai.virtualLabs.services.exceptions.course.CourseNotFoundExcepti
 import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.student.StudentNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.vm.VmIsActiveException;
 import it.polito.ai.virtualLabs.services.exceptions.vm.VmNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.vmmodel.VmModelNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -182,18 +183,6 @@ public class VmServiceImpl implements VmService {
     }
 
     @Override
-    public List<VmDTO> getStudentVms(String studentId) {
-        if(!userRepository.studentExistsById(studentId))
-            throw new StudentNotFoundException("The student with id " + studentId + " does not exist");
-
-
-        return userRepository.getStudentById(studentId).getVms()
-                .stream()
-                .map(v -> modelMapper.map(v, VmDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<VmDTO> getTeamVms(Long teamId) {
         Optional<Team> teamOpt = teamRepository.findById(teamId);
         if(!teamOpt.isPresent())
@@ -279,6 +268,10 @@ public class VmServiceImpl implements VmService {
 
         authService.checkAuthorizationForVm(vmId, true);
 
+        Vm curVm = vmRepository.getOne(vmId);
+        if(curVm.isActive())
+            throw new VmIsActiveException("The vm with id " + vmId + " cannot be deleted");
+
         //remove vm
         vmRepository.deleteById(vmId);
         vmRepository.flush();
@@ -299,6 +292,9 @@ public class VmServiceImpl implements VmService {
         curVm.setDisk(0);
         if(resourcesExceeded(curVm.getTeam().getVms(), curVm.getVmModel(), vCPU, ram, disk))
             return false;
+
+        if(curVm.isActive())
+            throw new VmIsActiveException("The vm with id " + vmId + " cannot be edited");
 
         //edit vm resources
         curVm.setVCPU(vCPU);

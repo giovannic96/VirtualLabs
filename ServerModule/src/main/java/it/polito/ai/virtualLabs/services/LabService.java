@@ -12,7 +12,6 @@ public interface LabService {
     Optional<AssignmentDTO> getAssignment(Long assignmentId);
     Optional<VersionDTO> getVersion(Long versionId);
     List<AssignmentDTO> getAllAssignments();
-    List<ReportDTO> getStudentReports(String studentId);
     Optional<ReportDTO> getStudentReportForAssignment(String studentUsername, Long assignmentId);
     List<ReportDTO> getAssignmentReports(Long assignmentId);
     Optional<ProfessorDTO> getAssignmentProfessor(Long assignmentId);

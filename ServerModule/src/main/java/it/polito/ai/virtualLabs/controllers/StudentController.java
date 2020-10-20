@@ -60,14 +60,6 @@ public class StudentController {
         return teams;
     }
 
-    @GetMapping("/{studentId}/vms")
-    public List<VmDTO> vms(@PathVariable String studentId) {
-        List<VmDTO> vms = vmService.getStudentVms(studentId);
-        for(VmDTO v: vms)
-            ModelHelper.enrich(v);
-        return vms;
-    }
-
     @GetMapping("/{studentId}/teamProposals")
     public List<TeamProposalDTO> teamProposals(@PathVariable String studentId) {
         List<TeamProposalDTO> teamProposals = teamService.getTeamProposalsForStudent(studentId);
@@ -76,14 +68,6 @@ public class StudentController {
             ModelHelper.enrich(tp);
 
         return teamProposals;
-    }
-
-    @GetMapping("/{studentId}/reports")
-    public List<ReportDTO> reports(@PathVariable String studentId) {
-        List<ReportDTO> reports = labService.getStudentReports(studentId);
-        for(ReportDTO report: reports)
-            ModelHelper.enrich(report);
-        return reports;
     }
 
     @GetMapping("/{studentId}/courses/{courseName}/checkAcceptedProposals")
