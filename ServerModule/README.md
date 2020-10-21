@@ -37,7 +37,6 @@ API
 * GET	https://ip_address:port/api/students/:studentId/courses/:courseName/checkAcceptedProposals   // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/students/:studentId/courses/:courseName/team                     // TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/students/:studentId/teams
-* GET	https://ip_address:port/api/students/:studentId/teamProposals/:teamProposalId/checkToken  // TO ADD TO POSTMAN
 
 *Labs*
 * GET	https://ip_address:port/api/labs/assignments/:assignmentId
@@ -67,13 +66,13 @@ API
 * GET	https://ip_address:port/api/vms/:vmId/team
 * GET	https://ip_address:port/api/vms/:vmId/creator
 * GET	https://ip_address:port/api/vms/:vmId/owners
+* GET	https://ip_address:port/api/vms/:vmId/vmModel
 * GET	https://ip_address:port/api/vms/vmModels
 * GET	https://ip_address:port/api/vms/vmModels/osMap                   //TO ADD TO POSTMAN
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/course
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/professor
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/vms
-* GET	https://ip_address:port/api/vms/vmModels/:vmModelId/vmModel      //TO ADD TO POSTMAN
 
 ---  
 **POST**
@@ -138,7 +137,6 @@ API
 
 *Teams*
 * DELETE https://ip_address:port/api/teams/:teamId
-* DELETE https://ip_address:port/api/teams/teamProposals/:teamProposalId
 
 *Labs*
 * DELETE https://ip_address:port/api/labs/assignments/:assignmentId      //TO ADD TO POSTMAN

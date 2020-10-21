@@ -262,6 +262,8 @@ public class TeamServiceImpl implements TeamService {
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
 
+        authService.checkAuthorizationForCourse(courseName);
+
         Course course = courseRepository.getOne(courseName);
         Optional<Student> student = course.getStudents()
                 .stream()
@@ -284,6 +286,8 @@ public class TeamServiceImpl implements TeamService {
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
 
+        authService.checkAuthorizationForCourse(courseName);
+
         Course course = courseRepository.getOne(courseName);
         course.removeStudent(userRepository.getStudentById(studentId));
     }
@@ -295,6 +299,8 @@ public class TeamServiceImpl implements TeamService {
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
+
+        authService.checkAuthorizationForCourse(courseName);
 
         Student student = userRepository.getStudentById(studentId);
         Optional<Team> team = teamRepository.findByStudentsContainsAndCourseName(student, courseName);

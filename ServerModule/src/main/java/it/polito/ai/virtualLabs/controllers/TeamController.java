@@ -158,20 +158,4 @@ public class TeamController {
 
         teamService.deleteTeam(teamId);
     }
-
-    @DeleteMapping("/teamProposals/{teamProposalId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteTeamProposal(@PathVariable Long teamProposalId,
-                                    @AuthenticationPrincipal UserDetails userDetails) {
-        Optional<StudentDTO> creator = teamService.getStudentByUsername(userDetails.getUsername());
-        Optional<TeamProposalDTO> proposal = teamService.getTeamProposal(teamProposalId);
-
-        if(!creator.isPresent() || !proposal.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        if(!creator.get().getId().equals(proposal.get().getCreatorId()))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-
-        teamService.deleteTeamProposal(teamProposalId);
-    }
 }
