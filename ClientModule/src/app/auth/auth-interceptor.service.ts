@@ -32,15 +32,13 @@ export class AuthInterceptorService implements HttpInterceptor{
         catchError((error: HttpErrorResponse) => {
         /* Auth token expired */
         if (error.status === 600) {
-
           /* First failed request */
           if (!this.isRefreshing) {
             this.isRefreshing = true;
             this.refreshTokenSubject.next(null);
-
+            localStorage.removeItem('auth_token');
             if (this.authService.isUserLogged()) {
               const refreshToken = localStorage.getItem('refresh_token');
-
               if (refreshToken) {
                 return this.authService.refreshToken(refreshToken).pipe(
                   switchMap(map => {
