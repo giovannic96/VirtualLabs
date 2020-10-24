@@ -78,13 +78,19 @@ export class PersonalComponent implements OnInit, OnDestroy {
       if (courseList.length) {
         const splitUrl = this.router.url.split('/');
         if (splitUrl.length > 2) {
-          courseList.find(course => {
-            if (course.name.replace(/ /g, '%20') === this.router.url.split('/')[2]) {
+          const validCourse = courseList.find(course => {
+            if (course.name.replace(/ /g, '%20') === splitUrl[2]) {
               this.setCurrentCourse(course);
               courseToNavigate = course.name;
-              tabToVisit = splitUrl.length > 3 ? this.router.url.split('/')[3] : '';
+              tabToVisit = splitUrl.length > 3 ? splitUrl[3] : '';
+              return true;
             }
+            return false;
           });
+          if (validCourse === undefined) {
+            this.router.navigate(['pageNotFound']);
+            return;
+          }
         }
         if (!courseToNavigate) {
           this.setCurrentCourse(courseList[0]);
