@@ -33,7 +33,8 @@ export class AuthService {
     }
     this.tokenLoggedObs = new BehaviorSubject<Token>(token);
     this.userLoggedObs = new BehaviorSubject<User>(null);
-    this.userRole = UserRole.UNDEFINED;
+
+    this.setUserRole(token?.roles);
   }
 
   login(email: string, password: string): Observable<any> {
@@ -101,16 +102,23 @@ export class AuthService {
     if (userInfo === null)
       this.userLoggedObs.next(null);
     else {
-      const roles: string[] = userInfo.roles;
-      if (roles.includes('ROLE_STUDENT'))
-        this.userRole = UserRole.STUDENT;
-      else if (roles.includes('ROLE_PROFESSOR'))
-        this.userRole = UserRole.PROFESSOR;
-      else
-        this.userRole = UserRole.UNDEFINED;
-
+      this.setUserRole(userInfo.roles);
       this.userLoggedObs.next(userInfo.user);
     }
+  }
+
+  setUserRole(roles: string[]) {
+    if (roles == null) {
+      this.userRole = UserRole.UNDEFINED;
+      return;
+    }
+
+    if (roles.includes('ROLE_STUDENT'))
+      this.userRole = UserRole.STUDENT;
+    else if (roles.includes('ROLE_PROFESSOR'))
+      this.userRole = UserRole.PROFESSOR;
+    else
+      this.userRole = UserRole.UNDEFINED;
   }
 
   getUserLogged(): Observable<User> {

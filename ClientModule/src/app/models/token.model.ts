@@ -3,8 +3,9 @@ export class Token {
   private _iat: number;
   private _exp: number;
   private _sub: string;
+  private _roles: string[];
 
-  constructor(username: string, iat: number, exp: number, sub: string) {
+  constructor(username: string, roles: string[], iat: number, exp: number, sub: string) {
     this._username = username;
     this._iat = iat;
     this._exp = exp;
@@ -41,5 +42,13 @@ export class Token {
 
   set sub(value: string) {
     this._sub = value;
+  }
+
+  get roles(): string[] {
+    return this._roles;
+  }
+
+  set roles(value: string[]) {
+    this._roles = value;
   }
 }
