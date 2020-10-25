@@ -170,6 +170,9 @@
             <button mat-raised-button color="warn" *ngIf="authService.isProfessor()"
                     (click)="deleteAssignment(assignment.id)">DELETE ASSIGNMENT</button>
             <button mat-raised-button color="primary" *ngIf="authService.isProfessor()"
+                    [disabled]="isAssignmentExpired(assignment)"
+                    matTooltip="You cannot edit an expired assignment"
+                    [matTooltipDisabled]="!isAssignmentExpired(assignment)"
                     (click)="openAssignmentDialog(assignment, true)">EDIT ASSIGNMENT</button>
             <button mat-raised-button color="primary"
                     *ngIf="!authService.isProfessor() && isReportSubmittable(assignment)"
