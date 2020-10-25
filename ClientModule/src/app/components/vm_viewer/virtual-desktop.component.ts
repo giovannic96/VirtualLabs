@@ -39,7 +39,8 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
     'Hover on the thin bar on top to open menu',
     'Press F11 on your keyboard to go fullscreen. Press it again to exit fullscreen mode',
     'Click the info button on menu to view all the vm settings',
-    'This is just another fake tip cause i have no imagination'
+    'Remember to power off the virtual machine when you and your team have finished your work',
+    'Be careful to not exceed the available resources'
   ];
   public chosenTip: string;
 
