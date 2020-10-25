@@ -36,7 +36,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private currentCourse: Observable<Course>;
   public assignmentList: Assignment[];
-  public gridColumns = 4;
+  public gridColumns = 3;
   public ReportStatus = ReportStatus;
 
   allReports: Map<number, Report[]>;
