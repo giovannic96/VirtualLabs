@@ -39,13 +39,13 @@ mat-icon {
 
 mat-panel-title {
   font-size: large;
-  width: 13em;
+  width: 20em;
 }
 
 .status-label-container {
   width: 10em;
   text-align: center;
-  padding-left: 3.8em;
+  margin-left: -5em;
 }
 
 .panels-description {

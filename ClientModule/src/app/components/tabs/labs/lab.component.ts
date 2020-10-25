@@ -426,13 +426,14 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
     this.assignmentStatusMap.set(assignment.id, {label, className});
   }
 
-  markAsRead(report: Report) {
+  markAsRead(assignment: Assignment, report: Report) {
     if (this.authService.isProfessor())
       return;
 
     if (report?.status === ReportStatus.NULL) {
       this.labService.markReportAsRead(report.id).subscribe(() => {
         report.status = ReportStatus.READ;
+        this.setAssignmentStatusLabel(assignment);
       });
     }
   }

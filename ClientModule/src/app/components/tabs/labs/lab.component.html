@@ -6,7 +6,7 @@
   <ng-container *ngIf="assignmentList?.length; else noAssignments">
     <mat-accordion multi="false">
       <mat-expansion-panel *ngFor="let assignment of this.assignmentList"
-                           (opened)="markAsRead(getReportForStudent(assignment, authService.getMyId()))">
+                           (opened)="markAsRead(assignment, getReportForStudent(assignment, authService.getMyId()))">
         <mat-expansion-panel-header class="assignment-header">
           <mat-panel-title>
             {{assignment.name}}
