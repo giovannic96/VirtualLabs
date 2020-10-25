@@ -33,10 +33,7 @@ export class AppComponent {
 
     this.authService.getUserLogged().subscribe(user => this.currentUser = user);
 
-    this.authService.getUserTokenLogged().subscribe(userTokenLogged => {
-      this.userLoggedIn = !!userTokenLogged;
-      console.log('UserToken', userTokenLogged);
-    });
+    this.authService.getUserTokenLogged().subscribe(userTokenLogged => this.userLoggedIn = !!userTokenLogged);
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.doLogin) {
