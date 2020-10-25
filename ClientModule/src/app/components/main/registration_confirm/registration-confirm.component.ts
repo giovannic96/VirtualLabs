@@ -23,9 +23,7 @@ export class RegistrationConfirmComponent implements OnInit {
 
     this.authService.confirmRegistration(this.token).pipe(
       finalize(() => this.requestSent = true)
-    ).subscribe(response => {
-      console.log(response);
-    }, () => this.error = true);
+    ).subscribe(() => null, () => this.error = true);
   }
 
   redirectToHome() {
