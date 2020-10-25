@@ -53,7 +53,7 @@
             <mat-divider class="team-sections-divider" [vertical]="true"></mat-divider>
             <div class="team-section-container">
               <h3 class="team-section-title">Vms</h3>
-              <ng-container *ngIf="myTeam?.vms?.length; else noVms">
+              <ng-container *ngIf="team.vms?.length; else noVms">
                 <div class="my-team-section-content">
                   <mat-card *ngFor="let vm of team.vms; let i = index">
                     <mat-card-header>
