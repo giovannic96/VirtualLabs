@@ -22,6 +22,7 @@
         <div matTooltip="This version has been revised already"
                       [matTooltipDisabled]="!version.revised" *ngIf="isVersionRevisable">
           <button mat-raised-button
+                  *ngIf="authService.isProfessor()"
                   color="primary"
                   [disabled]="version.revised"
                   (click)="reviewInProgress=true">REVIEW</button>

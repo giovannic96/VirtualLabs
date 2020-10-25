@@ -5,6 +5,7 @@ import {CanvasComponent} from '../canvas.component';
 import {Version} from '../../models/version.model';
 import {MySnackBarComponent} from '../my-snack-bar.component';
 import Utility from '../utility';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-version-dialog',
@@ -29,7 +30,8 @@ export class VersionDialogComponent implements OnInit {
                             '#8bc34a', '#ffeb3b', '#ff9800', '#795548', '#f44336', '#fff'];
   public currentColor;
 
-  constructor(private dialogRef: MatDialogRef<VersionDialogComponent>,
+  constructor(public authService: AuthService,
+              private dialogRef: MatDialogRef<VersionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) data) {
 
     this.version = data.version;
