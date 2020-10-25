@@ -14,7 +14,7 @@
                 <h4 matLine>{{vmModel.name}}</h4>
               </mat-list-item>
             </mat-list>
-            <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Set by Prof. ' + vmModel.professor.name + ' ' + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
+            <mat-card-subtitle class="vm-model-editor-description"><i>{{vmModel?.professor ? 'Created by Prof. ' + vmModel.professor.name + ' ' + vmModel.professor.surname : ''}}</i></mat-card-subtitle>
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
@@ -35,10 +35,8 @@
       <mat-action-row *ngIf="authService.isProfessor()">
         <button mat-raised-button color="primary" *ngIf="!vmModel else vmModelExists" (click)="openDialog()">CREATE MODEL</button>
         <ng-template #vmModelExists>
-          <ng-container *ngIf="vmModel.professor?.id === authService.getMyId()">
-            <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
-            <button mat-raised-button color="primary" (click)="openDialog()">EDIT</button>
-          </ng-container>
+          <button mat-raised-button color="warn" (click)="deleteVmModel()">DELETE</button>
+          <button mat-raised-button color="primary" (click)="openDialog()">EDIT</button>
         </ng-template>
       </mat-action-row>
     </mat-expansion-panel>

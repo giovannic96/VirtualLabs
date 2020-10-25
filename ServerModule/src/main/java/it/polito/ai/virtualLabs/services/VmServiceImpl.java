@@ -10,6 +10,7 @@ import it.polito.ai.virtualLabs.services.exceptions.team.TeamNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.vm.VmIsActiveException;
 import it.polito.ai.virtualLabs.services.exceptions.vm.VmNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.vmmodel.VmModelNotFoundException;
+import it.polito.ai.virtualLabs.services.exceptions.vmmodel.VmModelResourcesExceededException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,15 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class VmServiceImpl implements VmService {
+
+    private static final int VM_MODEL_MAX_VCPU = 32;
+    private static final int VM_MODEL_STEP_VCPU = 2;
+    private static final int VM_MODEL_MAX_RAM = 64;
+    private static final int VM_MODEL_STEP_RAM = 8;
+    private static final int VM_MODEL_MAX_DISK = 4096;
+    private static final int VM_MODEL_STEP_DISK = 512;
+    private static final int VM_MODEL_MAX_TOT_VM = 10;
+    private static final int VM_MODEL_STEP_TOT_VM = 1;
 
     @Autowired
     VmRepository vmRepository;
@@ -313,15 +323,27 @@ public class VmServiceImpl implements VmService {
 
         VmModel curVmModel = vmModelRepository.getOne(vmModelId);
 
-        List<VmDTO> vmList = getCourseVms(curVmModel.getCourse().getName());
+        authService.checkAuthorizationForCourse(curVmModel.getCourse().getName());
+
+        int maxVCPU = vmModelDTO.getMaxVCPU();
+        int maxRAM = vmModelDTO.getMaxRAM();
+        int maxDisk = vmModelDTO.getMaxDisk();
+        int maxTotVm = vmModelDTO.getMaxTotVm();
+        int maxActiveVm = vmModelDTO.getMaxActiveVm();
+
+        if(maxVCPU > VM_MODEL_MAX_VCPU || maxVCPU < VM_MODEL_STEP_VCPU || maxVCPU % VM_MODEL_STEP_VCPU != 0 ||
+                maxRAM > VM_MODEL_MAX_RAM || maxRAM < VM_MODEL_STEP_RAM || maxRAM % VM_MODEL_STEP_RAM != 0 ||
+                maxDisk > VM_MODEL_MAX_DISK || maxDisk < VM_MODEL_STEP_DISK || maxDisk % VM_MODEL_STEP_DISK != 0 ||
+                maxTotVm > VM_MODEL_MAX_TOT_VM || maxActiveVm > maxTotVm || maxActiveVm < 1)
+            throw new VmModelResourcesExceededException("The vm model with id " + vmModelId + "cannot be edit");
 
         curVmModel.setName(vmModelDTO.getName());
         curVmModel.setOs(vmModelDTO.getOs());
-        curVmModel.setMaxVCPU(vmModelDTO.getMaxVCPU());
-        curVmModel.setMaxDisk(vmModelDTO.getMaxDisk());
-        curVmModel.setMaxRAM(vmModelDTO.getMaxRAM());
-        curVmModel.setMaxActiveVm(vmModelDTO.getMaxActiveVm());
-        curVmModel.setMaxTotVm(vmModelDTO.getMaxTotVm());
+        curVmModel.setMaxVCPU(maxVCPU);
+        curVmModel.setMaxDisk(maxDisk);
+        curVmModel.setMaxRAM(maxRAM);
+        curVmModel.setMaxActiveVm(maxActiveVm);
+        curVmModel.setMaxTotVm(maxTotVm);
 
         vmModelRepository.saveAndFlush(curVmModel);
         return true;
@@ -333,10 +355,11 @@ public class VmServiceImpl implements VmService {
         if(!vmModelRepository.existsById(vmModelId))
             throw new VmModelNotFoundException("The vm model with id " + vmModelId + " does not exist");
 
-        authService.checkAuthorizationForVmModel(vmModelId);
+        VmModel vmModel = vmModelRepository.getOne(vmModelId);
+
+        authService.checkAuthorizationForCourse(vmModel.getCourse().getName());
 
         //remove vmModel
-        VmModel vmModel = vmModelRepository.getOne(vmModelId);
         vmModel.setProfessor(null);
         vmModel.setCourse(null);
 
