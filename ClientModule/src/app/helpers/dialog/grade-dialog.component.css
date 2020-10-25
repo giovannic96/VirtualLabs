@@ -8,6 +8,11 @@ form {
   flex-direction: column;
 }
 
+.version-preview-img {
+  width: 100%;
+  max-width: 800px;
+}
+
 form textarea {
   resize: none;
 }
