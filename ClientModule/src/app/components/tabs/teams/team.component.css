@@ -224,6 +224,7 @@ mat-card {
 
 .proposal-history-header mat-panel-title {
   flex: unset;
+  width: 20em;
 }
 
 .proposal-history-header span {
@@ -238,7 +239,7 @@ mat-card {
 .proposal-history-status-container {
   width: 10em;
   text-align: center;
-  padding-left: 3.8em;
+  margin-left: -5em;
 }
 
 .proposal-history-status-container span {
