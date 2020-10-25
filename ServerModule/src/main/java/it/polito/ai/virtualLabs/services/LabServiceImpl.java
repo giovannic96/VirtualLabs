@@ -391,8 +391,8 @@ public class LabServiceImpl implements LabService {
     @Override
     @PreAuthorize("hasRole('ROLE_PROFESSOR')")
     public boolean reviewVersion(Long versionId, String review) {
-        if(!reportRepository.existsById(versionId))
-            throw new ReportNotFoundException("The version with id " + versionId + " does not exist");
+        if(!versionRepository.existsById(versionId))
+            throw new VersionNotFoundException("The version with id " + versionId + " does not exist");
 
         Version version = versionRepository.getOne(versionId);
         Report report = version.getReport();
