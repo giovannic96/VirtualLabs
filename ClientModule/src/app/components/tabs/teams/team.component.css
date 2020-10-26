@@ -263,7 +263,6 @@ mat-card {
   flex-direction: row;
   gap: 1em;
   align-items: center;
-  margin-bottom: 1.4em;
 }
 .proposal-history-member-container img {
   height: 50px;
@@ -281,5 +280,5 @@ mat-card {
   padding-left: 2em;
   display: flex;
   flex-flow: row wrap;
-  gap: 7em;
+  gap: 2em 7em;
 }
