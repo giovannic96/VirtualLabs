@@ -89,9 +89,21 @@ export class CourseService {
       );
   }
 
-  enrollMany(courseName: string, formData: FormData) {
+  checkCsv(courseName: string, formData: FormData) {
     return this.httpClient
-      .post<Student[]>(`${this.API_PATH}/${courseName}/enrollMany`, formData)
+      .post<any>(`${this.API_PATH}/${courseName}/checkCsv`, formData)
+      .pipe(
+        retry(3),
+        catchError( err => {
+          console.error(err);
+          return throwError(`checkCsv error: ${err.message}`);
+        })
+      );
+  }
+
+  enrollMany(courseName: string, studentIdList: string[]) {
+    return this.httpClient
+      .post<Student[]>(`${this.API_PATH}/${courseName}/enrollMany`, studentIdList)
       .pipe(
         retry(3),
         catchError( err => {

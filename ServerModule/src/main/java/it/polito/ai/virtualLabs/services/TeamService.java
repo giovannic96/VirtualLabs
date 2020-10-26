@@ -56,8 +56,8 @@ public interface TeamService {
     List<ProfessorDTO> getProfessorsForCourse(String courseName);
     void enableCourse(String courseName);
     void disableCourse(String courseName);
-    List<Boolean> enrollAllStudents(List<String> studentIds, String courseName);
-    List<StudentDTO> addAndEnroll(Reader r, String courseName);
+    List<StudentDTO> enrollAllStudents(List<String> studentIds, String courseName);
+    String checkCsv(Reader r, String courseName);
     List<CourseDTO> getCoursesForStudent(String studentId);
     List<CourseDTO> getCoursesForProfessor(String professorId);
     Optional<CourseDTO> getCourseForTeam(Long teamId);

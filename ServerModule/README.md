@@ -86,6 +86,7 @@ API
 * POST https://ip_address:port/api/courses
 * POST https://ip_address:port/api/courses/:courseName/assignProfessor
 * POST https://ip_address:port/api/courses/:courseName/enrollOne
+* POST https://ip_address:port/api/courses/:courseName/checkCsv          //TO ADD TO POSTMAN
 * POST https://ip_address:port/api/courses/:courseName/enrollMany
 * POST https://ip_address:port/api/courses/:courseName/unrollMany
 * POST https://ip_address:port/api/courses/:courseName/setVmModel

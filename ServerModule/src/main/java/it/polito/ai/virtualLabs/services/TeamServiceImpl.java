@@ -12,6 +12,8 @@ import it.polito.ai.virtualLabs.services.exceptions.file.ParsingFileException;
 import it.polito.ai.virtualLabs.services.exceptions.professor.ProfessorNotFoundException;
 import it.polito.ai.virtualLabs.services.exceptions.student.*;
 import it.polito.ai.virtualLabs.services.exceptions.team.*;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +32,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class TeamServiceImpl implements TeamService {
+
+    private enum StudentStatus {
+        VALID,
+        ALREADY_ENROLLED,
+        UNREGISTERED,
+        NOT_FOUND
+    }
 
     private static final int PROPOSAL_EXPIRATION_DAYS = 3;
     private static final int MIN_SIZE_FOR_GROUP = 2;
@@ -393,46 +402,25 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Boolean> enrollAllStudents(List<String> studentIds, String courseName) {
-        List<Boolean> retList = new ArrayList<>();
-        for(String id : studentIds) {
-            retList.add(addStudentToCourse(id, courseName));
-        }
-        return retList;
-    }
-
-    @Override
     @PreAuthorize("hasRole('ROLE_PROFESSOR')")
-    public List<StudentDTO> addAndEnroll(Reader r, String courseName) {
-        List<StudentDTO> studentsFromClient;
-        try {
-            // create csv bean reader
-            CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder(r)
-                    .withType(StudentDTO.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-            // convert `CsvToBean` object to list of students
-            studentsFromClient = csvToBean.parse();
-        } catch(Exception ex) {
-           throw new ParsingFileException("Error in parsing file");
-        }
+    public List<StudentDTO> enrollAllStudents(List<String> studentIds, String courseName) {
+        authService.checkAuthorizationForCourse(courseName);
 
         List<StudentDTO> studentsAdded = new ArrayList<>();
         boolean warning = false;
 
-        for(StudentDTO s : studentsFromClient) {
+        for(String id : studentIds) {
             try {
-                // students must be registered to the system and not be enrolled to this course
-                Optional<User> studentOpt = userRepository.findByUsernameAndRegisteredTrue(s.getUsername());
-                if(studentOpt.isPresent()) {
-                    boolean enrolled = addStudentToCourse(s.getId(), courseName);
+                Optional<Student> studentOpt = userRepository.findStudentById(id);
+                if(studentOpt.isPresent() && studentOpt.get().isRegistered()) {
+                    boolean enrolled = addStudentToCourse(id, courseName);
                     if(enrolled) {
-                       studentsAdded.add(s);
+                        studentsAdded.add(getStudent(id).get());
                     }
                 } else {
                     warning = true;
                 }
-            } catch(StudentNotFoundException ex) {
+            } catch (StudentNotFoundException ex) {
                 warning = true;
             }
         }
@@ -443,6 +431,61 @@ public class TeamServiceImpl implements TeamService {
         for(StudentDTO s : studentsAdded)
             ModelHelper.enrich(s);
         return studentsAdded;
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ROLE_PROFESSOR')")
+    public String checkCsv(Reader r, String courseName) {
+        authService.checkAuthorizationForCourse(courseName);
+
+        List<StudentDTO> studentsFromClient;
+        try {
+            // create csv bean reader
+            CsvToBean<StudentDTO> csvToBean = new CsvToBeanBuilder(r)
+                    .withType(StudentDTO.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+            // convert `CsvToBean` object to list of students
+            studentsFromClient = csvToBean.parse();
+        } catch(Exception ex) {
+            throw new ParsingFileException("Error in parsing file");
+        }
+
+        Map<String, Integer> studentsStatus = new HashMap<>();
+
+        for(StudentDTO s : studentsFromClient) {
+            if(!userRepository.studentExistsById(s.getId())) {
+                studentsStatus.put(s.getId(), StudentStatus.NOT_FOUND.ordinal());
+                continue;
+            }
+            Student student = userRepository.getStudentById(s.getId());
+            if(!student.isRegistered()) {
+                studentsStatus.put(s.getId(), StudentStatus.UNREGISTERED.ordinal());
+                continue;
+            }
+            if(student.getCourses().stream().map(Course::getName).collect(Collectors.toList()).contains(courseName)) {
+                studentsStatus.put(s.getId(), StudentStatus.ALREADY_ENROLLED.ordinal());
+                continue;
+            }
+            studentsStatus.put(s.getId(), StudentStatus.VALID.ordinal());
+        }
+
+        JSONArray jsonArray = new JSONArray();
+        studentsFromClient.forEach(s -> {
+            JSONObject jsonStudent = new JSONObject()
+                    .appendField("id", s.getId())
+                    .appendField("username", s.getUsername())
+                    .appendField("name", s.getName())
+                    .appendField("surname", s.getSurname());
+            jsonArray.appendElement(jsonStudent);
+        });
+
+        String jsonString = new JSONObject()
+                .appendField("studentList", jsonArray)
+                .appendField("statusMap", studentsStatus)
+                .toJSONString();
+
+        return jsonString;
     }
 
     @Override

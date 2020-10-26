@@ -12,8 +12,8 @@ import {MessageType, MySnackBarComponent} from '../../../helpers/my-snack-bar.co
 import {filter} from 'rxjs/operators';
 import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import Utility from '../../../helpers/utility';
 import {Subscription} from 'rxjs';
+import {CsvImportDialogComponent} from '../../../helpers/dialog/csv-import-dialog.component';
 
 @Component({
   selector: 'app-students',
@@ -21,6 +21,7 @@ import {Subscription} from 'rxjs';
   styleUrls: ['./students.component.css']
 })
 export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
+
 
   // Title
   title = 'VirtualLabs';
@@ -113,7 +114,7 @@ export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  enrollStudents(event) {
+  checkCsv(event) {
     this.studentsFile = event.target.files[0];
 
     if (!this.studentsFile.name.endsWith('.csv')) {
@@ -121,9 +122,17 @@ export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', this.studentsFile);
-    this.courseService.enrollMany(this.selectedCourse.name, formData).subscribe(students => {
+    this.dialog.open(CsvImportDialogComponent, {disableClose: true, data: {file: this.studentsFile, course: this.selectedCourse}})
+      .afterClosed()
+      .pipe(
+        filter(confirm => confirm))
+      .subscribe(studentIdList => {
+        this.enrollStudents(studentIdList);
+      });
+  }
+
+  enrollStudents(studentIdList: string[]) {
+    this.courseService.enrollMany(this.selectedCourse.name, studentIdList).subscribe(students => {
       if (students && students.length > 0 && students[students.length - 1].id === null) {
         students.pop(); // remove student with null id
         students.forEach(s => { // add students to tableStudents
@@ -145,7 +154,7 @@ export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         this.mySnackBar.openSnackBar('All students were already enrolled in the course', MessageType.WARNING, 5);
       }
-    }, error => this.mySnackBar.openSnackBar('Impossible to enroll the students', MessageType.ERROR, 5));
+    }, () => this.mySnackBar.openSnackBar('Impossible to enroll the students', MessageType.ERROR, 5));
   }
 
   async openDialog() {

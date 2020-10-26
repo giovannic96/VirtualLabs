@@ -12,7 +12,7 @@ import {ProfessorService} from '../../../services/professor.service';
 import {StudentService} from '../../../services/student.service';
 import {AreYouSureDialogComponent} from '../../../helpers/dialog/are-you-sure-dialog.component';
 import {User} from '../../../models/user.model';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {AuthService} from '../../../services/auth.service';
 
 @Component({
@@ -115,8 +115,11 @@ export class PersonalComponent implements OnInit, OnDestroy {
           }));
 
       this.loading = false;
-    }, () => {
-      alert('Invalid token provided.\nPlease login again.');
+    }, (error: HttpErrorResponse) => {
+      if (error.status === 0)
+        alert('Unexpected server error.\nPlease try again later.');
+      else
+        alert('Invalid token provided.\nPlease login again.');
       this.authService.logout();
       this.router.navigate(['/'], {queryParams: {doLogin: true}});
     });

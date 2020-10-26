@@ -28,7 +28,8 @@
     </button>
     <input hidden type="file" accept=".csv" #fileUpload
            (click)="fileUpload.value = null"
-           (change)="enrollStudents($event)">
+           (change)="checkCsv($event)">
+           <!-- (change)="enrollStudents($event)"> -->
   </div>
   <button class="delete-btn" mat-raised-button color="warn"
           [disabled]="!selectedStudents.selected.length"

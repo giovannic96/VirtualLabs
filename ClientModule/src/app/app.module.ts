@@ -67,6 +67,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {CourseDialogComponent} from './helpers/dialog/course-dialog.component';
 import {MatStepperModule} from '@angular/material/stepper';
 import {RegistrationConfirmComponent} from './components/main/registration_confirm/registration-confirm.component';
+import {CsvImportDialogComponent} from './helpers/dialog/csv-import-dialog.component';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import {RegistrationConfirmComponent} from './components/main/registration_confi
     VmSettingsDialogComponent,
     CourseDialogComponent,
     RegistrationConfirmComponent,
+    CsvImportDialogComponent
   ],
   imports: [
     RouterModule.forRoot(routes, {enableTracing: false}),
@@ -171,7 +173,8 @@ import {RegistrationConfirmComponent} from './components/main/registration_confi
     VmInfoDialogComponent,
     AssignmentDialogComponent,
     VmSettingsDialogComponent,
-    CourseDialogComponent
+    CourseDialogComponent,
+    CsvImportDialogComponent
   ]
 })
 export class AppModule { }

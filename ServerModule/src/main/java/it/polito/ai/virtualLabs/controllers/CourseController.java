@@ -156,20 +156,26 @@ public class CourseController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in enrolling student with id: " + id);
     }
 
-    @PostMapping("/{courseName}/enrollMany")
+    @PostMapping("/{courseName}/checkCsv")
     @ResponseStatus(HttpStatus.OK)
-    public List<StudentDTO> enrollStudents(@PathVariable String courseName, @RequestParam("file") MultipartFile file) {
+    public String checkCsv(@PathVariable String courseName, @RequestParam("file") MultipartFile file) {
         try {
             Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-            List<StudentDTO> students = teamService.addAndEnroll(reader, courseName);
-            if(students != null && students.size() == 1 && students.get(0).getId() == null)
-                throw new ResponseStatusException(HttpStatus.CONFLICT);
-            return students;
+            return teamService.checkCsv(reader, courseName);
         } catch (ParsingFileException e) {
             throw new ResponseStatusException(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
         } catch(IOException ex) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/{courseName}/enrollMany")
+    @ResponseStatus(HttpStatus.OK)
+    public List<StudentDTO> enrollStudents(@PathVariable String courseName, @RequestBody List<String> studentIdList) {
+        if(!teamService.getCourse(courseName).isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return teamService.enrollAllStudents(studentIdList, courseName);
     }
 
     @PostMapping("/{courseName}/setVmModel")

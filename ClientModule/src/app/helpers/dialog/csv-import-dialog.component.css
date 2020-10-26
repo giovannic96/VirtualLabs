@@ -1,0 +1,43 @@
+.dialog-container {
+
+}
+
+table {
+  width: 100%;
+  min-width: 700px;
+}
+
+td {
+  color: inherit;
+}
+
+.valid-row {
+  color: darkgreen;
+}
+
+.warning-row {
+  color: orange;
+}
+
+.error-row {
+  color: darkred;
+  text-decoration-line: line-through;
+}
+
+.cdk-column-status {
+  font-weight: 500;
+}
+
+.advise-container {
+  margin-top: 1.5em;
+  display: flex;
+  gap: .6em;
+}
+
+.buttons-container {
+  margin-top: 2em;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+  gap: 1em;
+}
