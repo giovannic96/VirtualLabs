@@ -5,7 +5,7 @@ import {LoginDialogComponent} from './helpers/dialog/login-dialog.component';
 import {AuthService} from './services/auth.service';
 import {CourseService} from './services/course.service';
 import {Observable, throwError} from 'rxjs';
-import {catchError, retry} from 'rxjs/operators';
+import {catchError, filter, retry} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {User} from './models/user.model';
 import {AreYouSureDialogComponent} from './helpers/dialog/are-you-sure-dialog.component';
@@ -44,9 +44,8 @@ export class AppComponent {
 
   openLoginDialog() {
     const dialogRef = this.dialog.open(LoginDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
-
-      if (result && this.authService.redirectUrl) {
+    dialogRef.afterClosed().pipe(filter(result => result)).subscribe(result => {
+      if (this.authService.redirectUrl) {
         this.router.navigate([this.authService.redirectUrl]);
         this.authService.redirectUrl = '';
       } else {
