@@ -19,6 +19,11 @@ mat-icon {
   margin: 1em 1em 1em 0;
 }
 
+.csv-buttons-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .delete-btn {
   margin-bottom: 0.5em;
 }

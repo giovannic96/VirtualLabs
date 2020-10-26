@@ -290,5 +290,39 @@ export class StudentsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAllSelected = true;
   }
 
+  downloadFile() {
+    const data = this.tableStudents.data;
+    const csvData = this.ConvertToCSV(data, ['id', 'username', 'name', 'surname']);
+    console.log(csvData);
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const isSafariBrowser = navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1;
+    if (isSafariBrowser) {  // if Safari open in new window to save file with random filename.
+      link.setAttribute('target', '_blank');
+    }
+    link.setAttribute('href', url);
+    link.setAttribute('download', this.selectedCourse.name + '.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
+  ConvertToCSV(objArray, headerList: string[]): string {
+    const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+    let str = '';
+    let row = '';
+
+    headerList.forEach(header => row += header + ',');
+    row = row.slice(0, -1);
+    str += row + '\r\n';
+    for (let i = 0; i < array.length; i++) {
+      let line = '';
+      headerList.forEach(head => line += array[i][head] + ',');
+      line = line.slice(0, -1);
+      str += line + '\r\n';
+    }
+    return str;
+  }
 }
