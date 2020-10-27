@@ -33,7 +33,8 @@ export class TeamComponent implements OnInit, OnDestroy {
 
   public allProposals: TeamProposal[];
   public pendingProposals: TeamProposal[];
-  public myPendingProposals: TeamProposal[] = [];
+  public myPendingProposals: TeamProposal[];
+  public myProposalsChecked: boolean;
   public hasAcceptedAProposal = false;
   public proposalResponses: Map<string, Observable<string>>;
 
@@ -79,6 +80,9 @@ export class TeamComponent implements OnInit, OnDestroy {
         concatMap(teamProposalList => {
           this.allProposals = teamProposalList;
           this.pendingProposals = teamProposalList.filter(proposal => proposal.status === TeamProposalStatus.PENDING);
+          this.myPendingProposals = [];
+          if (!this.allProposals.length)
+            this.myProposalsChecked = true;
           return teamProposalList;
         }),
         tap(proposal => {
@@ -102,6 +106,7 @@ export class TeamComponent implements OnInit, OnDestroy {
             if (proposal.members.find(m => m.id === this.authService.getMyId())
               && proposal.status === TeamProposalStatus.PENDING) {
               this.myPendingProposals.push(proposal);
+              this.myProposalsChecked = true;
             }
           });
         })).subscribe());
@@ -246,12 +251,15 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.notificationService.responseToProposal('reject', tpId).subscribe(resp => {
       if (resp) {
         // remove rejected team proposal from my pending proposals
-        const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
-        if (tpToReject) {
-          this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject), 1);
-          this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
+        if (this.myPendingProposals !== undefined) {
+          const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
+          if (tpToReject) {
+            this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject), 1);
+            this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
+          }
+        } else {
+          this.myPendingProposals = [];
         }
-
         this.mySnackBar.openSnackBar('Team proposal rejected successfully', MessageType.SUCCESS, 3);
       } else {
         this.mySnackBar.openSnackBar('Team proposal reject failed', MessageType.ERROR, 3);

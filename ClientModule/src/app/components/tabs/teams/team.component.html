@@ -76,7 +76,7 @@
   </ng-container>
 </div>
 <ng-template #noTeams>
-  <div class="no-teams-message-container" *ngIf="teamList">
+  <div class="no-teams-message-container" *ngIf="myProposalsChecked">
     <mat-card class="no-teams-card">
       <span>{{isInATeamProposal(authService.getMyId()) ?
         'Waiting for the response, all the students must accept the proposal...' :

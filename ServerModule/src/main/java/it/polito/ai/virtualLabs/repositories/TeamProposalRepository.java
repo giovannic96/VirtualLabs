@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface TeamProposalRepository extends JpaRepository<TeamProposal, Long> {
     Optional<TeamProposal> findByTeamNameAndCourseName(String teamName, String courseName);
     List<TeamProposal> findAllByCourseNameAndStatus(String courseName, TeamProposal.TeamProposalStatus status);
+    List<TeamProposal> findAllByCourseNameAndCreatorId(String courseName, String creatorId);
 
 }

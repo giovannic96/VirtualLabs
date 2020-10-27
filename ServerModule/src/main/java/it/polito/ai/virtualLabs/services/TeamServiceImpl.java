@@ -575,6 +575,18 @@ public class TeamServiceImpl implements TeamService {
         if(!course.isEnabled())
             throw new CourseNotEnabledException("The course named '" + courseName + "' is not enabled");
 
+        Optional<Student> studentOpt = userRepository.findStudentByUsername(creatorUsername);
+        if(!studentOpt.isPresent())
+            throw new StudentNotFoundException("The student with username '" + creatorUsername + "' was not found");
+
+        Student me = studentOpt.get();
+        if(hasAcceptedProposals(me.getId(), courseName))
+            throw new TeamProposalAlreadyAcceptedException("The student with id " + me.getId() + " has already accepted a team proposal");
+
+        List<TeamProposal> ownProposals = teamProposalRepository.findAllByCourseNameAndCreatorId(courseName, me.getId());
+        if(!ownProposals.isEmpty())
+            throw new TeamProposalAlreadyCreatedException("The student with id " + me.getId() + " has already proposed a team");
+
         List<String> distinctMembersIds = memberIds.stream().distinct().collect(Collectors.toList());
         if(distinctMembersIds.size() < course.getMinTeamSize() && distinctMembersIds.size() > course.getMaxTeamSize())
             throw new TeamConstraintsNotSatisfiedException("The team '" + teamName + "' does not respect cardinality constraints");
@@ -727,8 +739,9 @@ public class TeamServiceImpl implements TeamService {
         authService.checkAuthorizationForCourse(courseName);
 
         List<Long> teamProposalIds = getPendingTeamProposalIdsForStudent(courseName, studentId);
-        if(teamProposalIds.size() == 0)
-            return true; // I don't have any proposal -> simulate that I accepted a previous proposal
+
+        if(teamProposalIds.isEmpty())
+            return false;
 
         for (Long proposalId: teamProposalIds) {
             String token = notificationService.getTokenByStudentId(proposalId, studentId);
