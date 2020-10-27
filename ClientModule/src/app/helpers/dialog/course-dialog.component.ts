@@ -47,6 +47,11 @@ export class CourseDialogComponent implements OnInit, AfterViewInit {
 
     this.professorService.professor(this.authService.getMyId()).subscribe(myself => this.mySelf = myself);
 
+    if (data.courseExists) {
+      this.courseService.getProfessors(data.course.name).subscribe(professors =>
+        this.selectedProfessors = professors.filter(p => p.id !== this.authService.getMyId()));
+    }
+
     this.basicForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(50)]],
       acronym: ['', [Validators.required, Validators.maxLength(3)]],

@@ -153,7 +153,7 @@
                         <h3 matLine class="professor-label">{{professor.name}} {{professor.surname}}</h3>
                         <mat-card-subtitle><em>{{professor.id}}</em></mat-card-subtitle>
                       </div>
-                      <mat-icon (click)="removeProfessor(i)">cancel</mat-icon>
+                      <mat-icon *ngIf="!data.courseExists" (click)="removeProfessor(i)">cancel</mat-icon>
                     </mat-list-item>
                   </mat-list>
                 </mat-card>
