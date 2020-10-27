@@ -135,15 +135,13 @@ public class CourseController {
 
     @PostMapping("/{courseName}/assignProfessor")
     @ResponseStatus(HttpStatus.OK)
-    public ProfessorDTO assignProfessor(@PathVariable String courseName, @RequestBody Map<String, String> input) {
+    public void assignProfessor(@PathVariable String courseName, @RequestBody Map<String, String> input) {
         if(!input.containsKey("id"))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         String id = input.get("id");
         if(!teamService.addProfessorToCourse(id, courseName))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in assignment of professor with id: " + id);
-
-        return ModelHelper.enrich(teamService.getProfessor(id).get());
     }
 
     @PostMapping("/{courseName}/enrollOne")
