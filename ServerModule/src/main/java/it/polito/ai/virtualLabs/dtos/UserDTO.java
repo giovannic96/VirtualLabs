@@ -11,7 +11,7 @@ public class UserDTO extends RepresentationModel<UserDTO> implements Serializabl
     @Id
     String id; //matricola
     String username;
-    String password;   //TODO: think if it's smart to send the password (check the modelHelper)
+    String password;
     String name;
     String surname;
     String photo;

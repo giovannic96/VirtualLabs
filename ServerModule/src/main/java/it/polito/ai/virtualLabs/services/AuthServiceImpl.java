@@ -149,16 +149,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean isRefreshTokenExpired(String token) {
+        String decodedToken = new String(Base64.getDecoder().decode(token));
+
         // check if token has a valid format
-        //TODO remember to restore the correct one
+        //TODO refresh token regex
         //Pattern pattern = Pattern.compile("[A-Fa-f0-9]{16}\\|((([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it)");
         Pattern pattern = Pattern.compile("[\\s\\S]*");
-        Matcher matcher = pattern.matcher(token);
+        Matcher matcher = pattern.matcher(decodedToken);
         if(!matcher.find())
             throw new IllegalStateException("Invalid token format");
 
         // check if decoded username is valid
-        String decodedUsername = new String(Base64.getDecoder().decode(token)).split("\\|")[1];
+        String decodedUsername = decodedToken.split("\\|")[1];
         Optional<User> userOpt = userRepository.findByUsernameAndRegisteredTrue(decodedUsername);
         if(!userOpt.isPresent())
             throw new UsernameNotFoundException("Username '" + decodedUsername + "' was not found");
