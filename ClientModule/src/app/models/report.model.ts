@@ -86,8 +86,12 @@ export class Report {
   }
 
   public static formatDate(date: string): Date {
-    const splitted = date.toString().split(',').map(s => Number(s));
-    return new Date(splitted[0], splitted[1] - 1, splitted[2], splitted[3], splitted[4], splitted[5]);
+    const split = date.toString().split(',');
+    if (split.length < 6 )
+      split.push('0');
+
+    const numbers = split.map(s => Number(s));
+    return new Date(numbers[0], numbers[1] - 1, numbers[2], numbers[3], numbers[4], numbers[5]);
   }
 
   getDTO(): any {
