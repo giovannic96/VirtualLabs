@@ -72,6 +72,8 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.setTeamMembersAndVms(team);
         })).subscribe());
 
+    let proposalsCounter: number;
+
     this.subscriptions.add(
       this.currentCourse.pipe(
         concatMap(course => {
@@ -79,6 +81,7 @@ export class TeamComponent implements OnInit, OnDestroy {
         }),
         concatMap(teamProposalList => {
           this.allProposals = teamProposalList;
+          proposalsCounter = teamProposalList.length;
           this.pendingProposals = teamProposalList.filter(proposal => proposal.status === TeamProposalStatus.PENDING);
           this.myPendingProposals = [];
           if (!this.allProposals.length)
@@ -106,8 +109,10 @@ export class TeamComponent implements OnInit, OnDestroy {
             if (proposal.members.find(m => m.id === this.authService.getMyId())
               && proposal.status === TeamProposalStatus.PENDING) {
               this.myPendingProposals.push(proposal);
-              this.myProposalsChecked = true;
             }
+
+            if (!--proposalsCounter)
+              this.myProposalsChecked = true;
           });
         })).subscribe());
 
