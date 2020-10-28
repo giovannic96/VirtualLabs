@@ -80,9 +80,10 @@ export class VmComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.currentCourse.pipe(
         concatMap(course => this.courseService.getVmModel(course.name)),
-        filter(vmModel => vmModel != null),
         concatMap(vmModel => {
           this.vmModel = vmModel;
+          if (vmModel == null)
+            return EMPTY;
           return this.vmService.getVmModelProfessor(vmModel.id);
         })).subscribe(professor => this.vmModel.professor = professor,
         error => {

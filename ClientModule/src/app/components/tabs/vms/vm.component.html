@@ -1,9 +1,9 @@
-<div class="tab-section vm-model-section">
+<div class="tab-section vm-model-section" *ngIf="vmModel !== undefined">
   <div class="tab-subtitle">
     <mat-icon>tune</mat-icon>
     <h2>Vm model</h2>
   </div>
-  <mat-accordion *ngIf="authService.isProfessor() || (!authService.isProfessor() && vmModel) else noVmModel">
+  <mat-accordion *ngIf="authService.isProfessor() || (!authService.isProfessor() && vmModel != null) else noVmModel">
     <mat-expansion-panel hideToggle [expanded]="!vmModel">
       <mat-expansion-panel-header class="vm-model-panel-header">
         <mat-panel-description>
