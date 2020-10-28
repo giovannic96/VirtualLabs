@@ -583,8 +583,8 @@ public class TeamServiceImpl implements TeamService {
         if(hasAcceptedProposals(me.getId(), courseName))
             throw new TeamProposalAlreadyAcceptedException("The student with id " + me.getId() + " has already accepted a team proposal");
 
-        List<TeamProposal> ownProposals = teamProposalRepository.findAllByCourseNameAndCreatorId(courseName, me.getId());
-        if(!ownProposals.isEmpty())
+        List<TeamProposal> ownPendingProposals = teamProposalRepository.findAllByCourseNameAndCreatorIdAndStatus(courseName, me.getId(), TeamProposal.TeamProposalStatus.PENDING);
+        if(!ownPendingProposals.isEmpty())
             throw new TeamProposalAlreadyCreatedException("The student with id " + me.getId() + " has already proposed a team");
 
         List<String> distinctMembersIds = memberIds.stream().distinct().collect(Collectors.toList());
