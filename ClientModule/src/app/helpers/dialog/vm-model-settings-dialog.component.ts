@@ -1,20 +1,24 @@
-import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {VmModel} from '../../models/vm-model.model';
 import {VmService} from '../../services/vm.service';
 import Utility from '../utility';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-vm-model-settings-dialog',
   templateUrl: './vm-model-settings-dialog.component.html',
   styleUrls: ['./vm-model-settings-dialog.component.css', '../../components/tabs/vms/vm.component.css']
 })
-export class VmModelSettingsDialogComponent implements OnInit {
+export class VmModelSettingsDialogComponent implements OnInit, OnDestroy {
 
   public vmModelFormGroup: FormGroup;
   public formIsInvalid = false;
+  public formUnchanged = true;
+  public originalFormValue: string;
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(public dialogRef: MatDialogRef<VmModelSettingsDialogComponent>,
@@ -23,6 +27,7 @@ export class VmModelSettingsDialogComponent implements OnInit {
               public formBuilder: FormBuilder,
               private vmService: VmService) {
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
   }
 
@@ -49,7 +54,16 @@ export class VmModelSettingsDialogComponent implements OnInit {
       this.vmModelFormGroup.get('maxActiveVms').setValue(vmModel.maxActiveVm);
 
       this.cd.detectChanges();
+
+      this.originalFormValue = JSON.stringify(this.vmModelFormGroup.value);
+      this.vmModelFormGroup.valueChanges.subscribe(() =>
+        this.formUnchanged = JSON.stringify(this.vmModelFormGroup.value) === this.originalFormValue
+      );
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   getOsImagePreview(osCode: string) {
