@@ -233,42 +233,43 @@ export class TeamComponent implements OnInit, OnDestroy {
     const course: Course = this.courseService.getSelectedCourseValue();
 
     this.notificationService.responseToProposal('accept', tp.id).subscribe(resp => {
-      if (resp) {
-        // empty all the other mine pending proposals
-        this.myPendingProposals = [];
+      // empty all the other mine pending proposals
+      this.myPendingProposals = [];
 
-        // set my team (and update UI)
-        this.courseService.getTeamByNameAndCourseName(tp.teamName, course.name).subscribe(team => {
-          if (team != null) {
-            this.setTeamMembersAndVms(team);
-            this.teamList.push(team);
-          }
-        });
-        this.retrieveStudentsInTeam();
-        this.mySnackBar.openSnackBar('Team proposal accepted successfully', MessageType.SUCCESS, 3);
-      } else {
-        this.mySnackBar.openSnackBar('Team proposal accept failed', MessageType.ERROR, 3);
-      }
+      // set my team (and update UI)
+      this.courseService.getTeamByNameAndCourseName(tp.teamName, course.name).subscribe(team => {
+        if (team != null) {
+          this.setTeamMembersAndVms(team);
+          this.teamList.push(team);
+        }
+      });
+      this.retrieveStudentsInTeam();
+      this.mySnackBar.openSnackBar('Team proposal accepted successfully', MessageType.SUCCESS, 3);
+    }, () => {
+      this.myPendingProposals.splice(this.myPendingProposals.indexOf(tp), 1);
+      this.pendingProposals.splice(this.pendingProposals.indexOf(tp), 1);
+      this.mySnackBar.openSnackBar('Error in accepting the proposal', MessageType.ERROR, 3);
     });
   }
 
   rejectTeamProposal(tpId: number) {
     this.notificationService.responseToProposal('reject', tpId).subscribe(resp => {
-      if (resp) {
-        // remove rejected team proposal from my pending proposals
-        if (this.myPendingProposals !== undefined) {
-          const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
-          if (tpToReject) {
-            this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject), 1);
-            this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
-          }
-        } else {
-          this.myPendingProposals = [];
+      // remove rejected team proposal from my pending proposals
+      if (this.myPendingProposals !== undefined) {
+        const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
+        if (tpToReject) {
+          this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject), 1);
+          this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
         }
-        this.mySnackBar.openSnackBar('Team proposal rejected successfully', MessageType.SUCCESS, 3);
       } else {
-        this.mySnackBar.openSnackBar('Team proposal reject failed', MessageType.ERROR, 3);
+        this.myPendingProposals = [];
       }
+      this.mySnackBar.openSnackBar('Team proposal rejected successfully', MessageType.SUCCESS, 3);
+    },  () => {
+      const tpToReject = this.myPendingProposals.find(tp => tp.id === tpId);
+      this.myPendingProposals.splice(this.myPendingProposals.indexOf(tpToReject));
+      this.pendingProposals.splice(this.pendingProposals.indexOf(tpToReject), 1);
+      this.mySnackBar.openSnackBar('Error in rejecting the proposal', MessageType.ERROR, 3);
     });
   }
 
@@ -305,12 +306,8 @@ export class TeamComponent implements OnInit, OnDestroy {
     });
   }
 
-  isInATeamProposal(studentId: string) {
-    let found = false;
-    this.pendingProposals?.forEach(tp => {
-      found = tp.members?.some(s => s.id === studentId);
-    });
-    return found;
+  hasCreatedProposal(studentId: string): boolean {
+    return !!this.pendingProposals.find(tp => tp.creator.id === studentId);
   }
 
   isAlreadyTeamedUp() {
