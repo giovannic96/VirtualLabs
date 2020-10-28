@@ -389,7 +389,7 @@ public class AuthServiceImpl implements AuthService {
                     Professor professor = (Professor)u;
                     boolean found = false;
                     for(Course course : professor.getCourses()) {
-                        if(course.getStudents().stream().map(Student::getId).collect(Collectors.toList()).containsAll(to)) {
+                        if(course.getStudents().stream().map(Student::getUsername).collect(Collectors.toList()).containsAll(to)) {
                             found = true;
                             break;
                         }
