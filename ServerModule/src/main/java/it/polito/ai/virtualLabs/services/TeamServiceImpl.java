@@ -580,8 +580,6 @@ public class TeamServiceImpl implements TeamService {
             throw new StudentNotFoundException("The student with username '" + creatorUsername + "' was not found");
 
         Student me = studentOpt.get();
-        if(hasAcceptedProposals(me.getId(), courseName))
-            throw new TeamProposalAlreadyAcceptedException("The student with id " + me.getId() + " has already accepted a team proposal");
 
         List<TeamProposal> ownPendingProposals = teamProposalRepository.findAllByCourseNameAndCreatorIdAndStatus(courseName, me.getId(), TeamProposal.TeamProposalStatus.PENDING);
         if(!ownPendingProposals.isEmpty())
@@ -605,6 +603,10 @@ public class TeamServiceImpl implements TeamService {
                 if(t.getCourse().getName().equals(courseName))
                     throw new StudentAlreadyTeamedUpException("The student with id '" + memberId + "' is already part of the group named '" + t.getName() + "'");
             }
+
+            if(hasAcceptedProposals(memberId, courseName))
+                throw new TeamProposalAlreadyAcceptedException("The student with id " + memberId + " has already accepted a team proposal");
+
             students.add(student); //this will be part of the team (if all the controls are verified)
         }
 
@@ -735,7 +737,6 @@ public class TeamServiceImpl implements TeamService {
         if(!courseRepository.existsById(courseName))
             throw new CourseNotFoundException("The course named '" + courseName + "' was not found");
 
-        authService.checkIdentity(studentId);
         authService.checkAuthorizationForCourse(courseName);
 
         List<Long> teamProposalIds = getPendingTeamProposalIdsForStudent(courseName, studentId);

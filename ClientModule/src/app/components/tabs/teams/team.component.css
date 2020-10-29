@@ -64,13 +64,13 @@ mat-card {
   margin: 0 0 5px 0;
 }
 
-.not-engaged-student-list .mat-list-text {
+::ng-deep .not-engaged-student-list .mat-list-text {
   width: unset !important;
 }
 
 .not-engaged-student-status {
-  margin-left: 1em;
-  font-size: unset;
+  margin-left: 2em;
+  font-size: unset !important;
 }
 
 .pending-teams-bottom {
