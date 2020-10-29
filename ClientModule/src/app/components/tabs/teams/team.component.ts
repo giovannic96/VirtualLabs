@@ -37,6 +37,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   public myProposalsChecked: boolean;
   public hasAcceptedAProposal = false;
   public proposalResponses: Map<string, Observable<string>>;
+  public studentHasProposalAccepted: Map<string, boolean>;
 
   public teamedUpStudents: Student[];
   public notTeamedUpStudents: Student[];
@@ -56,6 +57,7 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.utility = new Utility();
 
     this.proposalResponses = new Map<string, Observable<string>>();
+    this.studentHasProposalAccepted = new Map<string, boolean>();
 
     this.currentCourse = this.courseService.getSelectedCourse().pipe(filter(course => !!course));
   }
@@ -183,19 +185,25 @@ export class TeamComponent implements OnInit, OnDestroy {
     );
   }
 
-  async openTeamProposalDialog(notTeamedUpStudents: Student[], myId: string) {
+  async openTeamProposalDialog() {
     const course: Course = this.courseService.getSelectedCourseValue();
+    const availableStudents: Student[] = [];
+    this.notTeamedUpStudents.forEach(s => {
+      if (!this.studentHasProposalAccepted.get(s.id))
+        availableStudents.push(s);
+    });
 
     const data = {
       teamName: '',
       course,
-      students: notTeamedUpStudents,
-      myId
+      students: availableStudents,
+      myId: this.authService.getMyId()
     };
     const dialogRef = this.dialog.open(TeamProposalDialogComponent, {disableClose: true, data});
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
     if (!!dialogResponse) {
+      console.log(dialogResponse);
       if (dialogResponse.response === 'success') {
         this.teamService.getTeamProposal(dialogResponse.tpId)
           .subscribe(teamProposal => {
@@ -322,9 +330,16 @@ export class TeamComponent implements OnInit, OnDestroy {
             this.courseService.getTeamedUpStudents(course.name),
             this.courseService.getNotTeamedUpStudents(course.name),
           ]);
-        })).subscribe(students => {
+        }), mergeMap(students => {
           this.teamedUpStudents = students[0];
           this.notTeamedUpStudents = students[1];
-      }));
+          const checkProposals: Observable<boolean>[] = [];
+          students[1].forEach(s => checkProposals.push(this.studentService.checkAcceptedProposals(s.id, this.courseService.getSelectedCourseValue().name)));
+          return forkJoin(checkProposals);
+        })).subscribe(responses => {
+          responses.forEach((resp, index) => {
+            this.studentHasProposalAccepted.set(this.notTeamedUpStudents[index].id, resp);
+          });
+        }));
   }
 }

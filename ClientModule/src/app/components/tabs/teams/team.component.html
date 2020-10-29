@@ -198,7 +198,7 @@
         </mat-list>
       </mat-card>
     </div>
-    <div class="student-list">
+    <div class="student-list not-engaged-student-list">
       <mat-card>
         <mat-card-header>
           <mat-card-title class="student-list-title">Not engaged yet</mat-card-title>
@@ -208,6 +208,7 @@
           <mat-list-item *ngFor="let student of notTeamedUpStudents">
             <img matListAvatar [src]="student.photo">
             <h3 matLine>{{student.name}} {{student.surname}} - {{student.id}}</h3>
+            <span class="individual-proposal-status not-engaged-student-status">{{this.studentHasProposalAccepted?.get(student.id) ? 'accepted a pending proposal' : ''}}</span>
           </mat-list-item>
         </mat-list>
       </mat-card>
@@ -245,10 +246,13 @@
 </div>
 
 <ng-template #fabAddTeamProposal>
-  <div *ngIf="!isAlreadyTeamedUp() && !hasCreatedProposal(authService.getMyId()) && notTeamedUpStudents?.length"
+  <div *ngIf="!isAlreadyTeamedUp() &&
+              !hasCreatedProposal(authService.getMyId()) &&
+              notTeamedUpStudents?.length &&
+              this.notTeamedUpStudents.length === this.studentHasProposalAccepted.size"
        class="add-btn-container">
     <button class="icon-btn add-btn"
-            (click)="openTeamProposalDialog(notTeamedUpStudents, authService.getMyId())">
+            (click)="openTeamProposalDialog()">
       <div class="add-icon"></div>
       <div class="btn-txt"><strong>PROPOSE</strong></div>
     </button>

@@ -64,6 +64,15 @@ mat-card {
   margin: 0 0 5px 0;
 }
 
+.not-engaged-student-list .mat-list-text {
+  width: unset !important;
+}
+
+.not-engaged-student-status {
+  margin-left: 1em;
+  font-size: unset;
+}
+
 .pending-teams-bottom {
   justify-content: space-between;
   color: rgba(0,0,0,.54);
