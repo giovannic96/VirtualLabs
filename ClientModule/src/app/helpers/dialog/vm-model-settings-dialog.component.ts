@@ -56,9 +56,10 @@ export class VmModelSettingsDialogComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       this.originalFormValue = JSON.stringify(this.vmModelFormGroup.value);
-      this.vmModelFormGroup.valueChanges.subscribe(() =>
-        this.formUnchanged = JSON.stringify(this.vmModelFormGroup.value) === this.originalFormValue
-      );
+      this.subscriptions.add(
+        this.vmModelFormGroup.valueChanges.subscribe(() =>
+          this.formUnchanged = JSON.stringify(this.vmModelFormGroup.value) === this.originalFormValue
+        ));
     }
   }
 

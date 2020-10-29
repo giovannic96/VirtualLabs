@@ -250,7 +250,7 @@ export class VmComponent implements OnInit, OnDestroy {
   openVmSettingsDialog(vm?: Vm) {
 
     const maxVm = this.utility.calcAvailableVmResources(this.myTeam?.vms, this.vmModel);
-    if (!maxVm.vcpu || !maxVm.ram || !maxVm.disk)
+    if ((!maxVm.vcpu || !maxVm.ram || !maxVm.disk) && !vm)
       return;
 
     const data = {
@@ -259,7 +259,7 @@ export class VmComponent implements OnInit, OnDestroy {
       vm,
       osMap: this.osMap,
       teamId: this.myTeam.id,
-      maxVm: this.maxVmCreatable
+      maxVm
     };
 
     if (vm) {

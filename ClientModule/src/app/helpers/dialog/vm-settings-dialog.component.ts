@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import Utility from '../utility';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
@@ -7,18 +7,22 @@ import {VmModel} from '../../models/vm-model.model';
 import {Vm} from '../../models/vm.model';
 import {TeamService} from '../../services/team.service';
 import {MessageType, MySnackBarComponent} from '../my-snack-bar.component';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-vm-settings-dialog',
   templateUrl: './vm-settings-dialog.component.html',
   styleUrls: ['./vm-settings-dialog.component.css']
 })
-export class VmSettingsDialogComponent implements OnInit {
+export class VmSettingsDialogComponent implements OnInit, OnDestroy {
 
   public vmFormGroup: FormGroup;
   public formIsInvalid = false;
+  public formUnchanged = true;
+  public originalFormValue: string;
   public vmModel: VmModel;
 
+  private subscriptions: Subscription;
   public utility: Utility;
 
   constructor(public dialogRef: MatDialogRef<VmSettingsDialogComponent>,
@@ -29,6 +33,7 @@ export class VmSettingsDialogComponent implements OnInit {
               private teamService: TeamService,
               private mySnackBar: MySnackBarComponent) {
 
+    this.subscriptions = new Subscription();
     this.utility = new Utility();
   }
 
@@ -51,7 +56,17 @@ export class VmSettingsDialogComponent implements OnInit {
       this.vmFormGroup.get('disk').setValue(vm.disk);
 
       this.cd.detectChanges();
+
+      this.originalFormValue = JSON.stringify(this.vmFormGroup.value);
+      this.subscriptions.add(
+        this.vmFormGroup.valueChanges.subscribe(() =>
+          this.formUnchanged = JSON.stringify(this.vmFormGroup.value) === this.originalFormValue
+        ));
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   getOsImagePreview(osCode: string) {

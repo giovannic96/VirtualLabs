@@ -48,6 +48,11 @@
   <mat-divider style="margin-top: 1em;"></mat-divider>
   <div class="vm-buttons-div">
     <button mat-raised-button mat-dialog-close color="warn">CANCEL</button>
-    <button mat-raised-button color="primary">{{data.vmExists ? 'CONFIRM' : 'CREATE'}}</button>
+    <ng-template [ngIf]="data.vmExists" [ngIfElse]="createBtnTemplate">
+      <button mat-raised-button color="primary" [disabled]="formUnchanged">CONFIRM</button>
+    </ng-template>
+    <ng-template #createBtnTemplate>
+      <button mat-raised-button color="primary">CREATE</button>
+    </ng-template>
   </div>
 </form>
