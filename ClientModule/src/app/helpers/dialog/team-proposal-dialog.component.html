@@ -60,12 +60,12 @@
         </div>
       </div>
       <div [@error]="onAddErrAnim" class="warning-message">
-        <span>Warning: The team must consist of {{minTeamSize}} to {{maxTeamSize}} people</span>
+        <span>Warning: The team must consist of {{minTeamSize + (maxTeamSize !== minTeamSize ? ' to ' + maxTeamSize : '')}} people</span>
       </div>
       <div class="buttons-container">
         <mat-dialog-actions>
-          <button class="mat-raised-button" (click)="close()">CLOSE</button>
-          <button class="mat-raised-button mat-primary" (click)="confirm(proposed)">CONFIRM</button>
+          <button mat-raised-button (click)="close()">CLOSE</button>
+          <button mat-raised-button color="primary" (click)="confirm(proposed)">CONFIRM</button>
         </mat-dialog-actions>
       </div>
     </div>
