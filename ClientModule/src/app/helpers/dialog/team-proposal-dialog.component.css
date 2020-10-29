@@ -8,16 +8,21 @@ form {
   flex-direction: column;
 }
 
+mat-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: .8em 0;
+}
+
 .buttons-container {
   display: flex;
   place-content: flex-end;
-  margin: 0 0 0;
-  padding: 0 .5em .5em;
 }
 
 .buttons-container button {
-  margin: 0 0 0 1.3em;
   width: 100px;
+  margin-left: 1em;
 }
 
 h2 {
