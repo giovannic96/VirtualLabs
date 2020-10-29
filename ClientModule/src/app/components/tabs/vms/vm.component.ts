@@ -206,18 +206,26 @@ export class VmComponent implements OnInit, OnDestroy {
       }
   }
 
-  toggleVmPower(vm: Vm) {
+  toggleVmPower(vm: Vm, team: Team) {
     if (vm.active) {
       this.vmService.powerOffVm(vm.id).subscribe(() => {
         vm.active = false;
-      });
+      }, () => this.mySnackBar.openSnackBar('It was impossible to power off the vm', MessageType.ERROR, 5));
     } else {
-      if (this.myTeam?.vms.filter(v => v.active).length >= this.vmModel.maxActiveVm)
-        this.mySnackBar.openSnackBar('Your team have reached max number of active vms', MessageType.ERROR, 5);
-      else
+      let activeVmCount;
+      if (this.authService.isProfessor()) {
+        activeVmCount = team.vms.filter(v => v.active).length;
+      } else {
+        activeVmCount = this.myTeam?.vms.filter(v => v.active).length;
+      }
+
+      if (activeVmCount >= this.vmModel.maxActiveVm) {
+        this.mySnackBar.openSnackBar((this.authService.isProfessor() ? 'This' : 'Your') + ' team have reached max number of active vms', MessageType.ERROR, 5);
+      } else {
         this.vmService.powerOnVm(vm.id).subscribe(() => {
           vm.active = true;
-        });
+        }, () => this.mySnackBar.openSnackBar('It was impossible to power on the vm', MessageType.ERROR, 5));
+      }
     }
   }
 
