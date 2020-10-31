@@ -729,7 +729,6 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public boolean hasAcceptedProposals(String studentId, String courseName) {
         if(!userRepository.studentExistsById(studentId))
             throw new StudentNotFoundException("The student with id '" + studentId + "' was not found");
