@@ -73,6 +73,7 @@ API
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/course
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/professor
 * GET	https://ip_address:port/api/vms/vmModels/:vmModelId/vms
+* GET	https://ip_address:port/api/vms/heartbeat/:vmId
 
 ---  
 **POST**
