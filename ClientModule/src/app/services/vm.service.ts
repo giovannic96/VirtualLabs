@@ -25,7 +25,7 @@ export class VmService {
   constructor(private httpClient: HttpClient, private router: Router) { }
 
   heartbeat(vmId: number): Observable<boolean> {
-    return timer(10000, 30000).pipe(
+    return timer(10000, 10000).pipe(
       concatMap(() => this.httpClient.get<boolean>(`${this.API_PATH}/heartbeat/${vmId}`)),
       catchError(err => {
         console.error(err);
