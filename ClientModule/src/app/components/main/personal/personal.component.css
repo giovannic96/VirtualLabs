@@ -203,6 +203,11 @@ mat-sidenav {
   text-align: center;
 }
 
+.no-courses-desc-text {
+  width: 600px;
+  margin: auto;
+}
+
 .loader-container {
   display: flex;
   flex-direction: column;
