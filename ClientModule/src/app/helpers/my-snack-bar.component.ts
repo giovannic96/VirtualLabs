@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {duration} from "moment";
 
 export enum MessageType {
   INFO,
@@ -18,9 +19,10 @@ export class MySnackBarComponent {
   constructor(private snackBar: MatSnackBar) {
   }
 
-  openSnackBar(message: string, type: MessageType, durationInSeconds: number, action?: string) {
+  openSnackBar(message: string, type: MessageType, durationInSeconds?: number, action?: string) {
     const config: any = {};
-    config.duration = durationInSeconds * 1000;
+    if (durationInSeconds)
+      config.duration = durationInSeconds * 1000;
     switch (type) {
       case MessageType.INFO:
         config.panelClass = 'snackMessageInfo';
@@ -36,5 +38,9 @@ export class MySnackBarComponent {
         break;
     }
     this.snackBar.open(message, action ? action : '', config);
+  }
+
+  closeSnackBar() {
+    this.snackBar.dismiss();
   }
 }

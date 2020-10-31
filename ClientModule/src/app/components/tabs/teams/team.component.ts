@@ -175,9 +175,12 @@ export class TeamComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(
       data => {
         if (data !== undefined) { // i.e. close button was pressed
+          this.mySnackBar.openSnackBar('Please wait, we are sending the email to the team...', MessageType.INFO);
           this.teamService.sendMessageToTeam(emails, data.subject, data.body).subscribe( () => {
+            this.mySnackBar.closeSnackBar();
             this.mySnackBar.openSnackBar('Email sent successfully', MessageType.SUCCESS, 3);
           }, () => {
+            this.mySnackBar.closeSnackBar();
             this.mySnackBar.openSnackBar('Error while sending the email. Some students may not have received the email correctly', MessageType.ERROR, 3);
           });
         }
