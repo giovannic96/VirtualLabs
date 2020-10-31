@@ -7,8 +7,8 @@ import {Student} from '../../models/student.model';
 import {VmModel} from '../../models/vm-model.model';
 import {Team} from '../../models/team.model';
 import {Course} from '../../models/course.model';
-import {EMPTY, forkJoin, Observable, Subscription, timer} from 'rxjs';
-import {catchError, concatMap} from 'rxjs/operators';
+import {EMPTY, forkJoin, Observable, of, Subscription, timer} from 'rxjs';
+import {catchError, concatMap, mergeMap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {VmInfoDialogComponent} from '../../helpers/dialog/vm-info-dialog.component';
 import {AreYouSureDialogComponent} from '../../helpers/dialog/are-you-sure-dialog.component';
@@ -55,12 +55,13 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
               private router: Router,
               private dialog: MatDialog) {
 
-    this.authService.getUserInfo().subscribe(me => {
-      this.authService.setUserLogged(me);
-    });
-
     this.subscriptions = new Subscription();
     this.utility = new Utility();
+
+    this.subscriptions.add(
+      this.authService.getUserInfo().subscribe(me => {
+        this.authService.setUserLogged(me);
+      }));
 
     const loadingTimer = timer(3500);
     this.subscriptions.add(
@@ -90,28 +91,30 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
       this.vmService.getVmTeam(vmId),
       this.vmService.getVmModelByVmId(vmId));
 
-    forkJoin(requests).pipe(
-      catchError(err => {
-        alert('Access denied!\nYou cannot use this virtual machine');
-        this.router.navigate(['home']);
-        return EMPTY;
-      }),
-      concatMap(responses => {
-        this.vmCreator = responses[0];
-        this.vmTeam = responses[1];
-        this.vmModel = responses[2];
-        return this.vmService.getVmById(vmId);
-      }),
-      concatMap( vm => {
-        this.currentVm = vm;
-        return this.vmService.getVmModelCourse(this.vmModel.id);
-      })).subscribe(course => {
-        this.vmCourse = course;
-        const authUsers = this.authService.isProfessor() ?
-          this.courseService.getProfessors(this.vmCourse.name) :
-          this.teamService.getTeamMembers(this.vmTeam.id);
-
-        authUsers.subscribe((users: User[]) => {
+    this.subscriptions.add(
+      forkJoin(requests).pipe(
+        catchError(err => {
+          alert('Access denied!\nYou cannot use this virtual machine');
+          this.router.navigate(['home']);
+          return EMPTY;
+        }),
+        concatMap(responses => {
+          this.vmCreator = responses[0];
+          this.vmTeam = responses[1];
+          this.vmModel = responses[2];
+          return this.vmService.getVmById(vmId);
+        }),
+        concatMap( vm => {
+          this.currentVm = vm;
+          return this.vmService.getVmModelCourse(this.vmModel.id);
+        }),
+        mergeMap(course => {
+          this.vmCourse = course;
+          return this.authService.isProfessor() ?
+            this.courseService.getProfessors(this.vmCourse.name) :
+            this.teamService.getTeamMembers(this.vmTeam.id);
+        }),
+        concatMap((users: User[]) => {
           const userFound = users.find(user => user.id === this.authService.getMyId());
           if (!userFound) {
             alert('You are unauthorized to access this virtual machine!');
@@ -119,12 +122,23 @@ export class VirtualDesktopComponent implements OnInit, OnDestroy {
           }
           else if (!this.currentVm.active) {
             alert('You cannot access this virtual machine now.\n' +
-              'Maybe it\'s turned off.\n' +
+              'Maybe it\'s off.\n' +
               'Check on your personal page or ask an owner to power it on.');
             this.router.navigate(['courses']);
           }
-        });
-    });
+          return this.vmService.heartbeat(this.currentVm.id);
+        }))
+        .subscribe(() => {
+          alert('Sorry but this vm was powered off.\n' +
+            'Please power it on from your personal page or ask one of the owners to do it for you.');
+        }, error => {
+          alert('An error occurred.\n' +
+            'Maybe the vm was deleted while you are working on it or the vm server is temporarily out of service.\n' +
+            'Please check on your personal page.');
+        }, () => {
+          this.router.navigate(['courses', this.vmCourse.name, 'vms']);
+        })
+    );
 
     this.stats = {cpu: 0, ram: 0, disk: 0};
     const statsTimer = timer(1000, 1000);

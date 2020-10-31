@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Student} from '../models/student.model';
-import {catchError, retry} from 'rxjs/operators';
-import {Observable, throwError} from 'rxjs';
+import {catchError, concatMap, filter, retry, take} from 'rxjs/operators';
+import {Observable, throwError, timer} from 'rxjs';
 import {VmModel} from '../models/vm-model.model';
 import {Professor} from '../models/professor.model';
 import {Router} from '@angular/router';
@@ -23,6 +23,18 @@ export class VmService {
   private VM_MODEL_PREVIEW_FORMAT = '.jpg';
 
   constructor(private httpClient: HttpClient, private router: Router) { }
+
+  heartbeat(vmId: number): Observable<boolean> {
+    return timer(10000, 30000).pipe(
+      concatMap(() => this.httpClient.get<boolean>(`${this.API_PATH}/heartbeat/${vmId}`)),
+      catchError(err => {
+        console.error(err);
+        return throwError(`heartbeat error: ${err.message}`);
+      }),
+      filter(beat => !beat),
+      take(1)
+    );
+  }
 
   getVmModelProfessor(vmModelId: number): Observable<Professor> {
     return this.httpClient

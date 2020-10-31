@@ -20,6 +20,14 @@ public class VmController {
     @Autowired
     VmService vmService;
 
+    @GetMapping("/heartbeat/{vmId}")
+    public boolean heartBeat(@PathVariable Long vmId) {
+        Optional<VmDTO> vm = vmService.getVm(vmId);
+        if(!vm.isPresent())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, vmId.toString());
+        return vm.get().isActive();
+    }
+
     @GetMapping("/{vmId}")
     public VmDTO getOne(@PathVariable Long vmId) {
         Optional<VmDTO> vm = vmService.getVm(vmId);
