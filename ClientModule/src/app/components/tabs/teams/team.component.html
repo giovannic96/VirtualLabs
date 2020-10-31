@@ -78,7 +78,7 @@
 <ng-template #noTeams>
   <div class="no-teams-message-container" *ngIf="myProposalsChecked">
     <mat-card class="no-teams-card">
-      <span>{{hasCreatedProposal(authService.getMyId()) ?
+      <span>{{(hasCreatedProposal(authService.getMyId()) || hasAcceptedAProposal) ?
         'Waiting for the response, all the students must accept the proposal...' :
         'Still no team has been formed'}}
       </span>
@@ -246,7 +246,8 @@
 </div>
 
 <ng-template #fabAddTeamProposal>
-  <div *ngIf="!isAlreadyTeamedUp() &&
+  <div *ngIf="!hasAcceptedAProposal &&
+              !isAlreadyTeamedUp() &&
               !hasCreatedProposal(authService.getMyId()) &&
               notTeamedUpStudents?.length &&
               this.notTeamedUpStudents.length === this.studentHasProposalAccepted.size"

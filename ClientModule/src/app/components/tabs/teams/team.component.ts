@@ -203,7 +203,6 @@ export class TeamComponent implements OnInit, OnDestroy {
     const dialogResponse: any = await dialogRef.afterClosed().toPromise();
 
     if (!!dialogResponse) {
-      console.log(dialogResponse);
       if (dialogResponse.response === 'success') {
         this.teamService.getTeamProposal(dialogResponse.tpId)
           .subscribe(teamProposal => {
@@ -249,6 +248,8 @@ export class TeamComponent implements OnInit, OnDestroy {
         if (team != null) {
           this.setTeamMembersAndVms(team);
           this.teamList.push(team);
+        } else {
+          this.hasAcceptedAProposal = true;
         }
       });
       this.retrieveStudentsInTeam();
