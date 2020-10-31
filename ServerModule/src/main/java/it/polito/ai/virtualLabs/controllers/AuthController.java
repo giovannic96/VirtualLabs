@@ -78,10 +78,14 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.OK)
     public boolean signup(@RequestBody UserDTO data) {
-        Optional<UserDTO> userOpt = authService.getUserByUsername(data.getUsername());
+        String username = data.getUsername();
+        if(!this.authService.checkCredentials(username, data.getPassword()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad credentials provided");
+
+        Optional<UserDTO> userOpt = authService.getUserByUsername(username);
 
         if(!userOpt.isPresent())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with username '" + data.getUsername() + "' was not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with username '" + username + "' was not found");
 
         UserDTO user = userOpt.get();
 
@@ -96,7 +100,7 @@ public class AuthController {
                 "Confirmation link: " + CONFIRMATION_PATH + "?token=" + token;
 
         try {
-            notificationService.sendMessage(data.getUsername(), subject, message);
+            notificationService.sendMessage(username, subject, message);
         } catch(MessagingException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email for registration");
         }

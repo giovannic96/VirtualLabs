@@ -153,8 +153,8 @@ public class AuthServiceImpl implements AuthService {
 
         // check if token has a valid format
         //TODO refresh token regex
-        //Pattern pattern = Pattern.compile("[A-Fa-f0-9]{16}\\|((([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it)");
-        Pattern pattern = Pattern.compile("[\\s\\S]*");
+        Pattern pattern = Pattern.compile("[A-Fa-f0-9]{16}\\|((([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it)");
+        //Pattern pattern = Pattern.compile("[\\s\\S]*");
         Matcher matcher = pattern.matcher(decodedToken);
         if(!matcher.find())
             throw new IllegalStateException("Invalid token format");
@@ -276,24 +276,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void checkAuthorizationForVmModel(Long vmModelId) {
-        VmModel vmModel = vmModelRepository.getOne(vmModelId);
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        userDetails.getAuthorities().forEach(role -> {
-            if(role.getAuthority().equals("ROLE_STUDENT")) {
-                throw new StudentPrivacyException("This student does not have permission to view the information relating to vmModels");
-            } else if(role.getAuthority().equals("ROLE_PROFESSOR")) {
-                Optional<User> user = userRepository.findByUsernameAndRegisteredTrue(userDetails.getUsername());
-                user.ifPresent(p -> {
-                    Professor professor = (Professor)p;
-                    if(!professor.getId().equals(vmModel.getProfessor().getId()))
-                        throw new ProfessorPrivacyException("This professor does not have permission to view the information relating to the vmModel with id " + vmModelId);
-                });
-            }
-        });
-    }
-
-    @Override
     public void checkAuthorizationForVm(Long vmId, boolean mustBeOwner) {
         Vm vm = vmRepository.getOne(vmId);
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -375,6 +357,19 @@ public class AuthServiceImpl implements AuthService {
                 });
             }
         });
+    }
+
+    @Override
+    public boolean checkCredentials(String username, String password) {
+        //TODO credentials regex
+        Pattern usernamePattern = Pattern.compile("[A-Fa-f0-9]{16}\\|((([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it)");
+        Pattern goodPassPattern = Pattern.compile("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[.@$!%*?&])[A-Za-z\\d.@$!%*?&]{8,32}");
+        //Pattern usernamePattern = Pattern.compile("[\\s\\S]*");
+        //Pattern goodPassPattern = Pattern.compile("[\\s\\S]*");
+        Matcher usernameMatcher = usernamePattern.matcher(username);
+        Matcher goodPassMatcher = goodPassPattern.matcher(password);
+
+        return usernameMatcher.find() && goodPassMatcher.find();
     }
 
     @Override

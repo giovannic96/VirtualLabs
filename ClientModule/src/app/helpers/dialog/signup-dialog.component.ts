@@ -26,9 +26,10 @@ export class SignupDialogComponent implements OnInit {
               public dialogRef: MatDialogRef<LoginDialogComponent>) {
 
     // TODO: polito mail regex
-    // this.politoMailRegex = RegExp('^(([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it$');
-    this.politoMailRegex = RegExp('^[\\s\\S]*$');
+    this.politoMailRegex = RegExp('^(([s]\\d{6}[@]studenti[.])|([d]\\d{6}[@]))polito[.]it$');
     this.goodPassRegex = RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[.@$!%*?&])[A-Za-z\\d.@$!%*?&]{8,32}$');
+    // this.politoMailRegex = RegExp('^[\\s\\S]*$');
+    // this.goodPassRegex = RegExp('^[\\s\\S]*$');
 
     this.signupForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email, Validators.pattern(this.politoMailRegex)]],

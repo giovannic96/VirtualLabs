@@ -27,7 +27,7 @@
             <mat-icon>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
           <mat-error *ngIf="signupForm.controls.password.hasError('pattern')">
-            Password <strong>not valid</strong>
+            Password <strong>must</strong> contains at least 8 characters including an uppercase letter, a number and a special character (.@$!%*?&)
           </mat-error>
         </mat-form-field>
 
@@ -38,9 +38,6 @@
           <button mat-icon-button matSuffix type="button" [tabIndex]="-1" (click)="hideRepeatPass = !hideRepeatPass">
             <mat-icon>{{hideRepeatPass ? 'visibility_off' : 'visibility'}}</mat-icon>
           </button>
-          <mat-error *ngIf="signupForm.controls.repeatPassword.hasError('pattern')">
-            Password <strong>not valid</strong>
-          </mat-error>
           <mat-error *ngIf="signupForm.controls.repeatPassword.hasError('mustMatch')">
             Passwords inserted <b>must</b> match
           </mat-error>

@@ -21,10 +21,10 @@ public interface AuthService {
     void checkAuthorizationForCourse(String courseName);
     void checkAuthorizationForStudentInfo(String studentId);
     void checkAuthorizationForReport(Long reportId);
-    void checkAuthorizationForVmModel(Long vmModelId);
     void checkAuthorizationForVm(Long vmId);
     void checkAuthorizationForVm(Long vmId, boolean mustBeOwner);
     void checkAuthorizationForTeamProposalMembers(String studentId);
     void checkAuthorizationForMessage(List<String> to);
     void checkIdentity(String userId);
+    boolean checkCredentials(String username, String password);
 }
