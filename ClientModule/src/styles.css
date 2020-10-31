@@ -6,7 +6,7 @@ mat-sidenav-container{min-height: 100vh}
 mat-icon{padding-right: 12px;}
 mat-icon:hover {cursor: pointer;}
 
-.snackMessageInfo {background-color: #b8b6b6; color: #203988;}
+.snackMessageInfo {background-color: lightslategray; color: white;}
 .snackMessageSuccess {background-color: #54ba54; color: white;}
 .snackMessageWarning {background-color: #d6a440; color: white;}
 .snackMessageError {background-color: #cb4747; color: white;}
