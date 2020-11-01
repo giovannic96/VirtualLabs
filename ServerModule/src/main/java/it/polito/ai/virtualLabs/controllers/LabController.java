@@ -137,7 +137,7 @@ public class LabController {
 
         String subject = "Review submitted on last version";
         String body = "Your last version of the assignment " + assignmentName
-                + " has been revised by the professor.\nGo to your personal page to view the review.";
+                + " has been revised by the professor.<br>Go to your personal page to check the review.";
 
         try {
             this.notificationService.sendMessage(userEmail, subject, body);
@@ -164,8 +164,8 @@ public class LabController {
         String comment = input.get("comment") == "" ?
                 "Professor didn't leave a comment" :
                 "Comment of the Professor: " + input.get("comment");
-        String body = "The report for the assignment " + assignmentName + "was evaluated.\n\nYour grade is: " + input.get("grade") + "."
-                + "\n" + comment;
+        String body = "The report for the assignment " + assignmentName + "was evaluated.<br><br>Your grade is: " + input.get("grade") + "<br>."
+                + "<br>" + comment;
 
         String userEmail = this.labService.getReportOwner(reportId).get().getUsername();
         try {

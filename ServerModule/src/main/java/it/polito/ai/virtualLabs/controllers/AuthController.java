@@ -96,8 +96,7 @@ public class AuthController {
         authService.setNewPassword(user.getId(), data.getPassword());
 
         String subject = "Virtual Labs registration confirm";
-        String message = "Hello " + user.getName() + "\nClick on th link below to confirm your registration on Virtual Labs!\n\n" +
-                "Confirmation link: " + CONFIRMATION_PATH + "?token=" + token;
+        String message = "Hello " + user.getName() + ",<br><br>Click <a href=\"" + CONFIRMATION_PATH + "?token=" + token + "\">here</a> to confirm your registration on Virtual Labs!";
 
         try {
             notificationService.sendMessage(username, subject, message);

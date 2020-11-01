@@ -141,7 +141,7 @@ public class TeamController {
 
         try {
             notificationService.sendMessageToTeam(prof.get(), data.getTo(), data.getSubject(), data.getBody());
-        } catch(MailException ex) {
+        } catch(MailException | MessagingException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Error in sending the email to a student");
         } catch(StudentNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A student was not found in our system");

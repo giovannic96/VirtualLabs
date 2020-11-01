@@ -59,21 +59,16 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @PreAuthorize("hasRole('ROLE_PROFESSOR')")
-    public void sendMessageToTeam(ProfessorDTO from, List<String> to, String subject, String body) throws MailException {
+    public void sendMessageToTeam(ProfessorDTO from, List<String> to, String subject, String body) throws MailException, MessagingException {
         authService.checkAuthorizationForMessage(to);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        final String headerBody = "Communication from the Prof. " + from.getName() + " " + from.getSurname() + ":\n\n";
-        message.setSubject(subject);
-        message.setText(headerBody + body);
+        String headerBody = "Communication from the Prof. " + from.getName() + " " + from.getSurname() + ":<br><br>";
 
         for(String email : to) {
-            if(userRepository.findStudentByUsername(email).isPresent()) {
-                message.setTo(email);
-                emailSender.send(message);
-            } else {
+            if(userRepository.findStudentByUsername(email).isPresent())
+                sendMessage(email, subject, headerBody + body);
+            else
                 throw new StudentNotFoundException("The student with email '" + email + "' was not found in our system");
-            }
         }
     }
 
@@ -250,8 +245,8 @@ public class NotificationServiceImpl implements NotificationService {
         final String confirmURL = "https://virtuallabs.ns0.it/proposal_response/accept?tpId="+tpId+"&token="+token;
         final String rejectURL = "https://virtuallabs.ns0.it/proposal_response/reject?tpId="+tpId+"&token="+token;
 
-        final String confirmBody = "Click here to confirm the proposal: " + confirmURL;
-        final String rejectBody = "Click here to reject the proposal: " + rejectURL;
+        final String confirmBody = "Click <a href=\"" + confirmURL +"\">here</a> to <strong>confirm</strong> the proposal.";
+        final String rejectBody = "Click <a href=\"" + rejectURL +"\">here</a> to <strong>reject</strong> the proposal.";
 
         String headerBody = "<h2><b>You have been invited on a team!</b></h2><br>";
         return headerBody + confirmBody + "<br><br>" + rejectBody;

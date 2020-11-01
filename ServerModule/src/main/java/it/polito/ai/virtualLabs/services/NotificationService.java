@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface NotificationService {
     void sendMessage(String address, String subject, String body) throws MailException, MessagingException;
-    void sendMessageToTeam(ProfessorDTO from, List<String> to, String subject, String body) throws MailException;
+    void sendMessageToTeam(ProfessorDTO from, List<String> to, String subject, String body) throws MailException, MessagingException;
     boolean acceptByToken(Long teamProposalId, String token); //to confirm group participation
     boolean rejectByToken(Long teamProposalId, String token); //to express refusal participation
     boolean acceptById(Long teamProposalId, String studentId);
