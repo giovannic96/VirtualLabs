@@ -43,7 +43,6 @@ public class TeamServiceImpl implements TeamService {
     private static final int PROPOSAL_EXPIRATION_DAYS = 3;
     private static final int MIN_SIZE_FOR_GROUP = 2;
     private static final int MAX_SIZE_FOR_GROUP = 10;
-    private static final int TEAM_PROPOSAL_EXPIRY_DAYS = 30;
     private static final String RESOURCES_PATH = "/home/files/course_info/";
 
     @Autowired
@@ -238,14 +237,20 @@ public class TeamServiceImpl implements TeamService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<TeamProposalDTO> cleanTeamProposals(List<TeamProposalDTO> list) {
         for(TeamProposalDTO tp : list) {
-            if(tp.getExpiryDate().isBefore(LocalDateTime.now().minusDays(TEAM_PROPOSAL_EXPIRY_DAYS))) {
-                teamService.deleteTeamProposal(tp.getId());
-                tp.setId(null);
+            if(tp.getStatus() == TeamProposal.TeamProposalStatus.PENDING && tp.getExpiryDate().isBefore(LocalDateTime.now())) {
+                TeamProposal proposal = teamProposalRepository.getOne(tp.getId());
+                proposal.getTokens().clear();
+                proposal.setStatus(TeamProposal.TeamProposalStatus.REJECTED);
+                proposal.setStatusDesc("Team proposal has expired");
+
+                tp.setStatusDesc(proposal.getStatusDesc());
+                tp.setStatus(proposal.getStatus());
             }
         }
-        return list.stream().filter(tp -> tp.getId() != null).collect(Collectors.toList());
+        return list;
     }
 
     @Override
