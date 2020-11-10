@@ -1,6 +1,5 @@
 package it.polito.ai.virtualLabs.security;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -31,30 +30,9 @@ public class JwtTokenFilter extends GenericFilterBean {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } else {
-                //((HttpServletResponse) res).setStatus(600);
                 ((HttpServletResponse) res).sendError(600);
             }
         }
         filterChain.doFilter(req, res);
     }
-
-    /*
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
-            throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
-        if (token != null) {
-            try {
-                if(!jwtTokenProvider.validateToken(token))
-                    throw new InvalidJwtAuthenticationException("Token expired");
-                Authentication auth = jwtTokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (InvalidJwtAuthenticationException ex) {
-                ((HttpServletResponse) res).setStatus(HttpStatus.LOCKED.value());
-            }
-        }
-        filterChain.doFilter(req, res);
-    }
-
-     */
 }

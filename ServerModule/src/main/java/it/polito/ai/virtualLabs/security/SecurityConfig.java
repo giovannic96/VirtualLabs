@@ -34,7 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //@formatter:off
         http
                 .cors()
                 .and()
@@ -50,6 +49,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers( "/notification/**").permitAll()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
-        //@formatter:on
     }
 }
